@@ -6,16 +6,10 @@ import { Settings } from '../../../feature/settings/components/settings/settings
 
 @Component({
   selector: 'app-drawer',
-  imports: [
-    TranslatePipe,
-    Settings,
-    DrawerModule
-  ],
+  imports: [TranslatePipe, Settings, DrawerModule],
   templateUrl: './drawer.html',
 })
 export class Drawer {
-  visible: boolean = false;
-
-  openDrawer = () => 
-    this.visible = true;
+  visible = false;
+  openDrawer = (): boolean => (this.visible = true);
 }

@@ -4,12 +4,8 @@ import { Menubar } from './core/components/menubar/menubar';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    Drawer,
-    Menubar
-  ],
+  imports: [Drawer, Menubar],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-}
+export class App {}

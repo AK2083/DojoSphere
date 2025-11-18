@@ -1,9 +1,9 @@
 export type Language = {
-    name: string;
-    code: string;
-}
+  name: string;
+  code: string;
+};
 
 export const Languages: Language[] = [
-    { name: 'Englisch', code: 'en' },
-    { name: 'Deutsch', code: 'de' }
+  { name: 'Englisch', code: 'en' },
+  { name: 'Deutsch', code: 'de' },
 ];
