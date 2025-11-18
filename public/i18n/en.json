@@ -1,0 +1,9 @@
+{
+    "feature": {
+        "main": {
+            "settings": "Settings",
+            "mode": "Theme",
+            "language": "Language"
+        }
+    }
+}

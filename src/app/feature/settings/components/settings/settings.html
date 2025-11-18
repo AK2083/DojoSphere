@@ -1,0 +1,16 @@
+<div>
+    <div class="flex flex-row justify-between items-center mb-3 mt-1">
+        <label for="toggl" class="mr-3">{{'feature.main.mode' | translate}}</label>
+        <p-toggleswitch [(ngModel)]="isLightModeOn" id="toggl" (onChange)="toggleDarkMode()">
+            <ng-template #handle let-checked="isLightModeOn">
+                <i [ngClass]="['!text-xs', 'pi', isLightModeOn ? 'pi-sun' : 'pi-moon']"></i>
+            </ng-template>
+        </p-toggleswitch>
+    </div>
+
+    <div class="flex flex-row justify-between items-center">
+        <label for="cityselect">{{'feature.main.language' | translate}}</label>
+        <p-select id="cityselect" [options]="languages" [(ngModel)]="selectedLanguage" optionLabel="name"
+            class="mt-1 w-1/2" (onChange)="switchLanguage()" />
+    </div>
+</div>

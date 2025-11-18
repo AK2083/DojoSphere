@@ -1,0 +1,15 @@
+<p-menubar class="m-2">
+    <ng-template #start>
+        <div class="flex flex-col">
+            <span class="text-2xl font-semibold text-black dark:text-white">
+                D<i class="pi pi-heart-fill text-amber-500" style="font-size: 1rem;"></i>joSphere
+            </span>
+            <span class="text-xs text-slate-300 dark:text-slate-700">:aang</span>
+        </div>
+    </ng-template>
+    <ng-template #end>
+        <div class="flex items-center gap-2">
+            <p-button (click)="openDrawer()" [rounded]="true" [text]="true" icon="pi pi-cog" severity="secondary" />
+        </div>
+    </ng-template>
+</p-menubar>
