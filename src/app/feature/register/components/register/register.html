@@ -1,0 +1,44 @@
+<p-panel>
+    <ng-template #header>
+        <h1 class="text-2xl">Registriere mich</h1>
+    </ng-template>
+
+    <ng-template #footer>
+        <div class="flex flex-col">
+            <p-button fluid type="submit" icon="pi pi-check" severity="primary" [outlined]="true"
+                label="Registrieren" />
+        </div>
+    </ng-template>
+
+    <form action="#" method="POST" class="space-y-6">
+        <div class="flex flex-col gap-4 w-full">
+            <div class="flex flex-col gap-2">
+                <label for="email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Email</label>
+                <input pInputText inputId="email" [(ngModel)]="value" placeholder="sheldon.cooper@bbt.de"
+                    class="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                <small id="username-help">Enter your username to reset your password.</small>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="password" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Passwort</label>
+                <p-password inputId="password" [(ngModel)]="value" [toggleMask]="true" autocomplete="off"
+                    promptLabel="Wähle das Passwort aus" weakLabel="Zu einfach"
+                    mediumLabel="Durschnittliche Komplexität" strongLabel="Komplexes Passwort"
+                    inputStyleClass="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                    <ng-template #header>
+                        <div class="font-semibold text-xm mb-4">Passwort</div>
+                    </ng-template>
+                    <ng-template #footer>
+                        <p-divider />
+                        <ul class="pl-2 my-0 leading-normal">
+                            <li>At least one lowercase</li>
+                            <li>At least one uppercase</li>
+                            <li>At least one numeric</li>
+                            <li>Minimum 8 characters</li>
+                        </ul>
+                    </ng-template>
+                </p-password>
+                <small id="username-help">Enter your username to reset your password.</small>
+            </div>
+        </div>
+    </form>
+</p-panel>
