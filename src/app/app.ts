@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Drawer } from './core/components/drawer/drawer';
 import { Menubar } from './core/components/menubar/menubar';
+import { Register } from './feature/register/components/register/register';
+import { PanelModule } from 'primeng/panel';
 
 @Component({
   selector: 'app-root',
-  imports: [Drawer, Menubar],
+  imports: [Drawer, Menubar, Register, PanelModule],
   templateUrl: './app.html',
-  styleUrl: './app.css',
 })
 export class App {}
