@@ -8,6 +8,10 @@ import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { TranslatePipe } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-register',
   imports: [
@@ -18,6 +22,9 @@ import { DividerModule } from 'primeng/divider';
     IftaLabelModule,
     PasswordModule,
     ButtonModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    TranslatePipe,
     FormsModule
   ],
   templateUrl: './register.html'
