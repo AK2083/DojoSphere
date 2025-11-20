@@ -4,6 +4,47 @@
             "settings": "Settings",
             "mode": "Theme",
             "language": "Language"
+        },
+        "register": {
+            "title": "Create Account",
+            "subtitle": "Here you create an account to register.",
+            "email": {
+                "mailLabel": "E-Mail",
+                "error": {
+                    "required": "E-Mail Address is required",
+                    "wrong": "E-Mail address is unfortunately incorrect"
+                }
+            },
+            "password": {
+                "pwdLabel": "Password",
+                "feedbackLabels": {
+                    "choose": "Choose a password",
+                    "simple": "to simple",
+                    "average": "average complexity",
+                    "complex": "complex password"
+                },
+                "rules": {
+                    "minLength": "minimum length of {{pwdLength}} characters",
+                    "ucChars": "includes capital and small letters",
+                    "number": "password contains numbers",
+                    "specialChars": "special characters (preferably no language-dependent ones)"
+                },
+                "error": {
+                    "required": "Password is required",
+                    "wrong": "Password is unfortunately incorrect"
+                }
+            },
+            "confirmation": "Please, register me",
+            "question": "Do you already have an account?",
+            "exclamation": "Then I want to log in!!!",
+            "success": "Your registration has been successfully confirmed!",
+            "reset": "Password reset link is being processed.",
+            "linkExpired": "The link has already expired.",
+            "authError": "Authentication Error: {{errMssg}}",
+            "error": {
+                "timeout": "Registration took too long. Please try again later.",
+                "failed": "Registration failed. Please check your details or try again."
+            }
         }
     }
 }

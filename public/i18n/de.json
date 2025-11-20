@@ -4,6 +4,47 @@
             "settings": "Einstellungen",
             "mode": "Theme",
             "language": "Sprache"
+        },
+        "register": {
+            "title": "Account erstellen",
+            "subtitle": "Hier erstellst du einen Account zur Registrierung.",
+            "email": {
+                "mailLabel": "E-Mail",
+                "error": {
+                    "required": "E-Mail Adresse brauche ich noch",
+                    "wrong": "E-Mail Adresse ist leider nicht richtig"
+                }
+            },
+            "password": {
+                "pwdLabel": "Passwort",
+                "feedbackLabels": {
+                    "choose": "Wähle das Passwort aus",
+                    "simple": "Zu einfach",
+                    "average": "Durschnittliche Komplexität",
+                    "complex": "Komplexes Passwort"
+                },
+                "rules": {
+                    "minLength": "Länge von {{pwdLength}} Zeichen",
+                    "ucChars": "große und kleine Buchstaben",
+                    "number": "beinhaltet Zahlen",
+                    "specialChars": "Sonderzeichen (möglichst keine sprachabhängigen)"
+                },
+                "error": {
+                    "required": "Passwort brauche ich noch",
+                    "wrong": "Passwort ist leider nicht richtig"
+                }
+            },
+            "confirmation": "Erstell mir einen Account",
+            "question": "Schon einen Account?",
+            "exclamation": "Dann log mich ein!!!",
+            "success": "Ihre Registrierung wurde erfolgreich bestätigt!",
+            "reset": "Passwort-Reset-Link verarbeitet.",
+            "linkExpired": "Der Link ist bereits abgelaufen.",
+            "authError": "Fehler bei der Authentifizierung: {{errMssg}}",
+            "error": {
+                "timeout": "Die Registrierung hat zu lange gedauert. Bitte versuchen Sie es später erneut.",
+                "failed": "Die Registrierung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Daten oder versuchen Sie es erneut."
+            }
         }
     }
 }

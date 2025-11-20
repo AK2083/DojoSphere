@@ -36,6 +36,7 @@ export const appConfig: ApplicationConfig = {
         preset: Aura,
         options: {
           darkModeSelector: '.dark',
+          cssLayer: { name: 'primeng', order: 'theme, base, primeng' } 
         },
       },
     }),

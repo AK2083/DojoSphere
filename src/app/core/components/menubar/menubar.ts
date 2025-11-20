@@ -5,8 +5,7 @@ import { ButtonModule } from 'primeng/button';
 @Component({
   selector: 'app-menubar',
   imports: [MenubarModule, ButtonModule],
-  templateUrl: './menubar.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './menubar.html'
 })
 export class Menubar {
   visible = false;
