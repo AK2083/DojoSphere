@@ -1,5 +1,11 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { PanelModule } from 'primeng/panel';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -29,54 +35,49 @@ import { TranslatePipe } from '@ngx-translate/core';
     InputGroupAddonModule,
     MessageModule,
     TranslatePipe,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  templateUrl: './register.html'
+  templateUrl: './register.html',
 })
 export class Register {
-  registerForm: FormGroup;
+  fb = inject(FormBuilder);
+
   isFormLoading = false;
-  formSubmitted: boolean = false;
+  formSubmitted = false;
   minPwdLength = 8;
 
-  constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.group({
-      mail: new FormControl('', [
-        Validators.required, 
-        Validators.email]),
-      pwd: new FormControl('', [
-        Validators.required, 
-        Validators.minLength(this.minPwdLength)])
-    });
-  }
+  registerForm = this.fb.group({
+    mail: new FormControl('', [Validators.required, Validators.email]),
+    pwd: new FormControl('', [Validators.required, Validators.minLength(this.minPwdLength)]),
+  });
 
-  onSubmit() {
+  onSubmit(): void {
     this.isFormLoading = true;
     this.formSubmitted = true;
     this.isFormLoading = false;
   }
 
-  isInvalid(controlName: string) {
+  isInvalid(controlName: string): boolean | undefined {
     const control = this.registerForm?.get(controlName);
     return control?.invalid && (control.touched || this.formSubmitted);
   }
 
-  getPasswordRules() {
+  getPasswordRules(): { hasUpperCase: boolean; hasNumber: boolean; hasSpecialChar: boolean; hasMinLength: boolean } {
     const pwd: string = this.pwd?.value ?? '';
-  
+
     return {
       hasUpperCase: /[A-Z]/.test(pwd),
       hasNumber: /[0-9]/.test(pwd),
       hasSpecialChar: /[^A-Za-z0-9]/.test(pwd),
-      hasMinLength: pwd.length >= this.minPwdLength
+      hasMinLength: pwd.length >= this.minPwdLength,
     };
   }
 
-  get mail() {
+  get mail(): AbstractControl | null {
     return this.registerForm.get('mail');
   }
 
-  get pwd() {
+  get pwd(): AbstractControl | null {
     return this.registerForm.get('pwd');
   }
 }

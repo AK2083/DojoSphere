@@ -28,8 +28,8 @@ export class Supabase {
       password: pwd,
     });
 
-    console.log("usr: ", data);
-    console.error("err: ", error);
+    console.log('usr: ', data);
+    console.error('err: ', error);
 
     return true;
   }
