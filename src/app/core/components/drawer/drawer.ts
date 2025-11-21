@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { DrawerModule } from 'primeng/drawer';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Settings } from '../../../feature/settings/components/settings/settings';
+import { Settings } from '@features/settings/components/settings/settings';
 
 @Component({
   selector: 'app-drawer',

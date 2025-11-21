@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { InterpolatableTranslationObject, TranslatePipe } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { LanguageService } from '../../../../core/service/language/language';
-import { ThemeService } from '../../../../core/service/theme/theme';
+import { LanguageService } from '@core/service/language/language';
+import { ThemeService } from '@core/service/theme/theme';
 import { Observable } from 'rxjs/internal/Observable';
 
 @Component({
