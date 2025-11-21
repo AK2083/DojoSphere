@@ -1,12 +1,12 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LanguageSwitcher } from '@core/service/language/LanguageSwitcher';
+import { ThemeToggler } from '@core/service/theme/ThemeToggler';
 import { InterpolatableTranslationObject, TranslatePipe } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { ThemeToggler } from '@core/service/theme/ThemeToggler';
 import { Observable } from 'rxjs/internal/Observable';
-import { LanguageSwitcher } from '@core/service/language/LanguageSwitcher';
 
 @Component({
   selector: 'app-settings',

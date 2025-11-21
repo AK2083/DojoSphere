@@ -2,9 +2,13 @@ const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 const eslintConfigPrettier = require('eslint-config-prettier');
+const importPlugin = require('eslint-plugin-import');
 
 module.exports = tseslint.config(
   {
+    plugins: {
+      'import': importPlugin
+    },
     ignores: ['.angular/**', '.nx/**', 'coverage/**', 'dist/**'],
     files: ['**/*.ts'],
     extends: [
@@ -89,18 +93,46 @@ module.exports = tseslint.config(
       'one-var': ['error', 'never'],
       'prefer-arrow-callback': 'error',
       'prefer-const': 'error',
-      'sort-imports': [
-        'error',
-        {
-          ignoreCase: true,
-          ignoreDeclarationSort: true,
-          allowSeparatedGroups: true,
-        },
-      ],
 
       // Security
       'no-eval': 'error',
       'no-implied-eval': 'error',
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin', // Node.js built-ins
+            'external', // npm modules
+            'internal', // @core, @features, @environments
+            'parent', // ../
+            'sibling', // ./Sibling
+            'index', // ./index
+          ],
+          pathGroups: [
+            {
+              pattern: '@core/**',
+              group: 'internal',
+              position: 'before',
+            },
+            {
+              pattern: '@features/**',
+              group: 'internal',
+              position: 'before',
+            },
+            {
+              pattern: '@environments/**',
+              group: 'internal',
+              position: 'before',
+            },
+          ],
+          pathGroupsExcludedImportTypes: ['builtin', 'external'],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+          'newlines-between': 'always',
+        },
+      ],
     },
   },
   {
