@@ -1,6 +1,6 @@
 export const environment = {
-    "supabase": {
-        "url": "",
-        "key": ""
-    }
+  supabase: {
+    url: '',
+    key: '',
+  },
 };

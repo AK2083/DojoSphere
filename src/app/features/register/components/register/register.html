@@ -10,27 +10,25 @@
         </div>
     </ng-template>
 
-    <ng-template #footer>
+    <ng-template #footer />
 
-    </ng-template>
-
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <form class="space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="flex flex-col gap-4 w-full">
             <div class="flex flex-col gap-2">
-                <label for="email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">
+                <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="email">
                     {{ 'feature.register.email.mailLabel' | translate }}
                 </label>
-                <input pInputText inputId="email" formControlName="mail" placeholder="sheldon.cooper@bbt.de"
-                    class="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                <input class="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" formControlName="mail" inputId="email" pInputText
+                    placeholder="sheldon.cooper@bbt.de" />
                 @if (mail?.invalid && (mail?.dirty || mail?.touched)) {
                 <div class="alert alert-danger">
                     @if (mail?.hasError('required')) {
-                    <p-message size="small" severity="error" icon="pi pi-times-circle" styleClass="mb-2">
+                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
                         {{ 'feature.register.email.error.required' | translate }}
                     </p-message>
                     }
                     @if (mail?.hasError('email')) {
-                    <p-message size="small" severity="error" icon="pi pi-times-circle" styleClass="mb-2">
+                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
                         {{ 'feature.register.email.error.wrong' | translate }}
                     </p-message>
                     }
@@ -38,15 +36,15 @@
                 }
             </div>
             <div class="flex flex-col gap-2">
-                <label for="password" class="block text-sm/6 font-medium text-gray-900 dark:text-white">
+                <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="password">
                     {{ 'feature.register.password.pwdLabel' | translate }}
                 </label>
-                <p-password inputId="password" formControlName="pwd" [invalid]="isInvalid('value')" [toggleMask]="true"
-                    autocomplete="off" promptLabel="{{'feature.register.password.feedbackLabels.choose' | translate}}"
-                    weakLabel="{{'feature.register.password.feedbackLabels.simple' | translate}}"
-                    mediumLabel="{{'feature.register.password.feedbackLabels.average' | translate}}"
+                <p-password autocomplete="off" formControlName="pwd" inputId="password" inputStyleClass="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    mediumLabel="{{'feature.register.password.feedbackLabels.average' | translate}}" promptLabel="{{'feature.register.password.feedbackLabels.choose' | translate}}"
                     strongLabel="{{'feature.register.password.feedbackLabels.complex' | translate}}"
-                    inputStyleClass="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+                    weakLabel="{{'feature.register.password.feedbackLabels.simple' | translate}}"
+                    [invalid]="isInvalid('value')"
+                    [toggleMask]="true">
                     <ng-template #header>
                         <div class="font-semibold text-xm mb-4">
                             {{ 'feature.register.password.pwdLabel' | translate }}
@@ -78,12 +76,12 @@
                 @if (pwd?.invalid && (pwd?.dirty || pwd?.touched)) {
                 <div class="alert alert-danger">
                     @if (pwd?.hasError('required')) {
-                    <p-message size="small" severity="error" icon="pi pi-times-circle" styleClass="mb-2">
+                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
                         {{ 'feature.register.password.error.required' | translate }}
                     </p-message>
                     }
                     @if (pwd?.hasError('minLength')) {
-                    <p-message size="small" severity="error" icon="pi pi-times-circle" styleClass="mb-2">
+                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
                         {{ 'feature.register.password.rules.minLength' | translate: { pwdLength: minPwdLength } }}
                     </p-message>
                     }
@@ -91,7 +89,7 @@
                 }
             </div>
         </div>
-        <p-button [loading]="isFormLoading" [disabled]="registerForm.invalid" fluid size="small" type="submit"
-            icon="pi pi-check" label="{{'feature.register.confirmation' | translate}}" />
+        <p-button fluid icon="pi pi-check" label="{{'feature.register.confirmation' | translate}}" size="small" type="submit"
+            [disabled]="registerForm.invalid" [loading]="isFormLoading" />
     </form>
 </p-panel>
