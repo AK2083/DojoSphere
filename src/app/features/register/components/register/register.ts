@@ -6,20 +6,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-
-import { PanelModule } from 'primeng/panel';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
-import { IftaLabelModule } from 'primeng/iftalabel';
-import { PasswordModule } from 'primeng/password';
+import { SupabaseManager } from '@features/register/services/SupabaseManager';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
-import { MessageModule } from 'primeng/message';
-
+import { IconFieldModule } from 'primeng/iconfield';
+import { IftaLabelModule } from 'primeng/iftalabel';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { TranslatePipe } from '@ngx-translate/core';
-import { SupabaseManager } from '@features/register/services/SupabaseManager';
+import { InputIconModule } from 'primeng/inputicon';
+import { MessageModule } from 'primeng/message';
+import { PanelModule } from 'primeng/panel';
+import { PasswordModule } from 'primeng/password';
 
 @Component({
   selector: 'app-register',

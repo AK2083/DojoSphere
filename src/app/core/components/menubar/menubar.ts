@@ -1,6 +1,6 @@
 import { Component, output } from '@angular/core';
-import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
+import { MenubarModule } from 'primeng/menubar';
 
 @Component({
   selector: 'app-menubar',

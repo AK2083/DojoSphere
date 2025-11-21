@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
-import { Language } from '@core/types/Language';
-import { Observable } from 'rxjs/internal/Observable';
 import { AVAILABLE_LANGUAGES } from '@core/data/availableLanguages';
+import { Language } from '@core/types/Language';
+import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
   providedIn: 'root',
