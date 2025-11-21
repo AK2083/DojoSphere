@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { InterpolatableTranslationObject, TranslatePipe } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { LanguageService } from '@core/service/language/language';
-import { ThemeService } from '@core/service/theme/theme';
+import { ThemeToggler } from '@core/service/theme/ThemeToggler';
 import { Observable } from 'rxjs/internal/Observable';
+import { LanguageSwitcher } from '@core/service/language/LanguageSwitcher';
 
 @Component({
   selector: 'app-settings',
@@ -14,15 +14,15 @@ import { Observable } from 'rxjs/internal/Observable';
   templateUrl: './settings.html',
 })
 export class Settings {
-  private languageService = inject(LanguageService);
-  private themeService = inject(ThemeService);
+  private languageSwitcher = inject(LanguageSwitcher);
+  private themeToggler = inject(ThemeToggler);
 
-  languages = this.languageService.availableLanguages;
-  selectedLanguage = this.languageService.availableLanguages[0];
+  languages = this.languageSwitcher.availableLanguages;
+  selectedLanguage = this.languageSwitcher.availableLanguages[0];
 
   isLightModeOn = false;
 
   switchLanguage = (): Observable<InterpolatableTranslationObject> =>
-    this.languageService.switchLanguage(this.selectedLanguage);
-  toggleDarkMode = (): void => this.themeService.toggleDarkMode();
+    this.languageSwitcher.switchLanguage(this.selectedLanguage);
+  toggleDarkMode = (): void => this.themeToggler.toggleDarkMode();
 }

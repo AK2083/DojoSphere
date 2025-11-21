@@ -19,7 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TranslatePipe } from '@ngx-translate/core';
-import { SupabaseService } from '@features/register/services/supabase';
+import { SupabaseManager } from '@features/register/services/SupabaseManager';
 
 @Component({
   selector: 'app-register',
@@ -42,7 +42,7 @@ import { SupabaseService } from '@features/register/services/supabase';
 })
 export class Register {
   formbuilder = inject(FormBuilder);
-  supabaseService = inject(SupabaseService);
+  supabaseManager = inject(SupabaseManager);
 
   isFormLoading = false;
   formSubmitted = false;
@@ -57,7 +57,7 @@ export class Register {
     this.isFormLoading = true;
     this.formSubmitted = true;
 
-    this.supabaseService.signUpNewUser(this.mail?.value, this.pwd?.value);
+    this.supabaseManager.signUpNewUser(this.mail?.value, this.pwd?.value);
 
     this.isFormLoading = false;
   }

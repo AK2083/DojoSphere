@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Supabase } from './supabase';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
-describe('Supabase', () => {
-  let service: Supabase;
+describe('Language', () => {
+  let service: LanguageSwitcher;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Supabase);
+    service = TestBed.inject(LanguageSwitcher);
   });
 
   it('should be created', () => {
