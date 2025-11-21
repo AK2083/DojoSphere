@@ -1,14 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
-import { Language, Languages } from '@core/types/Languages';
+import { Language } from '@core/types/Language';
 import { Observable } from 'rxjs/internal/Observable';
+import { AVAILABLE_LANGUAGES } from '@core/data/availableLanguages';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LanguageService {
+export class LanguageSwitcher {
   private translate = inject(TranslateService);
-  availableLanguages = Languages;
+  availableLanguages = AVAILABLE_LANGUAGES;
 
   constructor() {
     this.translate.addLangs(this.availableLanguages.map((item) => item.code));
