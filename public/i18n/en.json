@@ -12,7 +12,7 @@
                 "mailLabel": "E-Mail",
                 "error": {
                     "required": "E-Mail Address is required",
-                    "wrong": "E-Mail address is unfortunately incorrect"
+                    "wrong": "E-Mail address format is incorrect"
                 }
             },
             "password": {
@@ -30,8 +30,7 @@
                     "specialChars": "special characters (preferably no language-dependent ones)"
                 },
                 "error": {
-                    "required": "Password is required",
-                    "wrong": "Password is unfortunately incorrect"
+                    "required": "Password is required"
                 }
             },
             "confirmation": "Please, register me",

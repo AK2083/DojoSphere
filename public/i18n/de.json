@@ -12,7 +12,7 @@
                 "mailLabel": "E-Mail",
                 "error": {
                     "required": "E-Mail Adresse brauche ich noch",
-                    "wrong": "E-Mail Adresse ist leider nicht richtig"
+                    "wrong": "E-Mail Adresse ist nicht im richtigen Format"
                 }
             },
             "password": {
