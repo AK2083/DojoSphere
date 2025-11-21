@@ -19,6 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { TranslatePipe } from '@ngx-translate/core';
+import { SupabaseService } from '@features/register/services/supabase';
 
 @Component({
   selector: 'app-register',
@@ -40,13 +41,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './register.html',
 })
 export class Register {
-  fb = inject(FormBuilder);
+  formbuilder = inject(FormBuilder);
+  supabaseService = inject(SupabaseService);
 
   isFormLoading = false;
   formSubmitted = false;
   minPwdLength = 8;
 
-  registerForm = this.fb.group({
+  registerForm = this.formbuilder.group({
     mail: new FormControl('', [Validators.required, Validators.email]),
     pwd: new FormControl('', [Validators.required, Validators.minLength(this.minPwdLength)]),
   });
@@ -54,6 +56,9 @@ export class Register {
   onSubmit(): void {
     this.isFormLoading = true;
     this.formSubmitted = true;
+
+    this.supabaseService.signUpNewUser(this.mail?.value, this.pwd?.value);
+
     this.isFormLoading = false;
   }
 

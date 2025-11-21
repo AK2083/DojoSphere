@@ -5,10 +5,16 @@ import { environment } from '@environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class Supabase {
+export class SupabaseService {
   key = environment.supabase.key;
   url = environment.supabase.url;
-  supabaseClient = createClient(this.url, this.key);
+  supabaseClient = createClient(this.url, this.key, {
+    auth: {
+      lock: async <T>(_name: string, _acquireTimeout: number, fn: () => Promise<T>): Promise<T> => {
+        return await fn();
+      },
+    },
+  });
 
   /**
    * Attempts to sign up a new user using the provided email and password.
