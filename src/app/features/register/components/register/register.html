@@ -69,7 +69,8 @@
                             </li>
                             <li [class.text-green-600]="getPasswordRules().hasMinLength"
                                 [class.text-slate-500]="!getPasswordRules().hasMinLength">
-                                {{ 'feature.register.password.rules.minLength' | translate: { pwdLength: minPwdLength } }}
+                                {{ 'feature.register.password.rules.minLength' | translate: { pwdLength: minPwdLength }
+                                }}
                             </li>
                         </ul>
                     </ng-template>

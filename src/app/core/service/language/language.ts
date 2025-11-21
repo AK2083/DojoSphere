@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
-import { Language, Languages } from '../../types/Languages';
+import { Language, Languages } from '@core/types/Languages';
 import { Observable } from 'rxjs/internal/Observable';
 
 @Injectable({
