@@ -1,14 +1,16 @@
-import { Component, input } from '@angular/core';
-import { Settings } from '@features/settings/components/settings/settings';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, input, TemplateRef } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 
 @Component({
   selector: 'app-drawer',
-  imports: [Settings, DrawerModule],
+  imports: [DrawerModule, NgTemplateOutlet],
   templateUrl: './drawer.html',
 })
 export class Drawer {
-  readonly settingsLabel = input<string>();
+  readonly customTemplate = input<TemplateRef<unknown> | null>(null);
+  readonly header = input<string>();
+  
   visible = false;
   
   openDrawer = (): boolean => (this.visible = true);
