@@ -1,28 +1,31 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LanguageSwitcher } from '@core/service/language/LanguageSwitcher';
+import { TranslationWrapper } from '@core/service/language/TranslationWrapper';
 import { ThemeToggler } from '@core/service/theme/ThemeToggler';
-import { InterpolatableTranslationObject, TranslatePipe } from '@ngx-translate/core';
+import { Translation } from '@features/settings/services/translation';
+import { InterpolatableTranslationObject } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { Observable } from 'rxjs/internal/Observable';
 
 @Component({
   selector: 'app-settings',
-  imports: [FormsModule, TranslatePipe, NgClass, ToggleSwitchModule, SelectModule],
+  imports: [FormsModule, NgClass, ToggleSwitchModule, SelectModule],
   templateUrl: './settings.html',
 })
 export class Settings {
-  private languageSwitcher = inject(LanguageSwitcher);
+  private translationWrapper = inject(TranslationWrapper);
   private themeToggler = inject(ThemeToggler);
+  private readonly translation = inject(Translation);
 
-  languages = this.languageSwitcher.availableLanguages;
-  selectedLanguage = this.languageSwitcher.availableLanguages[0];
+  translations = this.translation.getTranslations();
+  languages = this.translationWrapper.availableLanguages;
+  selectedLanguage = this.translationWrapper.getDefaultLanguage();
 
   isLightModeOn = false;
 
   switchLanguage = (): Observable<InterpolatableTranslationObject> =>
-    this.languageSwitcher.switchLanguage(this.selectedLanguage);
+    this.translationWrapper.switchLanguage(this.selectedLanguage);
   toggleDarkMode = (): void => this.themeToggler.toggleDarkMode();
 }

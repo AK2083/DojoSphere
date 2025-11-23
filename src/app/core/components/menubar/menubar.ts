@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 
@@ -8,8 +8,10 @@ import { MenubarModule } from 'primeng/menubar';
   templateUrl: './menubar.html',
 })
 export class Menubar {
-  visible = false;
+  readonly title = input<string>();
   readonly open = output();
+
+  visible = false;
 
   openDrawer = (): void => this.open.emit();
 }

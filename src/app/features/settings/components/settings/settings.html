@@ -1,16 +1,22 @@
 <div>
-    <div class="flex flex-row justify-between items-center mb-3 mt-1">
-        <label class="mr-3" for="toggl">{{'feature.main.mode' | translate}}</label>
-        <p-toggleswitch id="toggl" [(ngModel)]="isLightModeOn" (onChange)="toggleDarkMode()">
-            <ng-template #handle let-checked="isLightModeOn">
-                <i [ngClass]="['!text-xs', 'pi', isLightModeOn ? 'pi-sun' : 'pi-moon']"></i>
-            </ng-template>
-        </p-toggleswitch>
-    </div>
+  <div class="flex flex-row justify-between items-center mb-3 mt-1">
+    <label class="mr-3" for="toggl">{{ translations.themeMode() }}</label>
+    <p-toggleswitch id="toggl" [(ngModel)]="isLightModeOn" (onChange)="toggleDarkMode()">
+      <ng-template #handle let-checked="isLightModeOn">
+        <i [ngClass]="['!text-xs', 'pi', isLightModeOn ? 'pi-sun' : 'pi-moon']"></i>
+      </ng-template>
+    </p-toggleswitch>
+  </div>
 
-    <div class="flex flex-row justify-between items-center">
-        <label for="cityselect">{{'feature.main.language' | translate}}</label>
-        <p-select class="mt-1 w-1/2" id="cityselect" optionLabel="name" [options]="languages"
-            [(ngModel)]="selectedLanguage" (onChange)="switchLanguage()" />
-    </div>
+  <div class="flex flex-row justify-between items-center">
+    <label for="cityselect">{{ translations.language() }}</label>
+    <p-select
+      class="mt-1 w-1/2"
+      id="cityselect"
+      optionLabel="name"
+      [options]="languages"
+      [(ngModel)]="selectedLanguage"
+      (onChange)="switchLanguage()"
+    />
+  </div>
 </div>
