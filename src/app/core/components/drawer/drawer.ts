@@ -10,8 +10,8 @@ import { DrawerModule } from 'primeng/drawer';
 export class Drawer {
   readonly customTemplate = input<TemplateRef<unknown> | null>(null);
   readonly header = input<string>();
-  
+
   visible = false;
-  
+
   openDrawer = (): boolean => (this.visible = true);
 }

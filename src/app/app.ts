@@ -7,12 +7,7 @@ import { PanelModule } from 'primeng/panel';
 
 @Component({
   selector: 'app-root',
-  imports: [
-    Drawer, 
-    Menubar, 
-    Register, 
-    Settings, 
-    PanelModule],
+  imports: [Drawer, Menubar, Register, Settings, PanelModule],
   templateUrl: './app.html',
 })
 export class App {
