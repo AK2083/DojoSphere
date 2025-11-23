@@ -1,4 +1,4 @@
-<p-drawer styleClass="!w-full md:!w-80 lg:!w-[30rem]" [header]="settingsLabel()"
+<p-drawer styleClass="!w-full md:!w-80 lg:!w-[30rem]" [header]="header()"
     [(visible)]="visible">
-    <app-settings />
+    <ng-container *ngTemplateOutlet="customTemplate()" />
 </p-drawer>

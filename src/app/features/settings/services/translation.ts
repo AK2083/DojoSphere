@@ -11,9 +11,14 @@ export class Translation {
 
   getTranslations(): SettingsTranslations {
     return {
+      settingsLabel: this.getSettingsLabel(),
       themeMode: this.getThemeMode(),
       language: this.getLanguage(),
     }
+  }
+
+  getSettingsLabel(): Signal<string> {
+    return this.translationWrapper.t('feature.main.settings');
   }
 
   getThemeMode(): Signal<string> {

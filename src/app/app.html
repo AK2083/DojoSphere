@@ -1,6 +1,10 @@
-<app-drawer #drawer [settingsLabel]="translations.settingsLabel()"/>
+<ng-template #settingsTemplate>
+  <app-settings />
+</ng-template>
+
+<app-drawer #drawer [customTemplate]="settingsTemplate" [header]="childTranslationsSignal()" />
 <app-menubar (open)="drawer.openDrawer()" />
 
 <div class="mt-4">
-    <app-register />
+  <app-register />
 </div>
