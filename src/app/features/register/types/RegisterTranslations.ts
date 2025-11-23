@@ -1,4 +1,4 @@
-import { Signal } from "@angular/core";
+import { Signal } from '@angular/core';
 
 export type RegisterTranslations = {
   title: Signal<string>;
@@ -17,4 +17,4 @@ export type RegisterTranslations = {
   specialChars: Signal<string>;
   minLength: Signal<string>;
   confirmationButton: Signal<string>;
-}
+};

@@ -14,7 +14,7 @@ export class Translation {
       settingsLabel: this.getSettingsLabel(),
       themeMode: this.getThemeMode(),
       language: this.getLanguage(),
-    }
+    };
   }
 
   getSettingsLabel(): Signal<string> {

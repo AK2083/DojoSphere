@@ -26,7 +26,7 @@ export class Translation {
       specialChars: this.getSpecialChars(),
       minLength: this.getMinLength(amount),
       confirmationButton: this.getConfirmation(),
-    } 
+    };
   }
 
   getTitle(): Signal<string> {
@@ -89,7 +89,9 @@ export class Translation {
   }
 
   getMinLength(amount: number): Signal<string> {
-    return this.translationWrapper.t('feature.register.password.rules.minLength', { "pwdLength": amount });
+    return this.translationWrapper.t('feature.register.password.rules.minLength', {
+      pwdLength: amount,
+    });
   }
   //#endregion
 

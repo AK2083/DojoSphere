@@ -67,7 +67,12 @@ export class Register {
     return control?.invalid && (control.touched || this.formSubmitted);
   }
 
-  getPasswordRules(): { hasUpperCase: boolean; hasNumber: boolean; hasSpecialChar: boolean; hasMinLength: boolean } {
+  getPasswordRules(): {
+    hasUpperCase: boolean;
+    hasNumber: boolean;
+    hasSpecialChar: boolean;
+    hasMinLength: boolean;
+  } {
     const pwd: string = this.pwd?.value ?? '';
 
     return {
