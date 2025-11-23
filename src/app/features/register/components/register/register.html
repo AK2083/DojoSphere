@@ -1,95 +1,120 @@
 <p-panel>
-    <ng-template #header>
-        <div class="flex flex-col">
-            <h1 class="text-2xl">
-                {{ 'feature.register.title' | translate }}
-            </h1>
-            <span class="text-slate-300 text-xs">
-                {{ 'feature.register.subtitle' | translate }}
-            </span>
-        </div>
-    </ng-template>
+  <ng-template #header>
+    <div class="flex flex-col">
+      <h1 class="text-2xl">
+        {{ translations.title() }}
+      </h1>
+      <span class="text-slate-300 text-xs">
+        {{ translations.subtitle() }}
+      </span>
+    </div>
+  </ng-template>
 
-    <ng-template #footer />
+  <ng-template #footer />
 
-    <form class="space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="flex flex-col gap-4 w-full">
-            <div class="flex flex-col gap-2">
-                <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="email">
-                    {{ 'feature.register.email.mailLabel' | translate }}
-                </label>
-                <input class="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" formControlName="mail" inputId="email" pInputText
-                    placeholder="sheldon.cooper@bbt.de" />
-                @if (mail?.invalid && (mail?.dirty || mail?.touched)) {
-                <div class="alert alert-danger">
-                    @if (mail?.hasError('required')) {
-                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
-                        {{ 'feature.register.email.error.required' | translate }}
-                    </p-message>
-                    }
-                    @if (mail?.hasError('email')) {
-                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
-                        {{ 'feature.register.email.error.wrong' | translate }}
-                    </p-message>
-                    }
-                </div>
-                }
+  <form class="space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4 w-full">
+      <div class="flex flex-col gap-2">
+        <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="email">
+          {{ translations.mailLabel() }}
+        </label>
+        <input
+          class="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+          formControlName="mail"
+          inputId="email"
+          pInputText
+          placeholder="sheldon.cooper@bbt.de"
+        />
+        @if (mail?.invalid && (mail?.dirty || mail?.touched)) {
+          <div class="alert alert-danger">
+            @if (mail?.hasError('required')) {
+              <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
+                {{ translations.mailRequired() }}
+              </p-message>
+            }
+            @if (mail?.hasError('email')) {
+              <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
+                {{ translations.mailWrong() }}
+              </p-message>
+            }
+          </div>
+        }
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="password">
+          {{ translations.passwordLabel() }}
+        </label>
+        <p-password
+          autocomplete="off"
+          formControlName="pwd"
+          inputId="password"
+          inputStyleClass="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+          mediumLabel="{{ translations.mediumLabel() }}"
+          promptLabel="{{ translations.promptLabel() }}" 
+          strongLabel="{{ translations.strongLabel() }}"
+          weakLabel="{{ translations.simpleLabel() }}"
+          [invalid]="isInvalid('value')"
+          [toggleMask]="true"
+        >
+          <ng-template #header>
+            <div class="font-semibold text-xm mb-4">
+              {{ translations.passwordLabel() }}
             </div>
-            <div class="flex flex-col gap-2">
-                <label class="block text-sm/6 font-medium text-gray-900 dark:text-white" for="password">
-                    {{ 'feature.register.password.pwdLabel' | translate }}
-                </label>
-                <p-password autocomplete="off" formControlName="pwd" inputId="password" inputStyleClass="block w-full rounded-md bg-white px-3 py-2.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    mediumLabel="{{'feature.register.password.feedbackLabels.average' | translate}}" promptLabel="{{'feature.register.password.feedbackLabels.choose' | translate}}"
-                    strongLabel="{{'feature.register.password.feedbackLabels.complex' | translate}}"
-                    weakLabel="{{'feature.register.password.feedbackLabels.simple' | translate}}"
-                    [invalid]="isInvalid('value')"
-                    [toggleMask]="true">
-                    <ng-template #header>
-                        <div class="font-semibold text-xm mb-4">
-                            {{ 'feature.register.password.pwdLabel' | translate }}
-                        </div>
-                    </ng-template>
-                    <ng-template #footer>
-                        <p-divider />
-                        <ul class="pl-2 my-0 leading-normal text-xs">
-                            <li [class.text-green-600]="getPasswordRules().hasUpperCase"
-                                [class.text-slate-500]="!getPasswordRules().hasUpperCase">
-                                {{ 'feature.register.password.rules.ucChars' | translate }}
-                            </li>
-                            <li [class.text-green-600]="getPasswordRules().hasNumber"
-                                [class.text-slate-500]="!getPasswordRules().hasNumber">
-                                {{ 'feature.register.password.rules.number' | translate }}
-                            </li>
-                            <li [class.text-green-600]="getPasswordRules().hasSpecialChar"
-                                [class.text-slate-500]="!getPasswordRules().hasSpecialChar">
-                                {{ 'feature.register.password.rules.specialChars' | translate }}
-                            </li>
-                            <li [class.text-green-600]="getPasswordRules().hasMinLength"
-                                [class.text-slate-500]="!getPasswordRules().hasMinLength">
-                                {{ 'feature.register.password.rules.minLength' | translate: { pwdLength: minPwdLength }
-                                }}
-                            </li>
-                        </ul>
-                    </ng-template>
-                </p-password>
-                @if (pwd?.invalid && (pwd?.dirty || pwd?.touched)) {
-                <div class="alert alert-danger">
-                    @if (pwd?.hasError('required')) {
-                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
-                        {{ 'feature.register.password.error.required' | translate }}
-                    </p-message>
-                    }
-                    @if (pwd?.hasError('minLength')) {
-                    <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
-                        {{ 'feature.register.password.rules.minLength' | translate: { pwdLength: minPwdLength } }}
-                    </p-message>
-                    }
-                </div>
-                }
-            </div>
-        </div>
-        <p-button fluid icon="pi pi-check" label="{{'feature.register.confirmation' | translate}}" size="small" type="submit"
-            [disabled]="registerForm.invalid" [loading]="isFormLoading" />
-    </form>
+          </ng-template>
+          <ng-template #footer>
+            <p-divider />
+            <ul class="pl-2 my-0 leading-normal text-xs">
+              <li
+                [class.text-green-600]="getPasswordRules().hasUpperCase"
+                [class.text-slate-500]="!getPasswordRules().hasUpperCase"
+              >
+                {{ translations.ucChars() }}
+              </li>
+              <li
+                [class.text-green-600]="getPasswordRules().hasNumber"
+                [class.text-slate-500]="!getPasswordRules().hasNumber"
+              >
+                {{ translations.number() }}
+              </li>
+              <li
+                [class.text-green-600]="getPasswordRules().hasSpecialChar"
+                [class.text-slate-500]="!getPasswordRules().hasSpecialChar"
+              >
+                {{ translations.specialChars() }}
+              </li>
+              <li
+                [class.text-green-600]="getPasswordRules().hasMinLength"
+                [class.text-slate-500]="!getPasswordRules().hasMinLength"
+              >
+                {{ translations.minLength() }}
+              </li>
+            </ul>
+          </ng-template>
+        </p-password>
+        @if (pwd?.invalid && (pwd?.dirty || pwd?.touched)) {
+          <div class="alert alert-danger">
+            @if (pwd?.hasError('required')) {
+              <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
+                {{ translations.passwordRequired() }}
+              </p-message>
+            }
+            @if (pwd?.hasError('minLength')) {
+              <p-message icon="pi pi-times-circle" severity="error" size="small" styleClass="mb-2">
+                {{ translations.minLength() }}
+              </p-message>
+            }
+          </div>
+        }
+      </div>
+    </div>
+    <p-button
+      fluid
+      icon="pi pi-check"
+      label="{{ translations.confirmationButton() }}"
+      size="small"
+      type="submit"
+      [disabled]="registerForm.invalid"
+      [loading]="isFormLoading"
+    />
+  </form>
 </p-panel>

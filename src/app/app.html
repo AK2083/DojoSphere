@@ -1,4 +1,4 @@
-<app-drawer #drawer />
+<app-drawer #drawer [settingsLabel]="translations.settingsLabel()"/>
 <app-menubar (open)="drawer.openDrawer()" />
 
 <div class="mt-4">

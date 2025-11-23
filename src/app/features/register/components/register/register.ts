@@ -6,8 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SupabaseManager } from '@features/register/services/SupabaseManager';
-import { TranslatePipe } from '@ngx-translate/core';
+import { SupabaseManager } from '@features/register/services/supabasemanager/SupabaseManager';
+import { Translation } from '@features/register/services/translation/Translation';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -33,18 +33,20 @@ import { PasswordModule } from 'primeng/password';
     InputGroupModule,
     InputGroupAddonModule,
     MessageModule,
-    TranslatePipe,
     ReactiveFormsModule,
   ],
   templateUrl: './register.html',
 })
 export class Register {
-  formbuilder = inject(FormBuilder);
-  supabaseManager = inject(SupabaseManager);
+  private readonly formbuilder = inject(FormBuilder);
+  private readonly supabaseManager = inject(SupabaseManager);
+  private readonly translation = inject(Translation);
 
   isFormLoading = false;
   formSubmitted = false;
   minPwdLength = 8;
+
+  translations = this.translation.getTranslations(this.minPwdLength);
 
   registerForm = this.formbuilder.group({
     mail: new FormControl('', [Validators.required, Validators.email]),
