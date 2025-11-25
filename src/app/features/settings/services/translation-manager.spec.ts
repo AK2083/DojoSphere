@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SupabaseManager } from './SupabaseManager';
+import { TranslationManager } from './translation-manager';
 
-describe('Supabase', () => {
-  let service: SupabaseManager;
+describe('Translation', () => {
+  let service: TranslationManager;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SupabaseManager);
+    service = TestBed.inject(TranslationManager);
   });
 
   it('should be created', () => {

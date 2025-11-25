@@ -1,9 +1,9 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslationWrapper } from '@core/service/language/TranslationWrapper';
-import { ThemeToggler } from '@core/service/theme/ThemeToggler';
-import { Translation } from '@features/settings/services/translation';
+import { TranslationWrapper } from '@core/service/language/translation-wrapper';
+import { ThemeToggler } from '@core/service/theme/theme-toggler';
+import { TranslationManager } from '@features/settings/services/translation-manager';
 import { InterpolatableTranslationObject } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
@@ -17,7 +17,7 @@ import { Observable } from 'rxjs/internal/Observable';
 export class Settings {
   private translationWrapper = inject(TranslationWrapper);
   private themeToggler = inject(ThemeToggler);
-  private readonly translation = inject(Translation);
+  private readonly translation = inject(TranslationManager);
 
   translations = this.translation.getTranslations();
   languages = this.translationWrapper.availableLanguages;

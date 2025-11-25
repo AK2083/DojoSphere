@@ -1,4 +1,4 @@
-import { Language } from '@core/types/Language';
+import { Language } from '@core/types/language';
 
 export const AVAILABLE_LANGUAGES: Language[] = [
   { name: 'Englisch', code: 'en' },

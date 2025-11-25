@@ -6,8 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { SupabaseManager } from '@features/register/services/supabasemanager/SupabaseManager';
-import { Translation } from '@features/register/services/translation/Translation';
+import { SupabaseManager } from '@features/register/services/supabasemanager/supabase-manager';
+import { TranslationManager } from '@features/register/services/translation/translation-manager';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -40,7 +40,7 @@ import { PasswordModule } from 'primeng/password';
 export class Register {
   private readonly formbuilder = inject(FormBuilder);
   private readonly supabaseManager = inject(SupabaseManager);
-  private readonly translation = inject(Translation);
+  private readonly translation = inject(TranslationManager);
 
   isFormLoading = false;
   formSubmitted = false;
