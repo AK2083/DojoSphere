@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Translation } from './Translation';
+import { ThemeToggler } from './theme-toggler';
 
-describe('Translation', () => {
-  let service: Translation;
+describe('Theme', () => {
+  let service: ThemeToggler;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Translation);
+    service = TestBed.inject(ThemeToggler);
   });
 
   it('should be created', () => {

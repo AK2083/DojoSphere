@@ -1,11 +1,11 @@
 import { inject, Injectable, Signal } from '@angular/core';
-import { TranslationWrapper } from '@core/service/language/TranslationWrapper';
-import { RegisterTranslations } from '@features/register/types/RegisterTranslations';
+import { TranslationWrapper } from '@core/service/language/translation-wrapper';
+import { RegisterTranslations } from '@features/register/types/register-translations';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Translation {
+export class TranslationManager {
   private readonly translationWrapper = inject(TranslationWrapper);
 
   getTranslations(amount: number): RegisterTranslations {

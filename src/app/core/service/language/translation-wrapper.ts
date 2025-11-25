@@ -1,7 +1,7 @@
 import { inject, Injectable, runInInjectionContext, Injector, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AVAILABLE_LANGUAGES } from '@core/data/availableLanguages';
-import { Language } from '@core/types/Language';
+import { Language } from '@core/types/language';
 import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/internal/Observable';
 

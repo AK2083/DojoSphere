@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Translation } from './translation';
+import { TranslationWrapper } from './translation-wrapper';
 
-describe('Translation', () => {
-  let service: Translation;
+describe('Language', () => {
+  let service: TranslationWrapper;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Translation);
+    service = TestBed.inject(TranslationWrapper);
   });
 
   it('should be created', () => {
