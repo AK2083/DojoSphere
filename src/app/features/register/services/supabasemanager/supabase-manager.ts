@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
+import { EmailAlreadyExistsException } from '@features/register/exceptions/supabase/email-already-exists-exception';
+import { RegistrationFailedException } from '@features/register/exceptions/supabase/registration-failed-exception';
+import { TooManyRequestsException } from '@features/register/exceptions/supabase/too-many-requests-exception';
 import { createClient } from '@supabase/supabase-js';
 
 @Injectable({
@@ -26,7 +29,7 @@ export class SupabaseManager {
    * @param mail - The email address of the new user.
    * @param pwd - The password for the new user.
    * @returns A promise that resolves to `true` if the sign-up was successful.
-   * @throws SupabaseCriticalException | DuplicateMailException
+   * @throws TooManyRequestsException | EmailAlreadyExistsException | RegistrationFailedException
    */
   async signUpNewUser(mail: string, pwd: string): Promise<boolean> {
     const { data, error } = await this.supabaseClient.auth.signUp({
@@ -34,9 +37,27 @@ export class SupabaseManager {
       password: pwd,
     });
 
-    console.log('usr: ', data);
-    console.error('err: ', error);
+    if (error) {
+      if (error.status === 429) {
+        console.error('Too many requests made to the registration endpoint.');
+        throw new TooManyRequestsException();
+      }
 
+      if (error.status === 400 && error.message.includes('already registered')) {
+        console.error('The provided email is already registered.');
+        throw new EmailAlreadyExistsException();
+      }
+
+      console.error('Registration failed due to an unexpected error:', error.message);
+      throw new RegistrationFailedException();
+    }
+
+    if (!data.user && !data.session) {
+      console.error('Registration failed: No user session returned.');
+      throw new EmailAlreadyExistsException();
+    }
+
+    console.log('User registered successfully:', data.user?.email);
     return true;
   }
 }
