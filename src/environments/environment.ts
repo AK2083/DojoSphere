@@ -3,4 +3,6 @@ export const environment = {
     url: '',
     key: '',
   },
+  logLevel: '',
+  production: false,
 };

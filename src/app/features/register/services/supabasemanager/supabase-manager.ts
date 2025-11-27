@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
+import { scopedLoggerFactory } from '@core/utils/scope.logger.factory';
 import { environment } from '@environments/environment';
 import { EmailAlreadyExistsException } from '@features/register/exceptions/supabase/email-already-exists-exception';
 import { RegistrationFailedException } from '@features/register/exceptions/supabase/registration-failed-exception';
 import { TooManyRequestsException } from '@features/register/exceptions/supabase/too-many-requests-exception';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, Session, User } from '@supabase/supabase-js';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseManager {
+  private readonly logger = scopedLoggerFactory(SupabaseManager);
+
   key = environment.supabase.key;
   url = environment.supabase.url;
   supabaseClient = createClient(this.url, this.key, {
@@ -29,9 +32,14 @@ export class SupabaseManager {
    * @param mail - The email address of the new user.
    * @param pwd - The password for the new user.
    * @returns A promise that resolves to `true` if the sign-up was successful.
-   * @throws TooManyRequestsException | EmailAlreadyExistsException | RegistrationFailedException
+   * @throws TooManyRequestsException
+   * @throws EmailAlreadyExistsException
+   * @throws RegistrationFailedException
    */
-  async signUpNewUser(mail: string, pwd: string): Promise<boolean> {
+  async signUpNewUser(
+    mail: string,
+    pwd: string,
+  ): Promise<{ user: User | null; session: Session | null }> {
     const { data, error } = await this.supabaseClient.auth.signUp({
       email: mail,
       password: pwd,
@@ -39,25 +47,25 @@ export class SupabaseManager {
 
     if (error) {
       if (error.status === 429) {
-        console.error('Too many requests made to the registration endpoint.');
+        this.logger.error('Too many requests made to the registration endpoint.', error);
         throw new TooManyRequestsException();
       }
 
       if (error.status === 400 && error.message.includes('already registered')) {
-        console.error('The provided email is already registered.');
+        this.logger.error('The provided email is already registered.');
         throw new EmailAlreadyExistsException();
       }
 
-      console.error('Registration failed due to an unexpected error:', error.message);
+      this.logger.error('Registration failed due to an unexpected error:', error.message);
       throw new RegistrationFailedException();
     }
 
     if (!data.user && !data.session) {
-      console.error('Registration failed: No user session returned.');
+      this.logger.error('Registration failed: No user session returned.');
       throw new EmailAlreadyExistsException();
     }
 
-    console.log('User registered successfully:', data.user?.email);
-    return true;
+    this.logger.log('User registered successfully:', data.user?.email);
+    return data;
   }
 }
