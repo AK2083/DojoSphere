@@ -30,7 +30,7 @@ export class TranslationWrapper {
   /**
    * Sets the current language of the application.
    *
-   * @param lang - Language code (e.g., `'en'`, `'de'`)
+   * @param language - Language code (e.g., `'en'`, `'de'`)
    */
   switchLanguage = (language: Language): Observable<InterpolatableTranslationObject> =>
     this.translate.use(language.code);
