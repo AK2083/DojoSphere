@@ -40,10 +40,9 @@
             "success": "Ihre Registrierung wurde erfolgreich bestätigt!",
             "reset": "Passwort-Reset-Link verarbeitet.",
             "linkExpired": "Der Link ist bereits abgelaufen.",
-            "authError": "Fehler bei der Authentifizierung: {{errMssg}}",
             "error": {
                 "timeout": "Die Registrierung hat zu lange gedauert. Bitte versuchen Sie es später erneut.",
-                "failed": "Die Registrierung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Daten oder versuchen Sie es erneut."
+                "failed": "Die Registrierung ist fehlgeschlagen. Bitte überprüfen Sie Ihre Daten und versuchen Sie es später erneut."
             }
         }
     }

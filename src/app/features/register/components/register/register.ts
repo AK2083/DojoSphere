@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -6,6 +6,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { EmailAlreadyExistsException } from '@features/register/exceptions/supabase/email-already-exists-exception';
+import { RegistrationFailedException } from '@features/register/exceptions/supabase/registration-failed-exception';
+import { TooManyRequestsException } from '@features/register/exceptions/supabase/too-many-requests-exception';
 import { SupabaseManager } from '@features/register/services/supabasemanager/supabase-manager';
 import { TranslationManager } from '@features/register/services/translation/translation-manager';
 import { ButtonModule } from 'primeng/button';
@@ -53,11 +56,23 @@ export class Register {
     pwd: new FormControl('', [Validators.required, Validators.minLength(this.minPwdLength)]),
   });
 
+  isRegistrationSuccessful = signal(false);
+  info = signal<string | null>(null);
+
   onSubmit(): void {
     this.isFormLoading = true;
     this.formSubmitted = true;
 
-    this.supabaseManager.signUpNewUser(this.mail?.value, this.pwd?.value);
+    try {
+      this.supabaseManager.signUpNewUser(this.mail?.value, this.pwd?.value);
+      this.info.set(this.translations.success());
+      this.isRegistrationSuccessful.set(true);
+    } catch (ex: unknown) {
+      if (ex instanceof TooManyRequestsException ||
+        ex instanceof EmailAlreadyExistsException ||
+        ex instanceof RegistrationFailedException)
+      this.info.set(this.translations.failedRegistration());
+    }
 
     this.isFormLoading = false;
   }

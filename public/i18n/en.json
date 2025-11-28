@@ -42,7 +42,7 @@
             "authError": "Authentication Error: {{errMssg}}",
             "error": {
                 "timeout": "Registration took too long. Please try again later.",
-                "failed": "Registration failed. Please check your details or try again."
+                "failed": "Registration failed. Please check your details or try again later."
             }
         }
     }
