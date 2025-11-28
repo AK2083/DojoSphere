@@ -113,8 +113,14 @@
       label="{{ translations.confirmationButton() }}"
       size="small"
       type="submit"
-      [disabled]="registerForm.invalid"
+      [disabled]="registerForm.invalid || isRegistrationSuccessful()"
       [loading]="isFormLoading"
     />
   </form>
+
+  @if (info()) {
+    <p-message icon="pi pi-check-circle" severity="success" size="small" styleClass="mt-2">
+      {{info()}}
+    </p-message>
+  }
 </p-panel>

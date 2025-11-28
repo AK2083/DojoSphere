@@ -16,5 +16,7 @@ export type RegisterTranslations = {
   number: Signal<string>;
   specialChars: Signal<string>;
   minLength: Signal<string>;
+  success: Signal<string>;
+  failedRegistration: Signal<string>;
   confirmationButton: Signal<string>;
 };

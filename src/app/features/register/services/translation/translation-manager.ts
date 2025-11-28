@@ -25,6 +25,8 @@ export class TranslationManager {
       number: this.getNumbers(),
       specialChars: this.getSpecialChars(),
       minLength: this.getMinLength(amount),
+      success: this.getSuccess(),
+      failedRegistration: this.getFailedRegistration(),
       confirmationButton: this.getConfirmation(),
     };
   }
@@ -94,6 +96,14 @@ export class TranslationManager {
     });
   }
   //#endregion
+
+  getSuccess() {
+    return this.translationWrapper.t('feature.register.success');
+  }
+
+  getFailedRegistration() {
+    return this.translationWrapper.t('feature.register.error.failed');
+  }
 
   getConfirmation(): Signal<string> {
     return this.translationWrapper.t('feature.register.confirmation');
