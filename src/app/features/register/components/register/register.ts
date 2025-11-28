@@ -56,8 +56,8 @@ export class Register {
     pwd: new FormControl('', [Validators.required, Validators.minLength(this.minPwdLength)]),
   });
 
-  isRegistrationSuccessful = signal(false);
-  info = signal<string | null>(null);
+  readonly isRegistrationSuccessful = signal(false);
+  readonly info = signal<string | null>(null);
 
   onSubmit(): void {
     this.isFormLoading = true;
@@ -68,10 +68,12 @@ export class Register {
       this.info.set(this.translations.success());
       this.isRegistrationSuccessful.set(true);
     } catch (ex: unknown) {
-      if (ex instanceof TooManyRequestsException ||
-        ex instanceof EmailAlreadyExistsException ||
-        ex instanceof RegistrationFailedException)
-      this.info.set(this.translations.failedRegistration());
+      if (
+        ex instanceof TooManyRequestsException ||
+        ex instanceof RegistrationFailedException
+      ) {
+        this.info.set(this.translations.failedRegistration());
+      }
     }
 
     this.isFormLoading = false;
