@@ -51,11 +51,6 @@ export class SupabaseManager {
         throw new TooManyRequestsException();
       }
 
-      if (error.status === 400 && error.message.includes('already registered')) {
-        this.logger.error('The provided email is already registered.');
-        throw new EmailAlreadyExistsException();
-      }
-
       this.logger.error('Registration failed due to an unexpected error:', error.message);
       throw new RegistrationFailedException();
     }
