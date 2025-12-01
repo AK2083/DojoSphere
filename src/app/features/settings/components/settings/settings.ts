@@ -15,17 +15,18 @@ import { Observable } from 'rxjs/internal/Observable';
   templateUrl: './settings.html',
 })
 export class Settings {
-  private translationWrapper = inject(TranslationWrapper);
-  private themeToggler = inject(ThemeToggler);
+  private readonly translationWrapper = inject(TranslationWrapper);
+  private readonly themeToggler = inject(ThemeToggler);
   private readonly translation = inject(TranslationManager);
 
-  translations = this.translation.getTranslations();
-  languages = this.translationWrapper.availableLanguages;
-  selectedLanguage = this.translationWrapper.getDefaultLanguage();
-
-  isLightModeOn = false;
+  readonly isLightModeOn = this.themeToggler.isLightModeOn;
+  readonly translations = this.translation.getTranslations();
+  readonly languages = this.translationWrapper.availableLanguages;
+  readonly selectedLanguage = this.translationWrapper.getDefaultLanguage();
 
   switchLanguage = (): Observable<InterpolatableTranslationObject> =>
     this.translationWrapper.switchLanguage(this.selectedLanguage);
-  toggleDarkMode = (): void => this.themeToggler.toggleDarkMode();
+  toggleDarkMode = (): void => {
+    this.themeToggler.toggleDarkMode();
+  };
 }

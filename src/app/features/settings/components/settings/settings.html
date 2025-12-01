@@ -3,7 +3,7 @@
     <label class="mr-3" for="toggl">{{ translations.themeMode() }}</label>
     <p-toggleswitch id="toggl" [(ngModel)]="isLightModeOn" (onChange)="toggleDarkMode()">
       <ng-template #handle let-checked="isLightModeOn">
-        <i [ngClass]="['!text-xs', 'pi', isLightModeOn ? 'pi-sun' : 'pi-moon']"></i>
+        <i [ngClass]="['!text-xs', 'pi', isLightModeOn() ? 'pi-moon' : 'pi-sun']"></i>
       </ng-template>
     </p-toggleswitch>
   </div>
