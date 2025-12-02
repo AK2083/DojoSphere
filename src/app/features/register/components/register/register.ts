@@ -68,10 +68,7 @@ export class Register {
       this.info.set(this.translations.success());
       this.isRegistrationSuccessful.set(true);
     } catch (ex: unknown) {
-      if (
-        ex instanceof TooManyRequestsException ||
-        ex instanceof RegistrationFailedException
-      ) {
+      if (ex instanceof TooManyRequestsException || ex instanceof RegistrationFailedException) {
         this.info.set(this.translations.failedRegistration());
       }
     }

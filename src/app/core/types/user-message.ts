@@ -37,4 +37,4 @@ export type UserMessage = {
    * Example: 'danger', 'warning', 'info'
    */
   severity: 'danger' | 'warning' | 'info';
-}
+};

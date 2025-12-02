@@ -1,4 +1,4 @@
-import { APPNAME } from "./core";
+import { APPNAME } from '@core/types/core';
 
 export enum AvailableThemes {
   Light = 'light',
