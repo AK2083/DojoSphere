@@ -12,8 +12,7 @@ export class ThemeToggler {
   readonly currentTheme = signal(AvailableThemes.Light);
   readonly tailwindDarkThemeName = 'dark';
 
-  isLightModeOn = (): boolean => 
-    this.currentTheme() === AvailableThemes.Light;
+  isLightModeOn = (): boolean => this.currentTheme() === AvailableThemes.Light;
   isSystemColorDark = (): boolean =>
     window.matchMedia(`(prefers-color-scheme: ${this.tailwindDarkThemeName})`).matches;
   isDarkInLocalStorage = (): boolean =>

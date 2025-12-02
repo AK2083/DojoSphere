@@ -1,6 +1,6 @@
 export class RegistrationFailedException extends Error {
   constructor() {
-    super("registration failed.");
+    super('registration failed.');
     this.name = 'RegistrationFailedException';
   }
 }

@@ -1,9 +1,11 @@
 import { inject, Injectable, runInInjectionContext, Injector, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AVAILABLE_LANGUAGES } from '@core/data/availableLanguages';
-import { Language } from '@core/types/language';
+import { Language, TranslationStorageKey } from '@core/types/language';
+import { scopedLoggerFactory } from '@core/utils/scope.logger.factory';
 import { InterpolatableTranslationObject, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { LocalStorage } from '@core/service/localStorage/local-storage';
 
 /**
  * A wrapper service around `@ngx-translate/core`'s `TranslateService` that
@@ -17,6 +19,8 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 export class TranslationWrapper {
   private readonly translate = inject(TranslateService);
+  private readonly logger = scopedLoggerFactory(TranslationWrapper);
+  private readonly localStorage = inject(LocalStorage);
   private readonly injector = inject(Injector);
 
   availableLanguages = AVAILABLE_LANGUAGES;
@@ -32,8 +36,12 @@ export class TranslationWrapper {
    *
    * @param language - Language code (e.g., `'en'`, `'de'`)
    */
-  switchLanguage = (language: Language): Observable<InterpolatableTranslationObject> =>
-    this.translate.use(language.code);
+  switchLanguage = (language: Language): Observable<InterpolatableTranslationObject> => {
+    this.localStorage.setLocalStorage(TranslationStorageKey.Language, language.code);
+    this.logger.log(`Switching language to ${language.name}`);
+
+    return this.translate.use(language.code);
+  }
 
   /**
    * Gets the default fallback language of the application.
