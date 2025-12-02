@@ -97,11 +97,11 @@ export class TranslationManager {
   }
   //#endregion
 
-  getSuccess() {
+  getSuccess(): Signal<string> {
     return this.translationWrapper.t('feature.register.success');
   }
 
-  getFailedRegistration() {
+  getFailedRegistration(): Signal<string> {
     return this.translationWrapper.t('feature.register.error.failed');
   }
 

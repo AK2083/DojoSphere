@@ -4,12 +4,12 @@
             <span class="text-2xl font-semibold text-black dark:text-white">
                 D<i class="pi pi-heart-fill text-amber-500 text-md"></i>joSphere
             </span>
-            <span class="text-xs text-slate-300 dark:text-slate-700">:aang</span>
+            <span class="text-xs text-slate-500 dark:text-slate-200">:aang</span>
         </div>
     </ng-template>
     <ng-template #end>
         <div class="flex items-center gap-2">
-            <p-button icon="pi pi-cog" severity="secondary" [rounded]="true" [text]="true" (click)="openDrawer()" />
+            <p-button icon="pi pi-cog" severity="secondary" [ariaLabel]="'Settings'" [rounded]="true" [text]="true" (click)="openDrawer()" />
         </div>
     </ng-template>
 </p-menubar>
