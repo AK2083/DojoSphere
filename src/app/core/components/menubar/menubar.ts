@@ -1,10 +1,11 @@
 import { Component, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 
 @Component({
   selector: 'app-menubar',
-  imports: [MenubarModule, ButtonModule],
+  imports: [RouterLink, MenubarModule, ButtonModule],
   templateUrl: './menubar.html',
 })
 export class Menubar {

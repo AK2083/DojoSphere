@@ -9,6 +9,7 @@
     </ng-template>
     <ng-template #end>
         <div class="flex items-center gap-2">
+            <p-button icon="pi pi-user" severity="secondary" [rounded]="true" [routerLink]="'/signin'" [text]="true"/>
             <p-button icon="pi pi-cog" severity="secondary" [rounded]="true" [text]="true" (click)="openDrawer()" />
         </div>
     </ng-template>

@@ -5,6 +5,6 @@
 <app-drawer #drawer [customTemplate]="settingsTemplate" [header]="childTranslationsSignal()" />
 <app-menubar (open)="drawer.openDrawer()" />
 
-<div class="mt-4">
-  <app-register />
-</div>
+<main class="mt-4">
+  <router-outlet />
+</main>
