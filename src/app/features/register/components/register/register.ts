@@ -6,7 +6,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { EmailAlreadyExistsException } from '@features/register/exceptions/supabase/email-already-exists-exception';
 import { RegistrationFailedException } from '@features/register/exceptions/supabase/registration-failed-exception';
 import { TooManyRequestsException } from '@features/register/exceptions/supabase/too-many-requests-exception';
 import { SupabaseManager } from '@features/register/services/supabasemanager/supabase-manager';
