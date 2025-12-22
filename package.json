@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.{js,ts,json,md}\"",
-    "check-format": "prettier --check \"src/**/*.{js,ts,json,md}\"",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
