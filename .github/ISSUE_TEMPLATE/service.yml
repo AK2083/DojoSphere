@@ -1,0 +1,61 @@
+name: ⚙️ Service / Backend
+description: Logic, APIs
+title: 'Service: '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component_scope
+    attributes:
+      label: Component Scope
+      description: Select the architectural scope of the component
+      options:
+        - Shared / Design System
+        - Feature-specific
+        - Page-level
+    validations:
+      required: true
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain
+      description: >
+        Business domain this component belongs to (not a technical layer).
+        Examples: authentication, authorisation, information, billing.
+      placeholder: information
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tests
+    attributes:
+      label: Tests
+      description: What tests are available or planned?
+      options:
+        - label: Unit Tests
+          required: true
+        - label: Integration Tests
+          required: false
+
+  - type: checkboxes
+    id: special_requirements
+    attributes:
+      label: Requirements
+      options:
+        - label: Coverage >= 80%
+          required: true
+        - label: Lighthouse Best Practice Score >= 90
+          required: true
+
+  - type: textarea
+    id: coverage
+    attributes:
+      label: Test-Coverage / Hints
+      description: e.g. relevant edge cases or mocking
