@@ -14,11 +14,11 @@ body:
     id: version
     attributes:
       label: What version are you using?
+      placeholder: 1.0.0
       description: |
         Please provide your app version where this issue occurred.
     validations:
       required: true
-    placeholder: 1.0.0
 
   - type: dropdown
     attributes:
