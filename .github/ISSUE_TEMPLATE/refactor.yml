@@ -24,7 +24,7 @@ body:
       required: true
 
   - type: dropdown
-    id: refactor scope
+    id: refactor_scope
     attributes:
       label: Refactoring Scope
       description: Select the scope of the refactoring
