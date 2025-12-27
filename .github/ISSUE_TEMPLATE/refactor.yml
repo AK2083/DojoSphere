@@ -5,8 +5,8 @@ body:
   - type: textarea
     id: description
     attributes:
-    label: Description
-    description: Describe the refactoring needed.
+      label: Description
+      description: Describe the refactoring needed.
     validations:
       required: true
 
