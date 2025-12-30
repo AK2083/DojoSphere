@@ -10,6 +10,19 @@
       "name": "Launch Edge against localhost",
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Electron: Main",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "runtimeArgs": ["."],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
     }
   ]
 }
