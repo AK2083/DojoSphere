@@ -1,8 +1,8 @@
 {
   "name": "dojosphere",
   "private": true,
+  "main": "electron.js",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "lint:check": "eslint .",
@@ -31,6 +31,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
+    "electron": "^39.2.7",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -42,6 +43,7 @@
     "semantic-release": "^25.0.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vite-plugin-electron": "^0.29.0"
   }
 }
