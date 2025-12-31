@@ -1,13 +1,10 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   release:
-    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -25,12 +22,45 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'npm'
+          cache: npm
 
       - name: Install Dependencies
         run: npm ci
 
+      - name: Calculate next version
+        id: version
+        run: |
+          npx semantic-release --dry-run --json > release.json
+          echo "version=$(jq -r '.nextRelease.version' release.json)" >> $GITHUB_OUTPUT
+
+      - name: Create release branch
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git checkout -b release/$VERSION
+          git push origin release/$VERSION
+
+      - name: Update package.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          npm version $VERSION --no-git-tag-version
+          git add package.json package-lock.json
+          git commit -m "chore(dojosphere): update package.json version to $VERSION"
+          git push origin release/$VERSION
+
       - name: Semantic Release
-        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh pr create \
+            --base main \
+            --head release/$VERSION \
+            --title "Release $VERSION" \
+            --body "Automated release PR"
