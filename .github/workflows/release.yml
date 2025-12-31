@@ -36,17 +36,17 @@ jobs:
             --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator \
             1> release.json
 
+          echo "=== JSON ==="
+          cat release.json
+          echo "=== LOG ==="
+          cat release.log
+
           VERSION=$(jq -r '.nextRelease.version // empty' release.json)
 
           if [ -z "$VERSION" ]; then
             echo "No release needed"
             exit 0
           fi
-
-          echo "=== JSON ==="
-          cat release.json
-          echo "=== LOG ==="
-          cat release.log
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
