@@ -29,11 +29,26 @@ jobs:
 
       - name: Calculate next version
         id: version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release --dry-run --json > release.json
-          echo "version=$(jq -r '.nextRelease.version' release.json)" >> $GITHUB_OUTPUT
+          npx semantic-release \
+            --dry-run \
+            --json \
+            --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator \
+            1> release.json
+
+          VERSION=$(jq -r '.nextRelease.version // empty' release.json)
+
+          if [ -z "$VERSION" ]; then
+            echo "No release needed"
+            exit 0
+          fi
+
+          echo "=== JSON ==="
+          cat release.json
+          echo "=== LOG ==="
+          cat release.log
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create release branch
         env:
