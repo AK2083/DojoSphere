@@ -29,6 +29,8 @@ jobs:
 
       - name: Calculate next version
         id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npx semantic-release --dry-run --json > release.json
           echo "version=$(jq -r '.nextRelease.version' release.json)" >> $GITHUB_OUTPUT
