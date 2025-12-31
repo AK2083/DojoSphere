@@ -30,23 +30,11 @@ jobs:
       - name: Calculate next version
         id: version
         run: |
-<<<<<<< HEAD
-          npx semantic-release --dry-run --json 1> release.json 2> release.log
-
-          cat release.json
-=======
-<<<<<<< HEAD
           npx semantic-release \
             --dry-run \
             --json \
             --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator \
             1> release.json
-=======
-          npx semantic-release --dry-run --json 1> release.json 2> release.log
-
-          cat release.json
->>>>>>> fa58f38 (chore(dojosphere): fix version error)
->>>>>>> d8edc67 (chore(dojosphere): fix version error)
 
           VERSION=$(jq -r '.nextRelease.version // empty' release.json)
 
@@ -54,11 +42,6 @@ jobs:
             echo "No release needed"
             exit 0
           fi
-
-          echo "=== JSON ==="
-          cat release.json
-          echo "=== LOG ==="
-          cat release.log
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
