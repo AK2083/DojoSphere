@@ -57,10 +57,21 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          npm version $VERSION --no-git-tag-version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+          echo "Current version: $CURRENT_VERSION"
+          echo "Next version:    $VERSION"
+
+          if [ "$CURRENT_VERSION" = "$VERSION" ]; then
+            echo "package.json already at version $VERSION – skipping update"
+            exit 0
+          fi
+
+          npm version "$VERSION" --no-git-tag-version
+
           git add package.json package-lock.json
           git commit -m "chore(dojosphere): update package.json version to $VERSION"
-          git push origin release/$VERSION
+          git push origin "release/$VERSION"
 
       - name: Semantic Release
         env:
