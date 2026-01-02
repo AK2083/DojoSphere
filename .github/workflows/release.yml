@@ -69,6 +69,8 @@ jobs:
 
           npm version "$VERSION" --no-git-tag-version
 
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           git add package.json package-lock.json
           git commit -m "chore(dojosphere): update package.json version to $VERSION"
           git push origin release/$VERSION
