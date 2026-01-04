@@ -5,7 +5,7 @@
   "main": "src/electron/electron.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DEIN-USERNAME/dojosphere.git"
+    "url": "git@github.com:AK2083/DojoSphere.git"
   },
   "scripts": {
     "dev": "vite",
