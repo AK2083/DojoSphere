@@ -1,0 +1,57 @@
+name: ⚙️ Refactor
+description: Logic, APIs
+title: 'Service: '
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the refactoring needed.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target
+    attributes:
+      label: Refactoring Target
+      description: Select the target of the refactoring
+      options:
+        - reduce risk
+        - improve performance
+        - improve maintainability
+        - update dependencies
+    validations:
+      required: true
+
+  - type: dropdown
+    id: refactor_scope
+    attributes:
+      label: Refactoring Scope
+      description: Select the scope of the refactoring
+      options:
+        - UI Component
+        - Service / Backend
+        - Architecture / Infrastructure
+    validations:
+      required: true
+
+  - type: input
+    id: reason
+    attributes:
+      label: Reason
+      description: >
+        Described the reason for the refactor e. g. technical debt, performance, maintainability and why
+        you change it.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: add_to_tests
+    attributes:
+      label: Add to Tests
+      description: Select whether you want to add the refactored code to existing tests
+      options:
+        - label: Unit Tests
+          required: true
+        - label: Integration Tests
+          required: false

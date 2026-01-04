@@ -1,0 +1,67 @@
+name: 🎨 UI-Component
+description: New UI components or Changes
+title: 'UI: '
+labels: ['feature']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be implemented or changed?
+    validations:
+      required: true
+
+  - type: input
+    id: domain
+    attributes:
+      label: Domain
+      description: >
+        Business domain this component belongs to (not a technical layer).
+        Examples: authentication, authorisation, information, billing.
+      placeholder: information
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component_scope
+    attributes:
+      label: Component Scope
+      description: Select the architectural scope of the component
+      options:
+        - Shared / Design System
+        - Feature-specific
+        - Page-level
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: accessibility
+    attributes:
+      label: Accessibility (ARIA)
+      description: Please confirm
+      options:
+        - label: Correct ARIA roles and labels are defined (Lighthouse accessibility score ≥ 90)
+          required: true
+        - label: Keyboard navigation is fully supported
+          required: true
+        - label: Focus handling is implemented and visible
+          required: true
+        - label: Color contrast meets WCAG AA requirements
+          required: true
+
+  - type: checkboxes
+    id: responsiveness
+    attributes:
+      label: Responsiveness
+      options:
+        - label: Mobile
+          required: true
+        - label: Tablet
+          required: true
+        - label: Desktop
+          required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additionally Hints / Screenshots
