@@ -1,7 +1,7 @@
 name: 🎨 UI-Component
 description: New UI components or Changes
-title: 'UI: '
-labels: ['feature']
+title: "UI: "
+labels: ["feature"]
 body:
   - type: textarea
     id: description

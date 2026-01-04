@@ -1,70 +1,33 @@
 name: Release
-
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   release:
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
       pull-requests: write
       id-token: write
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Calculate next version
-        id: version
-        run: |
-          npx semantic-release \
-            --dry-run \
-            --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator \
-            > sr.log
-
-          cat sr.log
-
-          VERSION=$(grep -oE 'next release version is [0-9]+\.[0-9]+\.[0-9]+' sr.log | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || true)
-
-          if [ -z "$VERSION" ]; then
-            echo "No release needed"
-            exit 0
-          fi
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Create release branch
-        env:
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          git checkout -b release/$VERSION
-          git push origin release/$VERSION
-
-      - name: Semantic Release
+          node-version: "lts/*"
+      - name: Install dependencies
+        run: npm clean-install
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release --ci
-
-      - name: Create PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          gh pr create \
-            --base main \
-            --head release/$VERSION \
-            --title "Release $VERSION" \
-            --body "Automated release PR"

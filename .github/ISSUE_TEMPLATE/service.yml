@@ -1,6 +1,6 @@
 name: ⚙️ Service / Backend
 description: Logic, APIs
-title: 'Service: '
+title: "Service: "
 body:
   - type: textarea
     id: description

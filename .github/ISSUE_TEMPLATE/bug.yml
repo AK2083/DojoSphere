@@ -1,6 +1,6 @@
 name: 🐞 Bug Report
 description: Report a problem. Please provide enough information that we can reproduce the problem.
-title: 'Bug: '
+title: "Bug: "
 body:
   - type: textarea
     id: description
