@@ -6,11 +6,11 @@ import tseslint from "typescript-eslint";
 import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
+import importPlugin from "eslint-plugin-import";
 
 export default defineConfig([
   // Build-Output ignorieren
   globalIgnores(["dist", "build"]),
-
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
@@ -27,6 +27,14 @@ export default defineConfig([
     },
     plugins: {
       prettier: prettierPlugin,
+      import: importPlugin,
+    },
+    settings: {
+      "import/resolver": {
+        typescript: {
+          project: "./tsconfig.json",
+        },
+      },
     },
     rules: {
       "prettier/prettier": "error",
@@ -37,6 +45,18 @@ export default defineConfig([
       "@typescript-eslint/no-non-null-assertion": "warn",
 
       "react-hooks/exhaustive-deps": "warn",
+
+      "import/order": [
+        "error",
+        {
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
     },
   },
 ]);
