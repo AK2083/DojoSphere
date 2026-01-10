@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Validator } from "../utils/validators";
+import type { Validator } from "@shared/utils/validators";
 
 export function useField<T>(initialValue: T, validator?: Validator<T>) {
   const [value, setValue] = useState<T>(initialValue);

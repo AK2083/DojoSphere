@@ -1,11 +1,10 @@
+import RegisterForm from "@features/authentication/components/RegisterForm";
 import { Grid } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-
-import RegisterForm from "../components/RegisterForm";
 
 export default function CenteredCard() {
   return (

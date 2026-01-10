@@ -13,14 +13,16 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { useField } from "../../../shared/hooks/useFields";
-import { getPasswordRules } from "../../../shared/utils/passwordRules";
-import { emailValidator, passwordValidator } from "../../../shared/utils/validators";
+import { useField } from "@shared/hooks/useFields";
+import { getPasswordRules } from "@shared/utils/passwordRules";
+import { emailValidator, passwordValidator } from "@shared/utils/validators";
 
 export default function RegisterForm() {
+  const isDev = import.meta.env.VITE_PREFILL_FORM;
+
   const [showPassword, setShowPassword] = useState(false);
-  const email = useField<string>("", emailValidator);
-  const password = useField<string>("", passwordValidator);
+  const email = useField<string>(isDev ? "test@example.com" : "", emailValidator);
+  const password = useField<string>(isDev ? "Test1234!" : "", passwordValidator);
 
   const color = (ok: boolean) => (ok ? "success.main" : "text.secondary");
 
