@@ -13,15 +13,20 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import { RegistrationFailedException } from "@features/authentication/exceptions/RegistrationFailedException";
+import { TooManyRequestsException } from "@features/authentication/exceptions/TooManyRequestsException";
+
 import { useField } from "@shared/hooks/useFields";
+import useSignUp from "@shared/hooks/useSignUp";
 import { getPasswordRules } from "@shared/utils/passwordRules";
 import { emailValidator, passwordValidator } from "@shared/utils/validators";
 
 export default function RegisterForm() {
   const isDev = import.meta.env.VITE_PREFILL_FORM;
 
+  const { signUp } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
-  const email = useField<string>(isDev ? "test@example.com" : "", emailValidator);
+  const email = useField<string>(isDev ? "test@test.de" : "", emailValidator);
   const password = useField<string>(isDev ? "Test1234!" : "", passwordValidator);
 
   const color = (ok: boolean) => (ok ? "success.main" : "text.secondary");
@@ -32,8 +37,21 @@ export default function RegisterForm() {
     e.preventDefault();
 
     const valid = [email.validate(), password.validate()].every(Boolean);
-
     if (!valid) return;
+
+    let error: string = "";
+
+    try {
+      signUp(email.value, password.value);
+    } catch (err) {
+      if (err instanceof TooManyRequestsException) {
+        error = "Zu viele Versuche. Bitte später erneut versuchen.";
+      } else if (err instanceof RegistrationFailedException) {
+        error = "Registrierung fehlgeschlagen.";
+      } else {
+        error = "Unbekannter Fehler.";
+      }
+    }
   };
 
   return (

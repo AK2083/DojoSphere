@@ -55,6 +55,24 @@ export default defineConfig([
             order: "asc",
             caseInsensitive: true,
           },
+          pathGroups: [
+            {
+              pattern: "@features/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@shared/**",
+              group: "internal",
+              position: "after",
+            },
+            {
+              pattern: "@app/**",
+              group: "internal",
+              position: "after",
+            },
+          ],
+          pathGroupsExcludedImportTypes: ["builtin"],
         },
       ],
     },
