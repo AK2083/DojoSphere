@@ -14,7 +14,9 @@
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
