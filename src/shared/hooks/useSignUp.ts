@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { signUpNewUser } from "@shared/services/supabase/supabase";
+import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
 
 export default function useSignUp() {
   const [registering, setRegistering] = useState(false);
