@@ -30,3 +30,6 @@ jobs:
 
       - name: Run Prettier
         run: npm run format:check
+
+      - name: Run Vitest with Coverage
+        run: npm run test:coverage
