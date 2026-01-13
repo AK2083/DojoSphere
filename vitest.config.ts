@@ -12,6 +12,7 @@ export default defineConfig({
     },
   },
   test: {
+    environment: "jsdom",
     browser: {
       provider: playwright(),
       enabled: true,
