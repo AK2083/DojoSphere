@@ -1,4 +1,4 @@
-import { Visibility, VisibilityOff, Check } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Check, Clear } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -55,12 +55,12 @@ export default function RegisterForm() {
   };
 
   return (
-    <Card sx={{ width: "40vw", height: "70vh", p: 2 }}>
+    <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "70vh", p: 2 }}>
       <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
       <CardContent>
         <Stack
           direction="column"
-          spacing={1}
+          spacing={0.25}
           marginBottom={1}
           component="form"
           id="register-form"
@@ -71,16 +71,21 @@ export default function RegisterForm() {
             size="small"
             label="E-Mail"
             value={email.value}
-            helperText={email.error}
+            helperText={email.error ? "Ungültige E-Mail" : " "}
             onChange={(e) => email.setValue(e.target.value)}
             error={!!email.error}
             sx={{ pb: 2 }}
+            slotProps={{
+              formHelperText: {
+                sx: { minHeight: 10 },
+              },
+            }}
           />
           <TextField
             id="password"
             size="small"
             label="Passwort"
-            helperText={password.error}
+            helperText={password.error ? "Ungültiges Passwort" : " "}
             type={showPassword ? "text" : "password"}
             value={password.value}
             onChange={(e) => password.setValue(e.target.value)}
@@ -103,7 +108,7 @@ export default function RegisterForm() {
             }}
           />
         </Stack>
-        <Stack direction="column" spacing={0.5} sx={{ ml: 0.5 }}>
+        <Stack direction="column" spacing={0.5}>
           <Typography
             sx={{ display: "flex", alignItems: "center", color: color(rules.letters) }}
             variant="caption"
@@ -112,42 +117,51 @@ export default function RegisterForm() {
               aria-label="checked password rule"
               size="small"
               onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ mr: 0.25 }}
+              sx={{ p: 0, mr: 0.25 }}
             >
-              <Check sx={{ fontSize: 14 }} />
+              {rules.letters ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
             </IconButton>
             Es beinhaltet große und kleine Buchstaben
           </Typography>
-          <Typography sx={{ display: "flex", color: color(rules.numbers) }} variant="caption">
+          <Typography
+            sx={{ display: "flex", alignItems: "center", color: color(rules.numbers) }}
+            variant="caption"
+          >
             <IconButton
               aria-label="checked password rule"
               size="small"
               onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ mr: 0.25 }}
+              sx={{ p: 0, mr: 0.25 }}
             >
-              <Check sx={{ fontSize: 14 }} />
+              {rules.numbers ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
             </IconButton>
             Dein Passwort beinhaltet Zahlen
           </Typography>
-          <Typography sx={{ display: "flex", color: color(rules.special) }} variant="caption">
+          <Typography
+            sx={{ display: "flex", alignItems: "center", color: color(rules.special) }}
+            variant="caption"
+          >
             <IconButton
               aria-label="checked password rule"
               size="small"
               onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ mr: 0.25 }}
+              sx={{ p: 0, mr: 0.25 }}
             >
-              <Check sx={{ fontSize: 14 }} />
+              {rules.special ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
             </IconButton>
             Es hat Sonderzeichen (möglichst keine sprachabhängigen)
           </Typography>
-          <Typography sx={{ display: "flex", color: color(rules.length) }} variant="caption">
+          <Typography
+            sx={{ display: "flex", alignItems: "center", color: color(rules.length) }}
+            variant="caption"
+          >
             <IconButton
               aria-label="checked password rule"
               size="small"
               onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ mr: 0.25 }}
+              sx={{ p: 0, mr: 0.25 }}
             >
-              <Check sx={{ fontSize: 14 }} />
+              {rules.length ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
             </IconButton>
             Dein Passwort sollte eine min. eine Länge von 8 Zeichen haben
           </Typography>

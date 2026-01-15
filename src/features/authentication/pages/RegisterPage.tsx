@@ -10,11 +10,15 @@ import RegisterForm from "@features/authentication/components/RegisterForm";
 export default function CenteredCard() {
   return (
     <Grid container minWidth="100vw" minHeight="100vh" alignItems="center" justifyContent="center">
-      <Stack direction="row" divider={<Divider orientation="vertical" flexItem />} spacing={2}>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        divider={<Divider orientation="vertical" flexItem />}
+        spacing={2}
+      >
         <RegisterForm />
-        <Card sx={{ width: "40vw", height: "50vh" }}>
+        <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "10vh" }}>
           <CardContent>
-            <Stack alignItems="center" justifyContent="center" height={150}>
+            <Stack height={150}>
               <Typography>Stack Center</Typography>
             </Stack>
           </CardContent>

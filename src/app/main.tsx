@@ -4,7 +4,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import App from "@app/App.tsx";
-import "@app/index.css";
 
 // Reason: The root element is guaranteed by index.html (Vite entry point)
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

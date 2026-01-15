@@ -45,6 +45,7 @@ export default defineConfig([
       "@typescript-eslint/no-non-null-assertion": "warn",
 
       "react-hooks/exhaustive-deps": "warn",
+      "linebreak-style": ["error", "windows"],
 
       "import/order": [
         "error",
