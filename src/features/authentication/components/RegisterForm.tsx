@@ -1,4 +1,4 @@
-import { Visibility, VisibilityOff, Check, Clear } from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -29,9 +29,11 @@ export default function RegisterForm() {
   const email = useField<string>(isDev ? "test@test.de" : "", emailValidator);
   const password = useField<string>(isDev ? "Test1234!" : "", passwordValidator);
 
-  const color = (ok: boolean) => (ok ? "success.main" : "text.secondary");
-
   const rules = getPasswordRules(password.value);
+
+  const [open, setOpen] = useState(false);
+
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +51,7 @@ export default function RegisterForm() {
       } else if (err instanceof RegistrationFailedException) {
         error = "Registrierung fehlgeschlagen.";
       } else {
-        error = "Unbekannter Fehler.";
+        error = "Unbekannter Fehler. Bitte später erneut versuchen.";
       }
     }
   };
@@ -85,12 +87,58 @@ export default function RegisterForm() {
             id="password"
             size="small"
             label="Passwort"
-            helperText={password.error ? "Ungültiges Passwort" : " "}
+            helperText={
+              // password.error
+              //   ? "Ungültiges Passwort"
+              //   : "Das Passwort muss 8 Zeichen enthalten, darunter Zahlen, Groß- und Kleinbuchstaben und Sonderzeichen."
+              <Typography variant="caption" component="span">
+                Dein Passwort muss{" "}
+                <Typography
+                  variant="caption"
+                  component="span"
+                  sx={{ color: rules.length ? "success.main" : "text.secondary" }}
+                >
+                  mindestens 8 Zeichen
+                </Typography>
+                ,{" "}
+                <Typography
+                  variant="caption"
+                  component="span"
+                  sx={{ color: rules.letters ? "success.main" : "text.secondary" }}
+                >
+                  Groß- & Kleinbuchstaben
+                </Typography>
+                ,{" "}
+                <Typography
+                  variant="caption"
+                  component="span"
+                  sx={{ color: rules.numbers ? "success.main" : "text.secondary" }}
+                >
+                  Zahlen
+                </Typography>
+                {" und "}
+                <Typography
+                  variant="caption"
+                  component="span"
+                  sx={{ color: rules.special ? "success.main" : "text.secondary" }}
+                >
+                  Sonderzeichen
+                </Typography>
+                {" enthalten."}
+              </Typography>
+            }
             type={showPassword ? "text" : "password"}
             value={password.value}
             onChange={(e) => password.setValue(e.target.value)}
             error={!!password.error}
+            onFocus={(e) => {
+              setAnchorEl(e.currentTarget);
+              setOpen(true);
+            }}
             slotProps={{
+              root: {
+                ref: setAnchorEl,
+              },
               input: {
                 endAdornment: (
                   <InputAdornment position="end">
@@ -107,64 +155,6 @@ export default function RegisterForm() {
               },
             }}
           />
-        </Stack>
-        <Stack direction="column" spacing={0.5}>
-          <Typography
-            sx={{ display: "flex", alignItems: "center", color: color(rules.letters) }}
-            variant="caption"
-          >
-            <IconButton
-              aria-label="checked password rule"
-              size="small"
-              onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ p: 0, mr: 0.25 }}
-            >
-              {rules.letters ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
-            </IconButton>
-            Es beinhaltet große und kleine Buchstaben
-          </Typography>
-          <Typography
-            sx={{ display: "flex", alignItems: "center", color: color(rules.numbers) }}
-            variant="caption"
-          >
-            <IconButton
-              aria-label="checked password rule"
-              size="small"
-              onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ p: 0, mr: 0.25 }}
-            >
-              {rules.numbers ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
-            </IconButton>
-            Dein Passwort beinhaltet Zahlen
-          </Typography>
-          <Typography
-            sx={{ display: "flex", alignItems: "center", color: color(rules.special) }}
-            variant="caption"
-          >
-            <IconButton
-              aria-label="checked password rule"
-              size="small"
-              onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ p: 0, mr: 0.25 }}
-            >
-              {rules.special ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
-            </IconButton>
-            Es hat Sonderzeichen (möglichst keine sprachabhängigen)
-          </Typography>
-          <Typography
-            sx={{ display: "flex", alignItems: "center", color: color(rules.length) }}
-            variant="caption"
-          >
-            <IconButton
-              aria-label="checked password rule"
-              size="small"
-              onClick={() => setShowPassword((previousState) => !previousState)}
-              sx={{ p: 0, mr: 0.25 }}
-            >
-              {rules.length ? <Check sx={{ fontSize: 14 }} /> : <Clear sx={{ fontSize: 14 }} />}
-            </IconButton>
-            Dein Passwort sollte eine min. eine Länge von 8 Zeichen haben
-          </Typography>
         </Stack>
       </CardContent>
       <CardActions sx={{ px: 2, pb: 2 }}>
