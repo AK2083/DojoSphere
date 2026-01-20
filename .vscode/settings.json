@@ -1,0 +1,32 @@
+{
+  "files.eol": "\n",
+
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+
+  "editor.rulers": [100],
+
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+
+  "eslint.validate": ["javascript", "typescript", "typescriptreact", "javascriptreact"],
+  "eslint.run": "onSave",
+
+  "prettier.requireConfig": true,
+
+  "editor.quickSuggestions": { "other": true, "comments": false, "strings": true },
+  "editor.suggestSelection": "first",
+
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+  "editor.renderFinalNewline": "on"
+}
