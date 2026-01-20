@@ -1,39 +1,32 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+
+import EMail from "@/shared/components/EMail";
+import Password from "@/shared/components/Password";
+import { useField } from "@/shared/hooks/useFields";
+import {
+  composeValidators,
+  emailValidator,
+  passwordValidator,
+  required,
+} from "@/shared/utils/validators";
 
 import { RegistrationFailedException } from "@features/authentication/exceptions/RegistrationFailedException";
 import { TooManyRequestsException } from "@features/authentication/exceptions/TooManyRequestsException";
 
-import { useField } from "@shared/hooks/useFields";
 import useSignUp from "@shared/hooks/useSignUp";
-import { getPasswordRules } from "@shared/utils/passwordRules";
-import { emailValidator, passwordValidator } from "@shared/utils/validators";
 
 export default function RegisterForm() {
-  const isDev = import.meta.env.VITE_PREFILL_FORM;
-
+  const email = useField<string>("", composeValidators(required, emailValidator));
+  const password = useField<string>("", composeValidators(required, passwordValidator));
   const { signUp } = useSignUp();
-  const [showPassword, setShowPassword] = useState(false);
-  const email = useField<string>(isDev ? "test@test.de" : "", emailValidator);
-  const password = useField<string>(isDev ? "Test1234!" : "", passwordValidator);
-
-  const rules = getPasswordRules(password.value);
-
-  const [open, setOpen] = useState(false);
-
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,116 +50,33 @@ export default function RegisterForm() {
   };
 
   return (
-    <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "70vh", p: 2 }}>
-      <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
-      <CardContent>
-        <Stack
-          direction="column"
-          spacing={0.25}
-          marginBottom={1}
-          component="form"
-          id="register-form"
-          onSubmit={handleSubmit}
-        >
-          <TextField
-            id="email"
-            size="small"
-            label="E-Mail"
-            value={email.value}
-            helperText={email.error ? "Ungültige E-Mail" : " "}
-            onChange={(e) => email.setValue(e.target.value)}
-            error={!!email.error}
-            sx={{ pb: 2 }}
-            slotProps={{
-              formHelperText: {
-                sx: { minHeight: 10 },
-              },
-            }}
-          />
-          <TextField
-            id="password"
-            size="small"
-            label="Passwort"
-            helperText={
-              // password.error
-              //   ? "Ungültiges Passwort"
-              //   : "Das Passwort muss 8 Zeichen enthalten, darunter Zahlen, Groß- und Kleinbuchstaben und Sonderzeichen."
-              <Typography variant="caption" component="span">
-                Dein Passwort muss{" "}
-                <Typography
-                  variant="caption"
-                  component="span"
-                  sx={{ color: rules.length ? "success.main" : "text.secondary" }}
-                >
-                  mindestens 8 Zeichen
-                </Typography>
-                ,{" "}
-                <Typography
-                  variant="caption"
-                  component="span"
-                  sx={{ color: rules.letters ? "success.main" : "text.secondary" }}
-                >
-                  Groß- & Kleinbuchstaben
-                </Typography>
-                ,{" "}
-                <Typography
-                  variant="caption"
-                  component="span"
-                  sx={{ color: rules.numbers ? "success.main" : "text.secondary" }}
-                >
-                  Zahlen
-                </Typography>
-                {" und "}
-                <Typography
-                  variant="caption"
-                  component="span"
-                  sx={{ color: rules.special ? "success.main" : "text.secondary" }}
-                >
-                  Sonderzeichen
-                </Typography>
-                {" enthalten."}
-              </Typography>
-            }
-            type={showPassword ? "text" : "password"}
-            value={password.value}
-            onChange={(e) => password.setValue(e.target.value)}
-            error={!!password.error}
-            onFocus={(e) => {
-              setAnchorEl(e.currentTarget);
-              setOpen(true);
-            }}
-            slotProps={{
-              root: {
-                ref: setAnchorEl,
-              },
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      size="small"
-                      onClick={() => setShowPassword((previousState) => !previousState)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Stack>
-      </CardContent>
-      <CardActions sx={{ px: 2, pb: 2 }}>
-        <Button fullWidth variant="contained" type="submit" form="register-form">
-          Registriere mich
-        </Button>
-      </CardActions>
-      <Box sx={{ px: 2 }}>
-        <Typography variant="body2">
-          Ich habe schon einen Account. <Link href="#">Log mich ein.</Link>
-        </Typography>
-      </Box>
-    </Card>
+    <>
+      <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "70vh", p: 2 }}>
+        <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
+        <CardContent>
+          <Stack
+            direction="column"
+            spacing={0.25}
+            marginBottom={1}
+            component="form"
+            id="register-form"
+            onSubmit={handleSubmit}
+          >
+            <EMail field={email} />
+            <Password field={password} />
+          </Stack>
+        </CardContent>
+        <CardActions sx={{ px: 2, pb: 2 }}>
+          <Button fullWidth variant="contained" type="submit" form="register-form">
+            Registriere mich
+          </Button>
+        </CardActions>
+        <Box sx={{ px: 2 }}>
+          <Typography variant="body2">
+            Ich habe schon einen Account. <Link href="#">Log mich ein.</Link>
+          </Typography>
+        </Box>
+      </Card>
+    </>
   );
 }
