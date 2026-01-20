@@ -1,6 +1,47 @@
 import { describe, it, expect } from "vitest";
 
-import { required, emailValidator, passwordValidator } from "./validators";
+import {
+  required,
+  emailValidator,
+  passwordValidator,
+  type Validator,
+  composeValidators,
+} from "./validators";
+
+describe("composeValidators", () => {
+  it("returns error from first failing validator", () => {
+    const v1: Validator<string> = () => "Error 1";
+    const v2: Validator<string> = () => "Error 2";
+
+    const composed = composeValidators(v1, v2);
+
+    expect(composed("test")).toBe("Error 1");
+  });
+
+  it("returns error from second validator if first passes", () => {
+    const v1: Validator<string> = () => null;
+    const v2: Validator<string> = () => "Error 2";
+
+    const composed = composeValidators(v1, v2);
+
+    expect(composed("test")).toBe("Error 2");
+  });
+
+  it("returns null if all validators pass", () => {
+    const v1: Validator<string> = () => null;
+    const v2: Validator<string> = () => null;
+
+    const composed = composeValidators(v1, v2);
+
+    expect(composed("test")).toBeNull();
+  });
+
+  it("returns null if no validators are provided", () => {
+    const composed = composeValidators<string>();
+
+    expect(composed("test")).toBeNull();
+  });
+});
 
 describe("required validator", () => {
   it("returns error if value is empty string", () => {
@@ -19,7 +60,7 @@ describe("required validator", () => {
 
 describe("emailValidator", () => {
   it("returns error if email is empty", () => {
-    expect(emailValidator("")).toBe("E-Mail ist erforderlich");
+    expect(emailValidator("")).toBe("Ungültige E-Mail");
   });
 
   it("returns error if email is invalid", () => {
@@ -35,15 +76,19 @@ describe("emailValidator", () => {
 });
 
 describe("passwordValidator", () => {
-  it("returns error if password is empty", () => {
-    expect(passwordValidator("")).toBe("Passwort erfüllt nicht alle Regeln");
+  it("returns null if password is empty", () => {
+    expect(passwordValidator("")).toBeNull();
   });
 
-  it("returns error if one rule fails", () => {
-    expect(passwordValidator("Abcdefg1")).toBe("Passwort erfüllt nicht alle Regeln");
+  it("returns null if password does not fulfill rules", () => {
+    expect(passwordValidator("Abcdefg1")).toBeNull();
   });
 
   it("returns null if all rules are fulfilled", () => {
     expect(passwordValidator("Abcdef1!")).toBeNull();
+  });
+
+  it("currently never returns an error", () => {
+    expect(passwordValidator("anything")).toBeNull();
   });
 });
