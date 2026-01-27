@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Validator } from "../utils/validators";
+import type { Validator } from "@shared/utils/validators";
 
 export type Field<T> = {
   value: T;

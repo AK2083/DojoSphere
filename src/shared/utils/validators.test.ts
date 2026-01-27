@@ -6,7 +6,7 @@ import {
   passwordValidator,
   type Validator,
   composeValidators,
-} from "./validators";
+} from "@shared/utils/validators";
 
 describe("composeValidators", () => {
   it("returns error from first failing validator", () => {

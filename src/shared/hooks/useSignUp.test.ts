@@ -2,6 +2,7 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import useSignUp from "@shared/hooks/useSignUp";
+import type { AppUser } from "@shared/model/AppUser";
 import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
 
 vi.mock("@shared/services/supabase/supabase-manager", () => ({
@@ -36,7 +37,10 @@ describe("useSignUp", () => {
     expect(result.current.registering).toBe(true);
 
     await act(async () => {
-      resolvePromise({ user: null, session: null });
+      resolvePromise({
+        success: true,
+        data: null as unknown as AppUser,
+      });
     });
 
     await waitFor(() => {
