@@ -1,15 +1,17 @@
 import { useState } from "react";
 
+import type { AppUser } from "@shared/model/AppUser";
+import type { ApiResult } from "@shared/model/Response";
 import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
 
 export default function useSignUp() {
   const [registering, setRegistering] = useState(false);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<ApiResult<AppUser>> => {
     setRegistering(true);
 
     try {
-      await signUpNewUser(email, password);
+      return await signUpNewUser(email, password);
     } finally {
       setRegistering(false);
     }

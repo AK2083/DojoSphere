@@ -1,7 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type User } from "@supabase/supabase-js";
 
-import { RegistrationFailedException } from "@features/authentication/exceptions/RegistrationFailedException";
-import { TooManyRequestsException } from "@features/authentication/exceptions/TooManyRequestsException";
+import type { AppUser } from "@/shared/model/AppUser";
+import type { ApiResult } from "@/shared/model/Response";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
@@ -15,13 +15,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
  * Throws specific exceptions if the email is already in use, no session is returned,
  * or if a general error occurs.
  *
- * @param mail - The email address of the new user.
- * @param pwd - The password for the new user.
+ * @param userEmail The email address of the new user.
+ * @param userPassword The password for the new user.
  * @returns A promise that resolves to `true` if the sign-up was successful.
- * @throws TooManyRequestsException
- * @throws RegistrationFailedException
  */
-export async function signUpNewUser(userEmail: string, userPassword: string) {
+export async function signUpNewUser(
+  userEmail: string,
+  userPassword: string,
+): Promise<ApiResult<AppUser>> {
   const { data, error } = await supabase.auth.signUp({
     email: userEmail,
     password: userPassword,
@@ -29,14 +30,27 @@ export async function signUpNewUser(userEmail: string, userPassword: string) {
 
   if (error) {
     if (error.status === 429) {
-      console.error("Too many requests made to the registration endpoint.", error.message);
-      throw new TooManyRequestsException();
+      return {
+        success: false,
+        error: {
+          code: "RATE_LIMITED",
+          message: "Too many requests to the registration endpoint.",
+        },
+      };
     }
 
-    console.error("Registration failed due to an unexpected error:", error.message);
-    throw new RegistrationFailedException();
+    return {
+      success: false,
+      error: {
+        code: "CONFLICT",
+        message: "Registration failed due to an unexpected error.",
+      },
+    };
   }
 
-  console.log("User registered successfully:", data.user?.email);
-  return data;
+  if (!data?.user) {
+    throw new Error("Invariant violated: no user returned after signUp");
+  }
+
+  return { success: true, data: data.user };
 }
