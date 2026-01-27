@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { RegistrationFailedException } from "@features/authentication/exceptions/RegistrationFailedException";
-import { TooManyRequestsException } from "@features/authentication/exceptions/TooManyRequestsException";
-
 import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
 
 const signUpMock = vi.hoisted(() => vi.fn());
@@ -20,7 +17,7 @@ describe("signUpNewUser", () => {
     vi.clearAllMocks();
   });
 
-  it("returns data when signup is successful", async () => {
+  it("returns ApiResult with user data when signup is successful", async () => {
     const fakeResponse = {
       data: {
         user: { email: "test@test.de" },
@@ -38,47 +35,52 @@ describe("signUpNewUser", () => {
       password: "Valid123!",
     });
 
-    expect(result).toEqual(fakeResponse.data);
+    expect(result).toEqual({
+      success: true,
+      data: { email: "test@test.de" },
+    });
   });
 
-  it("throws TooManyRequestsException when status is 429", async () => {
+  it("returns RATE_LIMITED error on 429 response", async () => {
     signUpMock.mockResolvedValue({
       data: null,
-      error: {
-        status: 429,
-        message: "Too many requests",
-      },
+      error: { status: 429 },
     });
 
-    await expect(signUpNewUser("test@test.de", "Valid123!")).rejects.toBeInstanceOf(
-      TooManyRequestsException,
-    );
+    const result = await signUpNewUser("test@test.de", "Valid123!");
+
+    expect(result).toEqual({
+      success: false,
+      error: {
+        code: "RATE_LIMITED",
+        message: "Too many requests to the registration endpoint.",
+      },
+    });
   });
 
-  it("throws RegistrationFailedException for other errors", async () => {
+  it("throws if no user is returned", async () => {
     signUpMock.mockResolvedValue({
-      data: null,
-      error: {
-        status: 500,
-        message: "Internal Server Error",
-      },
+      data: { user: null },
+      error: null,
     });
 
-    await expect(signUpNewUser("test@test.de", "Valid123!")).rejects.toBeInstanceOf(
-      RegistrationFailedException,
-    );
+    await expect(signUpNewUser("test@test.de", "Valid123!")).rejects.toThrow("Invariant violated");
   });
 
-  it("throws RegistrationFailedException when error has no status", async () => {
+  it("returns CONFLICT error on non-429 error", async () => {
     signUpMock.mockResolvedValue({
       data: null,
-      error: {
-        message: "Unknown error",
-      },
+      error: { status: 400 },
     });
 
-    await expect(signUpNewUser("test@test.de", "Valid123!")).rejects.toBeInstanceOf(
-      RegistrationFailedException,
-    );
+    const result = await signUpNewUser("test@test.de", "Valid123!");
+
+    expect(result).toEqual({
+      success: false,
+      error: {
+        code: "CONFLICT",
+        message: "Registration failed due to an unexpected error.",
+      },
+    });
   });
 });
