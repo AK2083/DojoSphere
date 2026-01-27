@@ -1,4 +1,4 @@
-import { createClient, type User } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 import type { AppUser } from "@/shared/model/AppUser";
 import type { ApiResult } from "@/shared/model/Response";
