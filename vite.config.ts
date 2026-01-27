@@ -19,4 +19,8 @@ export default defineConfig({
       "@features": path.resolve(__dirname, "src/features"),
     },
   },
+  build: {
+    minify: "esbuild",
+    sourcemap: false,
+  },
 });
