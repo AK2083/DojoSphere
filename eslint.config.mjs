@@ -7,6 +7,7 @@ import prettierPlugin from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
 import importPlugin from "eslint-plugin-import";
+import checkFile from "eslint-plugin-check-file";
 
 export default defineConfig([
   // Build-Output ignorieren
@@ -28,6 +29,7 @@ export default defineConfig([
     plugins: {
       prettier: prettierPlugin,
       import: importPlugin,
+      "check-file": checkFile,
     },
     settings: {
       "import/resolver": {
@@ -51,6 +53,36 @@ export default defineConfig([
 
       "react-hooks/exhaustive-deps": "warn",
       "linebreak-style": "off",
+
+      "check-file/filename-naming-convention": [
+        "error",
+        {
+          // React Components
+          "src/**/*.{tsx}": "PASCAL_CASE",
+
+          // Hooks
+          "src/**/hooks/use*.ts": "CAMEL_CASE",
+
+          // Utils
+          "src/**/utils/**/*.ts": "KEBAB_CASE",
+
+          // Models
+          "src/**/models/**/*.ts": "PASCAL_CASE",
+
+          // Types
+          "src/**/types/**/*.ts": "KEBAB_CASE",
+        },
+        {
+          ignoreMiddleExtensions: true,
+        },
+      ],
+      "check-file/folder-naming-convention": [
+        "error",
+        {
+          // all folders within src (except __tests__)should be named in kebab-case
+          "src/**/!(__tests__)": "KEBAB_CASE",
+        },
+      ],
 
       "import/order": [
         "error",

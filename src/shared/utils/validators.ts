@@ -1,4 +1,4 @@
-import { getPasswordRules } from "@shared/utils/passwordRules";
+import { getPasswordRules } from "@/shared/utils/password-rules";
 
 export type Validator<T> = (value: T) => string | null;
 

@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import App from "@app/App.tsx";
+import App from "@app/app";
 
 const theme = createTheme({
   palette: {

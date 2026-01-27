@@ -6,8 +6,9 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import { getPasswordRules } from "@/shared/utils/password-rules";
+
 import type { Field } from "@shared/hooks/useFields";
-import { getPasswordRules } from "@shared/utils/passwordRules";
 
 type Props = {
   field: Field<string>;

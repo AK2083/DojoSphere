@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { getPasswordRules } from "@shared/utils/passwordRules";
+import { getPasswordRules } from "@/shared/utils/password-rules";
 
 describe("getPasswordRules", () => {
   it("fails all rules for empty password", () => {
