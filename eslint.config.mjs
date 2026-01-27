@@ -54,6 +54,29 @@ export default defineConfig([
       "react-hooks/exhaustive-deps": "warn",
       "linebreak-style": "off",
 
+      "import/no-restricted-paths": [
+        "error",
+        {
+          zones: [
+            {
+              target: "./src/shared",
+              from: "./src/features",
+              except: ["./shared"],
+            },
+            {
+              target: "./src/shared",
+              from: "./src/app",
+              except: ["./shared"],
+            },
+            {
+              target: "./src/features",
+              from: "./src/app",
+              except: ["./features"],
+            },
+          ],
+        },
+      ],
+
       "check-file/filename-naming-convention": [
         "error",
         {
