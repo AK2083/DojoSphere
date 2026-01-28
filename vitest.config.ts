@@ -13,11 +13,8 @@ export default defineConfig({
   },
   test: {
     environment: "jsdom",
-    browser: {
-      provider: playwright(),
-      enabled: true,
-      instances: [{ browser: "chromium" }],
-    },
+    browser: undefined,
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
