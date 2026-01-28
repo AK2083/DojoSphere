@@ -9,15 +9,18 @@ const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 /**
- * Attempts to sign up a new user using the provided email and password.
- * Redirect URL is configured via the `options` object.
+ * Registers a new user using Supabase authentication.
  *
- * Throws specific exceptions if the email is already in use, no session is returned,
- * or if a general error occurs.
+ * Attempts to create a new user account with the provided email and password.
+ * Handles common errors such as rate limiting and registration conflicts,
+ * and returns a standardized `ApiResult` indicating success or failure.
  *
- * @param userEmail The email address of the new user.
- * @param userPassword The password for the new user.
- * @returns A promise that resolves to `true` if the sign-up was successful.
+ * @param userEmail - The email address of the new user
+ * @param userPassword - The password for the new user
+ * @returns A promise that resolves to an `ApiResult` containing the newly created user
+ *          on success, or an error object on failure.
+ *
+ * @throws Will throw an error if the sign-up completes without returning a user.
  */
 export async function signUpNewUser(
   userEmail: string,
