@@ -6,15 +6,10 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { getPasswordRules } from "@/shared/utils/password-rules";
+import type { FormFieldProps } from "@shared/types/form-field-props";
+import { getPasswordRules } from "@shared/utils/password-rules";
 
-import type { Field } from "@shared/hooks/useFields";
-
-type Props = {
-  field: Field<string>;
-};
-
-export default function Password({ field }: Props) {
+export default function Password({ field }: FormFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const rules = getPasswordRules(field.value);
 

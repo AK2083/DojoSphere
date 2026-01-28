@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 
 import { useField } from "@shared/hooks/useFields";
-import type { Validator } from "@shared/utils/validators";
+import type { Validator } from "@shared/types/validator";
 
 describe("useField", () => {
   it("initializes with initial value and no error", () => {
@@ -88,7 +88,7 @@ describe("useField", () => {
   });
 
   it("works with non-string values (generic)", () => {
-    const validator: Validator<number> = (v) => (v > 0 ? null : "Must be positive");
+    const validator: Validator<number> = (v: number) => (v > 0 ? null : "Must be positive");
 
     const { result } = renderHook(() => useField<number>(0, validator));
 

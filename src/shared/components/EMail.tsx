@@ -1,12 +1,8 @@
 import TextField from "@mui/material/TextField";
 
-import type { Field } from "@shared/hooks/useFields";
+import type { FormFieldProps } from "@shared/types/form-field-props";
 
-type Props = {
-  field: Field<string>;
-};
-
-export default function EMail({ field }: Props) {
+export default function EMail({ field }: FormFieldProps) {
   return (
     <TextField
       id="email"

@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 
+import type { Validator } from "@shared/types/validator";
 import {
   required,
   emailValidator,
   passwordValidator,
-  type Validator,
   composeValidators,
 } from "@shared/utils/validators";
 

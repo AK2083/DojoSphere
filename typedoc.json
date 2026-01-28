@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "src/electron/**"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "includeVersion": true,
+  "readme": "README.md"
+}
