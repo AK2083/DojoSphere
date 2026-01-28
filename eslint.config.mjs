@@ -78,19 +78,16 @@ export default defineConfig([
         "error",
         {
           // React Components
-          "src/**/*.{tsx}": "PASCAL_CASE",
+          "src/**/{components, pages}/**/*.tsx": "PASCAL_CASE",
+          "src/**/{components, pages}/**/*.spec.ts": "PASCAL_CASE",
 
           // Hooks
           "src/**/hooks/use*.ts": "CAMEL_CASE",
+          "src/**/hooks/use*.test.ts": "CAMEL_CASE",
 
-          // Utils
-          "src/**/utils/**/*.ts": "KEBAB_CASE",
-
-          // Models
-          "src/**/models/**/*.ts": "PASCAL_CASE",
-
-          // Types
-          "src/**/types/**/*.ts": "KEBAB_CASE",
+          // Utils, Types
+          "src/**/{utils, types}/**/*.ts": "KEBAB_CASE",
+          "src/**/{utils, types}/**/*.test.ts": "KEBAB_CASE",
         },
         {
           ignoreMiddleExtensions: true,
@@ -99,7 +96,6 @@ export default defineConfig([
       "check-file/folder-naming-convention": [
         "error",
         {
-          // all folders within src (except __tests__)should be named in kebab-case
           "src/**/!(__tests__)": "KEBAB_CASE",
         },
       ],
