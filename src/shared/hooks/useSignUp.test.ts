@@ -2,8 +2,9 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 import useSignUp from "@shared/hooks/useSignUp";
-import type { AppUser } from "@shared/model/AppUser";
 import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
+
+import type { AppUser } from "@/shared/types/app-user";
 
 vi.mock("@shared/services/supabase/supabase-manager", () => ({
   signUpNewUser: vi.fn(),

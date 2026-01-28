@@ -61,17 +61,14 @@ export default defineConfig([
             {
               target: "./src/shared",
               from: "./src/features",
-              except: ["./shared"],
             },
             {
               target: "./src/shared",
               from: "./src/app",
-              except: ["./shared"],
             },
             {
               target: "./src/features",
               from: "./src/app",
-              except: ["./features"],
             },
           ],
         },
