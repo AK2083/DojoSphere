@@ -2,8 +2,9 @@ import { ThemeProvider, CssBaseline } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router";
 
-import App from "@app/app";
+import App from "@/app/App";
 
 const theme = createTheme({
   palette: {
@@ -17,7 +18,9 @@ createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <StrictMode>
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </StrictMode>
   </ThemeProvider>,
 );
