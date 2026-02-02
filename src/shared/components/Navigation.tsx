@@ -83,6 +83,8 @@ export default function Navigation() {
                 sx={{ justifyContent: "center" }}
                 onClick={() => !isDesktop && setMobileOpen(false)}
                 aria-label="Dashboard"
+                component={NavLink}
+                to="/dashboard"
               >
                 <ListItemIcon sx={{ minWidth: 0 }}>
                   <DashboardIcon />
