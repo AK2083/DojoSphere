@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router";
 import Dashboard from "@features/dashboard/pages/Dashboard";
 import Settings from "@features/settings/pages/Settings";
 
-import CommonLayout from "./CommonLayout";
+import CommonLayout from "@app/CommonLayout";
 
 export default function AppRouter() {
   return (
