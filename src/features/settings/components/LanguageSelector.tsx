@@ -42,9 +42,9 @@ export default function LanguageSelector() {
           <FormControl fullWidth size="small">
             <InputLabel id="language-label">Sprache</InputLabel>
             <Select
+              label="Sprache"
               labelId="language-label"
               value={language}
-              label="Sprache"
               onChange={handleLanguageChange}
             >
               <MenuItem value="de">Deutsch</MenuItem>

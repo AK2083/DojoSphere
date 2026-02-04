@@ -14,10 +14,9 @@ export default function Dashboard() {
       }}
     >
       <Box
+        alt="Dojosphere Logo"
         component="img"
         src="/Logo.png"
-        alt="Dojosphere Logo" // ♿ sinnvoller Alternativtext
-        onLoad={() => setLoaded(true)}
         sx={{
           maxWidth: "100%",
           maxHeight: "80vh",
@@ -30,6 +29,7 @@ export default function Dashboard() {
           // optional: kein Fokus, da nicht interaktiv
           pointerEvents: "none",
         }}
+        onLoad={() => setLoaded(true)}
       />
     </Box>
   );

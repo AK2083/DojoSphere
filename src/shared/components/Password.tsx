@@ -17,33 +17,33 @@ export default function Password({ field }: FormFieldProps) {
     <Typography variant="caption" component="span">
       Dein Passwort muss{" "}
       <Typography
-        variant="caption"
         component="span"
         sx={{ color: rules.length ? "success.main" : "text.secondary" }}
+        variant="caption"
       >
         mindestens 8 Zeichen
       </Typography>
       ,{" "}
       <Typography
-        variant="caption"
         component="span"
         sx={{ color: rules.letters ? "success.main" : "text.secondary" }}
+        variant="caption"
       >
         Groß- & Kleinbuchstaben
       </Typography>
       ,{" "}
       <Typography
-        variant="caption"
         component="span"
         sx={{ color: rules.numbers ? "success.main" : "text.secondary" }}
+        variant="caption"
       >
         Zahlen
       </Typography>
       {" und "}
       <Typography
-        variant="caption"
         component="span"
         sx={{ color: rules.special ? "success.main" : "text.secondary" }}
+        variant="caption"
       >
         Sonderzeichen
       </Typography>
@@ -68,23 +68,20 @@ export default function Password({ field }: FormFieldProps) {
 
   return (
     <TextField
-      id="password"
-      size="small"
-      label="Passwort"
-      helperText={helperText()}
-      type={showPassword ? "text" : "password"}
-      value={field.value}
-      onChange={(e) => field.setValue(e.target.value)}
       error={!!field.error && field.value.length === 0}
+      helperText={helperText()}
+      id="password"
+      label="Passwort"
+      size="small"
       slotProps={{
         input: {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
+                edge="end"
                 size="small"
                 onClick={() => setShowPassword((previousState) => !previousState)}
-                edge="end"
               >
                 {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
               </IconButton>
@@ -92,6 +89,9 @@ export default function Password({ field }: FormFieldProps) {
           ),
         },
       }}
+      type={showPassword ? "text" : "password"}
+      value={field.value}
+      onChange={(e) => field.setValue(e.target.value)}
     />
   );
 }

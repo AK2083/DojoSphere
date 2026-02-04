@@ -56,11 +56,11 @@ export default function RegisterForm() {
         <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
         <CardContent>
           <Stack
-            direction="column"
-            spacing={0.25}
-            marginBottom={1}
             component="form"
+            direction="column"
             id="register-form"
+            marginBottom={1}
+            spacing={0.25}
             onSubmit={handleSubmit}
           >
             <EMail field={email} />

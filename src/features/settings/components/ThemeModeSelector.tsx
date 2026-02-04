@@ -36,13 +36,12 @@ export default function ThemeModeSelector() {
 
         <Grid display="flex" justifyContent="flex-end">
           <FormControlLabel
-            sx={{ mr: 0 }}
             control={
               <ToggleButtonGroup
-                value={alignment}
                 exclusive
-                onChange={handleAlignment}
                 aria-label="text alignment"
+                value={alignment}
+                onChange={handleAlignment}
               >
                 <ToggleButton value="left" aria-label="left aligned">
                   <SunIcon />
@@ -53,6 +52,7 @@ export default function ThemeModeSelector() {
               </ToggleButtonGroup>
             }
             label={undefined}
+            sx={{ mr: 0 }}
           />
         </Grid>
       </Grid>

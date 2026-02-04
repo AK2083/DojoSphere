@@ -32,9 +32,10 @@ export default function Navigation() {
   return (
     <>
       <Button
+        aria-controls="main-navigation"
+        aria-expanded={mobileOpen}
+        aria-label="Navigation öffnen"
         ref={toggleButtonRef}
-        onClick={handleDrawerToggle}
-        variant="contained"
         sx={{
           top: 10,
           left: 0,
@@ -47,18 +48,16 @@ export default function Navigation() {
           minWidth: 0,
           boxShadow: 2,
         }}
-        aria-label="Navigation öffnen"
-        aria-controls="main-navigation"
-        aria-expanded={mobileOpen}
+        variant="contained"
+        onClick={handleDrawerToggle}
       >
         <MenuIcon />
       </Button>
 
       <Drawer
-        variant={isDesktop ? "permanent" : "temporary"}
-        role="navigation"
+        aria-label="Hauptnavigation"
         open={isDesktop ? true : mobileOpen}
-        onClose={handleCloseMobile}
+        role="navigation"
         sx={{
           width: 64,
           flexShrink: 0,
@@ -67,7 +66,8 @@ export default function Navigation() {
             boxSizing: "border-box",
           },
         }}
-        aria-label="Hauptnavigation"
+        variant={isDesktop ? "permanent" : "temporary"}
+        onClose={handleCloseMobile}
       >
         <Box
           sx={{
@@ -80,11 +80,11 @@ export default function Navigation() {
           <List sx={{ p: 0 }} aria-label="Hauptmenü">
             <Tooltip title="Dashboard" placement="right" arrow>
               <ListItemButton
-                sx={{ justifyContent: "center" }}
-                onClick={() => !isDesktop && setMobileOpen(false)}
                 aria-label="Dashboard"
                 component={NavLink}
+                sx={{ justifyContent: "center" }}
                 to="/dashboard"
+                onClick={() => !isDesktop && setMobileOpen(false)}
               >
                 <ListItemIcon sx={{ minWidth: 0 }}>
                   <DashboardIcon />
@@ -95,14 +95,14 @@ export default function Navigation() {
 
           <Tooltip title="Einstellungen" placement="right" arrow>
             <ListItemButton
+              aria-label="Einstellungen"
+              component={NavLink}
               sx={{
                 justifyContent: "center",
                 mt: "auto",
               }}
-              component={NavLink}
               to="/settings"
               onClick={() => !isDesktop && setMobileOpen(false)}
-              aria-label="Einstellungen"
             >
               <ListItemIcon sx={{ minWidth: 0 }}>
                 <SettingsIcon />
