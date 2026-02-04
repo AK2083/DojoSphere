@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-import type { ApiResult } from "@/shared/types/api-result";
-import type { AppUser } from "@/shared/types/app-user";
+import type { ApiResult } from "@shared/types/api-result";
+import type { AppUser } from "@shared/types/app-user";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;

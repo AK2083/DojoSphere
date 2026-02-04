@@ -1,7 +1,6 @@
-// router.tsx
 import { Routes, Route } from "react-router";
 
-import Dashboard from "@features/dashboard/pages/test-dashboard";
+import Dashboard from "@features/dashboard/pages/Dashboard";
 import Settings from "@features/settings/pages/Settings";
 
 import CommonLayout from "@app/CommonLayout";

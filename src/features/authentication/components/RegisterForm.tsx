@@ -10,17 +10,16 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import EMail from "@/shared/components/EMail";
-import Password from "@/shared/components/Password";
-import { useField } from "@/shared/hooks/useFields";
+import EMail from "@shared/components/EMail";
+import Password from "@shared/components/Password";
+import { useField } from "@shared/hooks/useFields";
+import useSignUp from "@shared/hooks/useSignUp";
 import {
   composeValidators,
   emailValidator,
   passwordValidator,
   required,
-} from "@/shared/utils/validators";
-
-import useSignUp from "@shared/hooks/useSignUp";
+} from "@shared/utils/validators";
 
 export default function RegisterForm() {
   const [formError, setFormError] = useState<string | null>(null);

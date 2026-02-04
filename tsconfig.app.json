@@ -10,7 +10,6 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
       "@shared/*": ["src/shared/*"],
       "@app/*": ["src/app/*"],
       "@features/*": ["src/features/*"]

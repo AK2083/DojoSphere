@@ -1,4 +1,4 @@
-import type { ApiError } from "@/shared/types/api-error";
+import type { ApiError } from "@shared/types/api-error";
 
 /**
  * Represents the result of an API call, which can be either a success or a failure.
