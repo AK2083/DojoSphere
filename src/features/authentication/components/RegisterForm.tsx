@@ -51,31 +51,32 @@ export default function RegisterForm() {
 
   return (
     <>
-      <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "65vh", p: 2 }}>
+      <Card
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ width: { xs: "95vw", md: "40vw" }, height: "65vh", p: 2 }}
+      >
         <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
+
         <CardContent>
-          <Stack
-            component="form"
-            direction="column"
-            id="register-form"
-            marginBottom={1}
-            spacing={0.25}
-            onSubmit={handleSubmit}
-          >
+          <Stack direction="column" spacing={0.25}>
             <EMail field={email} />
             <Password field={password} />
           </Stack>
         </CardContent>
+
         <CardActions sx={{ px: 2, pb: 2 }}>
-          <Button fullWidth variant="contained" type="submit" form="register-form">
+          <Button fullWidth variant="contained" type="submit">
             Registriere mich
           </Button>
         </CardActions>
+
         {formError && (
           <Alert variant="filled" severity="error" sx={{ px: 2, mx: 2 }}>
             {formError}
           </Alert>
         )}
+
         <Box sx={{ px: 2, pt: 2 }}>
           <Typography variant="body2">
             Ich habe schon einen Account. <Link href="#">Log mich ein.</Link>
