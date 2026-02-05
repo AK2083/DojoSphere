@@ -1,17 +1,27 @@
+import MonitorIcon from "@mui/icons-material/Monitor";
 import MoonIcon from "@mui/icons-material/NightsStay";
 import SunIcon from "@mui/icons-material/WbSunny";
 import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
+import { useColorScheme } from "@mui/material/styles";
 import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
-export default function ThemeModeSelector() {
-  const [alignment, setAlignment] = React.useState<string | null>("left");
 
-  const handleAlignment = (_event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
-    setAlignment(newAlignment);
+export default function ThemeModeSelector() {
+  const { mode, setMode } = useColorScheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  type ThemeMode = "light" | "dark" | "system";
+
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  const onChangeMode = (_: React.MouseEvent<HTMLElement>, value: ThemeMode | null) => {
+    if (value) setMode(value);
   };
 
   return (
@@ -35,25 +45,28 @@ export default function ThemeModeSelector() {
         </Grid>
 
         <Grid display="flex" justifyContent="flex-end">
-          <FormControlLabel
-            control={
-              <ToggleButtonGroup
-                exclusive
-                aria-label="text alignment"
-                value={alignment}
-                onChange={handleAlignment}
-              >
-                <ToggleButton value="left" aria-label="left aligned">
-                  <SunIcon />
-                </ToggleButton>
-                <ToggleButton value="center" aria-label="centered">
-                  <MoonIcon />
-                </ToggleButton>
-              </ToggleButtonGroup>
-            }
-            label={undefined}
-            sx={{ mr: 0 }}
-          />
+          <ToggleButtonGroup
+            exclusive
+            aria-label="Theme Mode auswählen"
+            value={mode}
+            onChange={onChangeMode}
+          >
+            <Tooltip title="Heller Modus">
+              <ToggleButton value="light" aria-label="light mode">
+                <SunIcon />
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title="Dunkler Modus">
+              <ToggleButton value="dark" aria-label="dark mode">
+                <MoonIcon />
+              </ToggleButton>
+            </Tooltip>
+            <Tooltip title="System">
+              <ToggleButton value="system" aria-label="system mode">
+                <MonitorIcon />
+              </ToggleButton>
+            </Tooltip>
+          </ToggleButtonGroup>
         </Grid>
       </Grid>
     </Box>

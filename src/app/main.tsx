@@ -7,15 +7,16 @@ import { BrowserRouter } from "react-router";
 import App from "@app/App";
 
 const theme = createTheme({
-  palette: {
-    mode: "dark",
+  colorSchemes: { light: true, dark: true },
+  cssVariables: {
+    colorSchemeSelector: "class",
   },
 });
 
 // Reason: The root element is guaranteed by index.html (Vite entry point)
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={theme} noSsr>
     <CssBaseline />
     <StrictMode>
       <BrowserRouter>
