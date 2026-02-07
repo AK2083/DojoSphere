@@ -1,0 +1,16 @@
+{
+  "mail": "E-Mail",
+  "password": {
+    "label": "Password",
+    "toggle": "toggle password visibility",
+    "hints": {
+      "common": "Your password must",
+      "length": "at least 8 characters",
+      "uppercase": "uppercase and lowercase letters",
+      "number": "numbers",
+      "special": "special characters"
+    }
+  },
+  "conjunction": "and",
+  "contain": "contain."
+}

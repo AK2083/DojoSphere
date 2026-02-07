@@ -6,22 +6,24 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import useTranslations from "@shared/hooks/useTranslations";
 import type { FormFieldProps } from "@shared/types/form-field-props";
 import { getPasswordRules } from "@shared/utils/password-rules";
 
 export default function Password({ field }: FormFieldProps) {
+  const { translations } = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
   const rules = getPasswordRules(field.value);
 
   const passwordHints = (
     <Typography variant="caption" component="span">
-      Dein Passwort muss{" "}
+      {translations.password.hints.common}{" "}
       <Typography
         component="span"
         sx={{ color: rules.length ? "success.main" : "text.secondary" }}
         variant="caption"
       >
-        mindestens 8 Zeichen
+        {translations.password.hints.length}
       </Typography>
       ,{" "}
       <Typography
@@ -29,7 +31,7 @@ export default function Password({ field }: FormFieldProps) {
         sx={{ color: rules.letters ? "success.main" : "text.secondary" }}
         variant="caption"
       >
-        Groß- & Kleinbuchstaben
+        {translations.password.hints.uppercase}
       </Typography>
       ,{" "}
       <Typography
@@ -37,32 +39,29 @@ export default function Password({ field }: FormFieldProps) {
         sx={{ color: rules.numbers ? "success.main" : "text.secondary" }}
         variant="caption"
       >
-        Zahlen
+        {translations.password.hints.number}
       </Typography>
-      {" und "}
+      {" " + translations.conjunction + " "}
       <Typography
         component="span"
         sx={{ color: rules.special ? "success.main" : "text.secondary" }}
         variant="caption"
       >
-        Sonderzeichen
+        {translations.password.hints.special}
       </Typography>
-      {" enthalten."}
+      {" " + translations.contain}
     </Typography>
   );
 
   const helperText = () => {
-    // Fehler nur zeigen, solange Feld leer ist (Submit-Fall)
     if (field.error && field.value.length === 0) {
       return field.error;
     }
 
-    // Sobald der User tippt → Regeln anzeigen
     if (field.value.length > 0) {
       return passwordHints;
     }
 
-    // Leerzustand
     return " ";
   };
 
@@ -71,14 +70,14 @@ export default function Password({ field }: FormFieldProps) {
       error={!!field.error && field.value.length === 0}
       helperText={helperText()}
       id="password"
-      label="Passwort"
+      label={translations.password.label}
       size="small"
       slotProps={{
         input: {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                aria-label="toggle password visibility"
+                aria-label={translations.password.toggle}
                 edge="end"
                 size="small"
                 onClick={() => setShowPassword((previousState) => !previousState)}

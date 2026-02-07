@@ -17,6 +17,7 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "src/shared"),
       "@app": path.resolve(__dirname, "src/app"),
       "@features": path.resolve(__dirname, "src/features"),
+      "@i18n": path.resolve(__dirname, "src/i18n"),
     },
   },
   build: {

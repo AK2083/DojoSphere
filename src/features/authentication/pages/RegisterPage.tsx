@@ -6,8 +6,11 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import RegisterForm from "@features/authentication/components/RegisterForm";
+import useTranslations from "@features/authentication/hooks/useTranslations";
 
-export default function CenteredCard() {
+export default function RegisterPage() {
+  const { translations } = useTranslations();
+
   return (
     <Grid container minWidth="100vw" minHeight="100vh" alignItems="center" justifyContent="center">
       <Stack
@@ -19,7 +22,7 @@ export default function CenteredCard() {
         <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "10vh" }}>
           <CardContent>
             <Stack height={150}>
-              <Typography>Stack Center</Typography>
+              <Typography>{translations.useWithoutAuth}</Typography>
             </Stack>
           </CardContent>
         </Card>

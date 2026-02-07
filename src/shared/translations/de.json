@@ -1,0 +1,16 @@
+{
+  "mail": "E-Mail",
+  "password": {
+    "label": "Passwort",
+    "toggle": "Passwort zeigen/ausblenden",
+    "hints": {
+      "common": "Dein Passwort muss",
+      "length": "mindestens 8 Zeichen",
+      "uppercase": "Groß- & Kleinbuchstaben",
+      "number": "Zahlen",
+      "special": "Sonderzeichen"
+    }
+  },
+  "conjunction": "und",
+  "contain": "enthalten."
+}

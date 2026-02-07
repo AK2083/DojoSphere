@@ -12,7 +12,8 @@
     "paths": {
       "@shared/*": ["src/shared/*"],
       "@app/*": ["src/app/*"],
-      "@features/*": ["src/features/*"]
+      "@features/*": ["src/features/*"],
+      "@i18n/*": ["src/i18n/*"]
     },
 
     /* Bundler mode */

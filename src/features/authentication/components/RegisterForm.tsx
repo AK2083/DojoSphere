@@ -10,6 +10,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import useTranslations from "@features/authentication/hooks/useTranslations";
+
 import EMail from "@shared/components/EMail";
 import Password from "@shared/components/Password";
 import { useField } from "@shared/hooks/useFields";
@@ -22,12 +24,13 @@ import {
 } from "@shared/utils/validators";
 
 export default function RegisterForm() {
+  const { translations } = useTranslations();
   const [formError, setFormError] = useState<string | null>(null);
   const email = useField<string>("", composeValidators(required, emailValidator));
   const password = useField<string>("", composeValidators(required, passwordValidator));
   const { signUp } = useSignUp();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     const valid = [email.validate(), password.validate()].every(Boolean);
@@ -38,11 +41,11 @@ export default function RegisterForm() {
     if (!result.success) {
       switch (result.error.code) {
         case "RATE_LIMITED":
-          setFormError("Zu viele Versuche. Bitte später erneut versuchen.");
+          setFormError(translations.form.error.retry);
           break;
 
         default:
-          setFormError("Unbekannter Fehler. Bitte später erneut versuchen.");
+          setFormError(translations.form.error.unknown);
       }
 
       return;
@@ -56,7 +59,7 @@ export default function RegisterForm() {
         onSubmit={handleSubmit}
         sx={{ width: { xs: "95vw", md: "40vw" }, height: "65vh", p: 2 }}
       >
-        <CardHeader title="Registrierung" subheader="Neuen Benutzer registrieren" />
+        <CardHeader title={translations.form.title} subheader={translations.form.description} />
 
         <CardContent>
           <Stack direction="column" spacing={0.25}>
@@ -67,7 +70,7 @@ export default function RegisterForm() {
 
         <CardActions sx={{ px: 2, pb: 2 }}>
           <Button fullWidth variant="contained" type="submit">
-            Registriere mich
+            {translations.form.submit}
           </Button>
         </CardActions>
 
@@ -79,7 +82,7 @@ export default function RegisterForm() {
 
         <Box sx={{ px: 2, pt: 2 }}>
           <Typography variant="body2">
-            Ich habe schon einen Account. <Link href="#">Log mich ein.</Link>
+            {translations.form.alreadyAccount} <Link href="#">{translations.form.logMeIn}</Link>
           </Typography>
         </Box>
       </Card>

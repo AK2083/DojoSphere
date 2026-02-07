@@ -1,0 +1,14 @@
+{
+  "useWithoutAuth": "Continue without registration",
+  "form": {
+    "title": "Registration",
+    "description": "Register a new user",
+    "alreadyAccount": "Already have an account?",
+    "logMeIn": "Log in here",
+    "submit": "Register me",
+    "error": {
+      "retry": "Too many attempts. Please try again later.",
+      "unknown": "An unknown error occurred. Please try again later."
+    }
+  }
+}

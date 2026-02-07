@@ -5,16 +5,21 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
-import React from "react";
 
-import type { SelectChangeEvent } from "@mui/material/Select";
+import useTranslations from "@features/settings/hooks/useTranslations";
+
+import { AVAILABLE_LANGUAGES } from "@shared/constants/AvailableLanguages";
+import { useSelectedTranslation } from "@shared/hooks/usei18n";
 
 export default function LanguageSelector() {
-  const [language, setLanguage] = React.useState("");
+  const { translations } = useTranslations();
+  const { language, changeLanguage } = useSelectedTranslation();
 
-  const handleLanguageChange = (event: SelectChangeEvent) => {
-    setLanguage(event.target.value as string);
-  };
+  const languageItem = AVAILABLE_LANGUAGES.map((item) => (
+    <MenuItem key={item.code} value={item.code}>
+      {item.name}
+    </MenuItem>
+  ));
 
   return (
     <Box
@@ -31,10 +36,10 @@ export default function LanguageSelector() {
       <Grid container alignItems="center" spacing={2}>
         <Grid size="grow">
           <Typography variant="subtitle1" fontWeight={500}>
-            Sprache
+            {translations.language.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Bevorzugte Sprache der Anwendung
+            {translations.language.description}
           </Typography>
         </Grid>
 
@@ -45,10 +50,9 @@ export default function LanguageSelector() {
               label="Sprache"
               labelId="language-label"
               value={language}
-              onChange={handleLanguageChange}
+              onChange={(e) => changeLanguage(e.target.value as typeof language)}
             >
-              <MenuItem value="de">Deutsch</MenuItem>
-              <MenuItem value="en">English</MenuItem>
+              {languageItem}
             </Select>
           </FormControl>
         </Grid>

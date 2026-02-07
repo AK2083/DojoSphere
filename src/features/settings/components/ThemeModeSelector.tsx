@@ -10,7 +10,10 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
+import useSettingTranslation from "@features/settings/hooks/useTranslations";
+
 export default function ThemeModeSelector() {
+  const { translations } = useSettingTranslation();
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -37,32 +40,32 @@ export default function ThemeModeSelector() {
       <Grid container alignItems="center" spacing={2}>
         <Grid size="grow">
           <Typography variant="subtitle1" fontWeight={500}>
-            Theme
+            {translations.theme.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Bevorzugtes Theme der Anwendung
+            {translations.theme.description}
           </Typography>
         </Grid>
 
         <Grid display="flex" justifyContent="flex-end">
           <ToggleButtonGroup
             exclusive
-            aria-label="Theme Mode auswählen"
+            aria-label={translations.theme.title}
             value={mode}
             onChange={onChangeMode}
           >
-            <Tooltip title="Heller Modus">
-              <ToggleButton value="light" aria-label="light mode">
+            <Tooltip title={translations.theme.tooltip.light}>
+              <ToggleButton value="light" aria-label={translations.theme.tooltip.light}>
                 <SunIcon />
               </ToggleButton>
             </Tooltip>
-            <Tooltip title="Dunkler Modus">
-              <ToggleButton value="dark" aria-label="dark mode">
+            <Tooltip title={translations.theme.tooltip.dark}>
+              <ToggleButton value="dark" aria-label={translations.theme.tooltip.dark}>
                 <MoonIcon />
               </ToggleButton>
             </Tooltip>
-            <Tooltip title="System">
-              <ToggleButton value="system" aria-label="system mode">
+            <Tooltip title={translations.theme.tooltip.system}>
+              <ToggleButton value="system" aria-label={translations.theme.tooltip.system}>
                 <MonitorIcon />
               </ToggleButton>
             </Tooltip>

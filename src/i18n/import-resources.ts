@@ -1,0 +1,20 @@
+import i18n from "i18next";
+
+import deAuth from "@features/authentication/translations/de.json";
+import enAuth from "@features/authentication/translations/en.json";
+import deSettings from "@features/settings/translations/de.json";
+import enSettings from "@features/settings/translations/en.json";
+
+import deShared from "@shared/translations/de.json";
+import enShared from "@shared/translations/en.json";
+
+i18n.addResourceBundle("de", "authentication", deAuth);
+i18n.addResourceBundle("en", "authentication", enAuth);
+
+i18n.addResourceBundle("de", "settings", deSettings);
+i18n.addResourceBundle("en", "settings", enSettings);
+
+i18n.addResourceBundle("de", "shared", deShared);
+i18n.addResourceBundle("en", "shared", enShared);
+
+export default i18n;
