@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 
 import { useField } from "@shared/hooks/useFields";
-import type { ValidationError, Validator } from "@shared/types/validator";
+import type { Validator } from "@shared/types/validator";
 
 describe("useField", () => {
   it("initializes with initial value and no error", () => {
