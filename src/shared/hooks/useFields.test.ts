@@ -2,7 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 
 import { useField } from "@shared/hooks/useFields";
-import type { Validator } from "@shared/types/validator";
+import type { ValidationError, Validator } from "@shared/types/validator";
 
 describe("useField", () => {
   it("initializes with initial value and no error", () => {
@@ -52,9 +52,9 @@ describe("useField", () => {
   });
 
   it("validate returns false and sets error when validator fails", () => {
-    const validator: Validator<string> = vi.fn(() => "Invalid value");
+    const validator: Validator<string> = vi.fn(() => "required" as const);
 
-    const { result } = renderHook(() => useField("invalid", validator));
+    const { result } = renderHook(() => useField("required", validator));
 
     let isValid!: boolean;
 
@@ -63,11 +63,11 @@ describe("useField", () => {
     });
 
     expect(isValid).toBe(false);
-    expect(result.current.error).toBe("Invalid value");
+    expect(result.current.error).toBe("required");
   });
 
   it("reset resets value and error to initial state", () => {
-    const validator: Validator<string> = () => "Error";
+    const validator: Validator<string> = () => "invalid_password";
 
     const { result } = renderHook(() => useField<string>("initial", validator));
 
@@ -77,7 +77,7 @@ describe("useField", () => {
     });
 
     expect(result.current.value).toBe("changed");
-    expect(result.current.error).toBe("Error");
+    expect(result.current.error).toBe("invalid_password");
 
     act(() => {
       result.current.reset();
@@ -88,7 +88,7 @@ describe("useField", () => {
   });
 
   it("works with non-string values (generic)", () => {
-    const validator: Validator<number> = (v: number) => (v > 0 ? null : "Must be positive");
+    const validator: Validator<number> = (v: number) => (v > 0 ? null : "invalid_password");
 
     const { result } = renderHook(() => useField<number>(0, validator));
 
@@ -99,7 +99,7 @@ describe("useField", () => {
     });
 
     expect(isValid).toBe(false);
-    expect(result.current.error).toBe("Must be positive");
+    expect(result.current.error).toBe("invalid_password");
 
     act(() => {
       result.current.setValue(5);

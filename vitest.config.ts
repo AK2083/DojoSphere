@@ -32,6 +32,7 @@ export default defineConfig({
         "**/pages/**",
         "**/app/**",
         "**/components/**",
+        "**/constants/**",
         "**/i18n/**",
       ],
       thresholds: {

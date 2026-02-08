@@ -1,4 +1,4 @@
-import { useNamespaceToTranslate } from "@shared/hooks/usei18n";
+import { useNamespaceToTranslate } from "@shared/hooks/useI18n";
 
 export default function useTranslations() {
   const { translate } = useNamespaceToTranslate("settings");
