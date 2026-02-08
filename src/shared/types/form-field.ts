@@ -12,6 +12,8 @@ export type FormField<T> = {
   error: string | null;
   /** Function to validate the field, returns true if valid */
   validate: () => boolean;
+  touched: boolean;
+  setTouched: (v: boolean) => void;
   /** Function to reset the field to its initial value and clear errors */
   reset: () => void;
 };

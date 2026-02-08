@@ -54,8 +54,10 @@ export default function Password({ field }: FormFieldProps) {
   );
 
   const helperText = () => {
-    if (field.error && field.value.length === 0) {
-      return field.error;
+    if (!field.touched) return " ";
+
+    if (field.error === "required") {
+      return translations.error.required;
     }
 
     if (field.value.length > 0) {
@@ -67,7 +69,7 @@ export default function Password({ field }: FormFieldProps) {
 
   return (
     <TextField
-      error={!!field.error && field.value.length === 0}
+      error={field.touched && !!field.error && field.value.length === 0}
       helperText={helperText()}
       id="password"
       label={translations.password.label}
@@ -91,6 +93,7 @@ export default function Password({ field }: FormFieldProps) {
       type={showPassword ? "text" : "password"}
       value={field.value}
       onChange={(e) => field.setValue(e.target.value)}
+      onBlur={() => field.setTouched(true)}
     />
   );
 }

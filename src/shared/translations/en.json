@@ -1,5 +1,10 @@
 {
   "mail": "E-Mail",
+  "error": {
+    "required": "This field is required.",
+    "invalid_email": "Invalid email address.",
+    "invalid_password": "Invalid password."
+  },
   "password": {
     "label": "Password",
     "toggle": "toggle password visibility",

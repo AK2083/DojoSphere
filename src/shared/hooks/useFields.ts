@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Validator } from "@shared/types/validator";
+import type { ValidationError, Validator } from "@shared/types/validator";
 
 /**
  * Custom React hook to manage a single form field with optional validation.
@@ -33,7 +33,8 @@ import type { Validator } from "@shared/types/validator";
  */
 export function useField<T>(initialValue: T, validator?: Validator<T> | undefined) {
   const [value, setValue] = useState<T>(initialValue);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ValidationError | null>(null);
+  const [touched, setTouched] = useState(false);
 
   const validate = () => {
     const err = validator?.(value) ?? null;
@@ -46,6 +47,8 @@ export function useField<T>(initialValue: T, validator?: Validator<T> | undefine
     setValue,
     error,
     validate,
+    touched,
+    setTouched,
     reset: () => {
       setValue(initialValue);
       setError(null);

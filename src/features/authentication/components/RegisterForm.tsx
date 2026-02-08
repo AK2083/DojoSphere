@@ -33,9 +33,18 @@ export default function RegisterForm() {
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
-    const valid = [email.validate(), password.validate()].every(Boolean);
-    if (!valid) return;
+    email.setTouched(true);
+    password.setTouched(true);
 
+    const isEmailValid = email.validate();
+    const isPasswordValid = password.validate();
+
+    if (!isEmailValid || !isPasswordValid) return;
+
+    signUpUser();
+  };
+
+  const signUpUser = async () => {
     const result = await signUp(email.value, password.value);
 
     if (!result.success) {

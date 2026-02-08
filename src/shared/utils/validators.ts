@@ -7,7 +7,7 @@ import { getPasswordRules } from "@shared/utils/password-rules";
  * @param v - The string value to validate
  * @returns An error message if the value is empty, otherwise null
  */
-export const required: Validator<string> = (v) => (v ? null : "Pflichtfeld");
+export const required: Validator<string> = (v) => (v ? null : "required");
 
 /**
  * Validator to check if a string is a valid email address.
@@ -16,7 +16,7 @@ export const required: Validator<string> = (v) => (v ? null : "Pflichtfeld");
  * @returns An error message if the email is invalid, otherwise null
  */
 export const emailValidator: Validator<string> = (mailaddress: string) => {
-  if (!/^\S+@\S+\.\S+$/.test(mailaddress)) return "Ungültige E-Mail";
+  if (!/^\S+@\S+\.\S+$/.test(mailaddress)) return "invalid_email";
   return null;
 };
 
@@ -33,10 +33,15 @@ export const emailValidator: Validator<string> = (mailaddress: string) => {
  * @returns An error message if the password does not meet the rules, otherwise null
  */
 export const passwordValidator: Validator<string> = (password: string) => {
-  if (!password) return null;
+  if (!password || password.trim().length === 0) {
+    return "required";
+  }
 
   const rules = getPasswordRules(password);
-  return Object.values(rules).every(Boolean) ? null : null;
+
+  const isValid = Object.values(rules).every(Boolean);
+
+  return isValid ? null : "invalid_password";
 };
 
 /**

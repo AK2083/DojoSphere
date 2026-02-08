@@ -6,6 +6,11 @@ export default function useTranslations() {
   return {
     translations: {
       mail: translate("mail"),
+      error: {
+        required: translate("error.required"),
+        invalid_email: translate("error.invalid_email"),
+        invalid_password: translate("error.invalid_password"),
+      },
       password: {
         label: translate("password.label"),
         toggle: translate("password.toggle"),
