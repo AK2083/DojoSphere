@@ -1,4 +1,4 @@
-name: 🐞 Bug Report
+name: Bug Report
 description: Report a problem. Please provide enough information that we can reproduce the problem.
 title: "Bug: "
 body:
