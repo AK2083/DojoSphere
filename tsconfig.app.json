@@ -13,7 +13,7 @@
       "@shared/*": ["src/shared/*"],
       "@app/*": ["src/app/*"],
       "@features/*": ["src/features/*"],
-      "@i18n/*": ["src/i18n/*"]
+      "@lib/*": ["src/lib/*"]
     },
 
     /* Bundler mode */

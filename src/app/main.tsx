@@ -5,8 +5,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 
 import App from "@app/App";
-import "@i18n/i18n";
-import "@i18n/import-resources";
+import "@lib/i18n/i18n";
+import "@lib/i18n/import-resources";
+import "@lib/sentry/sentry";
 
 const theme = createTheme({
   colorSchemes: { light: true, dark: true },
