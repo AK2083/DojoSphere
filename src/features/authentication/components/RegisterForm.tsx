@@ -11,6 +11,10 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
 import useTranslations from "@features/authentication/hooks/useTranslations";
+import {
+  monitorInformation,
+  MONITORING_EVENTS,
+} from "@features/authentication/monitoring/monitoring";
 
 import EMail from "@shared/components/EMail";
 import Password from "@shared/components/Password";
@@ -32,6 +36,7 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
+    monitorInformation(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED);
 
     email.setTouched(true);
     password.setTouched(true);

@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
+import { HTTP_STATUS_CODES } from "@shared/constants/http-codes";
+import { captureException, setUserContext } from "@shared/services/sentry/sentry-manager";
 import type { ApiResult } from "@shared/types/api-result";
 import type { AppUser } from "@shared/types/app-user";
 
@@ -30,9 +32,10 @@ export async function signUpNewUser(
     email: userEmail,
     password: userPassword,
   });
+  const serviceName = "Supabase Manager";
 
   if (error) {
-    if (error.status === 429) {
+    if (error.status === HTTP_STATUS_CODES.TOO_MANY_REQUESTS) {
       return {
         success: false,
         error: {
@@ -40,6 +43,10 @@ export async function signUpNewUser(
           message: "Too many requests to the registration endpoint.",
         },
       };
+    }
+
+    if (error.status && error.status >= HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
+      captureException(error, serviceName);
     }
 
     return {
@@ -52,8 +59,11 @@ export async function signUpNewUser(
   }
 
   if (!data?.user) {
-    throw new Error("Invariant violated: no user returned after signUp");
+    const invariantError = new Error("Invariant violated: no user returned after signUp");
+    captureException(invariantError, serviceName);
+    throw invariantError;
   }
 
+  setUserContext(data.user);
   return { success: true, data: data.user };
 }

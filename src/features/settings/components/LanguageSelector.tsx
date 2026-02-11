@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 
 import useTranslations from "@features/settings/hooks/useTranslations";
 
-import { AVAILABLE_LANGUAGES } from "@shared/constants/AvailableLanguages";
+import { AVAILABLE_LANGUAGES } from "@shared/constants/available-languages";
 import { useSelectedTranslation } from "@shared/hooks/useI18n";
 
 export default function LanguageSelector() {
