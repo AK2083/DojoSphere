@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { signUpNewUser } from "@shared/services/supabase/supabase-manager";
+import { captureException } from "@shared/services/sentry-manager";
+import { signUpNewUser } from "@shared/services/supabase-manager";
+import { ApiErrorCode } from "@shared/types/api-error-code";
 
 const signUpMock = vi.hoisted(() => vi.fn());
 
@@ -52,8 +54,7 @@ describe("signUpNewUser", () => {
     expect(result).toEqual({
       success: false,
       error: {
-        code: "RATE_LIMITED",
-        message: "Too many requests to the registration endpoint.",
+        code: ApiErrorCode.RATE_LIMITED,
       },
     });
   });
@@ -78,9 +79,24 @@ describe("signUpNewUser", () => {
     expect(result).toEqual({
       success: false,
       error: {
-        code: "CONFLICT",
-        message: "Registration failed due to an unexpected error.",
+        code: ApiErrorCode.CONFLICT,
       },
     });
+  });
+
+  it("calls captureException on 500 error", async () => {
+    vi.mock("@shared/services/sentry-manager", () => ({
+      captureException: vi.fn(),
+      setUserContext: vi.fn(),
+    }));
+
+    signUpMock.mockResolvedValue({
+      data: null,
+      error: { status: 500, message: "Server error" },
+    });
+
+    await signUpNewUser("test@test.de", "Valid123!");
+
+    expect(captureException).toHaveBeenCalled();
   });
 });

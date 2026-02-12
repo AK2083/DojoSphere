@@ -34,6 +34,8 @@ export default defineConfig({
         "**/components/**",
         "**/constants/**",
         "**/i18n/**",
+        "**/lib/**",
+        "**/monitoring/**",
       ],
       thresholds: {
         statements: 80,

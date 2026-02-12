@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useNamespaceToTranslate } from "@shared/hooks/use-i18n";
 import useTranslations from "@shared/hooks/use-translations";
 
-vi.mock("@shared/hooks/useI18n", () => ({
+vi.mock("@shared/hooks/use-i18n", () => ({
   useNamespaceToTranslate: vi.fn(),
 }));
 
