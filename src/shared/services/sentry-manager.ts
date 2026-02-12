@@ -6,13 +6,6 @@ export function setUserContext(user: { id: string } | null) {
   Sentry.setUser({ id: user?.id });
 }
 
-export function setContext(todos: any[], activeFilter: string) {
-  Sentry.setContext("TodoState", {
-    count: todos.length,
-    filter: activeFilter,
-  });
-}
-
 export function captureException(err: Error, service: string, action: string) {
   Sentry.captureException(err, {
     tags: { service: service, action: action },

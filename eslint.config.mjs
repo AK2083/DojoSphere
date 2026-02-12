@@ -10,7 +10,6 @@ import importPlugin from "eslint-plugin-import";
 import checkFile from "eslint-plugin-check-file";
 
 export default defineConfig([
-  // Build-Output ignorieren
   globalIgnores(["dist", "build"]),
   {
     files: ["**/*.{ts,tsx}"],
@@ -93,22 +92,13 @@ export default defineConfig([
       "import/order": [
         "error",
         {
-          groups: [
-            "builtin", // node builtins
-            "external", // react, mui, router
-            "internal", // @app, @lib, etc.
-            "parent",
-            "sibling",
-            "index",
-            "type",
-          ],
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
           "newlines-between": "always",
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
           },
           pathGroups: [
-            // React Core first (innerhalb external ganz oben)
             {
               pattern: "react",
               group: "external",
@@ -119,8 +109,6 @@ export default defineConfig([
               group: "external",
               position: "before",
             },
-
-            // Deine Aliases
             {
               pattern: "@app/**",
               group: "internal",
