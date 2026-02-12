@@ -10,7 +10,7 @@ import type { ApiErrorCode } from "@shared/types/api-error-code";
  */
 export type ApiError = {
   code: ApiErrorCode;
-  message: string;
+  message?: string;
   field?: string;
   correlationId?: string;
 };

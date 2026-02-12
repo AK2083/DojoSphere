@@ -1,15 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@lib/supabase/client";
 
 import { HTTP_STATUS_CODES } from "@shared/constants/http-codes";
 import { captureException, setUserContext } from "@shared/services/sentry/sentry-manager";
+import { ApiErrorCode } from "@shared/types/api-error-code";
 import type { ApiResult } from "@shared/types/api-result";
 import type { AppUser } from "@shared/types/app-user";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 /**
  * Registers a new user using Supabase authentication.
  *
@@ -32,38 +27,41 @@ export async function signUpNewUser(
     email: userEmail,
     password: userPassword,
   });
-  const serviceName = "Supabase Manager";
 
   if (error) {
     if (error.status === HTTP_STATUS_CODES.TOO_MANY_REQUESTS) {
       return {
         success: false,
         error: {
-          code: "RATE_LIMITED",
-          message: "Too many requests to the registration endpoint.",
+          code: ApiErrorCode.RATE_LIMITED,
         },
       };
     }
 
     if (error.status && error.status >= HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
-      captureException(error, serviceName);
+      callException(error);
     }
 
     return {
       success: false,
       error: {
-        code: "CONFLICT",
-        message: "Registration failed due to an unexpected error.",
+        code: ApiErrorCode.CONFLICT,
       },
     };
   }
 
   if (!data?.user) {
-    const invariantError = new Error("Invariant violated: no user returned after signUp");
-    captureException(invariantError, serviceName);
+    const invariantError = new Error("Invariant violated: signUp returned no user");
+    callException(invariantError);
     throw invariantError;
   }
 
   setUserContext(data.user);
   return { success: true, data: data.user };
+}
+
+function callException(err: Error) {
+  const serviceName = "Supabase Manager";
+  const actionName = "signUpNewUser";
+  captureException(err, serviceName, actionName);
 }

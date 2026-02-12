@@ -8,6 +8,7 @@ import App from "@app/App";
 import "@lib/i18n/i18n";
 import "@lib/i18n/import-resources";
 import "@lib/sentry/sentry";
+import { AuthProvider } from "@app/AuthProvider";
 
 const theme = createTheme({
   colorSchemes: { light: true, dark: true },
@@ -23,7 +24,9 @@ createRoot(document.getElementById("root")!).render(
     <CssBaseline />
     <StrictMode>
       <BrowserRouter>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </BrowserRouter>
     </StrictMode>
   </ThemeProvider>,

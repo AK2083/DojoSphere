@@ -1,10 +1,9 @@
 import * as Sentry from "@sentry/browser";
 
-import type { AppUser } from "@shared/types/app-user";
 import type { LogLevel } from "@shared/types/log-level";
 
-export function setUserContext(user: AppUser) {
-  Sentry.setUser({ id: user.id });
+export function setUserContext(user: { id: string } | null) {
+  Sentry.setUser({ id: user?.id });
 }
 
 export function setContext(todos: any[], activeFilter: string) {
@@ -14,9 +13,9 @@ export function setContext(todos: any[], activeFilter: string) {
   });
 }
 
-export function captureException(err: Error, scope: string) {
+export function captureException(err: Error, service: string, action: string) {
   Sentry.captureException(err, {
-    tags: { section: scope },
+    tags: { service: service, action: action },
     extra: { status: err.message },
   });
 }

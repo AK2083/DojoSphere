@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
+import useSignUp from "@features/authentication/hooks/useSignUp";
 import useTranslations from "@features/authentication/hooks/useTranslations";
 import {
   monitorInformation,
@@ -19,7 +20,7 @@ import {
 import EMail from "@shared/components/EMail";
 import Password from "@shared/components/Password";
 import { useField } from "@shared/hooks/useFields";
-import useSignUp from "@shared/hooks/useSignUp";
+import { ApiErrorCode } from "@shared/types/api-error-code";
 import {
   composeValidators,
   emailValidator,
@@ -54,7 +55,7 @@ export default function RegisterForm() {
 
     if (!result.success) {
       switch (result.error.code) {
-        case "RATE_LIMITED":
+        case ApiErrorCode.RATE_LIMITED:
           setFormError(translations.form.error.retry);
           break;
 
