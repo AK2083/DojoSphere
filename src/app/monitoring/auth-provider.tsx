@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 
+import { AuthContext } from "@app/monitoring/auth-context";
 import { supabase } from "@lib/supabase/client";
-
 import { setUserContext } from "@shared/services/sentry/sentry-manager";
-
-import { AuthContext } from "./auth-context";
 
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 

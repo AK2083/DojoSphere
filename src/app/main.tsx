@@ -1,14 +1,16 @@
+import { StrictMode } from "react";
+
+import { createRoot } from "react-dom/client";
+
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 
-import App from "@app/App";
+import App from "@app/components/app";
 import "@lib/i18n/i18n";
 import "@lib/i18n/import-resources";
 import "@lib/sentry/sentry";
-import { AuthProvider } from "@app/AuthProvider";
+import { AuthProvider } from "@app/monitoring/auth-provider";
 
 const theme = createTheme({
   colorSchemes: { light: true, dark: true },

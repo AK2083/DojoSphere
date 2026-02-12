@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import { Outlet } from "react-router";
 
-import Navigation from "@shared/components/Navigation";
+import Navigation from "@shared/components/navigation";
 
 export default function CommonLayout() {
   return (

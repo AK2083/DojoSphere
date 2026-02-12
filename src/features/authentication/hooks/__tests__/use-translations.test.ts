@@ -1,9 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import useTranslations from "@features/settings/hooks/useTranslations";
-
-import { useNamespaceToTranslate } from "@shared/hooks/useI18n";
+import useTranslations from "@features/authentication/hooks/use-translations";
+import { useNamespaceToTranslate } from "@shared/hooks/use-i18n";
 
 vi.mock("@shared/hooks/useI18n", () => ({
   useNamespaceToTranslate: vi.fn(),
@@ -14,7 +13,7 @@ describe("useTranslations", () => {
     vi.clearAllMocks();
   });
 
-  it("calls useNamespaceToTranslate with 'settings'", () => {
+  it("calls useNamespaceToTranslate with 'authentication'", () => {
     const mockTranslate = vi.fn((key: string) => `t:${key}`);
 
     (useNamespaceToTranslate as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -23,7 +22,7 @@ describe("useTranslations", () => {
 
     renderHook(() => useTranslations());
 
-    expect(useNamespaceToTranslate).toHaveBeenCalledWith("settings");
+    expect(useNamespaceToTranslate).toHaveBeenCalledWith("authentication");
   });
 
   it("returns correct translation structure", () => {
@@ -36,18 +35,16 @@ describe("useTranslations", () => {
     const { result } = renderHook(() => useTranslations());
 
     expect(result.current.translations).toEqual({
-      title: "t:title",
-      language: {
-        title: "t:language.title",
-        description: "t:language.description",
-      },
-      theme: {
-        title: "t:theme.title",
-        description: "t:theme.description",
-        tooltip: {
-          light: "t:theme.tooltip.light",
-          dark: "t:theme.tooltip.dark",
-          system: "t:theme.tooltip.system",
+      useWithoutAuth: "t:title",
+      form: {
+        title: "t:form.title",
+        description: "t:form.description",
+        alreadyAccount: "t:form.alreadyAccount",
+        logMeIn: "t:form.logMeIn",
+        submit: "t:form.submit",
+        error: {
+          retry: "t:form.error.retry",
+          unknown: "t:form.error.unknown",
         },
       },
     });
@@ -62,13 +59,12 @@ describe("useTranslations", () => {
 
     renderHook(() => useTranslations());
 
-    expect(mockTranslate).toHaveBeenCalledWith("title");
-    expect(mockTranslate).toHaveBeenCalledWith("language.title");
-    expect(mockTranslate).toHaveBeenCalledWith("language.description");
-    expect(mockTranslate).toHaveBeenCalledWith("theme.title");
-    expect(mockTranslate).toHaveBeenCalledWith("theme.description");
-    expect(mockTranslate).toHaveBeenCalledWith("theme.tooltip.light");
-    expect(mockTranslate).toHaveBeenCalledWith("theme.tooltip.dark");
-    expect(mockTranslate).toHaveBeenCalledWith("theme.tooltip.system");
+    expect(mockTranslate).toHaveBeenCalledWith("form.title");
+    expect(mockTranslate).toHaveBeenCalledWith("form.description");
+    expect(mockTranslate).toHaveBeenCalledWith("form.alreadyAccount");
+    expect(mockTranslate).toHaveBeenCalledWith("form.logMeIn");
+    expect(mockTranslate).toHaveBeenCalledWith("form.submit");
+    expect(mockTranslate).toHaveBeenCalledWith("form.error.retry");
+    expect(mockTranslate).toHaveBeenCalledWith("form.error.unknown");
   });
 });

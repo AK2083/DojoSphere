@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 
-import { useField } from "@shared/hooks/useFields";
+import { useField } from "@shared/hooks/use-fields";
 import type { Validator } from "@shared/types/validator";
 
 describe("useField", () => {

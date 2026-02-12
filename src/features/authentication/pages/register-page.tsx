@@ -5,8 +5,8 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import RegisterForm from "@features/authentication/components/RegisterForm";
-import useTranslations from "@features/authentication/hooks/useTranslations";
+import RegisterForm from "@features/authentication/components/register-form";
+import useTranslations from "@features/authentication/hooks/use-translations";
 
 export default function RegisterPage() {
   const { translations } = useTranslations();

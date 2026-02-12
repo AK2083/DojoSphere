@@ -1,3 +1,5 @@
+import React from "react";
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -10,7 +12,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import { useTheme } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import React from "react";
 import { NavLink } from "react-router";
 
 export default function Navigation() {

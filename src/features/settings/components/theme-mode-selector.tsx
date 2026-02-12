@@ -1,3 +1,5 @@
+import React from "react";
+
 import MonitorIcon from "@mui/icons-material/Monitor";
 import MoonIcon from "@mui/icons-material/NightsStay";
 import SunIcon from "@mui/icons-material/WbSunny";
@@ -8,9 +10,8 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import React from "react";
 
-import useSettingTranslation from "@features/settings/hooks/useTranslations";
+import useSettingTranslation from "@features/settings/hooks/use-translations";
 
 export default function ThemeModeSelector() {
   const { translations } = useSettingTranslation();

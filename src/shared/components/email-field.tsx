@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 
-import useTranslations from "@shared/hooks/useTranslations";
+import useTranslations from "@shared/hooks/use-translations";
 import type { FormFieldProps } from "@shared/types/form-field-props";
 
 export default function EMail({ field }: FormFieldProps) {

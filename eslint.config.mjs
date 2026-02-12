@@ -77,17 +77,7 @@ export default defineConfig([
       "check-file/filename-naming-convention": [
         "error",
         {
-          // React Components
-          "src/**/{components, pages}/**/*.tsx": "PASCAL_CASE",
-          "src/**/{components, pages}/**/*.spec.ts": "PASCAL_CASE",
-
-          // Hooks
-          "src/**/hooks/use*.ts": "CAMEL_CASE",
-          "src/**/hooks/use*.test.ts": "CAMEL_CASE",
-
-          // Utils, Types
-          "src/**/{utils, types}/**/*.ts": "KEBAB_CASE",
-          "src/**/{utils, types}/**/*.test.ts": "KEBAB_CASE",
+          "**/*.{ts,tsx}": "KEBAB_CASE",
         },
         {
           ignoreMiddleExtensions: true,
@@ -96,37 +86,59 @@ export default defineConfig([
       "check-file/folder-naming-convention": [
         "error",
         {
-          "src/**/!(__tests__)": "KEBAB_CASE",
+          "src/**/!(__tests__)": "^[a-z0-9]+([-\\.][a-z0-9]+)+\\.(ts|tsx)$",
         },
       ],
 
       "import/order": [
         "error",
         {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index", "type"],
+          groups: [
+            "builtin", // node builtins
+            "external", // react, mui, router
+            "internal", // @app, @lib, etc.
+            "parent",
+            "sibling",
+            "index",
+            "type",
+          ],
           "newlines-between": "always",
           alphabetize: {
             order: "asc",
             caseInsensitive: true,
           },
           pathGroups: [
+            // React Core first (innerhalb external ganz oben)
+            {
+              pattern: "react",
+              group: "external",
+              position: "before",
+            },
+            {
+              pattern: "react-dom/**",
+              group: "external",
+              position: "before",
+            },
+
+            // Deine Aliases
+            {
+              pattern: "@app/**",
+              group: "internal",
+            },
             {
               pattern: "@features/**",
               group: "internal",
-              position: "after",
             },
             {
               pattern: "@shared/**",
               group: "internal",
-              position: "after",
             },
             {
-              pattern: "@app/**",
+              pattern: "@lib/**",
               group: "internal",
-              position: "after",
             },
           ],
-          pathGroupsExcludedImportTypes: ["builtin"],
+          pathGroupsExcludedImportTypes: ["react"],
         },
       ],
     },

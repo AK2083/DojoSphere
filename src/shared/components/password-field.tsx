@@ -1,12 +1,13 @@
+import { useState } from "react";
+
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
 
-import useTranslations from "@shared/hooks/useTranslations";
+import useTranslations from "@shared/hooks/use-translations";
 import type { FormFieldProps } from "@shared/types/form-field-props";
 import { getPasswordRules } from "@shared/utils/password-rules";
 

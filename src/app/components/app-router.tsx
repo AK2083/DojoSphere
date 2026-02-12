@@ -1,10 +1,9 @@
 import { Routes, Route } from "react-router";
 
-import RegisterPage from "@features/authentication/pages/RegisterPage";
-import Dashboard from "@features/dashboard/pages/Dashboard";
-import Settings from "@features/settings/pages/Settings";
-
-import CommonLayout from "@app/CommonLayout";
+import CommonLayout from "@app/components/common-layout";
+import RegisterPage from "@features/authentication/pages/register-page";
+import Dashboard from "@features/dashboard/pages/dashboard";
+import Settings from "@features/settings/pages/settings";
 
 export default function AppRouter() {
   return (

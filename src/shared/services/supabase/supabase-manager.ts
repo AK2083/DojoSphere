@@ -1,5 +1,4 @@
 import { supabase } from "@lib/supabase/client";
-
 import { HTTP_STATUS_CODES } from "@shared/constants/http-codes";
 import { captureException, setUserContext } from "@shared/services/sentry/sentry-manager";
 import { ApiErrorCode } from "@shared/types/api-error-code";

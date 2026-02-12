@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { useNamespaceToTranslate } from "@shared/hooks/useI18n";
-import useTranslations from "@shared/hooks/useTranslations";
+import { useNamespaceToTranslate } from "@shared/hooks/use-i18n";
+import useTranslations from "@shared/hooks/use-translations";
 
 vi.mock("@shared/hooks/useI18n", () => ({
   useNamespaceToTranslate: vi.fn(),

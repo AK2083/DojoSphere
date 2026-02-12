@@ -4,7 +4,6 @@ import deAuth from "@features/authentication/translations/de.json";
 import enAuth from "@features/authentication/translations/en.json";
 import deSettings from "@features/settings/translations/de.json";
 import enSettings from "@features/settings/translations/en.json";
-
 import deShared from "@shared/translations/de.json";
 import enShared from "@shared/translations/en.json";
 

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -8,18 +10,16 @@ import CardHeader from "@mui/material/CardHeader";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
 
-import useSignUp from "@features/authentication/hooks/useSignUp";
-import useTranslations from "@features/authentication/hooks/useTranslations";
+import useSignUp from "@features/authentication/hooks/use-sign-up";
+import useTranslations from "@features/authentication/hooks/use-translations";
 import {
   monitorInformation,
   MONITORING_EVENTS,
 } from "@features/authentication/monitoring/monitoring";
-
-import EMail from "@shared/components/EMail";
-import Password from "@shared/components/Password";
-import { useField } from "@shared/hooks/useFields";
+import EMail from "@shared/components/email-field";
+import Password from "@shared/components/password-field";
+import { useField } from "@shared/hooks/use-fields";
 import { ApiErrorCode } from "@shared/types/api-error-code";
 import {
   composeValidators,

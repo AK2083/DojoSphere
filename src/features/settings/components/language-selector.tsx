@@ -6,10 +6,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 
-import useTranslations from "@features/settings/hooks/useTranslations";
-
+import useTranslations from "@features/settings/hooks/use-translations";
 import { AVAILABLE_LANGUAGES } from "@shared/constants/available-languages";
-import { useSelectedTranslation } from "@shared/hooks/useI18n";
+import { useSelectedTranslation } from "@shared/hooks/use-i18n";
 
 export default function LanguageSelector() {
   const { translations } = useTranslations();
