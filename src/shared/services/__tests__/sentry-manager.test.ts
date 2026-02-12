@@ -1,12 +1,7 @@
 import * as Sentry from "@sentry/browser";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import {
-  setUserContext,
-  setContext,
-  captureException,
-  addBreadcrumb,
-} from "@shared/services//sentry-manager";
+import { setUserContext, captureException, addBreadcrumb } from "@shared/services//sentry-manager";
 
 vi.mock("@sentry/browser", () => ({
   setUser: vi.fn(),
@@ -31,19 +26,6 @@ describe("sentry-manager", () => {
       setUserContext(null);
 
       expect(Sentry.setUser).toHaveBeenCalledWith({ id: undefined });
-    });
-  });
-
-  describe("setContext", () => {
-    it("calls Sentry.setContext with TodoState data", () => {
-      const todos = [{ id: 1 }, { id: 2 }];
-
-      setContext(todos, "active");
-
-      expect(Sentry.setContext).toHaveBeenCalledWith("TodoState", {
-        count: 2,
-        filter: "active",
-      });
     });
   });
 
