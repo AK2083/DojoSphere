@@ -4,6 +4,8 @@ import { createRoot } from "react-dom/client";
 
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router";
 
 import App from "@app/components/app";
@@ -19,16 +21,21 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 // Reason: The root element is guaranteed by index.html (Vite entry point)
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider theme={theme} noSsr>
+  <ThemeProvider theme={theme}>
     <CssBaseline />
     <StrictMode>
       <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <App />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </AuthProvider>
+        </QueryClientProvider>
       </BrowserRouter>
     </StrictMode>
   </ThemeProvider>,

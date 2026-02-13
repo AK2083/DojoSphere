@@ -16,7 +16,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(currentUser);
 
-        console.log("User:", currentUser);
         if (currentUser) {
           setUserContext({ id: currentUser.id });
         } else {

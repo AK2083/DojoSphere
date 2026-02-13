@@ -27,6 +27,8 @@
     "@mui/material": "^7.3.6",
     "@sentry/browser": "^10.38.0",
     "@supabase/supabase-js": "^2.90.0",
+    "@tanstack/react-form": "^1.28.0",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "i18next": "^25.8.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
