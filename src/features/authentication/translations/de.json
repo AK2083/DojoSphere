@@ -5,6 +5,14 @@
     "description": "Neuen Benutzer registrieren",
     "alreadyAccount": "Du hast bereits einen Account?",
     "logMeIn": "Logge dich hier ein",
+    "mail": {
+      "title": "E-Mail",
+      "invalid": "Ungültige E-Mail-Adresse"
+    },
+    "password": {
+      "title": "Passwort",
+      "invalid": "Ungültiges Passwort"
+    },
     "submit": "Registriere mich",
     "error": {
       "retry": "Zu viele Versuche. Bitte später erneut versuchen.",

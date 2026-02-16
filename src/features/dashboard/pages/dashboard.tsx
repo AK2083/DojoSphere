@@ -1,9 +1,9 @@
-import React from "react";
+import { useState } from "react";
 
 import Box from "@mui/material/Box";
 
 export default function Dashboard() {
-  const [loaded, setLoaded] = React.useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <Box

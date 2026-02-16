@@ -5,6 +5,14 @@
     "description": "Register a new user",
     "alreadyAccount": "Already have an account?",
     "logMeIn": "Log in here",
+    "mail": {
+      "title": "E-Mail",
+      "invalid": "Invalid email address"
+    },
+    "password": {
+      "title": "Password",
+      "invalid": "Invalid Password"
+    },
     "submit": "Register me",
     "error": {
       "retry": "Too many attempts. Please try again later.",

@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, type ReactNode } from "react";
 
 import MonitorIcon from "@mui/icons-material/Monitor";
 import MoonIcon from "@mui/icons-material/NightsStay";
@@ -6,27 +6,49 @@ import SunIcon from "@mui/icons-material/WbSunny";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { useColorScheme } from "@mui/material/styles";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
 import useSettingTranslation from "@features/settings/hooks/use-translations";
+import { type ThemeMode } from "@features/settings/types/theme-mode";
+import { useAppForm } from "@shared/lib/form-context";
 
 export default function ThemeModeSelector() {
   const { translations } = useSettingTranslation();
   const { mode, setMode } = useColorScheme();
-  const [mounted, setMounted] = React.useState(false);
 
-  type ThemeMode = "light" | "dark" | "system";
+  const form = useAppForm({
+    defaultValues: {
+      mode: "system" as ThemeMode,
+    },
+  });
 
-  React.useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (mode) {
+      form.setFieldValue("mode", mode);
+    }
+  }, [mode, form]);
 
-  if (!mounted) return null;
-
-  const onChangeMode = (_: React.MouseEvent<HTMLElement>, value: ThemeMode | null) => {
-    if (value) setMode(value);
-  };
+  const themeOptions = [
+    {
+      value: "light",
+      icon: <SunIcon />,
+      tooltip: translations.theme.tooltip.light,
+    },
+    {
+      value: "dark",
+      icon: <MoonIcon />,
+      tooltip: translations.theme.tooltip.dark,
+    },
+    {
+      value: "system",
+      icon: <MonitorIcon />,
+      tooltip: translations.theme.tooltip.system,
+    },
+  ] satisfies readonly {
+    value: ThemeMode;
+    icon: ReactNode;
+    tooltip?: string;
+  }[];
 
   return (
     <Box
@@ -49,28 +71,18 @@ export default function ThemeModeSelector() {
         </Grid>
 
         <Grid display="flex" justifyContent="flex-end">
-          <ToggleButtonGroup
-            exclusive
-            aria-label={translations.theme.title}
-            value={mode}
-            onChange={onChangeMode}
-          >
-            <Tooltip title={translations.theme.tooltip.light}>
-              <ToggleButton value="light" aria-label={translations.theme.tooltip.light}>
-                <SunIcon />
-              </ToggleButton>
-            </Tooltip>
-            <Tooltip title={translations.theme.tooltip.dark}>
-              <ToggleButton value="dark" aria-label={translations.theme.tooltip.dark}>
-                <MoonIcon />
-              </ToggleButton>
-            </Tooltip>
-            <Tooltip title={translations.theme.tooltip.system}>
-              <ToggleButton value="system" aria-label={translations.theme.tooltip.system}>
-                <MonitorIcon />
-              </ToggleButton>
-            </Tooltip>
-          </ToggleButtonGroup>
+          <form.AppField
+            name="mode"
+            validators={{
+              onChange: ({ value }) => setMode(value),
+            }}
+            children={(field) => (
+              <field.CustomButtonGroupField
+                ariaLabel={translations.theme.title}
+                options={themeOptions}
+              />
+            )}
+          />
         </Grid>
       </Grid>
     </Box>

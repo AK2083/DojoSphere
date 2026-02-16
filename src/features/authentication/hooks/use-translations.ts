@@ -11,6 +11,14 @@ export default function useTranslations() {
         description: translate("form.description"),
         alreadyAccount: translate("form.alreadyAccount"),
         logMeIn: translate("form.logMeIn"),
+        mail: {
+          title: translate("form.mail.title"),
+          invalid: translate("form.mail.invalid"),
+        },
+        password: {
+          title: translate("form.password.title"),
+          invalid: translate("form.password.invalid"),
+        },
         submit: translate("form.submit"),
         error: {
           retry: translate("form.error.retry"),

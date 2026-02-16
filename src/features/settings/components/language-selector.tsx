@@ -1,24 +1,21 @@
 import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
 import Grid from "@mui/material/Grid";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 
 import useTranslations from "@features/settings/hooks/use-translations";
-import { AVAILABLE_LANGUAGES } from "@shared/constants/available-languages";
+import { languageOptions, type LanguageCode } from "@shared/constants/available-languages";
 import { useSelectedTranslation } from "@shared/hooks/use-i18n";
+import { useAppForm } from "@shared/lib/form-context";
 
 export default function LanguageSelector() {
   const { translations } = useTranslations();
   const { language, changeLanguage } = useSelectedTranslation();
 
-  const languageItem = AVAILABLE_LANGUAGES.map((item) => (
-    <MenuItem key={item.code} value={item.code}>
-      {item.name}
-    </MenuItem>
-  ));
+  const form = useAppForm({
+    defaultValues: {
+      language: language,
+    },
+  });
 
   return (
     <Box
@@ -43,17 +40,18 @@ export default function LanguageSelector() {
         </Grid>
 
         <Grid display="flex" size={6} justifyContent="flex-end">
-          <FormControl fullWidth size="small">
-            <InputLabel id="language-label">Sprache</InputLabel>
-            <Select
-              label="Sprache"
-              labelId="language-label"
-              value={language}
-              onChange={(e) => changeLanguage(e.target.value as typeof language)}
-            >
-              {languageItem}
-            </Select>
-          </FormControl>
+          <form.AppField
+            name="language"
+            validators={{
+              onChange: ({ value }) => changeLanguage(value),
+            }}
+            children={(field) => (
+              <field.CustomSelectField<LanguageCode>
+                fieldLabel={translations.language.title}
+                data={languageOptions}
+              />
+            )}
+          />
         </Grid>
       </Grid>
     </Box>

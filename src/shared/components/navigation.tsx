@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -15,11 +15,11 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { NavLink } from "react-router";
 
 export default function Navigation() {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const toggleButtonRef = React.useRef<HTMLButtonElement>(null);
+  const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen((prev) => !prev);
