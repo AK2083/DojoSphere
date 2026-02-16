@@ -14,10 +14,15 @@ import Tooltip from "@mui/material/Tooltip";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { NavLink } from "react-router";
 
+import useAppTranslations from "@app/hooks/use-translations";
+import useSettingsTranslations from "@features/settings/hooks/use-translations";
+
 export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const appTranslations = useAppTranslations();
+  const settingsTranslations = useSettingsTranslations();
 
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -35,7 +40,7 @@ export default function Navigation() {
       <Button
         aria-controls="main-navigation"
         aria-expanded={mobileOpen}
-        aria-label="Navigation öffnen"
+        aria-label={appTranslations.translations.navigation.open}
         ref={toggleButtonRef}
         sx={{
           top: 10,
@@ -56,7 +61,7 @@ export default function Navigation() {
       </Button>
 
       <Drawer
-        aria-label="Hauptnavigation"
+        aria-label={appTranslations.translations.navigation.title}
         open={isDesktop ? true : mobileOpen}
         role="navigation"
         sx={{
@@ -78,10 +83,14 @@ export default function Navigation() {
             py: 2,
           }}
         >
-          <List sx={{ p: 0 }} aria-label="Hauptmenü">
-            <Tooltip title="Dashboard" placement="right" arrow>
+          <List sx={{ p: 0 }} aria-label={appTranslations.translations.navigation.menuTitle}>
+            <Tooltip
+              title={appTranslations.translations.navigation.dashboard}
+              placement="right"
+              arrow
+            >
               <ListItemButton
-                aria-label="Dashboard"
+                aria-label={appTranslations.translations.navigation.dashboard}
                 component={NavLink}
                 sx={{ justifyContent: "center" }}
                 to="/dashboard"
@@ -94,9 +103,9 @@ export default function Navigation() {
             </Tooltip>
           </List>
 
-          <Tooltip title="Einstellungen" placement="right" arrow>
+          <Tooltip title={settingsTranslations.translations.title} placement="right" arrow>
             <ListItemButton
-              aria-label="Einstellungen"
+              aria-label={settingsTranslations.translations.title}
               component={NavLink}
               sx={{
                 justifyContent: "center",
