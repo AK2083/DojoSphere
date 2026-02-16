@@ -11,7 +11,8 @@
     },
     "password": {
       "title": "Passwort",
-      "invalid": "Ungültiges Passwort"
+      "invalid": "Ungültiges Passwort",
+      "displayToggle": "Passwort ein- oder ausblenden"
     },
     "submit": "Registriere mich",
     "error": {

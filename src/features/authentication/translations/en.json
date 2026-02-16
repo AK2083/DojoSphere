@@ -11,7 +11,8 @@
     },
     "password": {
       "title": "Password",
-      "invalid": "Invalid Password"
+      "invalid": "Invalid Password",
+      "displayToggle": "Show or hide password"
     },
     "submit": "Register me",
     "error": {

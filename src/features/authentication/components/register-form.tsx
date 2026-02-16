@@ -107,7 +107,7 @@ export default function RegisterForm() {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            aria-label="toggle password display"
+                            aria-label={translations.form.password.displayToggle}
                             edge="end"
                             size="small"
                             onClick={() => setShowPassword((previousState) => !previousState)}

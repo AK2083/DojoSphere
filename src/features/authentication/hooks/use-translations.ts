@@ -18,6 +18,7 @@ export default function useTranslations() {
         password: {
           title: translate("form.password.title"),
           invalid: translate("form.password.invalid"),
+          displayToggle: translate("form.password.displayToggle"),
         },
         submit: translate("form.submit"),
         error: {
