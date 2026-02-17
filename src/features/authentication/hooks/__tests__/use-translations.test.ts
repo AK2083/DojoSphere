@@ -41,6 +41,15 @@ describe("useTranslations", () => {
         description: "t:form.description",
         alreadyAccount: "t:form.alreadyAccount",
         logMeIn: "t:form.logMeIn",
+        mail: {
+          title: "t:form.mail.title",
+          invalid: "t:form.mail.invalid",
+        },
+        password: {
+          title: "t:form.password.title",
+          invalid: "t:form.password.invalid",
+          displayToggle: "t:form.password.displayToggle",
+        },
         submit: "t:form.submit",
         error: {
           retry: "t:form.error.retry",
