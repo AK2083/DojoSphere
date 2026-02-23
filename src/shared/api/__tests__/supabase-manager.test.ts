@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { captureException } from "@shared/services/sentry-manager";
-import { signUpNewUser } from "@shared/services/supabase-manager";
+import { captureException } from "@shared/api/sentry-manager";
+import { signUpNewUser } from "@shared/api/supabase-manager";
 import { ApiErrorCode } from "@shared/types/api-result";
 
 const signUpMock = vi.hoisted(() => vi.fn());

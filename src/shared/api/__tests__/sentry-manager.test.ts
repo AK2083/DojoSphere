@@ -1,7 +1,7 @@
 import * as Sentry from "@sentry/browser";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { setUserContext, captureException, addBreadcrumb } from "@shared/services//sentry-manager";
+import { setUserContext, captureException, addBreadcrumb } from "@shared/api/sentry-manager";
 
 vi.mock("@sentry/browser", () => ({
   setUser: vi.fn(),

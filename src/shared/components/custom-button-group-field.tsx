@@ -23,11 +23,11 @@ export default function CustomButtonGroupField<T extends string>({
 }: ToggleButtonGroupFieldProps<T>) {
   const field = useFieldContext<T>();
 
-  const handleChange = (_: MouseEvent<HTMLElement>, value: T | null) => {
+  function handleChange(_: MouseEvent<HTMLElement>, value: T | null) {
     if (value !== null) {
       field.handleChange(value);
     }
-  };
+  }
 
   return (
     <ToggleButtonGroup

@@ -47,7 +47,7 @@ export default function RegisterForm() {
     },
   });
 
-  const signUpUser = async (value: RegisterFormValues) => {
+  async function signUpUser(value: RegisterFormValues) {
     const result = await signUp(value.email, value.password);
 
     if (!result.success) {
@@ -64,7 +64,7 @@ export default function RegisterForm() {
     }
 
     setFormError(null);
-  };
+  }
 
   return (
     <form

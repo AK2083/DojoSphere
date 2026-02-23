@@ -26,14 +26,14 @@ export default function Navigation() {
 
   const toggleButtonRef = useRef<HTMLButtonElement>(null);
 
-  const handleDrawerToggle = () => {
+  function handleDrawerToggle() {
     setMobileOpen((prev) => !prev);
-  };
+  }
 
-  const handleCloseMobile = () => {
+  function handleCloseMobile() {
     setMobileOpen(false);
     toggleButtonRef.current?.focus();
-  };
+  }
 
   return (
     <>
