@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git@github.com:AK2083/DojoSphere.git"
   },
+  "sideEffects": false,
   "scripts": {
     "dev": "vite",
     "lint:check": "eslint .",

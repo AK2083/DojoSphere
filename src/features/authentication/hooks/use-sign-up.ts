@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { signUpNewUser } from "@shared/services/supabase-manager";
+import { signUpNewUser } from "@shared/api/supabase-manager";
 import type { ApiResult } from "@shared/types/api-result";
 import type { AppUser } from "@shared/types/app-user";
 

@@ -1,6 +1,6 @@
 import { supabase } from "@lib/supabase/client";
+import { captureException, setUserContext } from "@shared/api/sentry-manager";
 import { HTTP_STATUS_CODES } from "@shared/constants/http-codes";
-import { captureException, setUserContext } from "@shared/services/sentry-manager";
 import { ApiErrorCode, type ApiResult } from "@shared/types/api-result";
 import type { AppUser } from "@shared/types/app-user";
 /**
