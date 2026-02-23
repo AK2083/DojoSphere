@@ -1,8 +1,8 @@
+import { captureException, setUserContext } from "@lib/sentry/sentry-manager";
+import type { AppUser } from "@lib/supabase/app-user";
 import { supabase } from "@lib/supabase/client";
-import { captureException, setUserContext } from "@shared/api/sentry-manager";
 import { HTTP_STATUS_CODES } from "@shared/constants/http-codes";
 import { ApiErrorCode, type ApiResult } from "@shared/types/api-result";
-import type { AppUser } from "@shared/types/app-user";
 /**
  * Registers a new user using Supabase authentication.
  *

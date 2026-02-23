@@ -1,4 +1,4 @@
-import { useNamespaceToTranslate } from "@shared/hooks/use-i18n";
+import { useNamespaceToTranslate } from "@lib/i18n/use-namespace-to-translate";
 
 export default function useTranslations() {
   const { translate } = useNamespaceToTranslate("app");

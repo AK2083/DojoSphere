@@ -3,11 +3,11 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 
 import useTranslations from "@features/settings/hooks/use-translations";
+import { setLocalStorageItem } from "@lib/browser/local-storage";
 import { languageOptions, type LanguageCode } from "@lib/i18n/available-languages";
+import { useSelectedTranslation } from "@lib/i18n/use-selected-translation";
 import { STORAGE_KEYS } from "@shared/constants/storage-keys";
-import { useSelectedTranslation } from "@shared/hooks/use-i18n";
 import { useAppForm } from "@shared/lib/form-context";
-import { setLocalStorageItem } from "@shared/lib/local-storage";
 
 export default function LanguageSelector() {
   const { translations } = useTranslations();

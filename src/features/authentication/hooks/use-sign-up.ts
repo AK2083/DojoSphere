@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import { signUpNewUser } from "@shared/api/supabase-manager";
+import type { AppUser } from "@lib/supabase/app-user";
+import { signUpNewUser } from "@lib/supabase/supabase-manager";
 import type { ApiResult } from "@shared/types/api-result";
-import type { AppUser } from "@shared/types/app-user";
 
 /**
  * Custom React hook to handle user registration.

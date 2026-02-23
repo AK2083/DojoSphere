@@ -1,6 +1,6 @@
+import { getLocalStorageItem, setLocalStorageItem } from "@lib/browser/local-storage";
 import { AVAILABLE_LANGUAGES, type LanguageCode } from "@lib/i18n/available-languages";
 import { STORAGE_KEYS } from "@shared/constants/storage-keys";
-import { getLocalStorageItem, setLocalStorageItem } from "@shared/lib/local-storage";
 
 function isLanguageCode(value: string): value is LanguageCode {
   return AVAILABLE_LANGUAGES.some((l) => l.code === value);

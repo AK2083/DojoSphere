@@ -2,14 +2,6 @@ import { useTranslation } from "react-i18next";
 
 import type { LanguageCode } from "@lib/i18n/available-languages";
 
-export function useNamespaceToTranslate(namespace: string) {
-  const { t } = useTranslation(namespace);
-
-  return {
-    translate: t,
-  };
-}
-
 export function useSelectedTranslation() {
   const { i18n } = useTranslation();
 

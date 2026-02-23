@@ -1,4 +1,4 @@
-import { addBreadcrumb } from "@shared/api/sentry-manager";
+import { addBreadcrumb } from "@lib/sentry/sentry-manager";
 
 export const CATEGORY = "authentication";
 

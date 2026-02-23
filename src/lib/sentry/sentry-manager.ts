@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/browser";
 
-import type { LogLevel } from "@shared/types/log-level";
+import type { LogLevel } from "@lib/sentry/log-level";
 
 export function setUserContext(user: { id: string } | null) {
   Sentry.setUser({ id: user?.id });
