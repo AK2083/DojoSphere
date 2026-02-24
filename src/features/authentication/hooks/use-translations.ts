@@ -26,6 +26,11 @@ export default function useTranslations() {
           unknown: translate("form.error.unknown"),
         },
       },
+      success: {
+        title: translate("success.title"),
+        description: translate("success.description"),
+        resendMail: translate("success.resendMail"),
+      },
     },
   };
 }

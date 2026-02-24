@@ -4,7 +4,7 @@
     "title": "Registrierung",
     "description": "Neuen Benutzer registrieren",
     "alreadyAccount": "Du hast bereits einen Account?",
-    "logMeIn": "Logge dich hier ein",
+    "logMeIn": "Log dich hier ein",
     "mail": {
       "title": "E-Mail",
       "invalid": "Ungültige E-Mail-Adresse"
@@ -19,5 +19,10 @@
       "retry": "Zu viele Versuche. Bitte später erneut versuchen.",
       "unknown": "Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut."
     }
+  },
+  "success": {
+    "title": "Registrierung erfolgreich",
+    "description": "Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte überprüfe dein Postfach, um deinen Account zu aktivieren.",
+    "resendMail": "E-Mail erneut senden"
   }
 }

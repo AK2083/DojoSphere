@@ -19,5 +19,10 @@
       "retry": "Too many attempts. Please try again later.",
       "unknown": "An unknown error occurred. Please try again later."
     }
+  },
+  "success": {
+    "title": "Register successful",
+    "description": "We have sent you a confirmation email. Please check your inbox to activate your account.",
+    "resendMail": "Resend email"
   }
 }
