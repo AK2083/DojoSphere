@@ -14,6 +14,7 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { useRegistrationForm } from "@features/authentication/form/register-form.config";
 import useSignUp from "@features/authentication/hooks/use-sign-up";
 import useTranslations from "@features/authentication/hooks/use-translations";
 import {
@@ -21,7 +22,6 @@ import {
   MONITORING_EVENTS,
 } from "@features/authentication/monitoring/monitoring";
 import { EMailValidator, PasswordValidator } from "@features/authentication/utils/validator";
-import { useAppForm } from "@shared/lib/form-context";
 import { ApiErrorCode } from "@shared/types/api-result";
 
 type RegisterFormValues = {
@@ -35,7 +35,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const { signUp } = useSignUp();
 
-  const form = useAppForm({
+  const form = useRegistrationForm({
     defaultValues: {
       email: "",
       password: "",

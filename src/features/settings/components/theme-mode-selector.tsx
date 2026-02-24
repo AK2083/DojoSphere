@@ -8,15 +8,15 @@ import Grid from "@mui/material/Grid";
 import { useColorScheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
+import { useSettingsForm } from "@features/settings/form/settings-form.config";
 import useSettingTranslation from "@features/settings/hooks/use-translations";
 import { type ThemeMode } from "@features/settings/types/theme-mode";
-import { useAppForm } from "@shared/lib/form-context";
 
 export default function ThemeModeSelector() {
   const { translations } = useSettingTranslation();
   const { mode, setMode } = useColorScheme();
 
-  const form = useAppForm({
+  const form = useSettingsForm({
     defaultValues: {
       mode: "system" as ThemeMode,
     },
