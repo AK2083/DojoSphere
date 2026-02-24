@@ -56,6 +56,11 @@ describe("useTranslations", () => {
           unknown: "t:form.error.unknown",
         },
       },
+      success: {
+        title: "t:success.title",
+        description: "t:success.description",
+        resendMail: "t:success.resendMail",
+      },
     });
   });
 
@@ -75,5 +80,8 @@ describe("useTranslations", () => {
     expect(mockTranslate).toHaveBeenCalledWith("form.submit");
     expect(mockTranslate).toHaveBeenCalledWith("form.error.retry");
     expect(mockTranslate).toHaveBeenCalledWith("form.error.unknown");
+    expect(mockTranslate).toHaveBeenCalledWith("success.title");
+    expect(mockTranslate).toHaveBeenCalledWith("success.description");
+    expect(mockTranslate).toHaveBeenCalledWith("success.resendMail");
   });
 });
