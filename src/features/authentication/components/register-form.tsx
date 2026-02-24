@@ -29,7 +29,11 @@ type RegisterFormValues = {
   password: string;
 };
 
-export default function RegisterForm() {
+type Props = {
+  onSuccess: () => void;
+};
+
+export default function RegisterForm({ onSuccess }: Props) {
   const { translations } = useTranslations();
   const [formError, setFormError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +68,7 @@ export default function RegisterForm() {
     }
 
     setFormError(null);
+    onSuccess();
   }
 
   return (

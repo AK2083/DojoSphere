@@ -4,12 +4,14 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router";
 
 import RegisterForm from "@features/authentication/components/register-form";
 import useTranslations from "@features/authentication/hooks/use-translations";
 
 export default function RegisterPage() {
   const { translations } = useTranslations();
+  const navigate = useNavigate();
 
   return (
     <Grid container minWidth="100vw" minHeight="100vh" alignItems="center" justifyContent="center">
@@ -18,7 +20,7 @@ export default function RegisterPage() {
         divider={<Divider orientation="vertical" flexItem />}
         spacing={2}
       >
-        <RegisterForm />
+        <RegisterForm onSuccess={() => navigate("/register-success")} />
         <Card sx={{ width: { xs: "95vw", md: "40vw" }, height: "10vh" }}>
           <CardContent>
             <Stack height={150}>
