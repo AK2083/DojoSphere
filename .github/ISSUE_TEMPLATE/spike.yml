@@ -1,0 +1,56 @@
+name: Spike
+description: Technical study or prototype for decision-making
+title: "SPIKE: "
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A spike is used for investigation or validation.
+        The goal is to provide a basis for decision-making – not production-ready code.
+
+  - type: textarea
+    id: problem_statement
+    attributes:
+      label: Problem Statement
+      description: What problem or uncertainty should be investigated?
+      placeholder: e.g. Is a Dev-Container useful for our setup?
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal of the Spike
+      description: What should be clear at the end?
+      placeholder: e.g. Comparison of Docker vs. local installation with pros and cons
+    validations:
+      required: true
+
+  - type: textarea
+    id: approach
+    attributes:
+      label: Approach
+      description: How should the investigation be conducted?
+      placeholder: Build a prototype, run benchmarks, compare alternatives...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Definition of Done
+      description: When is the spike considered complete?
+      placeholder: |
+        - Documented insights
+        - Decision recommendation
+        - Identified risks
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Expected Output
+      description: What is delivered at the end?
+      placeholder: Decision document, POC repo, comparison table...
