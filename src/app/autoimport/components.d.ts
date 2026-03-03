@@ -12,5 +12,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./../components/App.vue')['default']
+    Navigation: typeof import('./../components/Navigation.vue')['default']
   }
 }

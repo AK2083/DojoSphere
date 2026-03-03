@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <v-btn> Button </v-btn>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-  </div>
+  <v-app>
+    <v-layout>
+      <Navigation />
+      <v-main style="height: 250px"></v-main>
+    </v-layout>
+  </v-app>
 </template>
