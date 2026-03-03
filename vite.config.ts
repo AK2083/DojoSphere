@@ -8,23 +8,20 @@ export default defineConfig({
     vue(),
     AutoImport({
       imports: [
-        'vue', 
-        'vue-router', 
+        'vue',
+        'vue-router',
         'pinia',
         {
-          vuetify: [
-            'useDisplay',
-            'useTheme',
-            'useLocale'
-          ]
-        }],
+          vuetify: ['useDisplay', 'useTheme', 'useLocale']
+        }
+      ],
       dts: 'src/app/autoimport/auto-imports.d.ts',
       eslintrc: {
         enabled: true
       }
     }),
     Components({
-      dirs: ['src/app/components'],
+      dirs: ['src/app/components', 'src/app/features'],
       extensions: ['vue'],
       deep: true,
       dts: 'src/app/autoimport/components.d.ts'

@@ -20,7 +20,7 @@ function createWindow() {
     win.loadFile(path.join(__dirname, '../build/index.html'))
   }
 
-  mainWindow.webContents.on('before-input-event', (event, input) => {
+  win.webContents.on('before-input-event', (event, input) => {
     if (
       app.isPackaged &&
       (input.control || input.meta) &&
