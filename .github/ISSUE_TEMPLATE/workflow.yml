@@ -1,6 +1,6 @@
 name: Dev Workflow
 description: Adaptation or expansion of the development workflow
-title: "DEV: "
+title: 'DEV: '
 body:
   - type: textarea
     id: description

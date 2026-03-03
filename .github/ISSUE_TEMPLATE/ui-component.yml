@@ -1,6 +1,6 @@
 name: UI-Component
 description: New UI components or Changes
-title: "UI: "
+title: 'UI: '
 body:
   - type: textarea
     id: description

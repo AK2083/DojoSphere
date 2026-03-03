@@ -1,6 +1,6 @@
 name: Refactor
 description: Refactoring of existing code without changing its external behavior.
-title: "Refactor: "
+title: 'Refactor: '
 body:
   - type: textarea
     id: description
