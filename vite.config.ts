@@ -7,7 +7,17 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      imports: ['vue', 'vue-router', 'pinia'],
+      imports: [
+        'vue', 
+        'vue-router', 
+        'pinia',
+        {
+          vuetify: [
+            'useDisplay',
+            'useTheme',
+            'useLocale'
+          ]
+        }],
       dts: 'src/app/autoimport/auto-imports.d.ts',
       eslintrc: {
         enabled: true
