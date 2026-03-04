@@ -6,7 +6,7 @@ import Settings from '../../features/settings/page/Settings.vue'
   <v-app>
     <v-layout>
       <Navigation />
-      <v-main style="height: 250px">
+      <v-main>
         <Settings />
       </v-main>
     </v-layout>

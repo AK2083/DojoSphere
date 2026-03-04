@@ -5,17 +5,16 @@ const isMobile = computed(() => smAndDown.value)
 </script>
 
 <template>
-  <v-btn
-    v-if="isMobile"
-    density="default"
-    icon="mdi-menu"
-    class="ma-2"
-    @click="drawer = !drawer"
-  ></v-btn>
+  <v-app-bar v-if="isMobile" density="compact">
+    <template #append>
+      <v-btn icon="mdi-cog"></v-btn>
+    </template>
+  </v-app-bar>
 
   <v-navigation-drawer
     v-model="drawer"
     rail
+    floating
     :temporary="isMobile"
     :permanent="!isMobile"
   >
