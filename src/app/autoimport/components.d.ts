@@ -12,6 +12,21 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./../components/App.vue')['default']
+    LanguageSwitch: typeof import('./../../features/settings/components/LanguageSwitch.vue')['default']
     Navigation: typeof import('./../components/Navigation.vue')['default']
+    Settings: typeof import('./../../features/settings/page/Settings.vue')['default']
+    ThemeToggle: typeof import('./../../features/settings/components/ThemeToggle.vue')['default']
+    VApp: typeof import('vuetify/components')['VApp']
+    VAppBar: typeof import('vuetify/components')['VAppBar']
+    VBtn: typeof import('vuetify/components')['VBtn']
+    VBtnToggle: typeof import('vuetify/components')['VBtnToggle']
+    VCol: typeof import('vuetify/components')['VCol']
+    VContainer: typeof import('vuetify/components')['VContainer']
+    VLayout: typeof import('vuetify/components')['VLayout']
+    VMain: typeof import('vuetify/components')['VMain']
+    VNavigationDrawer: typeof import('vuetify/components')['VNavigationDrawer']
+    VRow: typeof import('vuetify/components')['VRow']
+    VSelect: typeof import('vuetify/components')['VSelect']
+    VSheet: typeof import('vuetify/components')['VSheet']
   }
 }

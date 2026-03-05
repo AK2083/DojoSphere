@@ -1,7 +1,12 @@
 <script setup>
-const drawer = ref(true)
+import { useDisplay } from 'vuetify'
+
+const drawer = ref(false)
 const { smAndDown } = useDisplay()
-const isMobile = computed(() => smAndDown.value)
+const isMobile = computed(() => {
+  drawer.value = !smAndDown.value
+  return smAndDown.value
+})
 </script>
 
 <template>

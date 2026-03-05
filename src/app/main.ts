@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import App from './components/App.vue'
+import App from '@app/components/App.vue'
 
 import 'vuetify/styles/main.css'
 import { createVuetify } from 'vuetify'
@@ -14,11 +14,13 @@ import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 
+import { getInitialTheme } from '@app/model/theme-service'
+
 const vuetify = createVuetify({
   components,
   directives,
-  icons: {
-    defaultSet: 'mdi' // This is already the default value - only for display purposes
+  theme: {
+    defaultTheme: getInitialTheme()
   }
 })
 

@@ -70,10 +70,8 @@ declare global {
   const useAttrs: typeof import('vue').useAttrs
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
-  const useDisplay: typeof import('vuetify').useDisplay
   const useId: typeof import('vue').useId
   const useLink: typeof import('vue-router').useLink
-  const useLocale: typeof import('vuetify').useLocale
   const useModel: typeof import('vue').useModel
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter

@@ -1,5 +1,5 @@
 <script setup>
-import Settings from '../../features/settings/page/Settings.vue'
+import Settings from '@features/settings/page/Settings.vue'
 </script>
 
 <template>
