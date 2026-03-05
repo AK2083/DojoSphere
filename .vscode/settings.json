@@ -4,5 +4,6 @@
   "eslint.validate": ["javascript", "typescript", "vue"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
-  }
+  },
+  "js/ts.preferences.includePackageJsonAutoImports": "auto"
 }

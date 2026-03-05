@@ -20,5 +20,5 @@
       "@lib/*": ["src/lib/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+  "include": ["src", "*.ts"]
 }
