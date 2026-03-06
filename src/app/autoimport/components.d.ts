@@ -13,7 +13,9 @@ declare module 'vue' {
   export interface GlobalComponents {
     App: typeof import('./../components/App.vue')['default']
     LanguageSwitch: typeof import('./../../features/settings/components/LanguageSwitch.vue')['default']
+    LocalWork: typeof import('./../../features/authentication/components/LocalWork.vue')['default']
     Navigation: typeof import('./../components/Navigation.vue')['default']
+    RegisterForm: typeof import('./../../features/authentication/components/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SaveLocation: typeof import('./../../features/authentication/page/SaveLocation.vue')['default']
@@ -23,8 +25,12 @@ declare module 'vue' {
     VAppBar: typeof import('vuetify/components')['VAppBar']
     VBtn: typeof import('vuetify/components')['VBtn']
     VBtnToggle: typeof import('vuetify/components')['VBtnToggle']
+    VCard: typeof import('vuetify/components')['VCard']
+    VCardSubtitle: typeof import('vuetify/components')['VCardSubtitle']
+    VCardText: typeof import('vuetify/components')['VCardText']
     VCol: typeof import('vuetify/components')['VCol']
     VContainer: typeof import('vuetify/components')['VContainer']
+    VForm: typeof import('vuetify/components')['VForm']
     VIcon: typeof import('vuetify/components')['VIcon']
     VImg: typeof import('vuetify/components')['VImg']
     VLayout: typeof import('vuetify/components')['VLayout']
@@ -35,5 +41,6 @@ declare module 'vue' {
     VRow: typeof import('vuetify/components')['VRow']
     VSelect: typeof import('vuetify/components')['VSelect']
     VSheet: typeof import('vuetify/components')['VSheet']
+    VTextField: typeof import('vuetify/components')['VTextField']
   }
 }

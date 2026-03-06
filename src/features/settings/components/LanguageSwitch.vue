@@ -11,7 +11,7 @@ const isMobile = computed(() => smAndDown.value)
       :src="languageImage"
       width="120"
       height="120"
-      rounded="xl"
+      rounded="shaped"
       alt="Rei-Language"
     />
   </v-col>

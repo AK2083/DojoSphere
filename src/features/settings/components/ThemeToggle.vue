@@ -25,7 +25,7 @@ function handleChangeTheme(value) {
       height="120"
       cover
       position="50% 10%"
-      rounded="xl"
+      rounded="shaped"
       alt="Rei-Theme"
     />
   </v-col>
