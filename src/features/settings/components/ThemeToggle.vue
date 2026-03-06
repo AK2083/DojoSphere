@@ -2,9 +2,13 @@
 import { useTheme } from 'vuetify'
 import { setThemeToStorage } from '@features/settings/model/theme-storage'
 import { Theme } from '@shared/types/theme-modes'
-import themeImage from '../assets/Theme.webp'
+import themeImage from '@features/settings/assets/Theme.webp'
+import { useDisplay } from 'vuetify'
 
+const { smAndDown } = useDisplay()
 const theme = useTheme()
+
+const isMobile = computed(() => smAndDown.value)
 
 function handleChangeTheme(value) {
   setThemeToStorage(value)
@@ -13,11 +17,20 @@ function handleChangeTheme(value) {
 </script>
 
 <template>
-  <v-col cols="2" class="d-flex justify-center">
-    <v-img :src="themeImage" width="fit-content" rounded="xl" alt="Rei-Theme" />
+  <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
+    <v-img
+      :src="themeImage"
+      aspect-ratio="1"
+      width="120"
+      height="120"
+      cover
+      position="50% 10%"
+      rounded="xl"
+      alt="Rei-Theme"
+    />
   </v-col>
 
-  <v-col cols="10" class="d-flex flex-column">
+  <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
       <label class="font-weight-medium">Theme</label>
       <div class="text-medium-emphasis text-body-2">

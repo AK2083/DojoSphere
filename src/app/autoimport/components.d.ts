@@ -22,6 +22,7 @@ declare module 'vue' {
     VBtnToggle: typeof import('vuetify/components')['VBtnToggle']
     VCol: typeof import('vuetify/components')['VCol']
     VContainer: typeof import('vuetify/components')['VContainer']
+    VIcon: typeof import('vuetify/components')['VIcon']
     VImg: typeof import('vuetify/components')['VImg']
     VLayout: typeof import('vuetify/components')['VLayout']
     VMain: typeof import('vuetify/components')['VMain']
