@@ -15,6 +15,7 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 
 import { getInitialTheme } from '@app/model/theme-service'
+import router from '@app/provider/router'
 
 const vuetify = createVuetify({
   components,
@@ -24,4 +25,7 @@ const vuetify = createVuetify({
   }
 })
 
-createApp(App).use(vuetify).mount('#app')
+createApp(App)
+.use(router)
+.use(vuetify)
+.mount('#app')
