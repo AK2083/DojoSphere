@@ -1,8 +1,12 @@
 <script setup>
 import languageImage from '@features/settings/assets/Language.webp'
+import { useDisplay } from 'vuetify'
+
+const { smAndDown } = useDisplay()
+const isMobile = computed(() => smAndDown.value)
 </script>
 <template>
-  <v-col cols="2" class="d-flex justify-center">
+  <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
     <v-img
       :src="languageImage"
       width="120"
@@ -12,7 +16,7 @@ import languageImage from '@features/settings/assets/Language.webp'
     />
   </v-col>
 
-  <v-col cols="10" class="d-flex flex-column">
+  <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
       <label class="font-weight-medium">Wähle eine Sprache aus</label>
       <div class="text-medium-emphasis text-body-2">
