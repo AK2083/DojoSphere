@@ -14,7 +14,7 @@ function handleChangeTheme(value) {
 
 <template>
   <v-col cols="2" class="d-flex justify-center">
-    <v-img :src="themeImage" width="fit-content" rounded="xl" />
+    <v-img :src="themeImage" width="fit-content" rounded="xl" alt="Rei-Theme" />
   </v-col>
 
   <v-col cols="10" class="d-flex flex-column">
@@ -28,13 +28,19 @@ function handleChangeTheme(value) {
 
     <div class="d-flex justify-end mt-2">
       <v-btn-toggle class="border" divided density="default">
-        <v-btn icon="mdi-laptop" @click="handleChangeTheme(Theme.SYSTEM)" />
+        <v-btn
+          icon="mdi-laptop"
+          aria-label="System Theme Mode"
+          @click="handleChangeTheme(Theme.SYSTEM)"
+        />
         <v-btn
           icon="mdi-moon-waning-crescent"
+          aria-label="Dark Mode"
           @click="handleChangeTheme(Theme.DARK)"
         />
         <v-btn
           icon="mdi-white-balance-sunny"
+          aria-label="Light Mode"
           @click="handleChangeTheme(Theme.LIGHT)"
         />
       </v-btn-toggle>

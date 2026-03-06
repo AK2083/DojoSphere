@@ -12,7 +12,7 @@ const isMobile = computed(() => {
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon="mdi-cog"></v-btn>
+      <v-btn icon="mdi-cog" aria-label="Settings" variant="text"></v-btn>
     </template>
   </v-app-bar>
 
@@ -30,6 +30,7 @@ const isMobile = computed(() => {
           icon="mdi-cog"
           variant="text"
           density="comfortable"
+          aria-label="Settings"
           @click="isMobile && (drawer = false)"
         />
       </div>

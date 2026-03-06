@@ -3,7 +3,12 @@ import languageImage from '../assets/Language.webp'
 </script>
 <template>
   <v-col cols="2" class="d-flex justify-center">
-    <v-img :src="languageImage" width="fit-content" rounded="xl" />
+    <v-img
+      :src="languageImage"
+      width="fit-content"
+      rounded="xl"
+      alt="Rei-Language"
+    />
   </v-col>
 
   <v-col cols="10" class="d-flex flex-column">
