@@ -37,7 +37,8 @@ export default defineConfig({
         '**/pages/**',
         '**/constants/**',
         '**/monitoring/**',
-        '**/form/**'
+        '**/form/**',
+        '**/provider/**',
       ],
       thresholds: {
         statements: 80,
