@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { emailRules, passwordRules } from '@features/authentication/validation/validators'
+import {
+  emailRules,
+  passwordRules
+} from '@features/authentication/validation/validators'
 
 describe('emailRules', () => {
   it('returns error if email is empty', () => {
@@ -51,22 +54,16 @@ describe('passwordRules', () => {
 
   it('rejects undefined password', () => {
     const result = passwordRules[0]!(undefined)
-    expect(result).toBe(
-      'Password must be at least 8 characters long.'
-    )
+    expect(result).toBe('Password must be at least 8 characters long.')
   })
 
   it('rejects password with no letters', () => {
     const result = passwordRules[1]!('12345678')
-    expect(result).toBe(
-      'Password must contain at least one letter.'
-    )
+    expect(result).toBe('Password must contain at least one letter.')
   })
 
   it('rejects undefined for letter rule', () => {
     const result = passwordRules[1]!(undefined)
-    expect(result).toBe(
-      'Password must contain at least one letter.'
-    )
+    expect(result).toBe('Password must contain at least one letter.')
   })
 })
