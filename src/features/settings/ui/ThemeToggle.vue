@@ -2,9 +2,11 @@
 import { useTheme } from 'vuetify'
 import { setThemeToStorage } from '@features/settings/model/theme-storage'
 import { Theme } from '@shared/types/theme-modes'
-import themeImage from '@features/settings/assets/Theme.webp'
+import { ThemeImage } from '@features/settings/assets'
 import { useDisplay } from 'vuetify'
+import { useTranslation, translationKeys } from '@features/settings/i18n'
 
+const { t } = useTranslation()
 const { smAndDown } = useDisplay()
 const theme = useTheme()
 
@@ -19,7 +21,7 @@ function handleChangeTheme(value) {
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
     <v-img
-      :src="themeImage"
+      :src="ThemeImage"
       aspect-ratio="1"
       width="120"
       height="120"
@@ -32,10 +34,11 @@ function handleChangeTheme(value) {
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">Theme</label>
+      <label class="font-weight-medium">{{
+        t(translationKeys.theme.title)
+      }}</label>
       <div class="text-medium-emphasis text-body-2">
-        Das Theme wird automatisch an die Systemeinstellungen angepasst. Du
-        kannst es hier aber auch manuell auswählen.
+        {{ t(translationKeys.theme.description) }}
       </div>
     </div>
 
@@ -43,17 +46,17 @@ function handleChangeTheme(value) {
       <v-btn-toggle class="border" divided density="default">
         <v-btn
           icon="mdi-laptop"
-          aria-label="System Theme Mode"
+          :aria-label="t(translationKeys.theme.tooltip.system)"
           @click="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
           icon="mdi-moon-waning-crescent"
-          aria-label="Dark Mode"
+          :aria-label="t(translationKeys.theme.tooltip.dark)"
           @click="handleChangeTheme(Theme.DARK)"
         />
         <v-btn
           icon="mdi-white-balance-sunny"
-          aria-label="Light Mode"
+          :aria-label="t(translationKeys.theme.tooltip.light)"
           @click="handleChangeTheme(Theme.LIGHT)"
         />
       </v-btn-toggle>

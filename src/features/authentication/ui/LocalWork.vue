@@ -1,5 +1,5 @@
 <script setup>
-import localImage from '@features/authentication/assets/Local.webp'
+import { LocalImage } from '@features/authentication/assets'
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import localImage from '@features/authentication/assets/Local.webp'
   >
     <template #prepend>
       <v-img
-        :src="localImage"
+        :src="LocalImage"
         width="64"
         height="64"
         rounded="shaped"

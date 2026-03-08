@@ -16,10 +16,10 @@ export default defineConfig({
       }
     }),
     Components({
-      dirs: ['src/app/components', 'src/features'],
+      dirs: ['src/app/ui', 'src/features'],
       extensions: ['vue'],
       deep: true,
-      dts: 'src/app/autoimport/components.d.ts',
+      dts: 'src/app/autoimport/ui.d.ts',
       resolvers: [Vuetify3Resolver()]
     })
   ],

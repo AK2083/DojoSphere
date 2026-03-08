@@ -1,0 +1,8 @@
+export default {
+  navigation: {
+    title: 'main navigation',
+    openMenu: 'open navigation',
+    menuTitle: 'main menu',
+    dashboard: 'dashboard'
+  }
+}

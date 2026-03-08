@@ -1,6 +1,12 @@
+<script setup lang="ts">
+import { useTranslation, translationKeys } from '@features/settings/i18n'
+
+const { t } = useTranslation()
+</script>
+
 <template>
   <v-container class="pa-6" max-width="900">
-    <h2 class="text-h5 mb-6">Einstellungen</h2>
+    <h2 class="text-h5 mb-6">{{ t(translationKeys.title) }}</h2>
 
     <v-sheet class="mb-4 border rounded pa-4">
       <v-row class="align-center">
