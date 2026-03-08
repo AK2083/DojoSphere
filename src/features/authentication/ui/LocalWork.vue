@@ -1,5 +1,8 @@
 <script setup>
 import { LocalImage } from '@features/authentication/assets'
+import { useTranslation, translationKeys } from '@features/authentication/i18n'
+
+const { t } = useTranslation()
 </script>
 
 <template>
@@ -20,14 +23,15 @@ import { LocalImage } from '@features/authentication/assets'
     </template>
 
     <template #text>
-      <span
-        >Hier kann lokal weitergearbeitet werden. Alle Daten werden lokal
-        gespeichert und nicht mit dem Server synchronisiert.</span
-      >
+      <span>{{ t(translationKeys.useLocal.description) }}</span>
     </template>
 
     <template #actions>
-      <v-btn text="Lokal weitermachen" variant="tonal" block></v-btn>
+      <v-btn
+        :text="t(translationKeys.useLocal.submit)"
+        variant="tonal"
+        block
+      ></v-btn>
     </template>
   </v-card>
 </template>

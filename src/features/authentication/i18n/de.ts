@@ -1,5 +1,9 @@
 export default {
-  useWithoutAuth: 'Weiter ohne Anmeldung',
+  useLocal: {
+    title: 'Lokal anmelden',
+    description: 'Hier kann Lokal weitergearbeitet werden. Alle Daten werden lokal gespeichert und nicht mit einem Server synchronisiert.',
+    submit: 'Weiter ohne Anmeldung'
+  },
   form: {
     title: 'Registrierung',
     description: 'Neuen Benutzer registrieren',

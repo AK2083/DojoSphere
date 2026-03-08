@@ -1,5 +1,9 @@
 export const translationKeys = {
-  useWithoutAuth: 'auth.useWithoutAuth',
+  useLocal: {
+    title: 'auth.useLocal.title',
+    description: 'auth.useLocal.description',
+    submit: 'auth.useLocal.submit'
+  },
   form: {
     title: 'auth.form.title',
     description: 'auth.form.description',
