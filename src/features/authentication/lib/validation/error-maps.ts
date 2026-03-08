@@ -1,4 +1,4 @@
-import { translationKeys } from './keys'
+import { translationKeys } from '../../i18n/keys'
 
 export const emailErrorMap = {
   required: translationKeys.form.mail.required,

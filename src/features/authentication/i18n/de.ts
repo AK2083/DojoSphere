@@ -1,7 +1,8 @@
 export default {
   useLocal: {
     title: 'Lokal anmelden',
-    description: 'Hier kann Lokal weitergearbeitet werden. Alle Daten werden lokal gespeichert und nicht mit einem Server synchronisiert.',
+    description:
+      'Hier kann Lokal weitergearbeitet werden. Alle Daten werden lokal gespeichert und nicht mit einem Server synchronisiert.',
     submit: 'Weiter ohne Anmeldung'
   },
   form: {

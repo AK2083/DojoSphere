@@ -10,16 +10,16 @@ export default defineConfig({
     vue(),
     AutoImport({
       imports: ['vue', 'vue-router', 'pinia'],
-      dts: 'src/app/autoimport/auto-imports.d.ts',
+      dts: 'src/app/config/autoimport/auto-imports.d.ts',
       eslintrc: {
         enabled: true
       }
     }),
     Components({
-      dirs: ['src/app/ui', 'src/features'],
+      dirs: ['src/app/ui', 'src/widgets', 'src/features'],
       extensions: ['vue'],
       deep: true,
-      dts: 'src/app/autoimport/ui.d.ts',
+      dts: 'src/app/config/autoimport/ui.d.ts',
       resolvers: [Vuetify3Resolver()]
     })
   ],
@@ -29,7 +29,8 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, 'src/shared'),
       '@app': path.resolve(__dirname, 'src/app'),
       '@features': path.resolve(__dirname, 'src/features'),
-      '@lib': path.resolve(__dirname, 'src/lib')
+      '@widgets': path.resolve(__dirname, 'src/widgets'),
+      '@pages': path.resolve(__dirname, 'src/pages')
     }
   },
   build: {

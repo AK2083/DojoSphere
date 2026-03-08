@@ -17,7 +17,8 @@
       "@shared/*": ["src/shared/*"],
       "@app/*": ["src/app/*"],
       "@features/*": ["src/features/*"],
-      "@lib/*": ["src/lib/*"]
+      "@widgets/*": ["src/widgets/*"],
+      "@pages/*": ["src/pages/*"]
     }
   },
   "include": ["src", "*.ts"]

@@ -1,15 +1,10 @@
 <script setup>
-import { RegisterImage } from '@features/authentication/assets'
-import {
-  emailRules,
-  passwordRules
-} from '@features/authentication/validation/validators'
-import { useTranslation, translationKeys } from '@features/authentication/i18n'
-import { mapRule } from '@features/authentication/utils/map-rule'
-import {
-  emailErrorMap,
-  passwordErrorMap
-} from '@features/authentication/i18n/error-maps'
+import RegisterImage from '../assets/Register.webp'
+import { emailRules, passwordRules } from '../lib/validation/validators'
+import { translationKeys } from '../i18n/keys'
+import { mapRule } from '../lib/map-rule'
+import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
+import { useTranslation } from '@shared/lib/i18n/useTranslation'
 
 const { t } = useTranslation()
 

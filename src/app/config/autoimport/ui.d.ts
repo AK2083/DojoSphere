@@ -11,16 +11,13 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    App: typeof import('./../ui/App.vue')['default']
-    LanguageSwitch: typeof import('./../../features/settings/ui/LanguageSwitch.vue')['default']
-    LocalWork: typeof import('./../../features/authentication/ui/LocalWork.vue')['default']
-    Navigation: typeof import('./../ui/Navigation.vue')['default']
-    RegisterForm: typeof import('./../../features/authentication/ui/RegisterForm.vue')['default']
+    LanguageSwitch: typeof import('./../../../features/settings/ui/LanguageSwitch.vue')['default']
+    LocalWork: typeof import('./../../../features/authentication/ui/LocalWork.vue')['default']
+    Navigation: typeof import('./../../../widgets/navigation/Navigation.vue')['default']
+    RegisterForm: typeof import('./../../../features/authentication/ui/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SaveLocation: typeof import('./../../features/authentication/page/SaveLocation.vue')['default']
-    Settings: typeof import('./../../features/settings/page/Settings.vue')['default']
-    ThemeToggle: typeof import('./../../features/settings/ui/ThemeToggle.vue')['default']
+    ThemeToggle: typeof import('./../../../features/settings/ui/ThemeToggle.vue')['default']
     VApp: typeof import('vuetify/components')['VApp']
     VAppBar: typeof import('vuetify/components')['VAppBar']
     VBtn: typeof import('vuetify/components')['VBtn']

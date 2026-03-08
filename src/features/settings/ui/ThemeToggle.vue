@@ -1,10 +1,11 @@
 <script setup>
 import { useTheme } from 'vuetify'
-import { setThemeToStorage } from '@features/settings/model/theme-storage'
+import { setThemeToStorage } from '../model/theme-storage'
 import { Theme } from '@shared/types/theme-modes'
-import { ThemeImage } from '@features/settings/assets'
+import ThemeImage from '../assets/Theme.webp'
 import { useDisplay } from 'vuetify'
-import { useTranslation, translationKeys } from '@features/settings/i18n'
+import { translationKeys } from '../i18n/keys'
+import { useTranslation } from '@shared/lib/i18n/useTranslation'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()

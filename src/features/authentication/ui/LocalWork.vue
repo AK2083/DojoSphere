@@ -1,6 +1,7 @@
 <script setup>
-import { LocalImage } from '@features/authentication/assets'
-import { useTranslation, translationKeys } from '@features/authentication/i18n'
+import LocalImage from '../assets/Local.webp'
+import { translationKeys } from '../i18n/keys'
+import { useTranslation } from '@shared/lib/i18n/useTranslation'
 
 const { t } = useTranslation()
 </script>

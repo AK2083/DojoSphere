@@ -1,5 +1,5 @@
-import SaveLocation from '@features/authentication/page/SaveLocation.vue'
-import Settings from '@features/settings/page/Settings.vue'
+import SaveLocation from '@pages/SaveLocation.vue'
+import Settings from '@pages/Settings.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [

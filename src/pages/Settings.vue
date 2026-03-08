@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useTranslation, translationKeys } from '@features/settings/i18n'
+import { translationKeys } from '@features/settings'
+import { useTranslation } from '@shared/lib/i18n/useTranslation'
 
 const { t } = useTranslation()
 </script>

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   emailRules,
   passwordRules
-} from '@features/authentication/validation/validators'
+} from '@features/authentication/lib/validation/validators'
 
 describe('emailRules', () => {
   it('returns error if email is empty', () => {

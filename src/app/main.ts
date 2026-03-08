@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import App from '@app/ui/App.vue'
+import App from './App.vue'
 
 import 'vuetify/styles/main.css'
 import { createVuetify } from 'vuetify'
@@ -15,8 +15,8 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 
 import { getInitialTheme } from '@app/model/theme-service'
-import router from '@app/provider/router'
-import { i18n } from '@app/provider/i18n'
+import router from '@app/providers/router'
+import { i18n } from '@app/providers/i18n'
 
 const vuetify = createVuetify({
   components,

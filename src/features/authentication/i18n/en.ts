@@ -1,7 +1,8 @@
 export default {
   useLocal: {
     title: 'Local Login',
-    description: 'Continue working locally. All data is stored locally and not synchronized with a server.',
+    description:
+      'Continue working locally. All data is stored locally and not synchronized with a server.',
     submit: 'Continue without registration'
   },
   form: {

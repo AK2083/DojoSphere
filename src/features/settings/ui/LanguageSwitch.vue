@@ -1,7 +1,8 @@
 <script setup>
-import { LanguageImage } from '@features/settings/assets'
+import LanguageImage from '../assets/Language.webp'
 import { useDisplay } from 'vuetify'
-import { useTranslation, translationKeys } from '@features/settings/i18n'
+import { translationKeys } from '../i18n/keys'
+import { useTranslation } from '@shared/lib/i18n/useTranslation'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
