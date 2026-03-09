@@ -13,7 +13,7 @@ export default {
     logMeIn: 'Log dich hier ein',
     mail: {
       title: 'E-Mail',
-      placeholder: 'deine E-Mail-Adresse',
+      placeholder: 'Deine E-Mail-Adresse',
       required: 'E-Mail ist erforderlich.',
       invalid: 'Ungültige E-Mail-Adresse'
     },
