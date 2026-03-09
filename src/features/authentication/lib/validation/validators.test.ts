@@ -7,7 +7,7 @@ import {
 describe('emailRules', () => {
   it('returns error if email is empty', () => {
     const result = emailRules[0]!('')
-    expect(result).toBe('E-mail is required.')
+    expect(result).toBe('required')
   })
 
   it('accepts a valid email', () => {
@@ -17,24 +17,24 @@ describe('emailRules', () => {
 
   it('rejects invalid email', () => {
     const result = emailRules[1]!('invalid-email')
-    expect(result).toBe('E-mail must be valid.')
+    expect(result).toBe('invalidEmail')
   })
 
   it('rejects undefined email', () => {
     const result = emailRules[0]!(undefined)
-    expect(result).toBe('E-mail is required.')
+    expect(result).toBe('required')
   })
 
   it('rejects undefined for format rule', () => {
     const result = emailRules[1]!(undefined)
-    expect(result).toBe('E-mail must be valid.')
+    expect(result).toBe('invalidEmail')
   })
 })
 
 describe('passwordRules', () => {
   it('rejects password shorter than 8 characters', () => {
     const result = passwordRules[0]!('abc123')
-    expect(result).toBe('Password must be at least 8 characters long.')
+    expect(result).toBe('minLength')
   })
 
   it('accepts password with at least 8 characters', () => {
@@ -44,7 +44,7 @@ describe('passwordRules', () => {
 
   it('rejects password without letters', () => {
     const result = passwordRules[1]!('12345678')
-    expect(result).toBe('Password must contain at least one letter.')
+    expect(result).toBe('missingLetter')
   })
 
   it('accepts password with letters', () => {
@@ -54,16 +54,16 @@ describe('passwordRules', () => {
 
   it('rejects undefined password', () => {
     const result = passwordRules[0]!(undefined)
-    expect(result).toBe('Password must be at least 8 characters long.')
+    expect(result).toBe('minLength')
   })
 
   it('rejects password with no letters', () => {
     const result = passwordRules[1]!('12345678')
-    expect(result).toBe('Password must contain at least one letter.')
+    expect(result).toBe('missingLetter')
   })
 
   it('rejects undefined for letter rule', () => {
     const result = passwordRules[1]!(undefined)
-    expect(result).toBe('Password must contain at least one letter.')
+    expect(result).toBe('missingLetter')
   })
 })

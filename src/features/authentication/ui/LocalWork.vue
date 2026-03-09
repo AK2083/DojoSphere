@@ -1,7 +1,7 @@
 <script setup>
 import LocalImage from '../assets/Local.webp'
 import { translationKeys } from '../i18n/keys'
-import { useTranslation } from '@shared/lib/i18n/useTranslation'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
 
 const { t } = useTranslation()
 </script>

@@ -4,7 +4,7 @@ import { emailRules, passwordRules } from '../lib/validation/validators'
 import { translationKeys } from '../i18n/keys'
 import { mapRule } from '../lib/map-rule'
 import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
-import { useTranslation } from '@shared/lib/i18n/useTranslation'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
 
 const { t } = useTranslation()
 

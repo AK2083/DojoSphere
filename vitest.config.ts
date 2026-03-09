@@ -26,6 +26,7 @@ export default defineConfig({
       exclude: [
         'env.d.ts',
         'main.ts',
+        'index.ts',
         '**/*.spec.ts',
         '**/node_modules/**',
         '**/dist/**',
@@ -39,7 +40,9 @@ export default defineConfig({
         '**/constants/**',
         '**/monitoring/**',
         '**/form/**',
-        '**/provider/**'
+        '**/providers/**',
+        '**/app/**/i18n/**',
+        '**/features/**/i18n/**'
       ],
       thresholds: {
         statements: 80,
