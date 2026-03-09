@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n'
 
-import appDe from '@app/i18n/de'
-import appEn from '@app/i18n/en'
+import appDe from './de'
+import appEn from './en'
 
 import authDe from '@features/authentication/i18n/de'
 import authEn from '@features/authentication/i18n/en'
