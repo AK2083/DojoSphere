@@ -1,4 +1,6 @@
 import { createI18n } from 'vue-i18n'
+import { FallbackLanguage } from '@shared/lib/i18n/languages'
+import { getInitialLanguage } from '../../model/language-service'
 
 import appDe from './de'
 import appEn from './en'
@@ -11,8 +13,8 @@ import settingsEn from '@features/settings/i18n/en'
 
 export const i18n = createI18n({
   legacy: false,
-  locale: 'de',
-  fallbackLocale: 'en',
+  locale: getInitialLanguage(),
+  fallbackLocale: FallbackLanguage,
   messages: {
     de: {
       app: appDe,

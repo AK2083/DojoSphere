@@ -1,13 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import LanguageImage from '../assets/Language.webp'
 import { useDisplay } from 'vuetify'
 import { translationKeys } from '../i18n/keys'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { AvailableLanguages, LanguageCode } from '@shared/lib/i18n/languages'
+import { setLanguageToStorage } from '../model/language-storage'
 
-const { t } = useTranslation()
+const { t, locale } = useTranslation()
+
 const { smAndDown } = useDisplay()
-
 const isMobile = computed(() => smAndDown.value)
+
+const selectedLanguage = computed<LanguageCode>({
+  get: () => locale.value as LanguageCode,
+  set: (val) => {
+    locale.value = val
+    setLanguageToStorage(val)
+  }
+})
 </script>
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
@@ -31,9 +41,12 @@ const isMobile = computed(() => smAndDown.value)
     </div>
 
     <v-select
+      v-model="selectedLanguage"
       class="mt-2"
       :label="t(translationKeys.language.title)"
-      :items="['Englisch', 'Deutsch']"
+      :items="AvailableLanguages"
+      item-title="label"
+      item-value="code"
       density="comfortable"
       hide-details
     />

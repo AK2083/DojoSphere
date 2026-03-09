@@ -8,8 +8,8 @@ const { t } = useTranslation()
 
 <template>
   <v-card
-    title="Lokales Arbeiten"
-    subtitle="Hier kann lokal weitergearbeitet werden."
+    :title="t(translationKeys.useLocal.title)"
+    :subtitle="t(translationKeys.useLocal.subtitle)"
     class="border px-4 py-4"
   >
     <template #prepend>
