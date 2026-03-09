@@ -5,6 +5,7 @@ import { translationKeys } from '../i18n/keys'
 import { mapRule } from '../lib/map-rule'
 import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { mdiEyeOff, mdiEye } from '@mdi/js'
 
 const { t } = useTranslation()
 
@@ -62,7 +63,7 @@ async function submit() {
           :type="showPassword ? 'text' : 'password'"
           required
           autocomplete="new-password"
-          :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+          :append-inner-icon="showPassword ? mdiEyeOff : mdiEye"
           @click:append-inner="showPassword = !showPassword"
         ></v-text-field>
       </v-card-text>

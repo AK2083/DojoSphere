@@ -1,17 +1,15 @@
-import SaveLocation from '@pages/SaveLocation.vue'
-import Settings from '@pages/Settings.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: SaveLocation
+    component: () => import('@pages/SaveLocation.vue')
   },
   {
     path: '/settings',
     name: 'settings',
-    component: Settings
+    component: () => import('@pages/Settings.vue')
   }
 ]
 

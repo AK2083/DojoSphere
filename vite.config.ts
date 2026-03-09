@@ -4,10 +4,12 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { Vuetify3Resolver } from 'unplugin-vue-components/resolvers'
 import path from 'path'
+import vuetify from 'vite-plugin-vuetify'
 
 export default defineConfig({
   plugins: [
     vue(),
+    vuetify({ autoImport: true }),
     AutoImport({
       imports: ['vue', 'vue-router', 'pinia'],
       dts: 'src/app/config/autoimport/auto-imports.d.ts',

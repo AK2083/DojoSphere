@@ -6,6 +6,7 @@ import ThemeImage from '../assets/Theme.webp'
 import { useDisplay } from 'vuetify'
 import { translationKeys } from '../i18n/keys'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { mdiLaptop, mdiMoonWaningCrescent, mdiWhiteBalanceSunny } from '@mdi/js'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
@@ -46,17 +47,17 @@ function handleChangeTheme(value) {
     <div class="d-flex justify-end mt-2">
       <v-btn-toggle class="border" divided density="default">
         <v-btn
-          icon="mdi-laptop"
+          :icon="mdiLaptop"
           :aria-label="t(translationKeys.theme.tooltip.system)"
           @click="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
-          icon="mdi-moon-waning-crescent"
+          :icon="mdiMoonWaningCrescent"
           :aria-label="t(translationKeys.theme.tooltip.dark)"
           @click="handleChangeTheme(Theme.DARK)"
         />
         <v-btn
-          icon="mdi-white-balance-sunny"
+          :icon="mdiWhiteBalanceSunny"
           :aria-label="t(translationKeys.theme.tooltip.light)"
           @click="handleChangeTheme(Theme.LIGHT)"
         />

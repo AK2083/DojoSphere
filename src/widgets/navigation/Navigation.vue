@@ -1,5 +1,6 @@
 <script setup>
 import { useDisplay } from 'vuetify'
+import { mdiAccount, mdiCog } from '@mdi/js'
 
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
@@ -13,11 +14,11 @@ const isMobile = computed(() => {
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
       <v-btn icon aria-label="Account" to="/"
-        ><v-icon>mdi-account</v-icon></v-btn
-      >
+        ><v-icon :icon="mdiAccount"></v-icon
+      ></v-btn>
       <v-btn icon aria-label="Settings" to="/settings"
-        ><v-icon>mdi-cog</v-icon></v-btn
-      >
+        ><v-icon :icon="mdiCog"></v-icon
+      ></v-btn>
     </template>
   </v-app-bar>
 
@@ -31,9 +32,8 @@ const isMobile = computed(() => {
   >
     <template #append>
       <v-list nav density="compact">
-        <v-list-item prepend-icon="mdi-account" to="/" title="Account" />
-
-        <v-list-item prepend-icon="mdi-cog" to="/settings" title="Settings" />
+        <v-list-item :prepend-icon="mdiAccount" to="/" title="Account" />
+        <v-list-item :prepend-icon="mdiCog" to="/settings" title="Settings" />
       </v-list>
     </template>
   </v-navigation-drawer>
