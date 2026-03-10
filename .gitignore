@@ -1,3 +1,8 @@
+# supabase
+supabase/.branches
+supabase/.temp
+supabase/snippets
+
 # Logs
 logs
 *.log
