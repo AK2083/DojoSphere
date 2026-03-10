@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import RegisterImage from '../assets/Register.webp'
 import { emailRules, passwordRules } from '../lib/validation/validators'
 import { translationKeys } from '../i18n/keys'
@@ -6,7 +6,15 @@ import { mapRule } from '../lib/map-rule'
 import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
 import { mdiEyeOff, mdiEye } from '@mdi/js'
+import { register } from '../model/register-service'
+import { AppError } from '@shared/errors/app-error'
+import type { VForm } from 'vuetify/components'
 
+const form = ref<VForm | null>(null)
+const email = ref('')
+const password = ref('')
+const showPassword = ref(false)
+const errorCode = ref<string | null>(null)
 const { t } = useTranslation()
 
 const translatedEmailRules = emailRules.map((rule) =>
@@ -17,19 +25,29 @@ const translatedPasswordRules = passwordRules.map((rule) =>
   mapRule(rule, passwordErrorMap, t)
 )
 
-const form = ref(null)
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-
 async function submit() {
+  if (!form.value) return
+
   const result = await form.value.validate()
 
   if (!result.valid) return
 
-  form.value.reset()
-  form.value.resetValidation()
-  showPassword.value = false
+  try {
+    await register(email.value, password.value)
+    errorCode.value = null
+  } catch (e: unknown) {
+    console.error(e)
+
+    if (e instanceof AppError) {
+      errorCode.value = e.code
+    } else {
+      errorCode.value = 'unknown_error'
+    }
+  } finally {
+    form.value.reset()
+    form.value.resetValidation()
+    showPassword.value = false
+  }
 }
 </script>
 
@@ -69,9 +87,17 @@ async function submit() {
       </v-card-text>
 
       <template #actions>
-        <v-btn type="submit" block variant="flat" color="success">{{
-          t(translationKeys.form.submit)
-        }}</v-btn>
+        <div class="d-flex flex-column w-100">
+          <v-btn type="submit" block variant="flat" color="success">{{
+            t(translationKeys.form.submit)
+          }}</v-btn>
+          <v-alert
+            v-if="errorCode"
+            :text="t(`errors.${errorCode}`)"
+            type="error"
+            class="mt-2"
+          ></v-alert>
+        </div>
       </template>
     </v-card>
   </v-form>
