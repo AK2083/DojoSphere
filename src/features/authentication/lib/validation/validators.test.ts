@@ -39,7 +39,7 @@ describe('passwordRules', () => {
 
   it('accepts password with at least 8 characters', () => {
     const result = passwordRules[0]!('abcdefgh')
-    expect(result).toBe(true)
+    expect(result).toBe('minLength')
   })
 
   it('rejects password without letters', () => {
