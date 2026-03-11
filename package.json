@@ -22,7 +22,8 @@
     "test:coverage": "vitest run --coverage",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
-    "supabase:status": "supabase status"
+    "supabase:status": "supabase status",
+    "supabase:init": "supabase init"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
