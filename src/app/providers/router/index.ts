@@ -7,6 +7,11 @@ const routes = [
     component: () => import('@pages/SaveLocation.vue')
   },
   {
+    path: '/confirm',
+    name: 'mailconfirmation',
+    component: () => import('@pages/EMailConfirmation.vue')
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import('@pages/Settings.vue')

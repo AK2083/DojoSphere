@@ -9,6 +9,7 @@ import { mdiEyeOff, mdiEye } from '@mdi/js'
 import { register } from '../model/register-service'
 import { AppError } from '@shared/errors/app-error'
 import type { VForm } from 'vuetify/components'
+import { useRouter } from 'vue-router'
 
 const form = ref<VForm | null>(null)
 const email = ref('')
@@ -16,6 +17,7 @@ const password = ref('')
 const showPassword = ref(false)
 const errorCode = ref<string | null>(null)
 const { t } = useTranslation()
+const router = useRouter()
 
 const translatedEmailRules = emailRules.map((rule) =>
   mapRule(rule, emailErrorMap, t)
@@ -35,6 +37,7 @@ async function submit() {
   try {
     await register(email.value, password.value)
     errorCode.value = null
+    router.push('/confirm?email=' + encodeURIComponent(email.value))
   } catch (e: unknown) {
     console.error(e)
 

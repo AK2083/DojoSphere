@@ -14,3 +14,13 @@ export async function signUp(
 
   return data
 }
+
+export async function checkOtp(email: string, token: string): Promise<void> {
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'signup'
+  })
+
+  if (error) throw error
+}
