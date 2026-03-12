@@ -6,10 +6,10 @@ import { mapRule } from '../lib/map-rule'
 import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
 import { mdiEyeOff, mdiEye } from '@mdi/js'
-import { register } from '../model/register-service'
 import { AppError } from '@shared/errors/app-error'
 import type { VForm } from 'vuetify/components'
 import { useRouter } from 'vue-router'
+import { registerUser } from '@shared/api'
 
 const form = ref<VForm | null>(null)
 const email = ref('')
@@ -35,9 +35,12 @@ async function submit() {
   if (!result.valid) return
 
   try {
-    await register(email.value, password.value)
+    await registerUser(email.value, password.value)
     errorCode.value = null
-    router.push('/confirm?email=' + encodeURIComponent(email.value))
+    router.push({
+      name: 'emailConfirmation',
+      query: { email: email.value }
+    })
   } catch (e: unknown) {
     console.error(e)
 

@@ -1,8 +1,9 @@
 <script setup>
-import { useRoute, useRouter } from 'vue-router'
 import { checkOtp } from '@shared/api'
-import { ref } from 'vue'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { translationKeys } from '@features/authentication/i18n/keys'
 
+const { t } = useTranslation()
 const router = useRouter()
 const route = useRoute()
 const email = route.query.email
@@ -21,17 +22,17 @@ const verifyOtp = async () => {
     return
   }
 
-  router.push('/settings')
+  router.push({ name: 'settings' })
 }
 </script>
 
 <template>
   <v-container class="fill-height d-flex align-center justify-center">
     <v-card width="420" class="pa-4">
-      <v-card-title>Email bestätigen</v-card-title>
+      <v-card-title>{{ t(translationKeys.otp.title) }}</v-card-title>
 
       <v-card-text>
-        <p>Bitte gib den Code aus deiner Email ein.</p>
+        <p>{{ t(translationKeys.otp.description) }}</p>
 
         <v-otp-input
           v-model="otp"

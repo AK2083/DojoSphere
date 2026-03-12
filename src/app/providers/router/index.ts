@@ -8,7 +8,7 @@ const routes = [
   },
   {
     path: '/confirm',
-    name: 'mailconfirmation',
+    name: 'emailConfirmation',
     component: () => import('@pages/EMailConfirmation.vue')
   },
   {

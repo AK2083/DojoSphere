@@ -31,6 +31,10 @@ export default {
         'Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut.'
     }
   },
+  otp: {
+    title: 'Email bestätigen',
+    description: 'Bitte gib den Bestätigungscode ein, den wir an deine E-Mail-Adresse gesendet haben.'
+  },
   success: {
     title: 'Registrierung erfolgreich',
     description:

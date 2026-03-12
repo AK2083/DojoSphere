@@ -30,6 +30,10 @@ export default {
       unknown: 'An unknown error occurred. Please try again later.'
     }
   },
+  otp: {
+    title: 'Confirm Email',
+    description: 'Please enter the confirmation code we have sent to your email address.'
+  },
   success: {
     title: 'Register successful',
     description:

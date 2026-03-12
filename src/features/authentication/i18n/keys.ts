@@ -29,6 +29,10 @@ export const translationKeys = {
       unknown: 'auth.form.error.unknown'
     }
   },
+  otp: {
+    title: 'auth.otp.title',
+    description: 'auth.otp.description'
+  },
   success: {
     title: 'auth.success.title',
     description: 'auth.success.description',
