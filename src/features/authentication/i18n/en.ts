@@ -32,7 +32,8 @@ export default {
   },
   otp: {
     title: 'Confirm Email',
-    description: 'Please enter the confirmation code we have sent to your email address.'
+    description:
+      'Please enter the confirmation code we have sent to your email address.'
   },
   success: {
     title: 'Register successful',
