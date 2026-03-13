@@ -49,5 +49,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'docs: update CHANGELOG'
           branch: chore/update-changelog
-          title: 'docs: update CHANGELOG'
+          title: 'PR DOCS: Update CHANGELOG'
           body: 'Automated changelog update after release'

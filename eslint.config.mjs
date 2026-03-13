@@ -15,7 +15,15 @@ const autoImportGlobals = require('./.eslintrc-auto-import.json')
 
 export default defineConfig([
   {
-    ignores: ['node_modules', 'dist', 'coverage', '.vscode', '*.min.js']
+    ignores: [
+      'node_modules',
+      'dist',
+      'coverage',
+      '.vscode',
+      '*.min.js',
+      'auto-imports.d.ts',
+      'ui.d.ts'
+    ]
   },
   {
     files: ['src/**/*.{js,mjs,cjs}'],
