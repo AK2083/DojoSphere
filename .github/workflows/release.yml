@@ -2,9 +2,6 @@ name: Release
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   release:
     name: Release
@@ -14,20 +11,42 @@ jobs:
       issues: write
       pull-requests: write
       id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+
       - name: Install dependencies
         run: npm clean-install
+
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --ci
+        run: npx -p semantic-release semantic-release
+
+      - name: Generate changelog
+        run: |
+          npx \
+            -p conventional-changelog-cli \
+            -p conventional-changelog-angular \
+            conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+
+      - name: Create Pull Request for changelog
+        uses: peter-evans/create-pull-request@v8
+        with:
+          sign-commits: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'docs: update CHANGELOG'
+          branch: chore/update-changelog
+          title: 'docs: update CHANGELOG'
+          body: 'Automated changelog update after release'
