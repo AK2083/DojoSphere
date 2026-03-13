@@ -1,6 +1,6 @@
 name: Service / Backend
 description: Logic, APIs
-title: 'Service: '
+title: 'SERVICE: '
 body:
   - type: textarea
     id: description
@@ -39,9 +39,7 @@ body:
       description: What tests are available or planned?
       options:
         - label: Unit Tests
-          required: true
         - label: Integration Tests
-          required: false
 
   - type: checkboxes
     id: special_requirements
@@ -49,17 +47,11 @@ body:
       label: Requirements
       options:
         - label: Coverage >= 80%
-          required: true
         - label: Lighthouse Best Practice Score >= 90
-          required: true
         - label: Comment Methods and Classes
-          required: true
         - label: Migration nesecessary
-          required: true
         - label: Add Error Handling
-          required: true
         - label: Add Logging
-          required: true
 
   - type: textarea
     id: coverage

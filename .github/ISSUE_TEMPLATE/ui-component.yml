@@ -40,13 +40,9 @@ body:
       description: Please confirm
       options:
         - label: Correct ARIA roles and labels are defined (Lighthouse accessibility score ≥ 90)
-          required: true
         - label: Keyboard navigation is fully supported
-          required: true
         - label: Focus handling is implemented and visible
-          required: true
         - label: Color contrast meets WCAG AA requirements
-          required: true
 
   - type: checkboxes
     id: responsiveness
@@ -54,11 +50,8 @@ body:
       label: Responsiveness
       options:
         - label: Mobile
-          required: true
         - label: Tablet
-          required: true
         - label: Desktop
-          required: true
 
   - type: textarea
     id: notes

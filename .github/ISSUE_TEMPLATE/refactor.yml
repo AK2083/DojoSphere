@@ -1,6 +1,6 @@
 name: Refactor
 description: Refactoring of existing code without changing its external behavior.
-title: 'Refactor: '
+title: 'REFACTOR: '
 body:
   - type: textarea
     id: description
@@ -52,6 +52,4 @@ body:
       description: Select whether you want to add the refactored code to existing tests
       options:
         - label: Unit Tests
-          required: true
         - label: Integration Tests
-          required: false
