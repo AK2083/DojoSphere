@@ -1,9 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import {
-  getStorageItem,
-  setStorageItem,
-  removeStorageItem
-} from './local-storage'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { getStorageItem, removeStorageItem, setStorageItem } from './local-storage'
 
 describe('local-storage helpers', () => {
   beforeEach(() => {

@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { registerUser } from './user'
-import { supabase } from './client'
 import { mapSupabaseError } from '@shared/api/supabase/map-error'
-import { AppError } from '../../errors/app-error'
 import { AuthError, type AuthResponse } from '@supabase/supabase-js'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { AppError } from '../../errors/app-error'
+import { supabase } from './client'
+import { registerUser } from './user'
 
 vi.mock('@shared/api/supabase/map-error', () => ({
   mapSupabaseError: vi.fn()
@@ -33,11 +34,7 @@ describe('registerUser', () => {
   })
 
   it('maps supabase error and throws AppError', async () => {
-    const supabaseError = new AuthError(
-      'Invalid login',
-      400,
-      'invalid_credentials'
-    )
+    const supabaseError = new AuthError('Invalid login', 400, 'invalid_credentials')
 
     const response: AuthResponse = {
       data: { user: null, session: null },
@@ -49,9 +46,7 @@ describe('registerUser', () => {
     vi.spyOn(supabase.auth, 'signUp').mockResolvedValue(response)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
-    await expect(registerUser('test@test.com', 'password')).rejects.toThrow(
-      mappedError
-    )
+    await expect(registerUser('test@test.com', 'password')).rejects.toThrow(mappedError)
 
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
   })

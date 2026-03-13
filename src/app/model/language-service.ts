@@ -2,11 +2,7 @@ import {
   getLanguageFromStorage,
   setLanguageToStorage
 } from '@features/settings/model/language-storage'
-import {
-  AvailableLanguages,
-  FallbackLanguage,
-  LanguageCode
-} from '@shared/lib/i18n/languages'
+import { AvailableLanguages, FallbackLanguage, LanguageCode } from '@shared/lib/i18n/languages'
 
 function getSystemLanguage(): LanguageCode {
   const browserLanguages = navigator.languages ?? [navigator.language]

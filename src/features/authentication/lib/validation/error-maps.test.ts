@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
-import { emailErrorMap, passwordErrorMap } from './error-maps'
+import { describe, expect, it } from 'vitest'
+
 import { translationKeys } from '../../i18n/keys'
+import { emailErrorMap, passwordErrorMap } from './error-maps'
 
 describe('emailErrorMap', () => {
   it('maps required error correctly', () => {
@@ -18,21 +19,14 @@ describe('emailErrorMap', () => {
 
 describe('passwordErrorMap', () => {
   it('maps minLength error correctly', () => {
-    expect(passwordErrorMap.minLength).toBe(
-      translationKeys.form.password.lessCharacters
-    )
+    expect(passwordErrorMap.minLength).toBe(translationKeys.form.password.lessCharacters)
   })
 
   it('maps missingLetter error correctly', () => {
-    expect(passwordErrorMap.missingLetter).toBe(
-      translationKeys.form.password.noLetter
-    )
+    expect(passwordErrorMap.missingLetter).toBe(translationKeys.form.password.noLetter)
   })
 
   it('contains exactly the expected keys', () => {
-    expect(Object.keys(passwordErrorMap)).toEqual([
-      'minLength',
-      'missingLetter'
-    ])
+    expect(Object.keys(passwordErrorMap)).toEqual(['minLength', 'missingLetter'])
   })
 })

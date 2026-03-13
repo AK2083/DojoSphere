@@ -1,7 +1,8 @@
 <script setup>
+import { useTranslation } from '@shared/lib/i18n/use-translation'
+
 import LocalImage from '../assets/Local.webp'
 import { translationKeys } from '../i18n/keys'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
 
 const { t } = useTranslation()
 </script>
@@ -13,14 +14,7 @@ const { t } = useTranslation()
     class="border px-4 py-4"
   >
     <template #prepend>
-      <v-img
-        :src="LocalImage"
-        width="64"
-        height="64"
-        rounded="shaped"
-        cover
-        class="border"
-      />
+      <v-img :src="LocalImage" width="64" height="64" rounded="shaped" cover class="border" />
     </template>
 
     <template #text>
@@ -28,11 +22,7 @@ const { t } = useTranslation()
     </template>
 
     <template #actions>
-      <v-btn
-        :text="t(translationKeys.useLocal.submit)"
-        variant="tonal"
-        block
-      ></v-btn>
+      <v-btn :text="t(translationKeys.useLocal.submit)" variant="tonal" block></v-btn>
     </template>
   </v-card>
 </template>

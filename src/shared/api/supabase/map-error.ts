@@ -1,5 +1,6 @@
-import { AppError } from '../../errors/app-error'
 import type { AuthError } from '@supabase/supabase-js'
+
+import { AppError } from '../../errors/app-error'
 
 export function mapSupabaseError(error: AuthError): AppError {
   switch (error.code) {

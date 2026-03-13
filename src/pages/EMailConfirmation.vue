@@ -1,7 +1,7 @@
 <script setup>
+import { translationKeys } from '@features/authentication/i18n/keys'
 import { checkOtp } from '@shared/api'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
-import { translationKeys } from '@features/authentication/i18n/keys'
 
 const { t } = useTranslation()
 const router = useRouter()
@@ -17,7 +17,6 @@ const verifyOtp = async () => {
 
     await checkOtp(email, otp.value)
   } catch (error) {
-    console.log('mail', email, otp.value)
     console.error(error.message)
     return
   }
@@ -34,12 +33,7 @@ const verifyOtp = async () => {
       <v-card-text>
         <p>{{ t(translationKeys.otp.description) }}</p>
 
-        <v-otp-input
-          v-model="otp"
-          length="6"
-          type="number"
-          @finish="verifyOtp"
-        />
+        <v-otp-input v-model="otp" length="6" type="number" @finish="verifyOtp" />
       </v-card-text>
     </v-card>
   </v-container>

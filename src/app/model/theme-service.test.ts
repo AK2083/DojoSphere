@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { getInitialTheme } from './theme-service'
 import { Theme } from '@shared/types/theme-modes'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { getInitialTheme } from './theme-service'
 
 describe('theme-service', () => {
   beforeEach(() => {

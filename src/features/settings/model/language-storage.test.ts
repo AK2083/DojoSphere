@@ -1,13 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-
-import {
-  getLanguageFromStorage,
-  setLanguageToStorage
-} from './language-storage'
-
 import * as storage from '@shared/lib/browser/local-storage'
-
 import { LanguageCode } from '@shared/lib/i18n/languages'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { getLanguageFromStorage, setLanguageToStorage } from './language-storage'
 
 describe('language-storage', () => {
   beforeEach(() => {

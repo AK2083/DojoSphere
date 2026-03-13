@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest'
-import { mapSupabaseError } from './map-error'
-import { AppError } from '../../errors/app-error'
 import type { AuthError } from '@supabase/supabase-js'
+import { describe, expect, it } from 'vitest'
+
+import { AppError } from '../../errors/app-error'
+import { mapSupabaseError } from './map-error'
 
 function createAuthError(code: string, message = 'supabase error'): AuthError {
   return {

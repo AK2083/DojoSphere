@@ -1,15 +1,13 @@
 import { createI18n } from 'vue-i18n'
-import { FallbackLanguage } from '@shared/lib/i18n/languages'
-import { getInitialLanguage } from '../../model/language-service'
-
-import appDe from './de'
-import appEn from './en'
-
 import authDe from '@features/authentication/i18n/de'
 import authEn from '@features/authentication/i18n/en'
-
 import settingsDe from '@features/settings/i18n/de'
 import settingsEn from '@features/settings/i18n/en'
+import { FallbackLanguage } from '@shared/lib/i18n/languages'
+
+import { getInitialLanguage } from '../../model/language-service'
+import appDe from './de'
+import appEn from './en'
 
 export const i18n = createI18n({
   legacy: false,

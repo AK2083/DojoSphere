@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 import { Theme } from '@shared/types/theme-modes'
+import { beforeEach, describe, expect, it } from 'vitest'
+
+import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 
 describe('theme-storage', () => {
   beforeEach(() => {

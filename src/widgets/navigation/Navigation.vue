@@ -13,12 +13,12 @@ const isMobile = computed(() => {
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon aria-label="Account" :to="{ name: 'home' }" exact
-        ><v-icon :icon="mdiAccount"></v-icon
-      ></v-btn>
-      <v-btn icon aria-label="Settings" :to="{ name: 'settings' }"
-        ><v-icon :icon="mdiCog"></v-icon
-      ></v-btn>
+      <v-btn icon aria-label="Account" :to="{ name: 'home' }" exact>
+        <v-icon :icon="mdiAccount"></v-icon>
+      </v-btn>
+      <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
+        <v-icon :icon="mdiCog"></v-icon>
+      </v-btn>
     </template>
   </v-app-bar>
 
@@ -32,17 +32,8 @@ const isMobile = computed(() => {
   >
     <template #append>
       <v-list nav density="compact">
-        <v-list-item
-          :prepend-icon="mdiAccount"
-          :to="{ name: 'home' }"
-          title="Account"
-          exact
-        />
-        <v-list-item
-          :prepend-icon="mdiCog"
-          :to="{ name: 'settings' }"
-          title="Settings"
-        />
+        <v-list-item :prepend-icon="mdiAccount" :to="{ name: 'home' }" title="Account" exact />
+        <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />
       </v-list>
     </template>
   </v-navigation-drawer>

@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { supabase } from './client'
 import type { AuthUser } from '@shared/types'
 import { AuthError } from '@supabase/supabase-js'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { checkOtp, signUp } from './auth'
+import { supabase } from './client'
 
 vi.mock('./client', () => ({
   supabase: {
@@ -47,9 +48,7 @@ describe('signUp', () => {
       error: mockError
     })
 
-    await expect(signUp('test@test.de', 'password123')).rejects.toThrow(
-      'Signup failed'
-    )
+    await expect(signUp('test@test.de', 'password123')).rejects.toThrow('Signup failed')
   })
 })
 
@@ -81,9 +80,7 @@ describe('checkOtp', () => {
       error: mockError
     })
 
-    await expect(checkOtp('test@test.de', '123456')).rejects.toThrow(
-      'OTP invalid'
-    )
+    await expect(checkOtp('test@test.de', '123456')).rejects.toThrow('OTP invalid')
   })
 
   it('calls verifyOtp exactly once', async () => {

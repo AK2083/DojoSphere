@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, type Mock } from 'vitest'
-import { useTranslation } from './use-translation'
 import { useI18n } from 'vue-i18n'
+import { describe, expect, it, type Mock, vi } from 'vitest'
+
+import { useTranslation } from './use-translation'
 
 vi.mock('vue-i18n', () => ({
   useI18n: vi.fn()

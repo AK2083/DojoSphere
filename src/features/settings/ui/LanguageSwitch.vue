@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import LanguageImage from '../assets/Language.webp'
 import { useDisplay } from 'vuetify'
-import { translationKeys } from '../i18n/keys'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
 import { AvailableLanguages, LanguageCode } from '@shared/lib/i18n/languages'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
+
+import LanguageImage from '../assets/Language.webp'
+import { translationKeys } from '../i18n/keys'
 import { setLanguageToStorage } from '../model/language-storage'
 
 const { t, locale } = useTranslation()
@@ -21,20 +22,12 @@ const selectedLanguage = computed<LanguageCode>({
 </script>
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
-    <v-img
-      :src="LanguageImage"
-      width="120"
-      height="120"
-      rounded="shaped"
-      alt="Rei-Language"
-    />
+    <v-img :src="LanguageImage" width="120" height="120" rounded="shaped" alt="Rei-Language" />
   </v-col>
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">{{
-        t(translationKeys.language.title)
-      }}</label>
+      <label class="font-weight-medium">{{ t(translationKeys.language.title) }}</label>
       <div class="text-medium-emphasis text-body-2">
         {{ t(translationKeys.language.description) }}
       </div>

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const createClientMock = vi.fn(() => ({ mockClient: true }))
 
@@ -17,10 +17,7 @@ describe('supabase client', () => {
   it('creates supabase client with correct env variables', async () => {
     const { supabase } = await import('./client')
 
-    expect(createClientMock).toHaveBeenCalledWith(
-      'https://test.supabase.co',
-      'test-key'
-    )
+    expect(createClientMock).toHaveBeenCalledWith('https://test.supabase.co', 'test-key')
 
     expect(supabase).toEqual({ mockClient: true })
   })

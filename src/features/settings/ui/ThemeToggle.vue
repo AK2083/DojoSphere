@@ -1,12 +1,12 @@
 <script setup>
-import { useTheme } from 'vuetify'
-import { setThemeToStorage } from '../model/theme-storage'
-import { Theme } from '@shared/types/theme-modes'
-import ThemeImage from '../assets/Theme.webp'
-import { useDisplay } from 'vuetify'
-import { translationKeys } from '../i18n/keys'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { useDisplay, useTheme } from 'vuetify'
 import { mdiLaptop, mdiMoonWaningCrescent, mdiWhiteBalanceSunny } from '@mdi/js'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { Theme } from '@shared/types/theme-modes'
+
+import ThemeImage from '../assets/Theme.webp'
+import { translationKeys } from '../i18n/keys'
+import { setThemeToStorage } from '../model/theme-storage'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
@@ -36,9 +36,7 @@ function handleChangeTheme(value) {
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">{{
-        t(translationKeys.theme.title)
-      }}</label>
+      <label class="font-weight-medium">{{ t(translationKeys.theme.title) }}</label>
       <div class="text-medium-emphasis text-body-2">
         {{ t(translationKeys.theme.description) }}
       </div>

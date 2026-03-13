@@ -1,7 +1,4 @@
-import {
-  getStorageItem,
-  setStorageItem
-} from '@shared/lib/browser/local-storage'
+import { getStorageItem, setStorageItem } from '@shared/lib/browser/local-storage'
 import type { ThemePreference } from '@shared/types/theme-modes'
 
 const THEMEKEY = 'thememode'

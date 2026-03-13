@@ -6,6 +6,7 @@ import { defineConfig } from 'eslint/config'
 import prettier from 'eslint-config-prettier'
 import security from 'eslint-plugin-security'
 import unusedImports from 'eslint-plugin-unused-imports'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 
 import { createRequire } from 'node:module'
 
@@ -14,36 +15,40 @@ const autoImportGlobals = require('./.eslintrc-auto-import.json')
 
 export default defineConfig([
   {
-    ignores: ['node_modules', 'dist', '.vscode']
+    ignores: ['node_modules', 'dist', 'coverage', '.vscode', '*.min.js']
   },
   {
     files: ['src/**/*.{js,mjs,cjs}'],
     ...js.configs.recommended,
     languageOptions: {
       globals: {
+        ...globals.browser,
         ...autoImportGlobals.globals
       }
     }
   },
+  ...tseslint.configs.recommended,
+  {
+    files: ['src/**/*.{ts,vue}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off'
+    }
+  },
   {
     files: ['electron/**/*.js'],
+    plugins: { security },
     languageOptions: {
       sourceType: 'commonjs',
       globals: globals.node
     },
     rules: {
-      '@typescript-eslint/no-require-imports': 'off'
+      ...security.configs.recommended.rules,
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+      'security/detect-object-injection': 'off'
     }
   },
-  ...tseslint.configs.recommended.map((config) => ({
-    ...config,
-    files: ['src/**/*.{ts,vue}'],
-    rules: {
-      ...config.rules,
-      '@typescript-eslint/no-unused-vars': 'off'
-    }
-  })),
-  ...pluginVue.configs['flat/recommended'].map((config) => ({
+  ...pluginVue.configs['flat/strongly-recommended'].map((config) => ({
     ...config,
     files: ['src/**/*.vue']
   })),
@@ -59,18 +64,32 @@ export default defineConfig([
     }
   },
   {
-    files: ['src/**/*.{js,ts}', 'electron/**/*.js'],
+    files: ['electron/**/*.js'],
     plugins: { security },
     rules: security.configs.recommended.rules
   },
   {
     files: ['src/**/*.{js,ts,vue}'],
     plugins: {
-      'unused-imports': unusedImports
+      'unused-imports': unusedImports,
+      'simple-import-sort': simpleImportSort
     },
     rules: {
-      'unused-imports/no-unused-imports': 'warn',
-      'unused-imports/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'warn',
+      'no-duplicate-imports': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      'unused-imports/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+
+      'simple-import-sort/imports': [
+        'warn',
+        {
+          groups: [['^node:'], ['^vue', '^@?\\w'], ['^@/'], ['^\\.'], ['^.+\\.?(css|scss)$']]
+        }
+      ],
+      'simple-import-sort/exports': 'warn'
     }
   },
   prettier

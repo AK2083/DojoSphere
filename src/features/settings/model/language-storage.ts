@@ -1,7 +1,4 @@
-import {
-  getStorageItem,
-  setStorageItem
-} from '@shared/lib/browser/local-storage'
+import { getStorageItem, setStorageItem } from '@shared/lib/browser/local-storage'
 import type { LanguageCode } from '@shared/lib/i18n/languages'
 
 const LANGUAGEKEY = 'preferredlanguage'

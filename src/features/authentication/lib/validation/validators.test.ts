@@ -1,8 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import {
-  emailRules,
-  passwordRules
-} from '@features/authentication/lib/validation/validators'
+import { emailRules, passwordRules } from '@features/authentication/lib/validation/validators'
+import { describe, expect, it } from 'vitest'
 
 describe('emailRules', () => {
   it('returns error if email is empty', () => {

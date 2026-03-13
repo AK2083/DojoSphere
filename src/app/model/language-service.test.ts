@@ -1,10 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import * as storage from '@features/settings/model/language-storage'
+import { FallbackLanguage, LanguageCode } from '@shared/lib/i18n/languages'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getInitialLanguage } from './language-service'
-
-import * as storage from '@features/settings/model/language-storage'
-
-import { LanguageCode, FallbackLanguage } from '@shared/lib/i18n/languages'
 
 describe('getInitialLanguage', () => {
   beforeEach(() => {
@@ -35,9 +33,7 @@ describe('getInitialLanguage', () => {
   it('stores detected system language', () => {
     vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
 
-    const setSpy = vi
-      .spyOn(storage, 'setLanguageToStorage')
-      .mockImplementation(() => {})
+    const setSpy = vi.spyOn(storage, 'setLanguageToStorage').mockImplementation(() => {})
 
     Object.defineProperty(navigator, 'languages', {
       value: ['en-US'],

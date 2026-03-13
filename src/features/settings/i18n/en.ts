@@ -6,8 +6,7 @@ export default {
   },
   theme: {
     title: 'Color Scheme',
-    description:
-      'Determine whether Dojosphere is displayed in light or dark mode.',
+    description: 'Determine whether Dojosphere is displayed in light or dark mode.',
     tooltip: {
       light: 'Light Mode',
       dark: 'Dark Mode',

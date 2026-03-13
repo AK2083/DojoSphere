@@ -1,7 +1,4 @@
-import type {
-  User as SupabaseUser,
-  Session as SupabaseSession
-} from '@supabase/supabase-js'
+import type { Session as SupabaseSession, User as SupabaseUser } from '@supabase/supabase-js'
 
 export type AuthUser = SupabaseUser
 export type AuthSession = SupabaseSession

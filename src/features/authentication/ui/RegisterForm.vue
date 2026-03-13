@@ -1,15 +1,16 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import type { VForm } from 'vuetify/components'
+import { mdiEye, mdiEyeOff } from '@mdi/js'
+import { registerUser } from '@shared/api'
+import { AppError } from '@shared/errors/app-error'
+import { useTranslation } from '@shared/lib/i18n/use-translation'
+
 import RegisterImage from '../assets/Register.webp'
-import { emailRules, passwordRules } from '../lib/validation/validators'
 import { translationKeys } from '../i18n/keys'
 import { mapRule } from '../lib/map-rule'
 import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
-import { mdiEyeOff, mdiEye } from '@mdi/js'
-import { AppError } from '@shared/errors/app-error'
-import type { VForm } from 'vuetify/components'
-import { useRouter } from 'vue-router'
-import { registerUser } from '@shared/api'
+import { emailRules, passwordRules } from '../lib/validation/validators'
 
 const form = ref<VForm | null>(null)
 const email = ref('')
@@ -19,13 +20,9 @@ const errorCode = ref<string | null>(null)
 const { t } = useTranslation()
 const router = useRouter()
 
-const translatedEmailRules = emailRules.map((rule) =>
-  mapRule(rule, emailErrorMap, t)
-)
+const translatedEmailRules = emailRules.map((rule) => mapRule(rule, emailErrorMap, t))
 
-const translatedPasswordRules = passwordRules.map((rule) =>
-  mapRule(rule, passwordErrorMap, t)
-)
+const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, passwordErrorMap, t))
 
 async function submit() {
   if (!form.value) return
@@ -94,9 +91,9 @@ async function submit() {
 
       <template #actions>
         <div class="d-flex flex-column w-100">
-          <v-btn type="submit" block variant="flat" color="success">{{
-            t(translationKeys.form.submit)
-          }}</v-btn>
+          <v-btn type="submit" block variant="flat" color="success">
+            {{ t(translationKeys.form.submit) }}
+          </v-btn>
           <v-alert
             v-if="errorCode"
             :text="t(`errors.${errorCode}`)"
