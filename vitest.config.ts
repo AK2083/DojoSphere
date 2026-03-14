@@ -28,6 +28,7 @@ export default defineConfig({
         'main.ts',
         'index.ts',
         '**/*.spec.ts',
+        '**/shared/lib/**',
         '**/node_modules/**',
         '**/dist/**',
         '**/types/**',

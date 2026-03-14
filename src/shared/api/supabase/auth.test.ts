@@ -1,3 +1,4 @@
+import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
 import type { AuthUser } from '@shared/types'
 import { AuthError } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -12,6 +13,11 @@ vi.mock('./client', () => ({
       verifyOtp: vi.fn()
     }
   }
+}))
+
+vi.mock('@shared/lib/glitchtip/logging', () => ({
+  captureException: vi.fn(),
+  setUserContext: vi.fn()
 }))
 
 describe('signUp', () => {
@@ -37,10 +43,14 @@ describe('signUp', () => {
       password: 'password123'
     })
 
+    expect(setUserContext).toHaveBeenCalledWith({
+      id: '123'
+    })
+
     expect(result).toEqual(mockResponse.data)
   })
 
-  it('throws error when supabase returns error', async () => {
+  it('logs and throws error when supabase returns error', async () => {
     const mockError = new AuthError('Signup failed')
 
     vi.mocked(supabase.auth.signUp).mockResolvedValue({
@@ -49,6 +59,21 @@ describe('signUp', () => {
     })
 
     await expect(signUp('test@test.de', 'password123')).rejects.toThrow('Signup failed')
+
+    expect(captureException).toHaveBeenCalledWith(mockError, 'auth', 'signUp')
+  })
+
+  it('logs and throws error if user is missing after signup', async () => {
+    vi.mocked(supabase.auth.signUp).mockResolvedValue({
+      data: { user: null, session: null },
+      error: null
+    })
+
+    await expect(signUp('test@test.de', 'password123')).rejects.toThrow(
+      'User not found after sign up'
+    )
+
+    expect(captureException).toHaveBeenCalled()
   })
 })
 
@@ -72,7 +97,7 @@ describe('checkOtp', () => {
     })
   })
 
-  it('throws error when verifyOtp returns error', async () => {
+  it('logs and throws error when verifyOtp returns error', async () => {
     const mockError = new AuthError('OTP invalid')
 
     vi.mocked(supabase.auth.verifyOtp).mockResolvedValue({
@@ -81,6 +106,8 @@ describe('checkOtp', () => {
     })
 
     await expect(checkOtp('test@test.de', '123456')).rejects.toThrow('OTP invalid')
+
+    expect(captureException).toHaveBeenCalledWith(mockError, 'auth', 'checkOtp')
   })
 
   it('calls verifyOtp exactly once', async () => {
