@@ -1,18 +1,30 @@
+import { captureException } from '../glitchtip/logging'
+
 export function getStorageItem<T>(key: string): T | null {
   const value = localStorage.getItem(key)
-
   if (!value) return null
 
   try {
     return JSON.parse(value) as T
-  } catch {
-    console.warn(`Invalid JSON in localStorage for key "${key}"`)
+  } catch (ex: unknown) {
+    if (ex instanceof Error) {
+      captureException(ex, 'browser', 'getStorageItem')
+    }
+
     return null
   }
 }
 
 export function setStorageItem<T>(key: string, value: T) {
-  localStorage.setItem(key, JSON.stringify(value))
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch (ex: unknown) {
+    if (ex instanceof Error) {
+      captureException(ex, 'browser', 'setStorageItem')
+    }
+
+    return null
+  }
 }
 
 export function removeStorageItem(key: string) {

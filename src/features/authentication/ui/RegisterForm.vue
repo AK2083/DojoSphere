@@ -21,7 +21,6 @@ const { t } = useTranslation()
 const router = useRouter()
 
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, emailErrorMap, t))
-
 const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, passwordErrorMap, t))
 
 async function submit() {
@@ -33,14 +32,13 @@ async function submit() {
 
   try {
     await registerUser(email.value, password.value)
+
     errorCode.value = null
     router.push({
       name: 'emailConfirmation',
       query: { email: email.value }
     })
   } catch (e: unknown) {
-    console.error(e)
-
     if (e instanceof AppError) {
       errorCode.value = e.code
     } else {
