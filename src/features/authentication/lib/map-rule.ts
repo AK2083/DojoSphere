@@ -33,10 +33,12 @@ export const mapRule = <T extends string>(
 
     if (result === true) return true
 
-    if (!(result in map)) {
+    const key = map[result]
+
+    if (!key) {
       return true
     }
 
-    return t(map[result as T])
+    return t(key)
   }
 }
