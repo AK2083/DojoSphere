@@ -42,4 +42,14 @@ describe('mapSupabaseError', () => {
     expect(result.code).toBe('auth.form.error.unknown')
     expect(result.message).toBe('Original supabase message')
   })
+
+  it('maps over_request_rate_limit to retry error', () => {
+    const error = createAuthError('over_request_rate_limit')
+
+    const result = mapSupabaseError(error)
+
+    expect(result).toBeInstanceOf(AppError)
+    expect(result.code).toBe('auth.form.error.retry')
+    expect(result.message).toBe('')
+  })
 })
