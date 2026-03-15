@@ -7,7 +7,7 @@ import prettier from 'eslint-config-prettier'
 import security from 'eslint-plugin-security'
 import unusedImports from 'eslint-plugin-unused-imports'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
-
+import jsdoc from 'eslint-plugin-jsdoc'
 import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
@@ -98,6 +98,28 @@ export default defineConfig([
         }
       ],
       'simple-import-sort/exports': 'warn'
+    }
+  },
+  {
+    files: ['src/**/*.{ts,js}'],
+    plugins: {
+      jsdoc
+    },
+    rules: {
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            ClassDeclaration: true,
+            MethodDefinition: true
+          }
+        }
+      ],
+      'jsdoc/require-param': 'error',
+      'jsdoc/require-returns': 'error',
+      'jsdoc/check-types': 'error'
     }
   },
   prettier

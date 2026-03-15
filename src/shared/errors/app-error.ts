@@ -12,6 +12,12 @@ export class AppError extends Error {
   code: string
   details?: unknown
 
+  /**
+   *
+   * @param code
+   * @param message
+   * @param details
+   */
   constructor(code: string, message?: string, details?: unknown) {
     super(message)
     this.code = code

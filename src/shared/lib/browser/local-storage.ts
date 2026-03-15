@@ -47,8 +47,6 @@ export function setStorageItem<T>(key: string, value: T) {
     if (ex instanceof Error) {
       captureException(ex, 'browser', 'setStorageItem')
     }
-
-    return null
   }
 }
 

@@ -9,6 +9,7 @@ import type { LogLevel } from './log-level'
  * a specific user in the monitoring system.
  *
  * @param {{ id: string }} user - The user information to attach to the logging context.
+ * @param user.id
  */
 export function setUserContext(user: { id: string }) {
   Sentry.setUser(user)
