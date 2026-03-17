@@ -2,53 +2,48 @@
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
-import { registerUser } from '@shared/api'
-import { AppError } from '@shared/errors/app-error'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
 
 import RegisterImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'
-import { mapRule } from '../lib/map-rule'
-import { emailErrorMap, passwordErrorMap } from '../lib/validation/error-maps'
-import { emailRules, passwordRules } from '../lib/validation/validators'
+import { emailRules, mapRule, passwordRules } from '../lib/validation/validators'
+import { register } from '../model/user-access'
+
+const { t } = useTranslation()
+const router = useRouter()
 
 const form = ref<VForm | null>(null)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const errorCode = ref<string | null>(null)
-const { t } = useTranslation()
-const router = useRouter()
 
-const translatedEmailRules = emailRules.map((rule) => mapRule(rule, emailErrorMap, t))
-const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, passwordErrorMap, t))
+const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
+const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
 
 async function submit() {
   if (!form.value) return
 
   const result = await form.value.validate()
-
   if (!result.valid) return
 
-  try {
-    await registerUser(email.value, password.value)
+  const response = await register(email.value, password.value)
 
-    errorCode.value = null
-    router.push({
-      name: 'emailConfirmation',
-      query: { email: email.value }
-    })
-  } catch (e: unknown) {
-    if (e instanceof AppError) {
-      errorCode.value = e.code
-    } else {
-      errorCode.value = 'unknown_error'
-    }
-  } finally {
-    form.value.reset()
-    form.value.resetValidation()
-    showPassword.value = false
+  if (!response.success) {
+    errorCode.value = response.error.code
+    return
   }
+
+  errorCode.value = null
+
+  router.push({
+    name: 'emailConfirmation',
+    query: { email: email.value }
+  })
+
+  form.value.reset()
+  form.value.resetValidation()
+  showPassword.value = false
 }
 </script>
 
@@ -66,7 +61,7 @@ async function submit() {
       <v-card-text class="d-flex flex-column ga-3">
         <v-text-field
           v-model="email"
-          density="compact"
+          density="default"
           :rules="translatedEmailRules"
           :label="t(translationKeys.form.mail.title)"
           :placeholder="t(translationKeys.form.mail.placeholder)"
@@ -76,7 +71,7 @@ async function submit() {
         ></v-text-field>
         <v-text-field
           v-model="password"
-          density="compact"
+          density="default"
           :rules="translatedPasswordRules"
           :label="t(translationKeys.form.password.title)"
           :type="showPassword ? 'text' : 'password'"
@@ -92,12 +87,7 @@ async function submit() {
           <v-btn type="submit" block variant="flat" color="success">
             {{ t(translationKeys.form.submit) }}
           </v-btn>
-          <v-alert
-            v-if="errorCode"
-            :text="t(`errors.${errorCode}`)"
-            type="error"
-            class="mt-2"
-          ></v-alert>
+          <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
         </div>
       </template>
     </v-card>

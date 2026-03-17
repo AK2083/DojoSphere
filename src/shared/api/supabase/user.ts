@@ -1,6 +1,6 @@
 import { mapSupabaseError } from '@shared/api/supabase/map-error'
 import { captureException } from '@shared/lib/glitchtip/logging'
-import type { RegisterResult } from '@shared/types'
+import type { RegisterResult } from '@shared/types/result'
 
 import { supabase } from './client'
 
@@ -20,15 +20,19 @@ import { supabase } from './client'
  * @throws {AppError} If the registration fails.
  */
 export async function registerUser(email: string, password: string): Promise<RegisterResult> {
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password
+  const { error } = await supabase.auth.signUp({
+    email,
+    password
   })
 
   if (error) {
     captureException(error, 'auth', 'registerUser')
-    throw mapSupabaseError(error)
+
+    return {
+      success: false,
+      error: mapSupabaseError(error)
+    }
   }
 
-  return data
+  return { success: true }
 }

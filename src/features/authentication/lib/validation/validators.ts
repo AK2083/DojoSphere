@@ -1,9 +1,4 @@
-import {
-  EmailError,
-  type EmailErrorCode,
-  PasswordError,
-  type PasswordErrorCode
-} from '../../types/auth-error-codes'
+import { ErrorCode, translateError } from './error-manager'
 
 /**
  * Minimum required length for user passwords.
@@ -27,9 +22,9 @@ export const PASSWORD_MIN_LENGTH = 12
  * @returns {(v?: string) => true | EmailErrorCode}[]
  * An array of validation functions used by form inputs.
  */
-export const emailRules: ((v?: string) => true | EmailErrorCode)[] = [
-  (v?: string) => !!v || EmailError.REQUIRED,
-  (v?: string) => /.+@.+\..+/.test(v ?? '') || EmailError.INVALID
+export const emailRules: ((v?: string) => true | ErrorCode)[] = [
+  (v?: string) => !!v || ErrorCode.REQUIRED,
+  (v?: string) => /.+@.+\..+/.test(v ?? '') || ErrorCode.INVALID_EMAIL
 ]
 
 /**
@@ -47,7 +42,41 @@ export const emailRules: ((v?: string) => true | EmailErrorCode)[] = [
  * @returns {(v?: string) => true | PasswordErrorCode}[]
  * An array of validation functions used by password form inputs.
  */
-export const passwordRules: ((v?: string) => true | PasswordErrorCode)[] = [
-  (v?: string) => (v ? v.length >= PASSWORD_MIN_LENGTH : false) || PasswordError.MIN_LENGTH,
-  (v?: string) => /[A-Za-z]/.test(v ?? '') || PasswordError.MISSING_LETTER
+export const passwordRules: ((v?: string) => true | ErrorCode)[] = [
+  (v?: string) => (v ? v.length >= PASSWORD_MIN_LENGTH : false) || ErrorCode.PASSWORD_MIN_LENGTH,
+  (v?: string) => /[A-Za-z]/.test(v ?? '') || ErrorCode.PASSWORD_MISSING_LETTER
 ]
+
+/**
+ * Wraps a validation rule and converts its returned {@link ErrorCode}
+ * into a translated error message.
+ *
+ * The provided `rule` function returns either `true` (validation passed)
+ * or an {@link ErrorCode}. If an error code is returned, it will be
+ * translated using {@link translateError} and the provided translation
+ * function `t`.
+ *
+ * This helper allows validation rules to stay framework-agnostic while
+ * the UI receives localized error messages compatible with Vuetify's
+ * validation system.
+ *
+ * @param rule
+ * Validation function that returns `true` if valid or an {@link ErrorCode}
+ * representing the validation failure.
+ *
+ * @param t
+ * Translation function used to resolve i18n keys into localized strings.
+ *
+ * @returns
+ * A wrapped validation rule that returns `true` if validation succeeds,
+ * otherwise the translated error message.
+ */
+export function mapRule(rule: (v: string) => true | ErrorCode, t: (key: string) => string) {
+  return (value: string) => {
+    const result = rule(value)
+
+    if (result === true) return true
+
+    return translateError(result, t)
+  }
+}
