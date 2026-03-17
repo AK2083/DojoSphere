@@ -1,9 +1,8 @@
-import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
-import type { AuthUser } from '@shared/types'
-import { AuthError } from '@supabase/supabase-js'
+import { captureException } from '@shared/lib/glitchtip/logging'
+import { AuthError, type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { checkOtp, signUp } from './auth'
+import { checkOtp, signUpByEmailPassword } from './auth'
 import { supabase } from './client'
 
 vi.mock('./client', () => ({
@@ -20,60 +19,45 @@ vi.mock('@shared/lib/glitchtip/logging', () => ({
   setUserContext: vi.fn()
 }))
 
-describe('signUp', () => {
+describe('signUpByEmailPassword', () => {
+  const email = 'test@example.com'
+  const password = 'password123'
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('calls supabase.auth.signUp with email and password', async () => {
+  it('calls supabase.auth.signUp with correct parameters', async () => {
     const mockResponse = {
-      data: {
-        user: { id: '123' } as AuthUser,
-        session: null
-      },
+      data: { user: null, session: null },
       error: null
     }
 
-    vi.mocked(supabase.auth.signUp).mockResolvedValue(mockResponse)
+    vi.mocked(supabase.auth.signUp).mockResolvedValue(mockResponse as AuthResponse)
 
-    const result = await signUp('test@test.de', 'password123')
+    const result = await signUpByEmailPassword(email, password)
 
     expect(supabase.auth.signUp).toHaveBeenCalledWith({
-      email: 'test@test.de',
-      password: 'password123'
+      email,
+      password
     })
 
-    expect(setUserContext).toHaveBeenCalledWith({
-      id: '123'
-    })
-
-    expect(result).toEqual(mockResponse.data)
+    expect(result).toEqual(mockResponse)
   })
 
-  it('logs and throws error when supabase returns error', async () => {
-    const mockError = new AuthError('Signup failed')
+  it('returns error response from supabase unchanged', async () => {
+    const mockError = new Error('Signup failed')
 
-    vi.mocked(supabase.auth.signUp).mockResolvedValue({
+    const mockResponse = {
       data: { user: null, session: null },
       error: mockError
-    })
+    }
 
-    await expect(signUp('test@test.de', 'password123')).rejects.toThrow('Signup failed')
+    vi.mocked(supabase.auth.signUp).mockResolvedValue(mockResponse as AuthResponse)
 
-    expect(captureException).toHaveBeenCalledWith(mockError, 'auth', 'signUp')
-  })
+    const result = await signUpByEmailPassword(email, password)
 
-  it('logs and throws error if user is missing after signup', async () => {
-    vi.mocked(supabase.auth.signUp).mockResolvedValue({
-      data: { user: null, session: null },
-      error: null
-    })
-
-    await expect(signUp('test@test.de', 'password123')).rejects.toThrow(
-      'User not found after sign up'
-    )
-
-    expect(captureException).toHaveBeenCalled()
+    expect(result.error).toBe(mockError)
   })
 })
 

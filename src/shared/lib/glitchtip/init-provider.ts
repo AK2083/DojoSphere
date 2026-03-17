@@ -17,7 +17,7 @@ import * as Sentry from '@sentry/vue'
  *
  * @returns {ReturnType<typeof Sentry.init>} The initialized Sentry client instance.
  */
-export default function initLoggingProvider(
+export function initLoggingProvider(
   app: App,
   router: Router,
   dsn: string,

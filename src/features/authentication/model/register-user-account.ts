@@ -1,6 +1,6 @@
 import { signUpWithMailAndPassword } from '@shared/api/supabase/sign-up-with-mail-and-password'
 import { AppError } from '@shared/errors/app-error'
-import type { RegisterResult } from '@shared/types/result'
+import type { RegisterResult } from '@shared/types/register-result'
 
 import { translationKeys } from '../i18n/keys'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
