@@ -7,16 +7,16 @@ import { useTranslation } from '@shared/lib/i18n/use-translation'
 import RegisterImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'
 import { emailRules, mapRule, passwordRules } from '../lib/validation/validators'
-import { register } from '../model/user-access'
+import { useRegister } from '../model/use-register'
 
 const { t } = useTranslation()
 const router = useRouter()
+const { execute, errorCode, loading } = useRegister()
 
 const form = ref<VForm | null>(null)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
-const errorCode = ref<string | null>(null)
 
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
@@ -27,23 +27,13 @@ async function submit() {
   const result = await form.value.validate()
   if (!result.valid) return
 
-  const response = await register(email.value, password.value)
-
-  if (!response.success) {
-    errorCode.value = response.error.code
-    return
-  }
-
-  errorCode.value = null
+  const success = await execute(email.value, password.value)
+  if (!success) return
 
   router.push({
     name: 'emailConfirmation',
     query: { email: email.value }
   })
-
-  form.value.reset()
-  form.value.resetValidation()
-  showPassword.value = false
 }
 </script>
 
@@ -84,7 +74,14 @@ async function submit() {
 
       <template #actions>
         <div class="d-flex flex-column w-100">
-          <v-btn type="submit" block variant="flat" color="success">
+          <v-btn
+            type="submit"
+            block
+            variant="flat"
+            color="success"
+            :loading="loading"
+            :disabled="loading"
+          >
             {{ t(translationKeys.form.submit) }}
           </v-btn>
           <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>

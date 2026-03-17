@@ -1,4 +1,4 @@
-import { registerUser } from '@shared/api/supabase/user'
+import { signUpWithMailAndPassword } from '@shared/api/supabase/sign-up-with-mail-and-password'
 import { AppError } from '@shared/errors/app-error'
 import type { RegisterResult } from '@shared/types/result'
 
@@ -15,8 +15,8 @@ import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
  *
  * Workflow:
  * 1. Records a monitoring event (`AUTH_REGISTER_SUBMITTED`).
- * 2. Calls {@link registerUser} to perform the actual registration.
- * 3. Normalizes possible errors into application-level {@link ErrorCode}s.
+ * 2. Calls {@link registerUserAccount} to perform the actual registration.
+ * 3. Normalizes possible errors into application-level {@link ErrorCode}.
  *
  * @param email - The email address used for the new account.
  * @param password - The password for the new account.
@@ -25,11 +25,14 @@ import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
  * - `{ success: true }` if the registration succeeded.
  * - `{ success: false, error }` if an error occurred.
  */
-export async function register(email: string, password: string): Promise<RegisterResult> {
+export async function registerUserAccount(
+  email: string,
+  password: string
+): Promise<RegisterResult> {
   monitorInformation(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
 
   try {
-    await registerUser(email, password)
+    await signUpWithMailAndPassword(email, password)
     return { success: true }
   } catch (error: unknown) {
     if (error instanceof AppError) {
