@@ -1,6 +1,6 @@
-import { translationKeys } from '@features/authentication/i18n/keys'
 import { describe, expect, it, vi } from 'vitest'
 
+import { translationKeys } from '../i18n/keys'
 import { ErrorCode, errorTranslationMap, translateError } from './error-manager'
 
 describe('ErrorCode', () => {
@@ -18,11 +18,11 @@ describe('ErrorCode', () => {
 describe('errorTranslationMap', () => {
   it('maps all error codes to translation keys', () => {
     expect(errorTranslationMap).toEqual({
-      required: translationKeys.form.mail.required,
-      invalidEmail: translationKeys.form.mail.invalid,
-      passwordMinLength: translationKeys.form.password.lessCharacters,
-      passwordMissingLetter: translationKeys.form.password.noLetter,
-      unknown: translationKeys.form.error.unknown
+      required: translationKeys.validation.email.required,
+      invalidEmail: translationKeys.validation.email.invalid,
+      passwordMinLength: translationKeys.validation.password.lessCharacters,
+      passwordMissingLetter: translationKeys.validation.password.noLetter,
+      unknown: translationKeys.error.unknown
     })
   })
 })
@@ -33,8 +33,8 @@ describe('translateError', () => {
 
     const result = translateError(ErrorCode.REQUIRED, t)
 
-    expect(t).toHaveBeenCalledWith(translationKeys.form.mail.required)
-    expect(result).toBe(`translated:${translationKeys.form.mail.required}`)
+    expect(t).toHaveBeenCalledWith(translationKeys.validation.email.required)
+    expect(result).toBe(`translated:${translationKeys.validation.email.required}`)
   })
 
   it('translates another known error code', () => {
@@ -42,8 +42,8 @@ describe('translateError', () => {
 
     const result = translateError(ErrorCode.PASSWORD_MIN_LENGTH, t)
 
-    expect(t).toHaveBeenCalledWith(translationKeys.form.password.lessCharacters)
-    expect(result).toBe(translationKeys.form.password.lessCharacters)
+    expect(t).toHaveBeenCalledWith(translationKeys.validation.password.lessCharacters)
+    expect(result).toBe(translationKeys.validation.password.lessCharacters)
   })
 
   it('falls back to unknown if code is not in map', () => {
@@ -51,7 +51,7 @@ describe('translateError', () => {
 
     const result = translateError('notExisting' as ErrorCode, t)
 
-    expect(t).toHaveBeenCalledWith(translationKeys.form.error.unknown)
-    expect(result).toBe(translationKeys.form.error.unknown)
+    expect(t).toHaveBeenCalledWith(translationKeys.error.unknown)
+    expect(result).toBe(translationKeys.error.unknown)
   })
 })

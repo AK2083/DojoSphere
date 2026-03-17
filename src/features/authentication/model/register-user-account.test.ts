@@ -1,5 +1,5 @@
 import { signUpWithMailAndPassword } from '@shared/api'
-import { AppError } from '@shared/errors'
+import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
@@ -21,40 +21,49 @@ describe('registerUserAccount', () => {
     vi.clearAllMocks()
   })
 
-  it('logs monitoring event and registers user successfully', async () => {
+  it('calls monitoring event before registering', async () => {
     vi.mocked(signUpWithMailAndPassword).mockResolvedValue({
       success: true
-    })
+    } as RegisterResult)
 
-    const result = await registerUserAccount('test@test.com', 'password')
+    await registerUserAccount('test@mail.com', 'password123')
 
     expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
-
-    expect(signUpWithMailAndPassword).toHaveBeenCalledWith('test@test.com', 'password')
-
-    expect(result).toEqual({ success: true })
   })
 
-  it('returns failure if AppError is thrown', async () => {
-    const appError = new AppError('auth.error')
+  it('calls signUpWithMailAndPassword with correct params', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockResolvedValue({
+      success: true
+    } as RegisterResult)
 
-    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(appError)
+    await registerUserAccount('user@test.com', 'securePassword')
 
-    const result = await registerUserAccount('test@test.com', 'password')
-
-    expect(result).toEqual({
-      success: false,
-      error: appError
-    })
+    expect(signUpWithMailAndPassword).toHaveBeenCalledWith('user@test.com', 'securePassword')
   })
 
-  it('wraps unknown error into AppError', async () => {
-    const unknownError = new Error('unexpected')
+  it('returns the result from signUpWithMailAndPassword', async () => {
+    const mockResult = { success: true }
+    vi.mocked(signUpWithMailAndPassword).mockResolvedValue(mockResult as RegisterResult)
 
-    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(unknownError)
+    const result = await registerUserAccount('a@b.com', '123456')
 
-    const result = await registerUserAccount('test@test.com', 'password')
+    expect(result).toEqual(mockResult)
+  })
 
-    expect(result.success).toBe(false)
+  it('propagates errors from API call', async () => {
+    const error = new Error('API failed')
+    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(error)
+
+    await expect(registerUserAccount('fail@test.com', 'badpass')).rejects.toThrow('API failed')
+  })
+
+  it('still triggers monitoring even if API fails', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(new Error())
+
+    try {
+      await registerUserAccount('x@y.com', '123')
+    } catch {}
+
+    expect(monitorInformation).toHaveBeenCalledTimes(1)
   })
 })

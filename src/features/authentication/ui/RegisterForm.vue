@@ -2,11 +2,10 @@
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
-import { useTranslation } from '@shared/lib'
+import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import RegisterImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'
-import { emailRules, mapRule, passwordRules } from '../lib/validation/validators'
 import { useRegister } from '../model/use-register'
 
 const { t } = useTranslation()

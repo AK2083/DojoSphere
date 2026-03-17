@@ -1,5 +1,5 @@
 <script setup>
-import { translationKeys } from '@features/authentication/i18n/keys'
+import { translationKeys } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
 const { t } = useTranslation()

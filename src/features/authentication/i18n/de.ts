@@ -13,22 +13,13 @@ export default {
     logMeIn: 'Log dich hier ein',
     mail: {
       title: 'E-Mail',
-      placeholder: 'Deine E-Mail-Adresse',
-      required: 'E-Mail ist erforderlich.',
-      invalid: 'Ungültige E-Mail-Adresse'
+      placeholder: 'Deine E-Mail-Adresse'
     },
     password: {
       title: 'Passwort',
-      invalid: 'Ungültiges Passwort',
-      lessCharacters: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
-      noLetter: 'Das Passwort muss mindestens einen Buchstaben enthalten.',
       displayToggle: 'Passwort ein- oder ausblenden'
     },
-    submit: 'Registriere mich',
-    error: {
-      retry: 'Zu viele Versuche. Bitte später erneut versuchen.',
-      unknown: 'Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut.'
-    }
+    submit: 'Registriere mich'
   },
   otp: {
     title: 'Email bestätigen',

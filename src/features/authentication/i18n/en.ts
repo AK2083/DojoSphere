@@ -13,22 +13,13 @@ export default {
     logMeIn: 'Log in here',
     mail: {
       title: 'E-Mail',
-      placeholder: 'Your E-Mail Address',
-      required: 'E-Mail is required.',
-      invalid: 'Invalid email address'
+      placeholder: 'Your E-Mail Address'
     },
     password: {
       title: 'Password',
-      invalid: 'Invalid Password',
-      lessCharacters: 'Password must be at least 8 characters long.',
-      noLetter: 'Password must contain at least one letter.',
       displayToggle: 'Show or hide password'
     },
-    submit: 'Register me',
-    error: {
-      retry: 'Too many attempts. Please try again later.',
-      unknown: 'An unknown error occurred. Please try again later.'
-    }
+    submit: 'Register me'
   },
   otp: {
     title: 'Confirm Email',

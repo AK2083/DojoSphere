@@ -1,50 +1,19 @@
 import { signUpWithMailAndPassword } from '@shared/api'
-import { AppError } from '@shared/errors'
 import type { RegisterResult } from '@shared/types'
 
-import { translationKeys } from '../i18n/keys'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
 /**
- * Registers a new user account.
+ * Executes the user registration use case.
  *
- * The function represents the registration use case of the auth feature.
- * It is responsible for orchestrating monitoring, API interaction and
- * error normalization so that the UI layer does not depend on infrastructure
- * details (e.g. Supabase errors).
+ * Triggers a monitoring event and delegates the actual sign-up process
+ * to the Supabase API wrapper.
  *
- * Workflow:
- * 1. Records a monitoring event (`AUTH_REGISTER_SUBMITTED`).
- * 2. Calls {@link registerUserAccount} to perform the actual registration.
- * 3. Normalizes possible errors into application-level {@link ErrorCode}.
- *
- * @param email - The email address used for the new account.
- * @param password - The password for the new account.
- *
- * @returns A promise resolving to a {@link RegisterResult}.
- * - `{ success: true }` if the registration succeeded.
- * - `{ success: false, error }` if an error occurred.
+ * @param email - User email address
+ * @param password - User password
+ * @returns A promise resolving to the registration result indicating success or failure.
  */
-export async function registerUserAccount(
-  email: string,
-  password: string
-): Promise<RegisterResult> {
+export function registerUserAccount(email: string, password: string): Promise<RegisterResult> {
   monitorInformation(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
-
-  try {
-    await signUpWithMailAndPassword(email, password)
-    return { success: true }
-  } catch (error: unknown) {
-    if (error instanceof AppError) {
-      return {
-        success: false,
-        error: error
-      }
-    }
-
-    return {
-      success: false,
-      error: new AppError(translationKeys.form.error.unknown, '', error)
-    }
-  }
+  return signUpWithMailAndPassword(email, password)
 }

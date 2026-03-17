@@ -43,11 +43,7 @@ describe('signUpWithMailAndPassword', () => {
 
     const result = await signUpWithMailAndPassword(email, password)
 
-    expect(captureException).toHaveBeenCalledWith(
-      supabaseError,
-      'auth',
-      'signUpWithMailAndPassword'
-    )
+    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signUpWithMailAndPassword')
 
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
 

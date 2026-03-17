@@ -3,7 +3,7 @@ import {
   mapRule,
   PASSWORD_MIN_LENGTH,
   passwordRules
-} from '@features/authentication/lib/validation/validators'
+} from '@shared/lib/validation/validators'
 import { describe, expect, it, vi } from 'vitest'
 
 import { ErrorCode } from './error-manager'

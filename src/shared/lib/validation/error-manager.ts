@@ -1,4 +1,4 @@
-import { translationKeys } from '../../i18n/keys'
+import { translationKeys } from '../i18n/keys'
 
 /**
  * Defines the canonical set of application-level error codes used across
@@ -44,13 +44,13 @@ export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
  * ensuring consistent and centralized error message handling.
  */
 export const errorTranslationMap: Record<ErrorCode, string> = {
-  required: translationKeys.form.mail.required,
-  invalidEmail: translationKeys.form.mail.invalid,
+  required: translationKeys.validation.email.required,
+  invalidEmail: translationKeys.validation.email.invalid,
 
-  passwordMinLength: translationKeys.form.password.lessCharacters,
-  passwordMissingLetter: translationKeys.form.password.noLetter,
+  passwordMinLength: translationKeys.validation.password.lessCharacters,
+  passwordMissingLetter: translationKeys.validation.password.noLetter,
 
-  unknown: translationKeys.form.error.unknown
+  unknown: translationKeys.error.unknown
 }
 
 /**
