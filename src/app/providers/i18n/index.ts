@@ -3,6 +3,8 @@ import authDe from '@features/authentication/i18n/de'
 import authEn from '@features/authentication/i18n/en'
 import settingsDe from '@features/settings/i18n/de'
 import settingsEn from '@features/settings/i18n/en'
+import sharedDe from '@shared/i18n/de'
+import sharedEn from '@shared/i18n/en'
 import { FallbackLanguage } from '@shared/lib/i18n/languages'
 
 import { getInitialLanguage } from '../../model/language-service'
@@ -17,12 +19,14 @@ export const i18n = createI18n({
     de: {
       app: appDe,
       auth: authDe,
-      settings: settingsDe
+      settings: settingsDe,
+      shared: sharedDe
     },
     en: {
       app: appEn,
       auth: authEn,
-      settings: settingsEn
+      settings: settingsEn,
+      shared: sharedEn
     }
   }
 })

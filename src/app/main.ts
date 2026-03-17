@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import initLoggingProvider from '@shared/lib/glitchtip/init-provider'
+import { initLoggingProvider } from '@shared/lib'
 
 import App from './App.vue'
 import { i18n } from './providers/i18n'

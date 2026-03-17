@@ -1,5 +1,5 @@
 <script setup>
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { useTranslation } from '@shared/lib'
 
 import LocalImage from '../assets/Local.webp'
 import { translationKeys } from '../i18n/keys'

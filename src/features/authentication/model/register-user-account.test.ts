@@ -1,11 +1,11 @@
-import { signUpWithMailAndPassword } from '@shared/api/supabase/sign-up-with-mail-and-password'
-import { AppError } from '@shared/errors/app-error'
+import { signUpWithMailAndPassword } from '@shared/api'
+import { AppError } from '@shared/errors'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { registerUserAccount } from './register-user-account'
 
-vi.mock('@shared/api/supabase/sign-up-with-mail-and-password', () => ({
+vi.mock('@shared/api', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 

@@ -1,7 +1,6 @@
 <script setup>
 import { translationKeys } from '@features/authentication/i18n/keys'
-import { checkOtp } from '@shared/api'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { useTranslation } from '@shared/lib'
 
 const { t } = useTranslation()
 const router = useRouter()
@@ -15,7 +14,7 @@ const verifyOtp = async () => {
       throw new Error('Email is required')
     }
 
-    await checkOtp(email, otp.value)
+    await checkOneTimePassword(email, otp.value)
   } catch (error) {
     console.error(error.message)
     return

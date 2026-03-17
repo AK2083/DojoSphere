@@ -1,4 +1,4 @@
-import { addBreadcrumb } from '@shared/lib/glitchtip/logging'
+import { addBreadcrumb } from '@shared/lib'
 
 /**
  * Monitoring category used for authentication-related events.

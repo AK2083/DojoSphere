@@ -30,7 +30,7 @@ describe('mapSupabaseError', () => {
     const result = mapSupabaseError(error)
 
     expect(result).toBeInstanceOf(AppError)
-    expect(result.code).toBe('auth.form.error.unknown')
+    expect(result.code).toBe('shared.error.unknown')
   })
 
   it('maps unknown errors to unknown_error and keeps message', () => {
@@ -39,7 +39,7 @@ describe('mapSupabaseError', () => {
     const result = mapSupabaseError(error)
 
     expect(result).toBeInstanceOf(AppError)
-    expect(result.code).toBe('auth.form.error.unknown')
+    expect(result.code).toBe('shared.error.unknown')
     expect(result.message).toBe('Original supabase message')
   })
 
@@ -49,7 +49,7 @@ describe('mapSupabaseError', () => {
     const result = mapSupabaseError(error)
 
     expect(result).toBeInstanceOf(AppError)
-    expect(result.code).toBe('auth.form.error.retry')
+    expect(result.code).toBe('shared.error.retry')
     expect(result.message).toBe('')
   })
 })

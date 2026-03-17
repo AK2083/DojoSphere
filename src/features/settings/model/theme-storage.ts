@@ -1,5 +1,5 @@
-import { getStorageItem, setStorageItem } from '@shared/lib/browser/local-storage'
-import type { ThemePreference } from '@shared/types/theme-modes'
+import { getStorageItem, setStorageItem } from '@shared/lib'
+import type { ThemePreference } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 

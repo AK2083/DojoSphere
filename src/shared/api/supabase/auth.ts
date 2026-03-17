@@ -1,4 +1,3 @@
-import { captureException } from '@shared/lib/glitchtip/logging'
 import type { AuthResponse } from '@supabase/supabase-js'
 
 import { supabase } from './client'
@@ -32,19 +31,32 @@ export async function signUpByEmailPassword(
 }
 
 /**
+ * Verifies a one-time password (OTP) for email-based sign-up using Supabase.
  *
- * @param email
- * @param token
+ * This function wraps Supabase's `auth.verifyOtp` method and confirms a user's
+ * email address during the sign-up flow. It performs no error handling or
+ * side effects and returns the raw Supabase response.
+ *
+ * @param {string} email - The email address associated with the OTP.
+ * @param {string} token - The one-time password (OTP) sent to the user's email.
+ *
+ * @returns {Promise<AuthResponse>} The raw authentication response from Supabase,
+ * containing `data` (user/session) and `error`.
+ *
+ * @example
+ * ```ts
+ * const { data, error } = await checkOtp('test@mail.com', '123456')
+ * ```
+ *
+ * @remarks
+ * This is a low-level API function intended to be used in higher-level layers
+ * (e.g. features or entities), where error handling, logging, and domain-specific
+ * logic should be implemented.
  */
-export async function checkOtp(email: string, token: string): Promise<void> {
-  const { error } = await supabase.auth.verifyOtp({
+export async function verifyOneTimePassword(email: string, token: string): Promise<AuthResponse> {
+  return await supabase.auth.verifyOtp({
     email,
     token,
     type: 'signup'
   })
-
-  if (error) {
-    captureException(error, 'auth', 'checkOtp')
-    throw error
-  }
 }

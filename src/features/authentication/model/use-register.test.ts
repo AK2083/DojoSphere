@@ -1,4 +1,4 @@
-import type { RegisterResult } from '@shared/types/register-result'
+import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { registerUserAccount } from './register-user-account'

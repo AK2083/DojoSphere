@@ -42,8 +42,7 @@ export default defineConfig({
         '**/monitoring/**',
         '**/form/**',
         '**/providers/**',
-        '**/app/**/i18n/**',
-        '**/features/**/i18n/**'
+        '**/i18n/**'
       ],
       thresholds: {
         statements: 80,

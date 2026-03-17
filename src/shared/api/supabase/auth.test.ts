@@ -2,7 +2,7 @@ import { captureException } from '@shared/lib/glitchtip/logging'
 import { AuthError, type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { checkOtp, signUpByEmailPassword } from './auth'
+import { signUpByEmailPassword, verifyOneTimePassword } from './auth'
 import { supabase } from './client'
 
 vi.mock('./client', () => ({
@@ -72,7 +72,7 @@ describe('checkOtp', () => {
       error: null
     })
 
-    await checkOtp('test@test.de', '123456')
+    await verifyOneTimePassword('test@test.de', '123456')
 
     expect(supabase.auth.verifyOtp).toHaveBeenCalledWith({
       email: 'test@test.de',
@@ -81,26 +81,13 @@ describe('checkOtp', () => {
     })
   })
 
-  it('logs and throws error when verifyOtp returns error', async () => {
-    const mockError = new AuthError('OTP invalid')
-
-    vi.mocked(supabase.auth.verifyOtp).mockResolvedValue({
-      data: { session: null, user: null },
-      error: mockError
-    })
-
-    await expect(checkOtp('test@test.de', '123456')).rejects.toThrow('OTP invalid')
-
-    expect(captureException).toHaveBeenCalledWith(mockError, 'auth', 'checkOtp')
-  })
-
   it('calls verifyOtp exactly once', async () => {
     vi.mocked(supabase.auth.verifyOtp).mockResolvedValue({
       data: { session: null, user: null },
       error: null
     })
 
-    await checkOtp('test@test.de', '123456')
+    await verifyOneTimePassword('test@test.de', '123456')
 
     expect(supabase.auth.verifyOtp).toHaveBeenCalledTimes(1)
   })

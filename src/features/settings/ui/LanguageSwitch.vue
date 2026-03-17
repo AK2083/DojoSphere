@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { AvailableLanguages, LanguageCode } from '@shared/lib/i18n/languages'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 
 import LanguageImage from '../assets/Language.webp'
 import { translationKeys } from '../i18n/keys'

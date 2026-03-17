@@ -1,5 +1,4 @@
-import { getStorageItem, setStorageItem } from '@shared/lib/browser/local-storage'
-import type { LanguageCode } from '@shared/lib/i18n/languages'
+import { getStorageItem, type LanguageCode, setStorageItem } from '@shared/lib'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 

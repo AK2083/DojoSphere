@@ -1,7 +1,7 @@
-import { translationKeys } from '@features/authentication/i18n/keys'
 import type { AuthError } from '@supabase/supabase-js'
 
 import { AppError } from '../../errors/app-error'
+import { translationKeys } from '../../i18n/keys'
 
 /**
  * Maps a Supabase authentication error to an application-specific {@link AppError}.
@@ -22,9 +22,9 @@ export function mapSupabaseError(error: AuthError): AppError {
       return new AppError('auth.email_exists')
 
     case 'over_request_rate_limit':
-      return new AppError(translationKeys.form.error.retry)
+      return new AppError(translationKeys.error.retry)
 
     default:
-      return new AppError(translationKeys.form.error.unknown, error.message)
+      return new AppError(translationKeys.error.unknown, error.message)
   }
 }

@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { useTranslation } from '@shared/lib'
 
 import RegisterImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'

@@ -1,30 +1,54 @@
-import { Theme } from '@shared/types/theme-modes'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { getStorageItem, setStorageItem } from '@shared/lib'
+import { type ThemePreference } from '@shared/types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { monitorInformation } from '../monitoring/monitoring'
 import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 
-describe('theme-storage', () => {
+vi.mock('@shared/lib', () => ({
+  getStorageItem: vi.fn(),
+  setStorageItem: vi.fn()
+}))
+
+vi.mock('../monitoring/monitoring', () => ({
+  monitorInformation: vi.fn(),
+  MONITORING_EVENTS: {
+    SETTINGS_THEME_WRITE: 'SETTINGS_THEME_WRITE',
+    SETTINGS_THEME_READ: 'SETTINGS_THEME_READ'
+  }
+}))
+
+describe('theme-storage (unit)', () => {
+  const THEME_KEY = 'thememode'
+
   beforeEach(() => {
-    localStorage.clear()
+    vi.clearAllMocks()
   })
 
-  it('stores theme correctly', () => {
-    setThemeToStorage(Theme.DARK)
+  it('writes theme to storage and logs event', () => {
+    const theme = 'dark' as ThemePreference
 
-    const stored = localStorage.getItem('thememode')
+    setThemeToStorage(theme)
 
-    expect(stored).toBe(JSON.stringify(Theme.DARK))
+    expect(monitorInformation).toHaveBeenCalledWith('SETTINGS_THEME_WRITE', { theme })
+    expect(setStorageItem).toHaveBeenCalledWith(THEME_KEY, theme)
   })
 
-  it('retrieves theme correctly', () => {
-    localStorage.setItem('thememode', JSON.stringify(Theme.LIGHT))
+  it('reads theme from storage and logs event', () => {
+    const theme = 'light' as ThemePreference
+
+    vi.mocked(getStorageItem).mockReturnValue(theme)
 
     const result = getThemeFromStorage()
 
-    expect(result).toBe(Theme.LIGHT)
+    expect(monitorInformation).toHaveBeenCalledWith('SETTINGS_THEME_READ', { THEMEKEY: THEME_KEY })
+    expect(getStorageItem).toHaveBeenCalledWith(THEME_KEY)
+    expect(result).toBe(theme)
   })
 
-  it('returns null when theme is missing', () => {
+  it('returns null when nothing is stored', () => {
+    vi.mocked(getStorageItem).mockReturnValue(null)
+
     const result = getThemeFromStorage()
 
     expect(result).toBeNull()
