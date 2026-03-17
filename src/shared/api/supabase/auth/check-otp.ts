@@ -1,8 +1,8 @@
 import { captureException } from '@shared/lib'
 import type { RegisterResult } from '@shared/types'
 
+import { mapSupabaseError } from '../map-supabase-error'
 import { verifyOneTimePassword } from './auth'
-import { mapSupabaseError } from './map-supabase-error'
 
 /**
  * Verifies a one-time password (OTP) for a user's email during sign-up.

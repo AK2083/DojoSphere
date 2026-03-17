@@ -1,9 +1,9 @@
-import { mapSupabaseError } from '@shared/api/supabase/map-supabase-error'
-import { AppError } from '@shared/errors'
-import { captureException } from '@shared/lib/glitchtip/logging'
 import { AuthError, type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AppError } from '../../../errors/app-error'
+import { captureException } from '../../../lib/glitchtip/logging'
+import { mapSupabaseError } from '../map-supabase-error'
 import { verifyOneTimePassword } from './auth'
 import { checkOneTimePassword } from './check-otp'
 
@@ -11,11 +11,11 @@ vi.mock('./auth', () => ({
   verifyOneTimePassword: vi.fn()
 }))
 
-vi.mock('@shared/api/supabase/map-supabase-error', () => ({
+vi.mock('../map-supabase-error', () => ({
   mapSupabaseError: vi.fn()
 }))
 
-vi.mock('@shared/lib/glitchtip/logging', () => ({
+vi.mock('../../../lib/glitchtip/logging', () => ({
   captureException: vi.fn()
 }))
 

@@ -1,11 +1,10 @@
-import { captureException } from '@shared/lib/glitchtip/logging'
-import { AuthError, type AuthResponse } from '@supabase/supabase-js'
+import { type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { supabase } from '../client'
 import { signUpByEmailPassword, verifyOneTimePassword } from './auth'
-import { supabase } from './client'
 
-vi.mock('./client', () => ({
+vi.mock('../client', () => ({
   supabase: {
     auth: {
       signUp: vi.fn(),
@@ -14,7 +13,7 @@ vi.mock('./client', () => ({
   }
 }))
 
-vi.mock('@shared/lib/glitchtip/logging', () => ({
+vi.mock('@shared/lib', () => ({
   captureException: vi.fn(),
   setUserContext: vi.fn()
 }))

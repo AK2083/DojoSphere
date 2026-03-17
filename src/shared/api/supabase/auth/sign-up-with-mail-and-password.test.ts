@@ -1,9 +1,9 @@
-import { mapSupabaseError } from '@shared/api/supabase/map-supabase-error'
-import { AppError } from '@shared/errors'
-import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
 import { AuthError, type AuthResponse, type User } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { AppError } from '../../../errors/app-error'
+import { captureException, setUserContext } from '../../../lib/glitchtip/logging'
+import { mapSupabaseError } from '../map-supabase-error'
 import { signUpByEmailPassword } from './auth'
 import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 
@@ -11,11 +11,11 @@ vi.mock('./auth', () => ({
   signUpByEmailPassword: vi.fn()
 }))
 
-vi.mock('@shared/api/supabase/map-supabase-error', () => ({
+vi.mock('../map-supabase-error', () => ({
   mapSupabaseError: vi.fn()
 }))
 
-vi.mock('@shared/lib/glitchtip/logging', () => ({
+vi.mock('../../../lib/glitchtip/logging', () => ({
   captureException: vi.fn(),
   setUserContext: vi.fn()
 }))

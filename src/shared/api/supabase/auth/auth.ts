@@ -1,6 +1,6 @@
 import type { AuthResponse } from '@supabase/supabase-js'
 
-import { supabase } from './client'
+import { supabase } from '../client'
 
 /**
  * Registers a new user using Supabase email/password authentication.

@@ -1,20 +1,22 @@
 import { useI18n } from 'vue-i18n'
 
 /**
- * Provides access to the application's translation utilities.
+ * Composable for handling translations using vue-i18n.
  *
- * This composable wraps {@link useI18n} and exposes the translation
- * function and the current locale used by the application.
+ * Provides the translation function `t` and the current `locale`.
  *
- * It can be used inside Vue components to translate text and
- * reactively access or change the current language.
+ * @returns An object containing the translation function and the current locale.
  *
- * @returns {{
- *   t: ReturnType<typeof useI18n>['t'],
- *   locale: ReturnType<typeof useI18n>['locale']
- * }} An object containing the translation function and the current locale.
+ * @example
+ * const { t, locale } = useTranslation()
+ *
+ * t('common.hello')
+ * locale.value = 'en'
  */
-export function useTranslation() {
+export function useTranslation(): {
+  t: import('vue-i18n').Composer['t']
+  locale: import('vue-i18n').Composer['locale']
+} {
   const { t, locale } = useI18n()
 
   return {
