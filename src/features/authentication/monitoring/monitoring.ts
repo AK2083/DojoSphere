@@ -15,7 +15,8 @@ export const CATEGORY = 'authentication'
  * consistent event naming across the application.
  */
 export const MONITORING_EVENTS = {
-  AUTH_REGISTER_SUBMITTED: 'auth.register.submitted'
+  AUTH_REGISTER_SUBMITTED: 'auth.register.submitted',
+  CHECK_OTP: 'auth.otp.verify'
 }
 
 /**

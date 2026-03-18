@@ -1,7 +1,8 @@
 <script setup>
-import { translationKeys } from '@features/authentication'
+import { translationKeys, useOtp } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
+const { execute, errorCode } = useOtp()
 const { t } = useTranslation()
 const router = useRouter()
 const route = useRoute()
@@ -9,16 +10,8 @@ const email = route.query.email
 const otp = ref('')
 
 const verifyOtp = async () => {
-  try {
-    if (!email) {
-      throw new Error('Email is required')
-    }
-
-    await checkOneTimePassword(email, otp.value)
-  } catch (error) {
-    console.error(error.message)
-    return
-  }
+  const success = await execute(email, otp.value)
+  if (!success) return
 
   router.push({ name: 'settings' })
 }
@@ -33,6 +26,7 @@ const verifyOtp = async () => {
         <p>{{ t(translationKeys.otp.description) }}</p>
 
         <v-otp-input v-model="otp" length="6" type="number" @finish="verifyOtp" />
+        <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
       </v-card-text>
     </v-card>
   </v-container>

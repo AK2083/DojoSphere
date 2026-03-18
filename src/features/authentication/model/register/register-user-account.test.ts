@@ -2,17 +2,18 @@ import { signUpWithMailAndPassword } from '@shared/api'
 import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
 import { registerUserAccount } from './register-user-account'
 
 vi.mock('@shared/api', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 
-vi.mock('../monitoring/monitoring', () => ({
+vi.mock('../../monitoring/monitoring', () => ({
   monitorInformation: vi.fn(),
   MONITORING_EVENTS: {
-    AUTH_REGISTER_SUBMITTED: 'AUTH_REGISTER_SUBMITTED'
+    AUTH_REGISTER_SUBMITTED: 'AUTH_REGISTER_SUBMITTED',
+    CHECK_OTP: 'CHECK_OTP'
   }
 }))
 

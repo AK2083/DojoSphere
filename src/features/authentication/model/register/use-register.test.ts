@@ -22,7 +22,6 @@ describe('useRegister', () => {
 
     const promise = execute('test@test.com', 'password')
 
-    // loading sollte direkt true sein
     expect(loading.value).toBe(true)
 
     const result = await promise

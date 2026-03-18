@@ -6,7 +6,7 @@ import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import RegisterImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'
-import { useRegister } from '../model/use-register'
+import { useRegister } from '../model/register/use-register'
 
 const { t } = useTranslation()
 const router = useRouter()
