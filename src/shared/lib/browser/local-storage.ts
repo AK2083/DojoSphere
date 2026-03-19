@@ -16,6 +16,7 @@ import { captureException } from '../glitchtip/logging'
  */
 export function getStorageItem<T>(key: string): T | null {
   const value = localStorage.getItem(key)
+
   if (!value) return null
 
   try {

@@ -6,7 +6,7 @@ import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 /**
  * Storage key used to persist the user's preferred theme mode.
  */
-const THEMEKEY = 'thememode'
+const THEMEKEY = 'dojosphere.settings.theme'
 
 /**
  * Stores the user's preferred theme in browser storage.

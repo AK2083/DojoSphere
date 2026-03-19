@@ -1,9 +1,12 @@
 <script setup>
 import { useDisplay } from 'vuetify'
+import { useAuthNavigation } from '@features/authentication'
 import { mdiAccount, mdiCog } from '@mdi/js'
 
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
+const { getAccountRoute } = useAuthNavigation()
+
 const isMobile = computed(() => {
   drawer.value = !smAndDown.value
   return smAndDown.value
@@ -13,7 +16,7 @@ const isMobile = computed(() => {
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon aria-label="Account" :to="{ name: 'home' }" exact>
+      <v-btn icon aria-label="Account" :to="getAccountRoute()" exact>
         <v-icon :icon="mdiAccount"></v-icon>
       </v-btn>
       <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
@@ -32,7 +35,7 @@ const isMobile = computed(() => {
   >
     <template #append>
       <v-list nav density="compact">
-        <v-list-item :prepend-icon="mdiAccount" :to="{ name: 'home' }" title="Account" exact />
+        <v-list-item :prepend-icon="mdiAccount" :to="getAccountRoute()" title="Account" exact />
         <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />
       </v-list>
     </template>

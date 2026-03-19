@@ -16,7 +16,9 @@ export const CATEGORY = 'authentication'
  */
 export const MONITORING_EVENTS = {
   AUTH_REGISTER_SUBMITTED: 'auth.register.submitted',
-  CHECK_OTP: 'auth.otp.verify'
+  CHECK_OTP: 'auth.otp.verify',
+  STORAGE_OTP_READ: 'auth.otp.storage.read',
+  STORAGE_OTP_WRITE: 'auth.otp.storage.write'
 }
 
 /**

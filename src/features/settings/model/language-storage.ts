@@ -5,7 +5,7 @@ import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 /**
  * Storage key used to persist the user's preferred language.
  */
-const LANGUAGEKEY = 'preferredlanguage'
+const LANGUAGEKEY = 'dojosphere.settings.language'
 
 /**
  * Stores the user's preferred language in browser storage.

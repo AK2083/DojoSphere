@@ -18,7 +18,7 @@ vi.mock('../monitoring/monitoring', () => ({
 }))
 
 describe('language-storage (unit)', () => {
-  const LANGUAGE_KEY = 'preferredlanguage'
+  const LANGUAGE_KEY = 'dojosphere.settings.language'
 
   beforeEach(() => {
     vi.clearAllMocks()

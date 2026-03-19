@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+import { setIsOtpActiveToStorage } from './register-storage'
 import { registerUserAccount } from './register-user-account'
 
 /**
@@ -37,6 +38,7 @@ export function useRegister() {
       return false
     }
 
+    setIsOtpActiveToStorage(true)
     errorCode.value = null
     return true
   }

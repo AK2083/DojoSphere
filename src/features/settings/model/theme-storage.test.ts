@@ -19,7 +19,7 @@ vi.mock('../monitoring/monitoring', () => ({
 }))
 
 describe('theme-storage (unit)', () => {
-  const THEME_KEY = 'thememode'
+  const THEME_KEY = 'dojosphere.settings.theme'
 
   beforeEach(() => {
     vi.clearAllMocks()
