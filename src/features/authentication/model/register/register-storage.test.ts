@@ -32,7 +32,7 @@ describe('otp-storage (unit)', () => {
     expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.STORAGE_OTP_READ, {
       isActive
     })
-    expect(setStorageItem).toHaveBeenCalledWith(OTPKEY, JSON.stringify(isActive))
+    expect(setStorageItem).toHaveBeenCalledWith(OTPKEY, isActive)
   })
 
   it('reads otp state from storage and logs event', () => {

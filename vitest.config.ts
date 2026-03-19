@@ -25,11 +25,11 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'env.d.ts',
-        'main.ts',
         'index.ts',
         '**/*.spec.ts',
         '**/shared/lib/**',
         '**/node_modules/**',
+        '**/app/**',
         '**/dist/**',
         '**/types/**',
         '**/exceptions/**',
