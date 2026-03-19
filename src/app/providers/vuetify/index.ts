@@ -1,8 +1,7 @@
 import { createVuetify } from 'vuetify'
 import { directives } from 'vuetify/dist/vuetify.js'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
-
-import { getInitialTheme } from '../../model/theme-service'
+import { getInitialTheme } from '@features/settings'
 
 import '@fontsource/roboto/100.css'
 import '@fontsource/roboto/300.css'
