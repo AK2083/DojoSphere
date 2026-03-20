@@ -2,13 +2,14 @@ import { type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { supabase } from '../client'
-import { signUpByEmailPassword, verifyOneTimePassword } from './auth'
+import { resendSignUpConfirmation, signUpByEmailPassword, verifyOneTimePassword } from './auth'
 
 vi.mock('../client', () => ({
   supabase: {
     auth: {
       signUp: vi.fn(),
-      verifyOtp: vi.fn()
+      verifyOtp: vi.fn(),
+      resend: vi.fn()
     }
   }
 }))
@@ -89,5 +90,36 @@ describe('checkOtp', () => {
     await verifyOneTimePassword('test@test.de', '123456')
 
     expect(supabase.auth.verifyOtp).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('resendSignUpConfirmation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.resend with type and email', async () => {
+    vi.mocked(supabase.auth.resend).mockResolvedValue({
+      data: { user: null, session: null },
+      error: null
+    } as AuthResponse)
+
+    await resendSignUpConfirmation('test@test.de')
+
+    expect(supabase.auth.resend).toHaveBeenCalledWith({
+      type: 'signup',
+      email: 'test@test.de'
+    })
+  })
+
+  it('calls resend exactly once', async () => {
+    vi.mocked(supabase.auth.resend).mockResolvedValue({
+      data: { user: null, session: null },
+      error: null
+    } as AuthResponse)
+
+    await resendSignUpConfirmation('test@test.de')
+
+    expect(supabase.auth.resend).toHaveBeenCalledTimes(1)
   })
 })

@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+
 import { resendOtp } from './resend-otp'
 
 type UseResendReturn = {
