@@ -60,3 +60,21 @@ export async function verifyOneTimePassword(email: string, token: string): Promi
     type: 'signup'
   })
 }
+
+/**
+ * Resends the email confirmation link for a sign-up flow.
+ *
+ * This is a low-level API wrapper around Supabase's `auth.resend` method.
+ * It performs no error handling and returns the raw Supabase response.
+ *
+ * @param {string} email - The email address that should receive a new confirmation link.
+ * @returns {Promise<Awaited<ReturnType<typeof supabase.auth.resend>>>} The raw Supabase resend response.
+ */
+export async function resendSignUpConfirmation(
+  email: string
+): Promise<Awaited<ReturnType<typeof supabase.auth.resend>>> {
+  return await supabase.auth.resend({
+    type: 'signup',
+    email
+  })
+}

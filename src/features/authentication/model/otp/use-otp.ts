@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+import { resendOtp } from './resend-otp'
 import { verifyOtp } from './verify-otp'
 /**
  * Composable for handling OTP (one-time password) verification.
@@ -23,6 +24,9 @@ import { verifyOtp } from './verify-otp'
 export function useOtp() {
   const errorCode = ref<string | null>(null)
   const loading = ref(false)
+  const resendErrorCode = ref<string | null>(null)
+  const resendLoading = ref(false)
+  const resendSuccess = ref(false)
 
   async function execute(email: string, token: string) {
     loading.value = true
@@ -40,5 +44,23 @@ export function useOtp() {
     return true
   }
 
-  return { execute, errorCode, loading }
+  async function resend(email: string) {
+    resendLoading.value = true
+    resendSuccess.value = false
+
+    const response = await resendOtp(email)
+
+    resendLoading.value = false
+
+    if (!response.success) {
+      resendErrorCode.value = response.error.code
+      return false
+    }
+
+    resendErrorCode.value = null
+    resendSuccess.value = true
+    return true
+  }
+
+  return { execute, errorCode, loading, resend, resendErrorCode, resendLoading, resendSuccess }
 }

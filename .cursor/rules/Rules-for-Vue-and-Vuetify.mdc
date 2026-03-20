@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+globs: src/**/*.vue
+---
+
+- Nutze ausschließlich die Script Setup Syntax (<script setup>).
+- Verwende Vuetify 3 Komponenten (v-btn, v-card, etc.).
+- Halte dich an Feature-First-Design: Komponenten gehören in ihren jeweiligen Feature-Ordner.
+- Nutze die Composition API und Composables für Logik.
