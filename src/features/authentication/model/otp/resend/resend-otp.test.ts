@@ -2,7 +2,7 @@ import { resendSignUpConfirmationEmail } from '@shared/api'
 import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../../monitoring/monitoring'
 import { resendOtp } from './resend-otp'
 
 // Mocks
@@ -10,7 +10,7 @@ vi.mock('@shared/api', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
-vi.mock('../../monitoring/monitoring', () => ({
+vi.mock('../../../monitoring/monitoring', () => ({
   monitorInformation: vi.fn(),
   MONITORING_EVENTS: {
     RESEND_OTP: 'auth.otp.resend'

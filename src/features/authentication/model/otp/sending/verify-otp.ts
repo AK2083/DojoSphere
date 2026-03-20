@@ -1,7 +1,7 @@
 import { checkOneTimePassword } from '@shared/api'
 import type { RegisterResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../..//monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../../monitoring/monitoring'
 
 /**
  * Registers a user account by validating a one-time password (OTP).

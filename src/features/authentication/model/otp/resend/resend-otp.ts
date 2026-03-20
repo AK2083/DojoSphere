@@ -1,7 +1,7 @@
 import { resendSignUpConfirmationEmail } from '@shared/api'
 import type { RegisterResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../../monitoring/monitoring'
 
 /**
  * Triggers resend of the sign-up confirmation mail and records monitoring data.

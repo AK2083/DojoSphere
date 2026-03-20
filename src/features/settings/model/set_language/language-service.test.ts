@@ -1,4 +1,4 @@
-import * as storage from '@features/settings/model/language-storage'
+import * as storage from '@features/settings/model/set_language/language-storage'
 import { FallbackLanguage, LanguageCode } from '@shared/lib/i18n/languages'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

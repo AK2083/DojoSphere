@@ -1,7 +1,7 @@
 import { getStorageItem, setStorageItem } from '@shared/lib'
 import type { ThemePreference } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
 
 /**
  * Storage key used to persist the user's preferred theme mode.

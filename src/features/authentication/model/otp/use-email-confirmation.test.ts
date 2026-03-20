@@ -3,9 +3,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getRegisterEmailFromStorage } from '../register/register-storage'
+import { useResend } from './resend/use-resend'
+import { useOtp } from './sending/use-otp'
 import { useEmailConfirmation } from './use-email-confirmation'
-import { useOtp } from './use-otp'
-import { useResend } from './use-resend'
 
 // Mocks
 vi.mock('vue-router', () => ({
@@ -13,11 +13,11 @@ vi.mock('vue-router', () => ({
   useRouter: vi.fn()
 }))
 
-vi.mock('./use-otp', () => ({
+vi.mock('./sending/use-otp', () => ({
   useOtp: vi.fn()
 }))
 
-vi.mock('./use-resend', () => ({
+vi.mock('./resend/use-resend', () => ({
   useResend: vi.fn()
 }))
 

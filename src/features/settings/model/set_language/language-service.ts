@@ -1,7 +1,7 @@
 import {
   getLanguageFromStorage,
   setLanguageToStorage
-} from '@features/settings/model/language-storage'
+} from '@features/settings/model/set_language/language-storage'
 import { AvailableLanguages, FallbackLanguage, LanguageCode } from '@shared/lib/i18n/languages'
 
 /**

@@ -6,7 +6,7 @@ import { Theme } from '@shared/types/theme-modes'
 
 import ThemeImage from '../assets/Theme.webp'
 import { translationKeys } from '../i18n/keys'
-import { setThemeToStorage } from '../model/theme-storage'
+import { setThemeToStorage } from '../model/set_theme/theme-storage'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()

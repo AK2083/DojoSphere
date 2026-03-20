@@ -2,8 +2,9 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { getRegisterEmailFromStorage } from '../register/register-storage'
-import { useOtp } from './use-otp'
-import { useResend } from './use-resend'
+import { useResend } from './resend/use-resend'
+import { useOtp } from './sending/use-otp'
+
 /**
  * Feature composable for the email confirmation page.
  *

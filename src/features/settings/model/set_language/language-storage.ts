@@ -1,6 +1,6 @@
 import { getStorageItem, type LanguageCode, setStorageItem } from '@shared/lib'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
 
 /**
  * Storage key used to persist the user's preferred language.

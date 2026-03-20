@@ -2,7 +2,7 @@ import { getStorageItem, setStorageItem } from '@shared/lib'
 import { type ThemePreference } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation } from '../monitoring/monitoring'
+import { monitorInformation } from '../../monitoring/monitoring'
 import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 
 vi.mock('@shared/lib', () => ({
@@ -10,7 +10,7 @@ vi.mock('@shared/lib', () => ({
   setStorageItem: vi.fn()
 }))
 
-vi.mock('../monitoring/monitoring', () => ({
+vi.mock('../../monitoring/monitoring', () => ({
   monitorInformation: vi.fn(),
   MONITORING_EVENTS: {
     SETTINGS_THEME_WRITE: 'SETTINGS_THEME_WRITE',

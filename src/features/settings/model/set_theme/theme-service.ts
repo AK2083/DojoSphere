@@ -1,4 +1,7 @@
-import { getThemeFromStorage, setThemeToStorage } from '@features/settings/model/theme-storage'
+import {
+  getThemeFromStorage,
+  setThemeToStorage
+} from '@features/settings/model/set_theme/theme-storage'
 import { Theme, type ThemePreference } from '@shared/types/theme-modes'
 
 /**
