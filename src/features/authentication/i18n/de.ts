@@ -24,7 +24,9 @@ export default {
   otp: {
     title: 'Email bestätigen',
     description:
-      'Bitte gib den Bestätigungscode ein, den wir an deine E-Mail-Adresse gesendet haben.'
+      'Bitte gib den Bestätigungscode ein, den wir an deine E-Mail-Adresse gesendet haben.',
+    codeAria: 'Bestätigungscode',
+    resendMailButton: 'Schicke mir eine neue Bestätigung zu'
   },
   success: {
     title: 'Registrierung erfolgreich',

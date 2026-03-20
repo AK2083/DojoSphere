@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-import { setIsOtpActiveToStorage } from './register-storage'
+import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
 import { registerUserAccount } from './register-user-account'
 
 /**
@@ -39,6 +39,7 @@ export function useRegister() {
     }
 
     setIsOtpActiveToStorage(true)
+    setRegisterEmailToStorage(email)
     errorCode.value = null
     return true
   }

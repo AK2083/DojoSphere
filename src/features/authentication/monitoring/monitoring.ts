@@ -19,7 +19,9 @@ export const MONITORING_EVENTS = {
   CHECK_OTP: 'auth.otp.verify',
   RESEND_OTP: 'auth.otp.resend',
   STORAGE_OTP_READ: 'auth.otp.storage.read',
-  STORAGE_OTP_WRITE: 'auth.otp.storage.write'
+  STORAGE_OTP_WRITE: 'auth.otp.storage.write',
+  STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
+  STORAGE_REGISTER_EMAIL_WRITE: 'auth.register.email.storage.write'
 }
 
 /**

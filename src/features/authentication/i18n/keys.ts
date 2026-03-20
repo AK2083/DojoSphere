@@ -31,7 +31,9 @@ export const translationKeys = {
   },
   otp: {
     title: 'auth.otp.title',
-    description: 'auth.otp.description'
+    description: 'auth.otp.description',
+    codeAria: 'auth.otp.codeAria',
+    resendMailButton: 'auth.otp.resendMailButton'
   },
   success: {
     title: 'auth.success.title',

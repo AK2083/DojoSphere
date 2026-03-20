@@ -1,29 +1,18 @@
 <script setup>
-import { translationKeys, useOtp } from '@features/authentication'
+import { translationKeys, useEmailConfirmation } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
-const { execute, errorCode, resend, resendErrorCode, resendLoading, resendSuccess } = useOtp()
+const {
+  email,
+  otp,
+  verifyOtp,
+  resendConfirmation,
+  errorCode,
+  resendErrorCode,
+  resendLoading,
+  resendSuccess
+} = useEmailConfirmation()
 const { t } = useTranslation()
-const router = useRouter()
-const route = useRoute()
-const email = computed(() => {
-  const value = route.query.email
-  if (Array.isArray(value)) return value[0] ?? ''
-  return typeof value === 'string' ? value : ''
-})
-const otp = ref('')
-
-const verifyOtp = async () => {
-  const success = await execute(email.value, otp.value)
-  if (!success) return
-
-  router.push({ name: 'settings' })
-}
-
-const resendConfirmation = async () => {
-  if (!email.value) return
-  await resend(email.value)
-}
 </script>
 
 <template>
@@ -34,7 +23,13 @@ const resendConfirmation = async () => {
       <v-card-text>
         <p>{{ t(translationKeys.otp.description) }}</p>
 
-        <v-otp-input v-model="otp" length="6" type="number" @finish="verifyOtp" />
+        <v-otp-input
+          v-model="otp"
+          length="6"
+          type="number"
+          :aria-label="t(translationKeys.otp.codeAria)"
+          @finish="verifyOtp"
+        />
         <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
         <v-alert
           v-if="resendErrorCode"
@@ -56,9 +51,10 @@ const resendConfirmation = async () => {
           variant="text"
           :loading="resendLoading"
           :disabled="!email"
+          :aria-label="t(translationKeys.otp.resendMailButton)"
           @click="resendConfirmation"
         >
-          Schicke mir eine neue Bestätigung zu
+          {{ t(translationKeys.otp.resendMailButton) }}
         </v-btn>
       </v-card-actions>
     </v-card>
