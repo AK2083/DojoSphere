@@ -6,6 +6,12 @@ export default {
       'Continue working locally. All data is stored locally and not synchronized with a server.',
     submit: 'Continue without registration'
   },
+  login: {
+    title: 'Login',
+    description: 'Sign in to your account',
+    submit: 'Log in',
+    forgotPassword: 'Forgot your password?'
+  },
   form: {
     title: 'Registration',
     description: 'Register a new user',

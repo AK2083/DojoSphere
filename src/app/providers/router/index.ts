@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: () => import('@pages/SaveLocation.vue')
   },
@@ -10,6 +10,11 @@ const routes = [
     path: '/confirm',
     name: 'emailConfirmation',
     component: () => import('@pages/EMailConfirmation.vue')
+  },
+  {
+    path: '/',
+    name: 'login',
+    component: () => import('@pages/Login.vue')
   },
   {
     path: '/settings',

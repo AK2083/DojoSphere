@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     LanguageSwitch: typeof import('./../../../features/settings/ui/LanguageSwitch.vue')['default']
     LocalWork: typeof import('./../../../features/authentication/ui/LocalWork.vue')['default']
+    LoginForm: typeof import('./../../../features/authentication/ui/LoginForm.vue')['default']
     Navigation: typeof import('./../../../widgets/navigation/Navigation.vue')['default']
     RegisterForm: typeof import('./../../../features/authentication/ui/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

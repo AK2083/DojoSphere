@@ -6,6 +6,12 @@ export default {
       'Hier kann Lokal weitergearbeitet werden. Alle Daten werden lokal gespeichert und nicht mit einem Server synchronisiert.',
     submit: 'Weiter ohne Anmeldung'
   },
+  login: {
+    title: 'Anmelden',
+    description: 'Melde dich bei deinem Konto an',
+    submit: 'Einloggen',
+    forgotPassword: 'Passwort vergessen?'
+  },
   form: {
     title: 'Registrierung',
     description: 'Neuen Benutzer registrieren',

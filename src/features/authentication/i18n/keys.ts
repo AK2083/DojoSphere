@@ -5,6 +5,12 @@ export const translationKeys = {
     description: 'auth.useLocal.description',
     submit: 'auth.useLocal.submit'
   },
+  login: {
+    title: 'auth.login.title',
+    description: 'auth.login.description',
+    submit: 'auth.login.submit',
+    forgotPassword: 'auth.login.forgotPassword'
+  },
   form: {
     title: 'auth.form.title',
     description: 'auth.form.description',
