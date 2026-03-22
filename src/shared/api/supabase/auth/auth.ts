@@ -31,6 +31,22 @@ export async function signUpByEmailPassword(
 }
 
 /**
+ * Signs in an existing user using Supabase email/password authentication.
+ *
+ * Low-level wrapper around `auth.signInWithPassword` with no error mapping.
+ *
+ * @param email - User email address
+ * @param password - User password
+ * @returns Raw Supabase authentication response
+ */
+export async function signInByEmailPassword(
+  email: string,
+  password: string
+): Promise<AuthResponse> {
+  return supabase.auth.signInWithPassword({ email, password })
+}
+
+/**
  * Verifies a one-time password (OTP) for email-based sign-up using Supabase.
  *
  * This function wraps Supabase's `auth.verifyOtp` method and confirms a user's

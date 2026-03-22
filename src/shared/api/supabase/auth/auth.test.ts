@@ -2,12 +2,18 @@ import { type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { supabase } from '../client'
-import { resendSignUpConfirmation, signUpByEmailPassword, verifyOneTimePassword } from './auth'
+import {
+  resendSignUpConfirmation,
+  signInByEmailPassword,
+  signUpByEmailPassword,
+  verifyOneTimePassword
+} from './auth'
 
 vi.mock('../client', () => ({
   supabase: {
     auth: {
       signUp: vi.fn(),
+      signInWithPassword: vi.fn(),
       verifyOtp: vi.fn(),
       resend: vi.fn()
     }
@@ -56,6 +62,48 @@ describe('signUpByEmailPassword', () => {
     vi.mocked(supabase.auth.signUp).mockResolvedValue(mockResponse as AuthResponse)
 
     const result = await signUpByEmailPassword(email, password)
+
+    expect(result.error).toBe(mockError)
+  })
+})
+
+describe('signInByEmailPassword', () => {
+  const email = 'test@example.com'
+  const password = 'password123'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.signInWithPassword with correct parameters', async () => {
+    const mockResponse = {
+      data: { user: null, session: null },
+      error: null
+    }
+
+    vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue(mockResponse as never)
+
+    const result = await signInByEmailPassword(email, password)
+
+    expect(supabase.auth.signInWithPassword).toHaveBeenCalledWith({
+      email,
+      password
+    })
+
+    expect(result).toEqual(mockResponse)
+  })
+
+  it('returns error response from supabase unchanged', async () => {
+    const mockError = new Error('Sign-in failed')
+
+    const mockResponse = {
+      data: { user: null, session: null },
+      error: mockError
+    }
+
+    vi.mocked(supabase.auth.signInWithPassword).mockResolvedValue(mockResponse as never)
+
+    const result = await signInByEmailPassword(email, password)
 
     expect(result.error).toBe(mockError)
   })

@@ -1,4 +1,6 @@
 export default {
+  email_exists: 'This email address is already registered.',
+  invalid_credentials: 'Invalid email or password.',
   useLocal: {
     title: 'Local Login',
     subtitle: "Don't feel like registering?",
@@ -10,7 +12,12 @@ export default {
     title: 'Login',
     description: 'Sign in to your account',
     submit: 'Log in',
-    forgotPassword: 'Forgot your password?'
+    forgotPassword: 'Forgot your password?',
+    noAccount: "Don't have an account yet?",
+    register: 'Register now'
+  },
+  welcome: {
+    title: 'Welcome'
   },
   form: {
     title: 'Registration',

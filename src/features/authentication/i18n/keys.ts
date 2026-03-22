@@ -9,7 +9,12 @@ export const translationKeys = {
     title: 'auth.login.title',
     description: 'auth.login.description',
     submit: 'auth.login.submit',
-    forgotPassword: 'auth.login.forgotPassword'
+    forgotPassword: 'auth.login.forgotPassword',
+    noAccount: 'auth.login.noAccount',
+    register: 'auth.login.register'
+  },
+  welcome: {
+    title: 'auth.welcome.title'
   },
   form: {
     title: 'auth.form.title',

@@ -30,7 +30,7 @@ describe('mapSupabaseError', () => {
     const result = mapSupabaseError(error)
 
     expect(result).toBeInstanceOf(AppError)
-    expect(result.code).toBe('shared.error.unknown')
+    expect(result.code).toBe('auth.invalid_credentials')
   })
 
   it('maps unknown errors to unknown_error and keeps message', () => {

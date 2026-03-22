@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import LoginPlaceholderImage from '../assets/Register.webp'
 import { translationKeys } from '../i18n/keys'
+import { useLogin } from '../model/login/use-login'
 
 const { t } = useTranslation()
+const route = useRoute()
+const router = useRouter()
+const { execute, errorCode, loading } = useLogin()
 
 const form = ref<VForm | null>(null)
 const email = ref('')
@@ -21,6 +26,17 @@ async function submit() {
 
   const result = await form.value.validate()
   if (!result.valid) return
+
+  const success = await execute(email.value, password.value)
+  if (!success) return
+
+  const redirect = route.query.redirect
+  if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
+    await router.push(redirect)
+    return
+  }
+
+  await router.push({ name: 'welcome' })
 }
 </script>
 
@@ -76,10 +92,14 @@ async function submit() {
             block
             variant="flat"
             color="success"
+            :loading="loading"
+            :disabled="loading"
             :aria-label="t(translationKeys.login.submit)"
           >
             {{ t(translationKeys.login.submit) }}
           </v-btn>
+
+          <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
 
           <v-btn
             type="button"
@@ -90,6 +110,20 @@ async function submit() {
           >
             {{ t(translationKeys.login.forgotPassword) }}
           </v-btn>
+
+          <div class="d-flex align-center justify-center w-100 mt-2">
+            <span class="text-body-2 text-medium-emphasis">
+              {{ t(translationKeys.login.noAccount) }}
+            </span>
+            <v-btn
+              variant="plain"
+              :to="{ name: 'home' }"
+              :aria-label="t(translationKeys.login.register)"
+              class="text-none"
+            >
+              {{ t(translationKeys.login.register) }}
+            </v-btn>
+          </div>
         </div>
       </template>
     </v-card>

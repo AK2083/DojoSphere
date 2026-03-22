@@ -1,4 +1,6 @@
 export default {
+  email_exists: 'Diese E-Mail-Adresse ist bereits registriert.',
+  invalid_credentials: 'E-Mail oder Passwort ist ungültig.',
   useLocal: {
     title: 'Lokal anmelden',
     subtitle: 'Keine Lust auf Registrierung?',
@@ -10,7 +12,12 @@ export default {
     title: 'Anmelden',
     description: 'Melde dich bei deinem Konto an',
     submit: 'Einloggen',
-    forgotPassword: 'Passwort vergessen?'
+    forgotPassword: 'Passwort vergessen?',
+    noAccount: 'Noch kein Konto?',
+    register: 'Jetzt registrieren'
+  },
+  welcome: {
+    title: 'Willkommen'
   },
   form: {
     title: 'Registrierung',
