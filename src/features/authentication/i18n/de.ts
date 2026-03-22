@@ -19,6 +19,16 @@ export default {
   welcome: {
     title: 'Willkommen'
   },
+  navigation: {
+    accountGuestAria: 'Konto, Registrierung oder E-Mail bestätigen',
+    accountLoggedInAria: 'Mein Konto',
+    accountGuestTitle: 'Konto',
+    accountLoggedInTitle: 'Profil'
+  },
+  account: {
+    greeting: 'Bye, {name}',
+    fallbackName: 'Benutzer'
+  },
   form: {
     title: 'Registrierung',
     description: 'Neuen Benutzer registrieren',
@@ -39,7 +49,10 @@ export default {
     description:
       'Bitte gib den Bestätigungscode ein, den wir an deine E-Mail-Adresse gesendet haben.',
     codeAria: 'Bestätigungscode',
-    resendMailButton: 'Schicke mir eine neue Bestätigung zu'
+    resendMailButton: 'Schicke mir eine neue Bestätigung zu',
+    errorExpired:
+      'Dieser Bestätigungscode ist abgelaufen. Bitte fordere unten einen neuen Code an.',
+    errorInvalid: 'Der eingegebene Code ist ungültig. Bitte prüfe ihn und versuche es erneut.'
   },
   success: {
     title: 'Registrierung erfolgreich',

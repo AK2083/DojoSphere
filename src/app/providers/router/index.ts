@@ -25,6 +25,12 @@ const routes = [
     component: () => import('@pages/Welcome.vue')
   },
   {
+    path: '/account',
+    name: 'account',
+    meta: { requiresAuth: true },
+    component: () => import('@pages/Account.vue')
+  },
+  {
     path: '/settings',
     name: 'settings',
     component: () => import('@pages/Settings.vue')

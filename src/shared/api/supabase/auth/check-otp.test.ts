@@ -35,7 +35,7 @@ describe('checkOneTimePassword', () => {
       error: supabaseError
     }
 
-    const mappedError = new AppError('auth.invalid_otp')
+    const mappedError = new AppError('auth.otp.errorInvalid')
 
     vi.mocked(verifyOneTimePassword).mockResolvedValue(response)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)

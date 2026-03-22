@@ -16,6 +16,16 @@ export const translationKeys = {
   welcome: {
     title: 'auth.welcome.title'
   },
+  navigation: {
+    accountGuestAria: 'auth.navigation.accountGuestAria',
+    accountLoggedInAria: 'auth.navigation.accountLoggedInAria',
+    accountGuestTitle: 'auth.navigation.accountGuestTitle',
+    accountLoggedInTitle: 'auth.navigation.accountLoggedInTitle'
+  },
+  account: {
+    greeting: 'auth.account.greeting',
+    fallbackName: 'auth.account.fallbackName'
+  },
   form: {
     title: 'auth.form.title',
     description: 'auth.form.description',
@@ -44,7 +54,9 @@ export const translationKeys = {
     title: 'auth.otp.title',
     description: 'auth.otp.description',
     codeAria: 'auth.otp.codeAria',
-    resendMailButton: 'auth.otp.resendMailButton'
+    resendMailButton: 'auth.otp.resendMailButton',
+    errorExpired: 'auth.otp.errorExpired',
+    errorInvalid: 'auth.otp.errorInvalid'
   },
   success: {
     title: 'auth.success.title',

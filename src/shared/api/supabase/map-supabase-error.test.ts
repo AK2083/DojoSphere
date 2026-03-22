@@ -52,4 +52,36 @@ describe('mapSupabaseError', () => {
     expect(result.code).toBe('shared.error.retry')
     expect(result.message).toBe('')
   })
+
+  it('maps otp_expired to auth.otp.errorExpired', () => {
+    const error = createAuthError('otp_expired')
+
+    const result = mapSupabaseError(error)
+
+    expect(result.code).toBe('auth.otp.errorExpired')
+  })
+
+  it('maps flow_state_expired to auth.otp.errorExpired', () => {
+    const error = createAuthError('flow_state_expired')
+
+    const result = mapSupabaseError(error)
+
+    expect(result.code).toBe('auth.otp.errorExpired')
+  })
+
+  it('maps invalid_otp to auth.otp.errorInvalid', () => {
+    const error = createAuthError('invalid_otp')
+
+    const result = mapSupabaseError(error)
+
+    expect(result.code).toBe('auth.otp.errorInvalid')
+  })
+
+  it('maps generic code with expired token message to auth.otp.errorExpired', () => {
+    const error = createAuthError('unknown', 'Token has expired or is invalid')
+
+    const result = mapSupabaseError(error)
+
+    expect(result.code).toBe('auth.otp.errorExpired')
+  })
 })

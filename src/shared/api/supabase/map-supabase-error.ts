@@ -24,6 +24,14 @@ export function mapSupabaseError(error: AuthError): AppError {
     case 'invalid_credentials':
       return new AppError('auth.invalid_credentials')
 
+    case 'invalid_otp':
+      return new AppError('auth.otp.errorInvalid')
+
+    case 'otp_expired':
+    case 'flow_state_expired':
+    case 'expired_token':
+      return new AppError('auth.otp.errorExpired')
+
     case 'over_request_rate_limit':
       return new AppError(translationKeys.error.retry)
 

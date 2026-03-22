@@ -19,6 +19,16 @@ export default {
   welcome: {
     title: 'Welcome'
   },
+  navigation: {
+    accountGuestAria: 'Account, registration, or email confirmation',
+    accountLoggedInAria: 'My account',
+    accountGuestTitle: 'Account',
+    accountLoggedInTitle: 'Profile'
+  },
+  account: {
+    greeting: 'Bye, {name}',
+    fallbackName: 'User'
+  },
   form: {
     title: 'Registration',
     description: 'Register a new user',
@@ -38,7 +48,9 @@ export default {
     title: 'Confirm Email',
     description: 'Please enter the confirmation code we have sent to your email address.',
     codeAria: 'Confirmation code',
-    resendMailButton: 'Send me a new confirmation'
+    resendMailButton: 'Send me a new confirmation',
+    errorExpired: 'This confirmation code has expired. Please request a new code below.',
+    errorInvalid: 'The code you entered is invalid. Please check it and try again.'
   },
   success: {
     title: 'Register successful',
