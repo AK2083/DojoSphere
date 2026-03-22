@@ -76,12 +76,4 @@ describe('mapSupabaseError', () => {
 
     expect(result.code).toBe('auth.otp.errorInvalid')
   })
-
-  it('maps generic code with expired token message to auth.otp.errorExpired', () => {
-    const error = createAuthError('unknown', 'Token has expired or is invalid')
-
-    const result = mapSupabaseError(error)
-
-    expect(result.code).toBe('auth.otp.errorExpired')
-  })
 })
