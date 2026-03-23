@@ -57,5 +57,25 @@ export default {
     description:
       'We have sent you a confirmation email. Please check your inbox to activate your account.',
     resendMail: 'Resend email'
+  },
+  resetPassword: {
+    title: 'Reset your password',
+    description: 'Request a confirmation code and set a new password',
+    steps: {
+      email: 'E-Mail',
+      otp: 'Confirmation code',
+      newPassword: 'New password'
+    },
+    cancel: 'Cancel',
+    resendOtpButton: 'Resend code',
+    next: {
+      email: 'Continue',
+      otp: 'Verify code',
+      finish: 'Finish'
+    },
+    password: {
+      repeatTitle: 'Repeat password',
+      mismatch: 'Passwords do not match.'
+    }
   }
 }

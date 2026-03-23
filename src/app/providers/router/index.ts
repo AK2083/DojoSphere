@@ -13,10 +13,16 @@ const routes = [
     component: () => import('@pages/EMailConfirmation.vue')
   },
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     meta: { guestOnly: true },
     component: () => import('@pages/Login.vue')
+  },
+  {
+    path: '/',
+    name: 'passwordReset',
+    meta: { guestOnly: true },
+    component: () => import('@pages/PasswordReset.vue')
   },
   {
     path: '/welcome',

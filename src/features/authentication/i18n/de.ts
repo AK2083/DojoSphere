@@ -59,5 +59,25 @@ export default {
     description:
       'Wir haben dir eine Bestätigungs-E-Mail gesendet. Bitte überprüfe dein Postfach, um deinen Account zu aktivieren.',
     resendMail: 'E-Mail erneut senden'
+  },
+  resetPassword: {
+    title: 'Passwort zurücksetzen',
+    description: 'Fordere einen Bestätigungscode an und setze ein neues Passwort',
+    steps: {
+      email: 'E-Mail',
+      otp: 'Bestätigungscode',
+      newPassword: 'Neues Passwort'
+    },
+    cancel: 'Abbrechen',
+    resendOtpButton: 'Code erneut senden',
+    next: {
+      email: 'Weiter',
+      otp: 'Code prüfen',
+      finish: 'Abschließen'
+    },
+    password: {
+      repeatTitle: 'Passwort wiederholen',
+      mismatch: 'Passwörter stimmen nicht überein.'
+    }
   }
 }

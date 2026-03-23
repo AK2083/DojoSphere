@@ -62,5 +62,25 @@ export const translationKeys = {
     title: 'auth.success.title',
     description: 'auth.success.description',
     resendMail: 'auth.success.resendMail'
+  },
+  resetPassword: {
+    title: 'auth.resetPassword.title',
+    description: 'auth.resetPassword.description',
+    steps: {
+      email: 'auth.resetPassword.steps.email',
+      otp: 'auth.resetPassword.steps.otp',
+      newPassword: 'auth.resetPassword.steps.newPassword'
+    },
+    cancel: 'auth.resetPassword.cancel',
+    resendOtpButton: 'auth.resetPassword.resendOtpButton',
+    next: {
+      email: 'auth.resetPassword.next.email',
+      otp: 'auth.resetPassword.next.otp',
+      finish: 'auth.resetPassword.next.finish'
+    },
+    password: {
+      repeatTitle: 'auth.resetPassword.password.repeatTitle',
+      mismatch: 'auth.resetPassword.password.mismatch'
+    }
   }
 } as const

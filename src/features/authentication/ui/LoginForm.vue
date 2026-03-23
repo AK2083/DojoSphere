@@ -38,6 +38,15 @@ async function submit() {
 
   await router.push({ name: 'welcome' })
 }
+
+function goToPasswordReset() {
+  if (!email.value) {
+    router.push({ name: 'passwordReset' })
+    return
+  }
+
+  router.push({ name: 'passwordReset', query: { email: email.value } })
+}
 </script>
 
 <template>
@@ -107,6 +116,7 @@ async function submit() {
             variant="text"
             class="mt-2"
             :aria-label="t(translationKeys.login.forgotPassword)"
+            @click="goToPasswordReset"
           >
             {{ t(translationKeys.login.forgotPassword) }}
           </v-btn>
