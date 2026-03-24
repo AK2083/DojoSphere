@@ -11,10 +11,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    EmailStep: typeof import('./../../../features/authentication/ui/EmailStep.vue')['default']
     LanguageSwitch: typeof import('./../../../features/settings/ui/LanguageSwitch.vue')['default']
     LocalWork: typeof import('./../../../features/authentication/ui/LocalWork.vue')['default']
     LoginForm: typeof import('./../../../features/authentication/ui/LoginForm.vue')['default']
     Navigation: typeof import('./../../../widgets/navigation/Navigation.vue')['default']
+    NewPasswordStep: typeof import('./../../../features/authentication/ui/NewPasswordStep.vue')['default']
+    OtpStep: typeof import('./../../../features/authentication/ui/OtpStep.vue')['default']
+    PasswordStepper: typeof import('./../../../features/authentication/ui/PasswordStepper.vue')['default']
     RegisterForm: typeof import('./../../../features/authentication/ui/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
