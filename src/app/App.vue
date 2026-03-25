@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import Navigation from '@widgets/navigation/Navigation.vue'
+</script>
+
 <template>
   <v-app>
     <v-layout>

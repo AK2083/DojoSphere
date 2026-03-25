@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { translationKeys, useEmailConfirmation } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
@@ -27,7 +27,7 @@ const { t } = useTranslation()
           v-model="otp"
           length="6"
           type="number"
-          :aria-label="t(translationKeys.otp.codeAria)"
+          v-bind="{ 'aria-label': t(translationKeys.otp.codeAria) }"
           @finish="verifyOtp"
         />
         <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
@@ -51,7 +51,7 @@ const { t } = useTranslation()
           variant="text"
           :loading="resendLoading"
           :disabled="!email"
-          :aria-label="t(translationKeys.otp.resendMailButton)"
+          v-bind="{ 'aria-label': t(translationKeys.otp.resendMailButton) }"
           @click="resendConfirmation"
         >
           {{ t(translationKeys.otp.resendMailButton) }}

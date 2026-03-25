@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { translationKeys, useAuthNavigation, useAuthSession } from '@features/authentication'
 import { mdiAccount, mdiCardAccountDetails, mdiCog } from '@mdi/js'
@@ -28,39 +29,37 @@ const accountListTitle = computed(() =>
     : t(translationKeys.navigation.accountGuestTitle)
 )
 
-const isMobile = computed(() => {
-  drawer.value = !smAndDown.value
-  return smAndDown.value
-})
+const isMobile = computed(() => smAndDown.value)
+
+watch(
+  smAndDown,
+  (value) => {
+    drawer.value = !value
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon :aria-label="accountAriaLabel" :to="accountTo" exact>
+      <v-btn icon v-bind="{ 'aria-label': accountAriaLabel }" :to="accountTo" exact>
         <v-icon :icon="accountIcon"></v-icon>
       </v-btn>
-      <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
+      <v-btn icon v-bind="{ 'aria-label': 'Settings' }" :to="{ name: 'settings' }">
         <v-icon :icon="mdiCog"></v-icon>
       </v-btn>
     </template>
   </v-app-bar>
 
-  <v-navigation-drawer
-    v-model="drawer"
-    density="comfortable"
-    rail
-    floating
-    :temporary="isMobile"
-    :permanent="!isMobile"
-  >
+  <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
       <v-list nav density="compact">
         <v-list-item
           :prepend-icon="accountIcon"
           :to="accountTo"
           :title="accountListTitle"
-          :aria-label="accountAriaLabel"
+          v-bind="{ 'aria-label': accountAriaLabel }"
           exact
         />
         <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />

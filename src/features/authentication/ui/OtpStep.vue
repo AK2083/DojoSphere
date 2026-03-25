@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { watch } from 'vue'
 import OtpInput from '@shared/ui/OtpInput.vue'
 
 const props = defineProps<{

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useTranslation } from '@shared/lib'
 
 import LocalImage from '../assets/Local.webp'

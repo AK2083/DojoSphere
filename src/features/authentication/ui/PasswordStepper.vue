@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { mdiCancel, mdiCheck } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import { translationKeys } from '../i18n/keys'
+import EmailStep from './EmailStep.vue'
+import NewPasswordStep from './NewPasswordStep.vue'
+import OtpStep from './OtpStep.vue'
 
 const router = useRouter()
 const { t } = useTranslation()
-const step = ref<'1' | '2' | '3'>('0')
+const step = ref<'0' | '1' | '2' | '3'>('0')
 
 // Email-Step 1
 const email = ref('')

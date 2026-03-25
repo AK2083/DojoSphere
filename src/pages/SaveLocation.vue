@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { LocalWork, RegisterForm } from '@features/authentication'
+</script>
+
 <template>
   <v-container class="fill-height d-flex align-center justify-start h-100">
     <v-row class="w-100">

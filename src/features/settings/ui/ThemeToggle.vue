@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import { computed } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
 import { mdiLaptop, mdiMoonWaningCrescent, mdiWhiteBalanceSunny } from '@mdi/js'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
@@ -47,7 +48,7 @@ function handleChangeTheme(value) {
         <v-btn
           :icon="mdiLaptop"
           :aria-label="t(translationKeys.theme.tooltip.system)"
-          @click="handleChangeTheme(Theme.SYSTEM)"
+          @onclick="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
           :icon="mdiMoonWaningCrescent"

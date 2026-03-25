@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { translationKeys } from '@features/settings'
+import { LanguageSwitch, ThemeToggle, translationKeys } from '@features/settings'
 import { useTranslation } from '@shared/lib'
-
 const { t } = useTranslation()
 </script>
 

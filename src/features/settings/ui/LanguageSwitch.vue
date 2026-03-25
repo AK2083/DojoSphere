@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 

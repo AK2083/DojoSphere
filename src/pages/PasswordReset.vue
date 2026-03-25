@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { translationKeys } from '@features/authentication'
+import { PasswordStepper, translationKeys } from '@features/authentication'
+import ResetPasswordImage from '@features/authentication/assets/Register.webp'
 import { useTranslation } from '@shared/lib'
-
-import ResetPasswordImage from '../features/authentication/assets/Register.webp'
 
 const { t } = useTranslation()
 </script>

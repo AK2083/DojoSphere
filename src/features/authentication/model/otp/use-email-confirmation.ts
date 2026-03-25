@@ -42,7 +42,7 @@ export function useEmailConfirmation() {
     router.push({ name: 'settings' })
   }
 
-  async function resendConfirmation() {
+  async function resendConfirmation(): Promise<void> {
     if (!email.value) return
     await resend(email.value)
   }

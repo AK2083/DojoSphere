@@ -8,30 +8,17 @@ import security from 'eslint-plugin-security'
 import unusedImports from 'eslint-plugin-unused-imports'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import jsdoc from 'eslint-plugin-jsdoc'
-import { createRequire } from 'node:module'
-
-const require = createRequire(import.meta.url)
-const autoImportGlobals = require('./.eslintrc-auto-import.json')
 
 export default defineConfig([
   {
-    ignores: [
-      'node_modules',
-      'dist',
-      'coverage',
-      '.vscode',
-      '*.min.js',
-      'auto-imports.d.ts',
-      'ui.d.ts'
-    ]
+    ignores: ['node_modules', 'dist', 'coverage', '.vscode', '*.min.js']
   },
   {
     files: ['src/**/*.{js,mjs,cjs}'],
     ...js.configs.recommended,
     languageOptions: {
       globals: {
-        ...globals.browser,
-        ...autoImportGlobals.globals
+        ...globals.browser
       }
     }
   },
@@ -72,11 +59,6 @@ export default defineConfig([
     }
   },
   {
-    files: ['electron/**/*.js'],
-    plugins: { security },
-    rules: security.configs.recommended.rules
-  },
-  {
     files: ['src/**/*.{js,ts,vue}'],
     plugins: {
       'unused-imports': unusedImports,
@@ -90,6 +72,8 @@ export default defineConfig([
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'unused-imports/no-unused-imports': 'warn',
+      'no-undef': 'error',
 
       'simple-import-sort/imports': [
         'warn',

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import type { VForm } from 'vuetify/components/VForm'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
 
 const props = defineProps<{

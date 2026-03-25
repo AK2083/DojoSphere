@@ -16,7 +16,7 @@ const emit = defineEmits<{
     :model-value="modelValue"
     length="6"
     type="number"
-    :aria-label="ariaLabel"
+    v-bind="{ 'aria-label': ariaLabel }"
     @update:model-value="emit('update:modelValue', $event)"
     @finish="emit('finish')"
   />
