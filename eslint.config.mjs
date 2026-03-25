@@ -74,6 +74,7 @@ export default defineConfig([
       'unused-imports/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'unused-imports/no-unused-imports': 'warn',
       'no-undef': 'error',
+      'vue/attribute-hyphenation': 'off',
 
       'simple-import-sort/imports': [
         'warn',

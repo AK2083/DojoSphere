@@ -71,8 +71,13 @@ export const passwordRules: ((v?: string) => true | ErrorCode)[] = [
  * A wrapped validation rule that returns `true` if validation succeeds,
  * otherwise the translated error message.
  */
-export function mapRule(rule: (v: string) => true | ErrorCode, t: (key: string) => string) {
-  return (value: string) => {
+export function mapRule(
+  rule: (v: string) => true | ErrorCode,
+  t: (key: string) => string
+): (value: unknown) => boolean | string {
+  return (value: unknown) => {
+    if (typeof value !== 'string') return false
+
     const result = rule(value)
 
     if (result === true) return true

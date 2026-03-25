@@ -43,10 +43,10 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon v-bind="{ 'aria-label': accountAriaLabel }" :to="accountTo" exact>
+      <v-btn icon :aria-label="accountAriaLabel" :to="accountTo" exact>
         <v-icon :icon="accountIcon"></v-icon>
       </v-btn>
-      <v-btn icon v-bind="{ 'aria-label': 'Settings' }" :to="{ name: 'settings' }">
+      <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
         <v-icon :icon="mdiCog"></v-icon>
       </v-btn>
     </template>
@@ -59,7 +59,7 @@ watch(
           :prepend-icon="accountIcon"
           :to="accountTo"
           :title="accountListTitle"
-          v-bind="{ 'aria-label': accountAriaLabel }"
+          :aria-label="accountAriaLabel"
           exact
         />
         <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />

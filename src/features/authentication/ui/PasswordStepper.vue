@@ -20,7 +20,7 @@ const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 
 // Otp-Step 2
 const otp = ref<string | null>('')
-const otpError = ref('')
+const otpError = ref<string | null>('')
 const resendSuccess = ref(false)
 const isOtpValid = ref(false)
 
@@ -80,8 +80,8 @@ function cancel() {
           <EmailStep
             :email="email"
             :rules="translatedEmailRules"
-            :label-text-field="t(translationKeys.form.mail.title)"
-            :aria-label-email="t(translationKeys.form.mail.title)"
+            :labelTextField="t(translationKeys.form.mail.title)"
+            :ariaLabelEmail="t(translationKeys.form.mail.title)"
             :placeholder="t(translationKeys.form.mail.placeholder)"
             :loading="false"
             @valid-change="isEmailValid = $event"
@@ -93,14 +93,14 @@ function cancel() {
           <OtpStep
             :step-title="t(translationKeys.otp.description)"
             :otp="otp"
-            :otp-aria-label="t(translationKeys.otp.codeAria)"
-            :resend-aria-label="t(translationKeys.resetPassword.resendOtpButton)"
-            :is-mail-available="true"
-            :resend-label="t(translationKeys.resetPassword.resendOtpButton)"
-            :resend-success-label="t(translationKeys.success.resendMail)"
-            :show-resend-success-label="resendSuccess"
-            :otp-error-label="otpError ?? ''"
-            :show-otp-error="otpError ? true : false"
+            :otpAriaLabel="t(translationKeys.otp.codeAria)"
+            :resendAriaLabel="t(translationKeys.resetPassword.resendOtpButton)"
+            :isMailAvailable="true"
+            :resendLabel="t(translationKeys.resetPassword.resendOtpButton)"
+            :resendSuccessLabel="t(translationKeys.success.resendMail)"
+            :showResendSuccessLabel="resendSuccess"
+            :otpErrorLabel="otpError ?? ''"
+            :showOtpError="otpError ? true : false"
             :loading="false"
             @valid-change="isOtpValid = $event"
             @update:otp="otp = $event"
@@ -112,12 +112,12 @@ function cancel() {
         <v-stepper-window-item value="2">
           <NewPasswordStep
             :password="password"
-            :repeated-password="confirmedPassword"
+            :repeatedPassword="confirmedPassword"
             :rules="translatedPasswordRules"
-            :label-password="t(translationKeys.form.password.title)"
-            :aria-label-password="t(translationKeys.form.password.title)"
-            :label-repeated-password="t(translationKeys.resetPassword.password.repeatTitle)"
-            :aria-label-repeated-password="t(translationKeys.resetPassword.password.repeatTitle)"
+            :labelPassword="t(translationKeys.form.password.title)"
+            :ariaLabelPassword="t(translationKeys.form.password.title)"
+            :labelRepeatedPassword="t(translationKeys.resetPassword.password.repeatTitle)"
+            :ariaLabelRepeatedPassword="t(translationKeys.resetPassword.password.repeatTitle)"
             @update:password="password = $event"
             @update:repassword="confirmedPassword = $event"
             @valid-change="isPasswordConfirmationValid = $event"

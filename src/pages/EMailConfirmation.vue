@@ -27,7 +27,7 @@ const { t } = useTranslation()
           v-model="otp"
           length="6"
           type="number"
-          v-bind="{ 'aria-label': t(translationKeys.otp.codeAria) }"
+          :aria-label="t(translationKeys.otp.codeAria)"
           @finish="verifyOtp"
         />
         <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
@@ -51,7 +51,7 @@ const { t } = useTranslation()
           variant="text"
           :loading="resendLoading"
           :disabled="!email"
-          v-bind="{ 'aria-label': t(translationKeys.otp.resendMailButton) }"
+          :aria-label="t(translationKeys.otp.resendMailButton)"
           @click="resendConfirmation"
         >
           {{ t(translationKeys.otp.resendMailButton) }}

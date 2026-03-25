@@ -2,7 +2,6 @@
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "types": ["vite/client", "vue", "vuetify"],
 
     /* Linting */
     "strict": true,
@@ -11,6 +10,12 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "lib": ["ESNext", "DOM"],
+    "jsx": "preserve",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
 
     "baseUrl": ".",
     "paths": {
@@ -21,8 +26,5 @@
       "@pages/*": ["src/pages/*"]
     }
   },
-  "vueCompilerOptions": {
-    "strictTemplates": true
-  },
-  "include": ["src", "*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.vue", "env.d.ts"]
 }

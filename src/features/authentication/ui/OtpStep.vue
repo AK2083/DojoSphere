@@ -4,7 +4,7 @@ import OtpInput from '@shared/ui/OtpInput.vue'
 
 const props = defineProps<{
   stepTitle: string
-  otp: string
+  otp: string | null
   otpAriaLabel: string
   isMailAvailable: boolean
   resendAriaLabel: string
@@ -37,7 +37,7 @@ watch(
     <p class="mb-0">{{ stepTitle }}</p>
 
     <OtpInput
-      :model-value="props.otp"
+      :modelValue="props.otp ?? ''"
       :aria-label="props.otpAriaLabel"
       @update:model-value="emit('update:otp', $event)"
       @finish="emit('clear-error')"
