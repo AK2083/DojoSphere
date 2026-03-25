@@ -20,7 +20,7 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  
+
   "files.eol": "\n",
   "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

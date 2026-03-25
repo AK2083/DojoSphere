@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { type Ref, ref } from 'vue'
 
 import { resendOtp } from './resend-otp'
 

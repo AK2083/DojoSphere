@@ -20,7 +20,7 @@ describe('getInitialLanguage', () => {
   it('falls back to system language if no stored language', () => {
     vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
 
-    Object.defineProperty(navigator, 'languages', {
+    Object.defineProperty(globalThis.navigator, 'languages', {
       value: ['de-DE'],
       configurable: true
     })
@@ -35,7 +35,7 @@ describe('getInitialLanguage', () => {
 
     const setSpy = vi.spyOn(storage, 'setLanguageToStorage').mockImplementation(() => {})
 
-    Object.defineProperty(navigator, 'languages', {
+    Object.defineProperty(globalThis.navigator, 'languages', {
       value: ['en-US'],
       configurable: true
     })
@@ -49,7 +49,7 @@ describe('getInitialLanguage', () => {
   it('returns fallback if browser language unsupported', () => {
     vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
 
-    Object.defineProperty(navigator, 'languages', {
+    Object.defineProperty(globalThis.navigator, 'languages', {
       value: ['fr-FR'],
       configurable: true
     })
@@ -62,12 +62,12 @@ describe('getInitialLanguage', () => {
   it('falls back to navigator.language if navigator.languages is undefined', () => {
     vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
 
-    Object.defineProperty(navigator, 'languages', {
+    Object.defineProperty(globalThis.navigator, 'languages', {
       value: undefined,
       configurable: true
     })
 
-    Object.defineProperty(navigator, 'language', {
+    Object.defineProperty(globalThis.navigator, 'language', {
       value: 'de-DE',
       configurable: true
     })

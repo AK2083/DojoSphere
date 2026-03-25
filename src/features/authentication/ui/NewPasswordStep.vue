@@ -3,10 +3,12 @@ import { computed, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components/VForm'
 import { mdiEye, mdiEyeOff } from '@mdi/js'
 
+type ValidationRule = string | ((value: unknown) => boolean | string)
+
 const props = defineProps<{
   password: string
   repeatedPassword: string
-  rules: any[]
+  rules: ValidationRule[]
   labelPassword: string
   ariaLabelPassword: string
   labelRepeatedPassword: string

@@ -34,7 +34,7 @@ describe('getInitialTheme', () => {
   it('falls back to system theme (dark) if no valid stored value', () => {
     vi.mocked(getThemeFromStorage).mockReturnValue(null)
 
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.window!.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: true,
       media: query,
       onchange: null,
@@ -55,7 +55,7 @@ describe('getInitialTheme', () => {
     vi.mocked(getThemeFromStorage).mockReturnValue(null)
 
     // Mock matchMedia → light
-    window.matchMedia = vi.fn().mockImplementation((query) => ({
+    globalThis.window!.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,

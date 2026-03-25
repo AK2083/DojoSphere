@@ -15,7 +15,8 @@ import { Theme, type ThemePreference } from '@shared/types/theme-modes'
  * @returns {ThemePreference} The detected system theme (`Theme.DARK` or `Theme.LIGHT`).
  */
 function getSystemTheme(): ThemePreference {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const prefersDark =
+    globalThis.window?.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false
   setThemeToStorage(prefersDark ? Theme.DARK : Theme.LIGHT)
   return prefersDark ? Theme.DARK : Theme.LIGHT
 }

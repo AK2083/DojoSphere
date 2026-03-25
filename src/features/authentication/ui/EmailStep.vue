@@ -2,9 +2,11 @@
 import { ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 
+type ValidationRule = string | ((value: unknown) => boolean | string)
+
 defineProps<{
   email: string
-  rules: any[]
+  rules: ValidationRule[]
   labelTextField: string
   ariaLabelEmail: string
   placeholder: string

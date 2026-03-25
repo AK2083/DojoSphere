@@ -20,7 +20,8 @@ import { AvailableLanguages, FallbackLanguage, LanguageCode } from '@shared/lib/
  * otherwise the fallback language.
  */
 function getSystemLanguage(): LanguageCode {
-  const browserLanguages = navigator.languages ?? [navigator.language]
+  const nav = globalThis.navigator
+  const browserLanguages = nav?.languages ?? (nav?.language ? [nav.language] : [])
 
   for (const lang of browserLanguages) {
     const code = lang.split('-')[0]

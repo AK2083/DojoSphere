@@ -15,8 +15,9 @@ import { captureException } from '../glitchtip/logging'
  * @returns {T | null} The parsed value if present and valid, otherwise `null`.
  */
 export function getStorageItem<T>(key: string): T | null {
-  const value = localStorage.getItem(key)
+  const storage = globalThis.localStorage
 
+  const value = storage?.getItem(key)
   if (!value) return null
 
   try {
@@ -43,7 +44,7 @@ export function getStorageItem<T>(key: string): T | null {
  */
 export function setStorageItem<T>(key: string, value: T) {
   try {
-    localStorage.setItem(key, JSON.stringify(value))
+    globalThis.localStorage?.setItem(key, JSON.stringify(value))
   } catch (ex: unknown) {
     if (ex instanceof Error) {
       captureException(ex, 'browser', 'setStorageItem')
@@ -57,5 +58,5 @@ export function setStorageItem<T>(key: string, value: T) {
  * @param {string} key - The storage key to remove.
  */
 export function removeStorageItem(key: string) {
-  localStorage.removeItem(key)
+  globalThis.localStorage?.removeItem(key)
 }
