@@ -1,4 +1,6 @@
-export { translationKeys } from './i18n/keys'
+export { default as settingsDe } from './i18n/de'
+export { default as settingsEn } from './i18n/en'
+export { default as translationKeys } from './i18n/keys'
 export { getInitialLanguage } from './model/set_language/language-service'
 export { getInitialTheme } from './model/set_theme/theme-service'
 export { getThemeFromStorage, setThemeToStorage } from './model/set_theme/theme-storage'

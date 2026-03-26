@@ -20,7 +20,6 @@
     "format:fix": "prettier . --write",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "type-check": "vue-tsc --noEmit",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",

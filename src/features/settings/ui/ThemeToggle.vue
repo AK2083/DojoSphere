@@ -6,7 +6,7 @@ import { useTranslation } from '@shared/lib/i18n/use-translation'
 import { Theme } from '@shared/types/theme-modes'
 
 import ThemeImage from '../assets/Theme.webp'
-import { translationKeys } from '../i18n/keys'
+import translationKeys from '../i18n/keys'
 import { setThemeToStorage } from '../model/set_theme/theme-storage'
 
 const { t } = useTranslation()
@@ -15,7 +15,7 @@ const theme = useTheme()
 
 const isMobile = computed(() => smAndDown.value)
 
-function handleChangeTheme(value) {
+function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
   setThemeToStorage(value)
   theme.change(value)
 }
@@ -48,7 +48,7 @@ function handleChangeTheme(value) {
         <v-btn
           :icon="mdiLaptop"
           :aria-label="t(translationKeys.theme.tooltip.system)"
-          @onclick="handleChangeTheme(Theme.SYSTEM)"
+          @click="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
           :icon="mdiMoonWaningCrescent"

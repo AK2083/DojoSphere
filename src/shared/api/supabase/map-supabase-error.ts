@@ -1,7 +1,7 @@
 import type { AuthError } from '@supabase/supabase-js'
 
 import { AppError } from '../../errors/app-error'
-import { translationKeys } from '../../lib/i18n/keys'
+import translationKeys from '../../lib/i18n/keys'
 
 /**
  * Maps a Supabase authentication error to an application-specific {@link AppError}.

@@ -1,4 +1,4 @@
-import { translationKeys } from '../i18n/keys'
+import translationKeys from '../i18n/keys'
 
 /**
  * Defines the canonical set of application-level error codes used across

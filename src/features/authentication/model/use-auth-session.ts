@@ -3,18 +3,19 @@ import { supabase } from '@shared/api/supabase/client'
 import type { Session, User } from '@supabase/supabase-js'
 
 /**
- * Composable für die aktuelle Supabase-Auth-Session (z. B. Navigation, Account-Seite).
+ * Composable for the current Supabase auth session (e.g. navigation, account page).
  *
- * Beim Mount:
- * - Lädt die initiale Session mit `supabase.auth.getSession()`.
- * - Abonniert `supabase.auth.onAuthStateChange`, damit Login, Logout und Token-Refresh die UI mitbekommen.
+ * On mount:
+ * - Loads the initial session using `supabase.auth.getSession()`.
+ * - Subscribes to `supabase.auth.onAuthStateChange` so that login, logout,
+ *   and token refresh updates are reflected in the UI.
  *
- * Beim Unmount wird das Abo beendet, damit keine Listener hängen bleiben.
+ * On unmount, the subscription is removed to prevent lingering listeners.
  *
- * @returns Refs und abgeleitete Werte:
- * - `session` – aktuelle {@link Session} oder `null`, wenn abgemeldet
- * - `isLoggedIn` – `true`, sobald eine Session existiert
- * - `user` – aktueller {@link User} oder `null`
+ * @returns Refs and derived values:
+ * - `session` – current {@link Session} or `null` if logged out
+ * - `isLoggedIn` – `true` as soon as a session exists
+ * - `user` – current {@link User} or `null`
  *
  * @example
  * const { isLoggedIn, user } = useAuthSession()

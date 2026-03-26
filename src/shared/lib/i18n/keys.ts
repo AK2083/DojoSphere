@@ -1,4 +1,4 @@
-export const translationKeys = {
+const translationKeys = {
   error: {
     retry: 'shared.error.retry',
     unknown: 'shared.error.unknown'
@@ -14,4 +14,6 @@ export const translationKeys = {
       noLetter: 'shared.validation.password.noLetter'
     }
   }
-} as const
+}
+
+export default translationKeys

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getIsOtpActiveFromStorage } from './register/register-storage'
+import { getIsOtpActiveFromStorage } from '../register-user/model/register-storage'
 import { useAuthNavigation } from './use-auth-navigation'
 
 vi.mock('./register/register-storage', () => ({

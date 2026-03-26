@@ -4,7 +4,7 @@ import { useDisplay } from 'vuetify'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 
 import LanguageImage from '../assets/Language.webp'
-import { translationKeys } from '../i18n/keys'
+import translationKeys from '../i18n/keys'
 import { setLanguageToStorage } from '../model/set_language/language-storage'
 
 const { t, locale } = useTranslation()

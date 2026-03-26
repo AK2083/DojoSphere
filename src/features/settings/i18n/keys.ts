@@ -1,4 +1,4 @@
-export const translationKeys = {
+const translationKeys = {
   title: 'settings.title',
   language: {
     title: 'settings.language.title',
@@ -13,4 +13,6 @@ export const translationKeys = {
       system: 'settings.theme.tooltip.system'
     }
   }
-} as const
+}
+
+export default translationKeys

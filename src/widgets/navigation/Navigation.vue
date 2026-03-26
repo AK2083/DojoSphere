@@ -18,15 +18,11 @@ const accountTo = computed(() =>
 )
 
 const accountAriaLabel = computed(() =>
-  isLoggedIn.value
-    ? t(translationKeys.navigation.accountLoggedInAria)
-    : t(translationKeys.navigation.accountGuestAria)
+  isLoggedIn.value ? t(translationKeys.label) : t(translationKeys.ariaLabel)
 )
 
 const accountListTitle = computed(() =>
-  isLoggedIn.value
-    ? t(translationKeys.navigation.accountLoggedInTitle)
-    : t(translationKeys.navigation.accountGuestTitle)
+  isLoggedIn.value ? t(translationKeys.label) : t(translationKeys.ariaLabel)
 )
 
 const isMobile = computed(() => smAndDown.value)

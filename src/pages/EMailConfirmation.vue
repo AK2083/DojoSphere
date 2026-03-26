@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { translationKeys, useEmailConfirmation } from '@features/authentication'
+import { translationKeysPasswordForgotten, useEmailConfirmation } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
 const {
@@ -18,16 +18,16 @@ const { t } = useTranslation()
 <template>
   <v-container class="fill-height d-flex align-center justify-center">
     <v-card width="420" class="pa-4">
-      <v-card-title>{{ t(translationKeys.otp.title) }}</v-card-title>
+      <v-card-title>{{ t(translationKeysPasswordForgotten.title) }}</v-card-title>
 
       <v-card-text>
-        <p>{{ t(translationKeys.otp.description) }}</p>
+        <p>{{ t(translationKeysPasswordForgotten.description) }}</p>
 
         <v-otp-input
           v-model="otp"
           length="6"
           type="number"
-          :aria-label="t(translationKeys.otp.codeAria)"
+          :aria-label="t(translationKeysPasswordForgotten.steps.otp.ariaLabel)"
           @finish="verifyOtp"
         />
         <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
@@ -39,7 +39,7 @@ const { t } = useTranslation()
         ></v-alert>
         <v-alert
           v-if="resendSuccess"
-          :text="t(translationKeys.success.resendMail)"
+          :text="t(translationKeysPasswordForgotten.steps.otp.resend.success)"
           type="success"
           class="mt-2"
         ></v-alert>
@@ -51,10 +51,10 @@ const { t } = useTranslation()
           variant="text"
           :loading="resendLoading"
           :disabled="!email"
-          :aria-label="t(translationKeys.otp.resendMailButton)"
+          :aria-label="t(translationKeysPasswordForgotten.steps.otp.resend.ariaResendLabel)"
           @click="resendConfirmation"
         >
-          {{ t(translationKeys.otp.resendMailButton) }}
+          {{ t(translationKeysPasswordForgotten.steps.otp.resend.resendLabel) }}
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { PasswordStepper, ResetPasswordImage, translationKeys } from '@features/authentication'
+import {
+  PasswordStepper,
+  ResetPasswordImage,
+  translationKeysPasswordForgotten
+} from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
 const { t } = useTranslation()
@@ -10,8 +14,8 @@ const { t } = useTranslation()
     <v-row class="w-100" justify="center">
       <v-col cols="12" sm="10" lg="8">
         <v-card
-          :title="t(translationKeys.resetPassword.title)"
-          :subtitle="t(translationKeys.resetPassword.description)"
+          :title="t(translationKeysPasswordForgotten.title)"
+          :subtitle="t(translationKeysPasswordForgotten.description)"
           class="border px-4 py-4"
         >
           <template #prepend>
@@ -20,7 +24,7 @@ const { t } = useTranslation()
               width="64"
               height="64"
               rounded="shaped"
-              :alt="t(translationKeys.resetPassword.title)"
+              :alt="t(translationKeysPasswordForgotten.title)"
             />
           </template>
 
