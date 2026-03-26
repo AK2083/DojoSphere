@@ -1,4 +1,6 @@
 export default {
+  title: '',
+  description: '',
   steps: {
     title: 'Passwort zurücksetzen',
     description: 'Hier kannst du dein Passwort zurücksetzen',

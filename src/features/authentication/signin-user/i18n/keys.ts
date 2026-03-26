@@ -1,17 +1,17 @@
 const translationKeys = {
-  title: 'auth.login.title',
-  description: 'auth.login.description',
-  submit: 'auth.login.submit',
-  forgotPassword: 'auth.login.forgotPassword',
-  noAccount: 'auth.login.noAccount',
-  register: 'auth.login.register',
+  title: 'auth.signIn.title',
+  description: 'auth.signIn.description',
+  submit: 'auth.signIn.submit',
+  forgotPassword: 'auth.signIn.forgotPassword',
+  noAccount: 'auth.signIn.noAccount',
+  register: 'auth.signIn.register',
   mail: {
-    title: 'auth.form.mail.title',
-    placeholder: 'auth.form.mail.placeholder'
+    title: 'auth.signIn.mail.title',
+    placeholder: 'auth.signIn.mail.placeholder'
   },
   password: {
-    title: 'auth.form.password.title',
-    displayToggle: 'auth.form.password.displayToggle'
+    title: 'auth.signIn.password.title',
+    displayToggle: 'auth.signIn.password.displayToggle'
   }
 }
 

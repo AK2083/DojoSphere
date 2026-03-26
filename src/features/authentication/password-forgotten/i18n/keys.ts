@@ -1,43 +1,43 @@
 const translationKeys = {
-  title: 'title',
-  description: 'description',
+  title: 'auth.passwordForgotten.title',
+  description: 'auth.passwordForgotten.description',
   steps: {
     email: {
-      title: 'steps.email.title',
-      label: 'steps.email.label',
-      placeholder: 'steps.email.placeholder',
-      ariaLabel: 'steps.email.ariaLabel'
+      title: 'auth.passwordForgotten.steps.email.title',
+      label: 'auth.passwordForgotten.steps.email.label',
+      placeholder: 'auth.passwordForgotten.steps.email.placeholder',
+      ariaLabel: 'auth.passwordForgotten.steps.email.ariaLabel'
     },
     otp: {
-      title: 'steps.otp.title',
-      description: 'steps.otp.description',
-      ariaLabel: 'steps.otp.ariaLabel',
+      title: 'auth.passwordForgotten.steps.otp.title',
+      description: 'auth.passwordForgotten.steps.otp.description',
+      ariaLabel: 'auth.passwordForgotten.steps.otp.ariaLabel',
       resend: {
-        resendLabel: 'steps.otp.resend.resendLabel',
-        ariaResendLabel: 'steps.otp.resend.ariaResendLabel',
-        success: 'steps.otp.resend.success'
+        resendLabel: 'auth.passwordForgotten.steps.otp.resend.resendLabel',
+        ariaResendLabel: 'auth.passwordForgotten.steps.otp.resend.ariaResendLabel',
+        success: 'auth.passwordForgotten.steps.otp.resend.success'
       },
       error: {
-        expired: 'steps.otp.error.expired',
-        invalid: 'steps.otp.error.invalid'
+        expired: 'auth.passwordForgotten.steps.otp.error.expired',
+        invalid: 'auth.passwordForgotten.steps.otp.error.invalid'
       }
     },
     newPassword: {
-      title: 'steps.newPassword.title',
-      description: 'steps.newPassword.description',
-      passwordLabel: 'steps.newPassword.passwordLabel',
-      ariaPasswordLabel: 'steps.newPassword.ariaPasswordLabel',
-      newPasswordLabel: 'steps.newPassword.newPasswordLabel',
-      ariaNewPasswordLabel: 'steps.newPassword.ariaNewPasswordLabel',
+      title: 'auth.passwordForgotten.steps.newPassword.title',
+      description: 'auth.passwordForgotten.steps.newPassword.description',
+      passwordLabel: 'auth.passwordForgotten.steps.newPassword.passwordLabel',
+      ariaPasswordLabel: 'auth.passwordForgotten.steps.newPassword.ariaPasswordLabel',
+      newPasswordLabel: 'auth.passwordForgotten.steps.newPassword.newPasswordLabel',
+      ariaNewPasswordLabel: 'auth.passwordForgotten.steps.newPassword.ariaNewPasswordLabel',
       error: {
-        mismatch: 'steps.newPassword.error.mismatch'
+        mismatch: 'auth.passwordForgotten.steps.newPassword.error.mismatch'
       }
     }
   },
-  nextLabel: 'nextLabel',
-  ariaNextLabel: 'ariaNextLabel',
-  cancelLabel: 'cancelLabel',
-  ariaCancelLabel: 'ariaCancelLabel'
+  nextLabel: 'auth.passwordForgotten.nextLabel',
+  ariaNextLabel: 'auth.passwordForgotten.ariaNextLabel',
+  cancelLabel: 'auth.passwordForgotten.cancelLabel',
+  ariaCancelLabel: 'auth.passwordForgotten.ariaCancelLabel'
 }
 
 export default translationKeys

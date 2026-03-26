@@ -11,20 +11,6 @@ const { getAccountRoute } = useAuthNavigation()
 const { isLoggedIn } = useAuthSession()
 const { t } = useTranslation()
 
-const accountIcon = computed(() => (isLoggedIn.value ? mdiAccount : mdiCardAccountDetails))
-
-const accountTo = computed(() =>
-  isLoggedIn.value ? { name: 'account' as const } : getAccountRoute()
-)
-
-const accountAriaLabel = computed(() =>
-  isLoggedIn.value ? t(translationKeys.label) : t(translationKeys.ariaLabel)
-)
-
-const accountListTitle = computed(() =>
-  isLoggedIn.value ? t(translationKeys.label) : t(translationKeys.ariaLabel)
-)
-
 const isMobile = computed(() => smAndDown.value)
 
 watch(
@@ -39,8 +25,22 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn icon :aria-label="accountAriaLabel" :to="accountTo" exact>
-        <v-icon :icon="accountIcon"></v-icon>
+      <v-btn
+        v-if="isLoggedIn"
+        icon
+        :aria-label="t(translationKeys.label)"
+        :to="{ name: 'account' }"
+        exact
+      >
+        <v-icon :icon="mdiAccount"></v-icon>
+      </v-btn>
+      <v-btn
+        icon
+        :aria-label="t(translationKeys.navigation.ariaSignUp)"
+        :to="getAccountRoute()"
+        exact
+      >
+        <v-icon :icon="mdiCardAccountDetails"></v-icon>
       </v-btn>
       <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
         <v-icon :icon="mdiCog"></v-icon>
@@ -52,10 +52,18 @@ watch(
     <template #append>
       <v-list nav density="compact">
         <v-list-item
-          :prepend-icon="accountIcon"
-          :to="accountTo"
-          :title="accountListTitle"
-          :aria-label="accountAriaLabel"
+          v-if="isLoggedIn"
+          :prepend-icon="mdiAccount"
+          :to="{ name: 'account' }"
+          :title="t(translationKeys.navigation.signUp)"
+          :aria-label="t(translationKeys.navigation.ariaSignUp)"
+          exact
+        />
+        <v-list-item
+          :prepend-icon="mdiCardAccountDetails"
+          :to="getAccountRoute()"
+          :title="t(translationKeys.ariaLabel)"
+          :aria-label="t(translationKeys.ariaLabel)"
           exact
         />
         <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />
