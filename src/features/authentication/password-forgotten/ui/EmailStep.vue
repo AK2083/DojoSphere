@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
+import { mdiEmailFastOutline } from '@mdi/js'
 
 type ValidationRule = string | ((value: unknown) => boolean | string)
 
@@ -46,6 +47,12 @@ watch(isValid, (val) => {
         <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
       </template>
 
+      <template #prepend>
+        <v-avatar color="blue-darken-2">
+          <v-icon :icon="mdiEmailFastOutline" size="30"></v-icon>
+        </v-avatar>
+      </template>
+
       <v-card-text>
         <v-text-field
           :model-value="email"
@@ -60,8 +67,6 @@ watch(isValid, (val) => {
           autofocus
           :aria-label="ariaLabelEmail"
         />
-
-        <v-alert v-if="false" text="" type="success"></v-alert>
       </v-card-text>
     </v-card>
   </v-form>

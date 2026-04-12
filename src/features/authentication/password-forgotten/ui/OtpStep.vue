@@ -12,10 +12,6 @@ const props = defineProps<{
   resendAriaLabel: string
   resendLabel: string
 
-  alertText: string
-  alertType: 'error' | 'success'
-  showAlert: boolean
-
   loading?: boolean
 }>()
 
@@ -59,7 +55,6 @@ watch(
         @update:model-value="emit('update:otp', $event)"
         @finish="emit('clear-error')"
       ></OtpInput>
-      <v-alert v-if="showAlert" :text="alertText" :type="alertType" class="mt-2"></v-alert>
     </v-card-text>
     <v-card-actions>
       <v-btn

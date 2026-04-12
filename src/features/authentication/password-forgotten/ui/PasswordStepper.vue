@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useEmailConfirmation } from '@features/authentication'
 import { mdiCancel, mdiCheck } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
@@ -19,8 +18,13 @@ const isEmailValid = ref(false)
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 
 // Otp-Step 2
-const { email, otp, verifyOtp, resendConfirmation, alert, resendLoading } = useEmailConfirmation()
 const isOtpValid = ref(false)
+const email = ref('')
+const otp = ref<string | null>(null)
+const resendLoading = ref(false)
+
+function verifyOtp() {}
+function resendConfirmation() {}
 
 // NewPassword-Step 3
 const password = ref('')
@@ -54,25 +58,26 @@ function cancel() {
   <v-card-text>
     <v-stepper v-model="step" alt-labels elevation="0" show-actions style="border: none">
       <v-stepper-header>
-        <v-stepper-item value="0">
+        <v-stepper-item value="0" :complete="isEmailValid">
           <template #title>{{ t(translationKeys.steps.email.title) }}</template>
         </v-stepper-item>
 
         <v-divider />
 
-        <v-stepper-item value="1">
+        <v-stepper-item value="1" :complete="isOtpValid">
           <template #title>{{ t(translationKeys.steps.otp.title) }}</template>
         </v-stepper-item>
 
         <v-divider />
 
-        <v-stepper-item value="2">
+        <v-stepper-item value="2" :complete="isPasswordConfirmationValid">
           <template #title>{{ t(translationKeys.steps.newPassword.title) }}</template>
         </v-stepper-item>
       </v-stepper-header>
 
       <v-stepper-window>
         <v-stepper-window-item value="0">
+          <v-alert v-if="false" :text="''" :type="'error'" class="mt-2" />
           <EmailStep
             :step-title="t(translationKeys.steps.email.title)"
             :step-sub-title="t(translationKeys.steps.email.description)"
@@ -88,6 +93,7 @@ function cancel() {
         </v-stepper-window-item>
 
         <v-stepper-window-item value="1">
+          <v-alert v-if="false" :text="''" :type="'error'" class="mt-2" />
           <OtpStep
             :step-title="t(translationKeys.steps.otp.title)"
             :step-sub-title="t(translationKeys.steps.otp.description)"
@@ -96,9 +102,6 @@ function cancel() {
             :resendLabel="t(translationKeys.steps.otp.resend.resendLabel)"
             :resendAriaLabel="t(translationKeys.steps.otp.resend.ariaResendLabel)"
             :isMailAvailable="!!email"
-            :alertText="alert ? t(alert.text) : ''"
-            :alertType="alert?.type ?? 'error'"
-            :showAlert="alert !== null"
             :loading="resendLoading"
             @valid-change="isOtpValid = $event"
             @update:otp="otp = $event"
@@ -108,6 +111,7 @@ function cancel() {
         </v-stepper-window-item>
 
         <v-stepper-window-item value="2">
+          <v-alert v-if="false" :text="''" :type="'error'" class="mt-2" />
           <NewPasswordStep
             :step-title="t(translationKeys.steps.newPassword.title)"
             :step-sub-title="t(translationKeys.steps.newPassword.description)"

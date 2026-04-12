@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components/VForm'
-import { mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiEye, mdiEyeOff, mdiLockReset } from '@mdi/js'
 
 type ValidationRule = string | ((value: unknown) => boolean | string)
 
@@ -65,6 +65,12 @@ watch(
 
       <template #subtitle>
         <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+      </template>
+
+      <template #prepend>
+        <v-avatar color="blue-darken-2">
+          <v-icon :icon="mdiLockReset" size="30"></v-icon>
+        </v-avatar>
       </template>
 
       <v-card-text>

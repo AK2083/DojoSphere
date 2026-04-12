@@ -17,6 +17,7 @@ export function useEmailConfirmation() {
   const router = useRouter()
   const route = useRoute()
 
+  const isOtpVerified = ref(false)
   const { execute: verifyOtp, errorCode: otpError } = useOtp()
   const {
     resend,
@@ -37,7 +38,7 @@ export function useEmailConfirmation() {
 
   async function verifyOtpHandler() {
     const success = await verifyOtp(email.value, otp.value)
-    if (!success) return
+    isOtpVerified.value = success
 
     router.push({ name: 'settings' })
   }
@@ -77,6 +78,7 @@ export function useEmailConfirmation() {
     otp,
     verifyOtp: verifyOtpHandler,
     resendConfirmation,
+    isOtpVerified,
 
     errorCode: otpError,
     resendErrorCode,
