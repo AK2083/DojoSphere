@@ -1,9 +1,10 @@
 const translationKeys = {
-  title: 'auth.passwordForgotten.title',
-  description: 'auth.passwordForgotten.description',
   steps: {
+    title: 'auth.passwordForgotten.steps.title',
+    description: 'auth.passwordForgotten.steps.description',
     email: {
       title: 'auth.passwordForgotten.steps.email.title',
+      description: 'auth.passwordForgotten.steps.email.description',
       label: 'auth.passwordForgotten.steps.email.label',
       placeholder: 'auth.passwordForgotten.steps.email.placeholder',
       ariaLabel: 'auth.passwordForgotten.steps.email.ariaLabel'

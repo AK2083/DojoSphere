@@ -6,6 +6,8 @@ import { mdiEye, mdiEyeOff } from '@mdi/js'
 type ValidationRule = string | ((value: unknown) => boolean | string)
 
 const props = defineProps<{
+  stepTitle: string
+  stepSubTitle: string
   password: string
   repeatedPassword: string
   rules: ValidationRule[]
@@ -56,32 +58,46 @@ watch(
 
 <template>
   <v-form ref="form" v-model="isValid" @submit.prevent="handleSubmit">
-    <v-text-field
-      :model-value="password"
-      density="default"
-      :rules="repeatPasswordRules"
-      :label="labelPassword"
-      :type="showPassword ? 'text' : 'password'"
-      required
-      autocomplete="new-password"
-      :append-inner-icon="showPassword ? mdiEyeOff : mdiEye"
-      @click:append-inner="showPassword = !showPassword"
-      @update:model-value="emit('update:password', $event)"
-      :aria-label="ariaLabelPassword"
-    />
+    <v-card class="pa-4" variant="tonal">
+      <template #title>
+        <div class="v-card-title" id="otpTitle">{{ stepTitle }}</div>
+      </template>
 
-    <v-text-field
-      :model-value="repeatedPassword"
-      density="default"
-      :rules="repeatPasswordRules"
-      :label="labelRepeatedPassword"
-      :type="showRepeatedPassword ? 'text' : 'password'"
-      required
-      autocomplete="new-password"
-      :append-inner-icon="showRepeatedPassword ? mdiEyeOff : mdiEye"
-      @click:append-inner="showRepeatedPassword = !showRepeatedPassword"
-      @update:model-value="emit('update:repassword', $event)"
-      :aria-label="ariaLabelRepeatedPassword"
-    />
+      <template #subtitle>
+        <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+      </template>
+
+      <v-card-text>
+        <v-text-field
+          :model-value="password"
+          density="default"
+          :rules="repeatPasswordRules"
+          :label="labelPassword"
+          :type="showPassword ? 'text' : 'password'"
+          required
+          autofocus
+          autocomplete="new-password"
+          :append-inner-icon="showPassword ? mdiEyeOff : mdiEye"
+          @click:append-inner="showPassword = !showPassword"
+          @update:model-value="emit('update:password', $event)"
+          aria-labelledby="titleId"
+          aria-describedby="descId"
+        />
+
+        <v-text-field
+          :model-value="repeatedPassword"
+          density="default"
+          :rules="repeatPasswordRules"
+          :label="labelRepeatedPassword"
+          :type="showRepeatedPassword ? 'text' : 'password'"
+          required
+          autocomplete="new-password"
+          :append-inner-icon="showRepeatedPassword ? mdiEyeOff : mdiEye"
+          @click:append-inner="showRepeatedPassword = !showRepeatedPassword"
+          @update:model-value="emit('update:repassword', $event)"
+          :aria-label="ariaLabelRepeatedPassword"
+        />
+      </v-card-text>
+    </v-card>
   </v-form>
 </template>

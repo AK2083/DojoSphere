@@ -47,6 +47,31 @@ export function useEmailConfirmation() {
     await resend(email.value)
   }
 
+  const alert = computed(() => {
+    if (otpError.value) {
+      return {
+        type: 'error' as const,
+        text: otpError.value
+      }
+    }
+
+    if (resendErrorCode.value) {
+      return {
+        type: 'error' as const,
+        text: resendErrorCode.value
+      }
+    }
+
+    if (resendSuccess.value) {
+      return {
+        type: 'success' as const,
+        text: 'auth.otp.resend.success'
+      }
+    }
+
+    return null
+  })
+
   return {
     email,
     otp,
@@ -56,6 +81,8 @@ export function useEmailConfirmation() {
     errorCode: otpError,
     resendErrorCode,
     resendLoading,
-    resendSuccess
+    resendSuccess,
+
+    alert
   }
 }

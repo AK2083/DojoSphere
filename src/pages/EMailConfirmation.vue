@@ -2,27 +2,20 @@
 import { translationKeysPasswordForgotten, useEmailConfirmation } from '@features/authentication'
 import { useTranslation } from '@shared/lib'
 
-const {
-  email,
-  otp,
-  verifyOtp,
-  resendConfirmation,
-  errorCode,
-  resendErrorCode,
-  resendLoading,
-  resendSuccess
-} = useEmailConfirmation()
+const { email, otp, verifyOtp, resendConfirmation, alert, resendLoading } = useEmailConfirmation()
 const { t } = useTranslation()
 </script>
 
 <template>
   <v-container class="fill-height d-flex align-center justify-center">
-    <v-card width="420" class="pa-4">
-      <v-card-title>{{ t(translationKeysPasswordForgotten.title) }}</v-card-title>
-
+    <v-card
+      width="420"
+      class="pa-4"
+      :title="t(translationKeysPasswordForgotten.steps.otp.title)"
+      :subtitle="t(translationKeysPasswordForgotten.steps.otp.description)"
+      variant="tonal"
+    >
       <v-card-text>
-        <p>{{ t(translationKeysPasswordForgotten.description) }}</p>
-
         <v-otp-input
           v-model="otp"
           length="6"
@@ -30,17 +23,10 @@ const { t } = useTranslation()
           :aria-label="t(translationKeysPasswordForgotten.steps.otp.ariaLabel)"
           @finish="verifyOtp"
         />
-        <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
         <v-alert
-          v-if="resendErrorCode"
-          :text="t(resendErrorCode)"
-          type="error"
-          class="mt-2"
-        ></v-alert>
-        <v-alert
-          v-if="resendSuccess"
-          :text="t(translationKeysPasswordForgotten.steps.otp.resend.success)"
-          type="success"
+          v-if="alert !== null"
+          :text="t(alert.text)"
+          :type="alert.type"
           class="mt-2"
         ></v-alert>
       </v-card-text>

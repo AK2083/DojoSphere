@@ -5,6 +5,8 @@ import type { VForm } from 'vuetify/components'
 type ValidationRule = string | ((value: unknown) => boolean | string)
 
 defineProps<{
+  stepTitle: string
+  stepSubTitle: string
   email: string
   rules: ValidationRule[]
   labelTextField: string
@@ -35,17 +37,32 @@ watch(isValid, (val) => {
 
 <template>
   <v-form ref="form" v-model="isValid" @submit.prevent="handleSubmit">
-    <v-text-field
-      :model-value="email"
-      @update:model-value="emit('update:email', $event)"
-      density="default"
-      :rules="rules"
-      :label="labelTextField"
-      :placeholder="placeholder"
-      clearable
-      autocomplete="email"
-      required
-      :aria-label="ariaLabelEmail"
-    />
+    <v-card class="pa-4" variant="tonal">
+      <template #title>
+        <div class="v-card-title" id="otpTitle">{{ stepTitle }}</div>
+      </template>
+
+      <template #subtitle>
+        <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+      </template>
+
+      <v-card-text>
+        <v-text-field
+          :model-value="email"
+          @update:model-value="emit('update:email', $event)"
+          density="default"
+          :rules="rules"
+          :label="labelTextField"
+          :placeholder="placeholder"
+          clearable
+          autocomplete="email"
+          required
+          autofocus
+          :aria-label="ariaLabelEmail"
+        />
+
+        <v-alert v-if="false" text="" type="success"></v-alert>
+      </v-card-text>
+    </v-card>
   </v-form>
 </template>

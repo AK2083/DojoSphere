@@ -1,11 +1,10 @@
 export default {
-  title: '',
-  description: '',
   steps: {
     title: 'Passwort zurücksetzen',
     description: 'Hier kannst du dein Passwort zurücksetzen',
     email: {
       title: 'Eingabe E-Mail Adresse',
+      description: 'Bitte gib die E-Mail Adresse ein, die du für die Registrierung verwendet hast.',
       label: 'E-Mail',
       placeholder: 'Deine E-Mail-Adresse',
       ariaLabel: 'E-Mail'

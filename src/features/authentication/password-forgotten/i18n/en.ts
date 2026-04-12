@@ -6,6 +6,7 @@ export default {
     description: 'You can reset your password here.',
     email: {
       title: 'Enter your email address',
+      description: 'Please enter the email address you used to register.',
       label: 'E-Mail',
       placeholder: 'Your E-Mail Address',
       ariaLabel: 'E-Mail'

@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { watch } from 'vue'
+import { mdiEmailOutline } from '@mdi/js'
 import OtpInput from '@shared/ui/OtpInput.vue'
 
 const props = defineProps<{
   stepTitle: string
+  stepSubTitle: string
   otp: string | null
-  otpAriaLabel: string
+
   isMailAvailable: boolean
   resendAriaLabel: string
   resendLabel: string
-  resendSuccessLabel: string
-  showResendSuccessLabel: boolean
-  otpErrorLabel: string
-  showOtpError: boolean
+
+  alertText: string
+  alertType: 'error' | 'success'
+  showAlert: boolean
+
   loading?: boolean
 }>()
 
@@ -25,40 +28,51 @@ const emit = defineEmits<{
 
 watch(
   () => props.otp,
-  (val) => {
-    emit('valid-change', (val?.length ?? 0) === 6)
-  },
+  (val) => emit('valid-change', (val?.length ?? 0) === 6),
   { immediate: true }
 )
 </script>
 
 <template>
-  <div class="d-flex flex-column ga-3">
-    <p class="mb-0">{{ stepTitle }}</p>
+  <v-card class="pa-4" variant="tonal">
+    <template #title>
+      <div class="v-card-title" id="otpTitle">{{ stepTitle }}</div>
+    </template>
 
-    <OtpInput
-      :modelValue="props.otp ?? ''"
-      :aria-label="props.otpAriaLabel"
-      @update:model-value="emit('update:otp', $event)"
-      @finish="emit('clear-error')"
-    ></OtpInput>
+    <template #subtitle>
+      <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+    </template>
 
-    <v-alert v-if="showOtpError" :text="otpErrorLabel" type="error" class="mt-2"></v-alert>
-  </div>
+    <template #prepend>
+      <v-avatar color="blue-darken-2">
+        <v-icon :icon="mdiEmailOutline" size="30"></v-icon>
+      </v-avatar>
+    </template>
 
-  <div class="mt-4">
-    <v-btn
-      block
-      color="primary"
-      variant="text"
-      :loading="loading"
-      :disabled="!isMailAvailable"
-      :aria-label="resendAriaLabel"
-      @click="emit('resend')"
-    >
-      {{ resendLabel }}
-    </v-btn>
-
-    <v-alert v-if="false" :text="resendSuccessLabel" type="success" class="mt-2"></v-alert>
-  </div>
+    <v-card-text>
+      <OtpInput
+        :modelValue="props.otp ?? ''"
+        aria-labelledby="titleId"
+        aria-describedby="descId"
+        autocomplete="one-time-code"
+        autofocus
+        @update:model-value="emit('update:otp', $event)"
+        @finish="emit('clear-error')"
+      ></OtpInput>
+      <v-alert v-if="showAlert" :text="alertText" :type="alertType" class="mt-2"></v-alert>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn
+        block
+        color="primary"
+        variant="text"
+        :loading="loading"
+        :disabled="!isMailAvailable"
+        :aria-label="resendAriaLabel"
+        @click="emit('resend')"
+      >
+        {{ resendLabel }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
