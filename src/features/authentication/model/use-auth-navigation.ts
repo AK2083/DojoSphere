@@ -19,7 +19,7 @@ export function useAuthNavigation() {
    * @returns Vue Router location object.
    */
   function getAccountRoute() {
-    return getIsOtpActiveFromStorage() ? { name: 'emailConfirmation' } : { name: 'home' }
+    return getIsOtpActiveFromStorage() ? { name: 'emailverification' } : { name: 'datasource' }
   }
 
   return { getAccountRoute }

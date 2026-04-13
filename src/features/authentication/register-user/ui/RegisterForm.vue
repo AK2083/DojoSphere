@@ -31,7 +31,7 @@ async function submit() {
   if (!success) return
 
   router.push({
-    name: 'emailConfirmation',
+    name: 'emailverification',
     query: { email: email.value }
   })
 }

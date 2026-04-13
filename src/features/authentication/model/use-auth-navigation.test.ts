@@ -20,7 +20,7 @@ describe('useAuthNavigation (unit)', () => {
     const result = getAccountRoute()
 
     expect(getIsOtpActiveFromStorage).toHaveBeenCalled()
-    expect(result).toEqual({ name: 'emailConfirmation' })
+    expect(result).toEqual({ name: 'emailverification' })
   })
 
   it('returns emailConfirmation route when OTP is not active', () => {
@@ -31,7 +31,7 @@ describe('useAuthNavigation (unit)', () => {
     const result = getAccountRoute()
 
     expect(getIsOtpActiveFromStorage).toHaveBeenCalled()
-    expect(result).toEqual({ name: 'home' })
+    expect(result).toEqual({ name: 'datasource' })
   })
 
   it('returns emailConfirmation when storage returns null', () => {
@@ -41,6 +41,6 @@ describe('useAuthNavigation (unit)', () => {
 
     const result = getAccountRoute()
 
-    expect(result).toEqual({ name: 'home' })
+    expect(result).toEqual({ name: 'datasource' })
   })
 })

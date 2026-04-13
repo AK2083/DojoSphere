@@ -37,16 +37,16 @@ async function submit() {
     return
   }
 
-  await router.push({ name: 'welcome' })
+  await router.push('/')
 }
 
 function goToPasswordReset() {
   if (!email.value) {
-    router.push({ name: 'passwordReset' })
+    router.push({ name: 'passwordreset' })
     return
   }
 
-  router.push({ name: 'passwordReset', query: { email: email.value } })
+  router.push({ name: 'passwordreset', query: { email: email.value } })
 }
 </script>
 
@@ -128,7 +128,7 @@ function goToPasswordReset() {
             </span>
             <v-btn
               variant="plain"
-              :to="{ name: 'home' }"
+              :to="{ name: 'datasource' }"
               :aria-label="t(translationKeys.register)"
               class="text-none"
             >

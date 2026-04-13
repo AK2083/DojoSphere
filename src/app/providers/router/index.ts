@@ -3,43 +3,48 @@ import { supabase } from '@shared/api/supabase/client'
 
 const routes = [
   {
-    path: '/home',
-    name: 'home',
-    component: () => import('@pages/SaveLocation.vue')
+    path: '/',
+    redirect: { name: 'datasource' }
   },
   {
-    path: '/confirm',
-    name: 'emailConfirmation',
-    component: () => import('@pages/EMailConfirmation.vue')
+    path: '/datasource',
+    name: 'datasource',
+    component: () => import('@pages/data-source')
+  },
+  {
+    path: '/emailverification',
+    name: 'emailverification',
+    meta: { guestOnly: true },
+    component: () => import('@pages/email-verification')
   },
   {
     path: '/login',
     name: 'login',
     meta: { guestOnly: true },
-    component: () => import('@pages/Login.vue')
+    component: () => import('@pages/login')
   },
   {
-    path: '/',
-    name: 'passwordReset',
+    path: '/passwordreset',
+    name: 'passwordreset',
     meta: { guestOnly: true },
-    component: () => import('@pages/PasswordReset.vue')
+    component: () => import('@pages/password-reset')
   },
   {
-    path: '/welcome',
-    name: 'welcome',
+    path: '/dashboard',
+    name: 'dashboard',
     meta: { requiresAuth: true },
-    component: () => import('@pages/Welcome.vue')
+    component: () => import('@pages/dashboard')
   },
   {
     path: '/account',
     name: 'account',
     meta: { requiresAuth: true },
-    component: () => import('@pages/Account.vue')
+    component: () => import('@pages/account')
   },
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@pages/Settings.vue')
+    component: () => import('@pages/settings')
   }
 ]
 
