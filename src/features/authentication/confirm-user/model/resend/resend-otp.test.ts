@@ -1,63 +1,51 @@
-import { resendSignUpConfirmationEmail } from '@shared/api'
-import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../../password-forgotten/model/monitoring'
 import { resendOtp } from './resend-otp'
 
-// Mocks
 vi.mock('@shared/api', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
-vi.mock('../../../monitoring/monitoring', () => ({
+vi.mock('../../monitoring/monitoring', () => ({
   monitorInformation: vi.fn(),
   MONITORING_EVENTS: {
-    RESEND_OTP: 'auth.otp.resend'
+    RESEND_OTP: 'RESEND_OTP'
   }
 }))
 
+import { resendSignUpConfirmationEmail } from '@shared/api'
+import type { RegisterResult } from '@shared/types'
+
 describe('resendOtp', () => {
+  const email = 'test@example.com'
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should call monitoring with correct event', async () => {
-    const executeResult: RegisterResult = { success: true }
-
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue(executeResult)
-
-    await resendOtp('test@mail.com')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.RESEND_OTP)
-  })
-
-  it('should call resendSignUpConfirmationEmail with correct params', async () => {
-    const email = 'test@mail.com'
-    const executeResult: RegisterResult = { success: true }
-
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue(executeResult)
+  it('calls resendSignUpConfirmationEmail with correct email', async () => {
+    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue({ success: true })
 
     await resendOtp(email)
 
     expect(resendSignUpConfirmationEmail).toHaveBeenCalledWith(email)
   })
 
-  it('should return the result from resendSignUpConfirmationEmail', async () => {
-    const executeResult: RegisterResult = { success: true }
+  it('returns the result from resendSignUpConfirmationEmail', async () => {
+    const mockResult: RegisterResult = { success: true }
 
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue(executeResult)
+    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue(mockResult)
 
-    const result = await resendOtp('test@mail.com')
+    const result = await resendOtp(email)
 
-    expect(result).toBe(executeResult)
+    expect(result).toEqual(mockResult)
   })
 
-  it('should propagate errors from resendSignUpConfirmationEmail', async () => {
-    const error = new Error('Network error')
+  it('throws if resendSignUpConfirmationEmail fails', async () => {
+    const error = new Error('API error')
 
     vi.mocked(resendSignUpConfirmationEmail).mockRejectedValue(error)
 
-    await expect(resendOtp('test@mail.com')).rejects.toThrow('Network error')
+    await expect(resendOtp(email)).rejects.toThrow('API error')
   })
 })

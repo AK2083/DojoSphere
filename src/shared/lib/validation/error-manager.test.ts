@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { translationKeys } from '../i18n/keys'
+import translationKeys from '../i18n/keys'
 import { ErrorCode, errorTranslationMap, translateError } from './error-manager'
 
 describe('ErrorCode', () => {

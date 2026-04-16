@@ -1,7 +1,10 @@
 import { resendSignUpConfirmationEmail } from '@shared/api'
 import type { RegisterResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../../password-forgotten/model/monitoring'
+import {
+  monitorInformation,
+  MONITORING_EVENTS
+} from '../../../password-forgotten/monitoring/monitoring'
 
 /**
  * Triggers resend of the sign-up confirmation mail and records monitoring data.

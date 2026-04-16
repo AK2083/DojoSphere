@@ -1,5 +1,5 @@
 import { captureException } from '@shared/lib'
-import type { AuthError, AuthResponse } from '@supabase/supabase-js'
+import type { AuthError, AuthOtpResponse, AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AppError } from '../../../errors/app-error'
@@ -7,7 +7,6 @@ import { mapSupabaseError } from '../map-supabase-error'
 import { resendSignUpConfirmation } from './auth'
 import { resendSignUpConfirmationEmail } from './resend-sign-up-confirmation'
 
-// Mocks
 vi.mock('./auth', () => ({
   resendSignUpConfirmation: vi.fn()
 }))
@@ -58,7 +57,7 @@ describe('resendSignUpConfirmationEmail', () => {
   })
 
   it('returns success when supabase resend succeeds', async () => {
-    const response: AuthResponse = {
+    const response: AuthOtpResponse = {
       data: { user: null, session: null },
       error: null
     }

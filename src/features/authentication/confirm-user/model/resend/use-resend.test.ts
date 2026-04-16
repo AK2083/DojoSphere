@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { resendOtp } from './resend-otp'
 import { useResend } from './use-resend'
 
-// Mocks
 vi.mock('./resend-otp', () => ({
   resendOtp: vi.fn()
 }))

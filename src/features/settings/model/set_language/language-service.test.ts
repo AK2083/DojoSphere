@@ -5,8 +5,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getInitialLanguage } from './language-service'
 
 describe('getInitialLanguage', () => {
+  const originalNavigator = globalThis.navigator
+
   beforeEach(() => {
     vi.resetAllMocks()
+
+    Object.defineProperty(globalThis, 'navigator', {
+      value: { ...originalNavigator },
+      configurable: true,
+      writable: true
+    })
   })
 
   it('returns stored language if valid', () => {
@@ -75,5 +83,50 @@ describe('getInitialLanguage', () => {
     const result = getInitialLanguage()
 
     expect(result).toBe(LanguageCode.DE)
+  })
+
+  it('falls back to system language if stored language is not in AvailableLanguages', () => {
+    vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(
+      'invalid-code' as unknown as LanguageCode
+    )
+
+    Object.defineProperty(globalThis.navigator, 'languages', {
+      value: ['en-US'],
+      configurable: true
+    })
+
+    const result = getInitialLanguage()
+
+    expect(result).toBe(LanguageCode.EN)
+  })
+
+  it('returns fallback if navigator object is completely missing', () => {
+    vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
+
+    Object.defineProperty(globalThis, 'navigator', {
+      value: undefined,
+      configurable: true
+    })
+
+    const result = getInitialLanguage()
+
+    expect(result).toBe(FallbackLanguage)
+  })
+
+  it('returns fallback if both languages and language are null/undefined', () => {
+    vi.spyOn(storage, 'getLanguageFromStorage').mockReturnValue(null)
+
+    Object.defineProperty(globalThis.navigator, 'languages', {
+      value: null,
+      configurable: true
+    })
+    Object.defineProperty(globalThis.navigator, 'language', {
+      value: null,
+      configurable: true
+    })
+
+    const result = getInitialLanguage()
+
+    expect(result).toBe(FallbackLanguage)
   })
 })

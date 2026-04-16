@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const createClientMock = vi.fn(() => ({ mockClient: true }))
 
@@ -10,8 +10,12 @@ describe('supabase client', () => {
   beforeEach(() => {
     vi.resetModules()
 
-    import.meta.env.VITE_SUPABASE_URL = 'https://test.supabase.co'
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'test-key'
+    vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co')
+    vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', 'test-key')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
   })
 
   it('creates supabase client with correct env variables', async () => {

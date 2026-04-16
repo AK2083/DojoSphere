@@ -1,59 +1,88 @@
 import { checkOneTimePassword } from '@shared/api'
+import type { AppError } from '@shared/errors/app-error'
 import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../../password-forgotten/model/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
 import { verifyOtp } from './verify-otp'
 
-// mocks
-vi.mock('../../../monitoring/monitoring', () => ({
-  monitorInformation: vi.fn(),
-  MONITORING_EVENTS: {
-    AUTH_REGISTER_SUBMITTED: 'AUTH_REGISTER_SUBMITTED',
-    CHECK_OTP: 'CHECK_OTP'
-  }
-}))
+const { monitorInformationMock, checkOneTimePasswordMock, MONITORING_EVENTS_MOCK } = vi.hoisted(
+  () => ({
+    monitorInformationMock: vi.fn(),
+    checkOneTimePasswordMock: vi.fn(),
+    MONITORING_EVENTS_MOCK: {
+      CHECK_OTP: 'CHECK_OTP'
+    }
+  })
+)
 
 vi.mock('@shared/api', () => ({
-  checkOneTimePassword: vi.fn()
+  checkOneTimePassword: checkOneTimePasswordMock
+}))
+
+vi.mock('../../monitoring/monitoring', () => ({
+  monitorInformation: monitorInformationMock,
+  MONITORING_EVENTS: MONITORING_EVENTS_MOCK
 }))
 
 describe('verifyOtp', () => {
+  const email = 'test@example.com'
+  const token = '123456'
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should call monitoring with correct event', async () => {
-    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
+  it('calls monitoring with CHECK_OTP event', async () => {
+    const mockResult: RegisterResult = { success: true }
 
-    await verifyOtp('test@mail.com', '123456')
+    vi.mocked(checkOneTimePassword).mockResolvedValue(mockResult)
+
+    await verifyOtp(email, token)
 
     expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.CHECK_OTP)
   })
 
-  it('should call checkOneTimePassword with correct params', async () => {
-    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
+  it('calls checkOneTimePassword with correct params', async () => {
+    const mockResult: RegisterResult = { success: true }
 
-    await verifyOtp('test@mail.com', '123456')
+    vi.mocked(checkOneTimePassword).mockResolvedValue(mockResult)
 
-    expect(checkOneTimePassword).toHaveBeenCalledWith('test@mail.com', '123456')
+    await verifyOtp(email, token)
+
+    expect(checkOneTimePassword).toHaveBeenCalledWith(email, token)
   })
 
-  it('should return the result from checkOneTimePassword', async () => {
-    const mockResponse = { success: true }
+  it('returns success result', async () => {
+    const mockResult: RegisterResult = { success: true }
 
-    vi.mocked(checkOneTimePassword).mockResolvedValue(mockResponse as RegisterResult)
+    vi.mocked(checkOneTimePassword).mockResolvedValue(mockResult)
 
-    const result = await verifyOtp('test@mail.com', '123456')
+    const result = await verifyOtp(email, token)
 
-    expect(result).toBe(mockResponse)
+    expect(result).toEqual(mockResult)
   })
 
-  it('should propagate errors from checkOneTimePassword', async () => {
+  it('returns error result (API-level error)', async () => {
+    const mockError = { message: 'Invalid OTP' } as AppError
+
+    const mockResult: RegisterResult = {
+      success: false,
+      error: mockError
+    }
+
+    vi.mocked(checkOneTimePassword).mockResolvedValue(mockResult)
+
+    const result = await verifyOtp(email, token)
+
+    expect(result).toEqual(mockResult)
+  })
+
+  it('throws if checkOneTimePassword rejects', async () => {
     const error = new Error('Network error')
 
     vi.mocked(checkOneTimePassword).mockRejectedValue(error)
 
-    await expect(verifyOtp('test@mail.com', '123456')).rejects.toThrow('Network error')
+    await expect(verifyOtp(email, token)).rejects.toThrow('Network error')
   })
 })

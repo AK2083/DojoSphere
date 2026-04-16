@@ -54,7 +54,6 @@ describe('getInitialTheme', () => {
   it('falls back to system theme (light) if no valid stored value', () => {
     vi.mocked(getThemeFromStorage).mockReturnValue(null)
 
-    // Mock matchMedia → light
     globalThis.window!.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
@@ -65,6 +64,33 @@ describe('getInitialTheme', () => {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn()
     }))
+
+    const result = getInitialTheme()
+
+    expect(result).toBe(Theme.LIGHT)
+    expect(setThemeToStorage).toHaveBeenCalledWith(Theme.LIGHT)
+  })
+
+  it('falls back to LIGHT if window is undefined (SSR scenario)', () => {
+    vi.mocked(getThemeFromStorage).mockReturnValue(null)
+
+    vi.stubGlobal('window', undefined)
+
+    const result = getInitialTheme()
+
+    expect(result).toBe(Theme.LIGHT)
+    expect(setThemeToStorage).toHaveBeenCalledWith(Theme.LIGHT)
+
+    vi.unstubAllGlobals()
+  })
+
+  it('falls back to LIGHT if matchMedia is not supported', () => {
+    vi.mocked(getThemeFromStorage).mockReturnValue(null)
+
+    Object.defineProperty(globalThis.window, 'matchMedia', {
+      value: undefined,
+      configurable: true
+    })
 
     const result = getInitialTheme()
 
