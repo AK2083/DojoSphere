@@ -1,6 +1,5 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { watchAuthState } from '@shared/api/supabase/auth/on-auth-state-change'
-import { supabase } from '@shared/api/supabase/client'
+import { getCurrentSession, watchAuthState } from '@shared/api'
 import type { Session, User } from '@supabase/supabase-js'
 
 /**
@@ -27,9 +26,7 @@ export function useAuthSession() {
   let subscription: { unsubscribe: () => void } | undefined
 
   onMounted(async () => {
-    const {
-      data: { session: initial }
-    } = await supabase.auth.getSession()
+    const initial = await getCurrentSession()
     session.value = initial
 
     subscription = watchAuthState(({ event: _, session: newSession }) => {

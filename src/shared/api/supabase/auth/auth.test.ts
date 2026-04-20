@@ -1,8 +1,15 @@
-import { type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { supabase } from '../client'
 import {
+  type AuthError,
+  type AuthResponse,
+  type Session,
+  type Subscription
+} from '../types/auth-user'
+import {
+  getCurrentSession,
+  onAuthStateChange,
   resendSignUpConfirmation,
   signInByEmailPassword,
   signUpByEmailPassword,
@@ -15,7 +22,9 @@ vi.mock('../client', () => ({
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
       verifyOtp: vi.fn(),
-      resend: vi.fn()
+      resend: vi.fn(),
+      getSession: vi.fn(),
+      onAuthStateChange: vi.fn()
     }
   }
 }))
@@ -150,7 +159,7 @@ describe('resendSignUpConfirmation', () => {
     vi.mocked(supabase.auth.resend).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    } as AuthResponse)
+    })
 
     await resendSignUpConfirmation('test@test.de')
 
@@ -164,10 +173,76 @@ describe('resendSignUpConfirmation', () => {
     vi.mocked(supabase.auth.resend).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    } as AuthResponse)
+    })
 
     await resendSignUpConfirmation('test@test.de')
 
     expect(supabase.auth.resend).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('getCurrentSession', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns session when successful', async () => {
+    const mockSession = {
+      access_token: 'abc',
+      refresh_token: 'def',
+      expires_in: 3600,
+      token_type: 'bearer',
+      user: { id: 'user-123' }
+    } as Session
+
+    vi.mocked(supabase.auth.getSession).mockResolvedValue({
+      data: { session: mockSession },
+      error: null
+    })
+
+    const result = await getCurrentSession()
+    expect(result).toEqual(mockSession)
+  })
+
+  it('logs error and returns null when supabase returns an error', async () => {
+    const mockError = {
+      name: 'AuthError',
+      message: 'Session expired',
+      status: 401,
+      __isAuthError: true
+    } as unknown as AuthError
+
+    vi.mocked(supabase.auth.getSession).mockResolvedValue({
+      data: { session: null },
+      error: mockError
+    })
+
+    const result = await getCurrentSession()
+
+    expect(result).toBeNull()
+  })
+})
+
+describe('onAuthStateChange', () => {
+  it('subscribes and returns subscription object', () => {
+    const mockSubscription = {
+      id: 'sub-123',
+      callback: vi.fn(),
+      unsubscribe: vi.fn()
+    } as Subscription
+
+    const mockResponse: ReturnType<typeof supabase.auth.onAuthStateChange> = {
+      data: {
+        subscription: mockSubscription
+      }
+    }
+
+    vi.mocked(supabase.auth.onAuthStateChange).mockReturnValue(mockResponse)
+    const callback = vi.fn()
+    const result = onAuthStateChange(callback)
+
+    // Assertions
+    expect(result).toBe(mockSubscription)
+    expect(supabase.auth.onAuthStateChange).toHaveBeenCalledWith(callback)
   })
 })

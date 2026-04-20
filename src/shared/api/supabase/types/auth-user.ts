@@ -1,6 +1,13 @@
-import type { AuthChangeEvent, AuthResponse, Session, User } from '@supabase/supabase-js'
+import type {
+  AuthChangeEvent,
+  AuthError,
+  AuthResponse,
+  Session,
+  Subscription,
+  User
+} from '@supabase/supabase-js'
 
-export type { AuthChangeEvent, AuthResponse, Session, User }
+export type { AuthChangeEvent, AuthError, AuthResponse, Session, Subscription, User }
 
 export type AuthEvent =
   | 'SIGNED_IN'
