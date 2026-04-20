@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { supabase } from '@shared/api/supabase/client'
+import { getCurrentSession } from '@shared/api/supabase/auth/auth'
 
 const routes = [
   {
@@ -54,9 +54,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  const {
-    data: { session }
-  } = await supabase.auth.getSession()
+  const session = await getCurrentSession()
 
   if (to.meta.requiresAuth && !session) {
     return {
@@ -66,7 +64,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.guestOnly && session) {
-    return { name: 'welcome' }
+    return { name: 'dashboard' }
   }
 })
 

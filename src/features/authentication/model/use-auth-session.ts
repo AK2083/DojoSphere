@@ -1,4 +1,5 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { watchAuthState } from '@shared/api/supabase/auth/on-auth-state-change'
 import { supabase } from '@shared/api/supabase/client'
 import type { Session, User } from '@supabase/supabase-js'
 
@@ -31,10 +32,9 @@ export function useAuthSession() {
     } = await supabase.auth.getSession()
     session.value = initial
 
-    const { data } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    subscription = watchAuthState(({ event: _, session: newSession }) => {
       session.value = newSession
     })
-    subscription = data.subscription
   })
 
   onUnmounted(() => {

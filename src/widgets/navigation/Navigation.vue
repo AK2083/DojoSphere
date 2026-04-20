@@ -35,6 +35,7 @@ watch(
         <v-icon :icon="mdiAccount"></v-icon>
       </v-btn>
       <v-btn
+        v-else
         icon
         :aria-label="t(translationKeys.navigation.ariaSignUp)"
         :to="getAccountRoute()"
@@ -60,6 +61,7 @@ watch(
           exact
         />
         <v-list-item
+          v-else
           :prepend-icon="mdiCardAccountDetails"
           :to="getAccountRoute()"
           :title="t(translationKeys.ariaLabel)"

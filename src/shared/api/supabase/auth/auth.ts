@@ -1,6 +1,44 @@
-import type { AuthResponse } from '@supabase/supabase-js'
+import { captureException } from '@shared/lib/glitchtip/logging'
 
 import { supabase } from '../client'
+import type { AuthChangeEvent, AuthResponse, Session } from '../types/auth-user'
+
+/**
+ * Retrieves the current session once.
+ * This is used for one-time checks like route guards.
+ * @returns The current session or null if no session exists or an error occurred.
+ */
+export async function getCurrentSession(): Promise<Session | null> {
+  const { data, error } = await supabase.auth.getSession()
+
+  if (error) {
+    captureException(error, 'auth', 'getCurrentSession')
+    return null
+  }
+
+  return data.session
+}
+
+/**
+ * Subscribes to auth state changes (sign in, sign out, token refresh, etc.).
+ * * This is a low-level wrapper around Supabase's `onAuthStateChange`.
+ * It allows higher-level layers to react to authentication events
+ * without directly depending on the Supabase client.
+ *
+ * @param callback - A function that is invoked whenever an auth event occurs.
+ * @returns A subscription object containing an `unsubscribe` method to clean up the listener.
+ *
+ * @example
+ * const { unsubscribe } = onAuthStateChange((event, session) => {
+ * console.log('Auth event:', event, 'New session:', session)
+ * })
+ */
+export function onAuthStateChange(
+  callback: (event: AuthChangeEvent, session: Session | null) => void
+) {
+  const { data } = supabase.auth.onAuthStateChange(callback)
+  return data.subscription
+}
 
 /**
  * Registers a new user using Supabase email/password authentication.
