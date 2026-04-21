@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
-import { mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiAccountCircle, mdiEye, mdiEyeOff } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
-import RegisterImage from '../assets/Register.webp'
 import translationKeys from '../i18n/keys'
 import { useRegister } from '../model/use-register'
 
@@ -45,9 +44,10 @@ async function submit() {
       class="border px-4 py-4"
     >
       <template #prepend>
-        <v-img :src="RegisterImage" width="64" height="64" rounded="shaped" />
+        <v-avatar color="primary" size="48">
+          <v-icon :icon="mdiAccountCircle" size="32"></v-icon>
+        </v-avatar>
       </template>
-
       <v-card-text class="d-flex flex-column ga-3">
         <v-text-field
           v-model="email"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { mdiHarddisk } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
-import LocalImage from '../assets/Local.webp'
 import translationKeys from '../i18n/keys'
 
 const { t } = useTranslation()
@@ -14,7 +14,9 @@ const { t } = useTranslation()
     class="border px-4 py-4"
   >
     <template #prepend>
-      <v-img :src="LocalImage" width="64" height="64" rounded="shaped" cover class="border" />
+      <v-avatar color="primary" size="48">
+        <v-icon :icon="mdiHarddisk" size="32"></v-icon>
+      </v-avatar>
     </template>
 
     <template #text>

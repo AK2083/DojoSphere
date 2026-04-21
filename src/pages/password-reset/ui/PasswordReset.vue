@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import {
-  PasswordStepper,
-  ResetPasswordImage,
-  translationKeysPasswordForgotten
-} from '@features/authentication'
+import { PasswordStepper, translationKeysPasswordForgotten } from '@features/authentication'
+import { mdiLockReset } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 const { t } = useTranslation()
@@ -19,13 +16,9 @@ const { t } = useTranslation()
           class="border px-4 py-4"
         >
           <template #prepend>
-            <v-img
-              :src="ResetPasswordImage"
-              width="64"
-              height="64"
-              rounded="shaped"
-              :alt="t(translationKeysPasswordForgotten.steps.title)"
-            />
+            <v-avatar color="primary" size="48">
+              <v-icon :icon="mdiLockReset" size="32"></v-icon>
+            </v-avatar>
           </template>
 
           <PasswordStepper />

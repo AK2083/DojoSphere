@@ -2,10 +2,9 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
-import { mdiEye, mdiEyeOff } from '@mdi/js'
+import { mdiEye, mdiEyeOff, mdiLogin } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
-import LoginPlaceholderImage from '../assets/Register.webp'
 import translationKeys from '../i18n/keys'
 import { useLogin } from '../model/use-login'
 
@@ -58,14 +57,9 @@ function goToPasswordReset() {
       class="border px-4 py-4"
     >
       <template #prepend>
-        <!-- Placeholder image (will be replaced with the real login image later) -->
-        <v-img
-          :src="LoginPlaceholderImage"
-          width="64"
-          height="64"
-          rounded="shaped"
-          :alt="t(translationKeys.title)"
-        />
+        <v-avatar color="primary" size="48">
+          <v-icon :icon="mdiLogin" size="32"></v-icon>
+        </v-avatar>
       </template>
 
       <v-card-text class="d-flex flex-column ga-3">

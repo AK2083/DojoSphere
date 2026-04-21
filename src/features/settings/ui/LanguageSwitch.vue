@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
+import { mdiTranslateVariant } from '@mdi/js'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 
-import LanguageImage from '../assets/Language.webp'
 import translationKeys from '../i18n/keys'
 import { setLanguageToStorage } from '../model/set_language/language-storage'
 
@@ -22,7 +22,7 @@ const selectedLanguage = computed<LanguageCode>({
 </script>
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
-    <v-img :src="LanguageImage" width="120" height="120" rounded="shaped" alt="Rei-Language" />
+    <v-icon :icon="mdiTranslateVariant" size="64"></v-icon>
   </v-col>
 
   <v-col cols="12" md="10" class="d-flex flex-column">

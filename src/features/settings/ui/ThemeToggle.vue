@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
-import { mdiLaptop, mdiMoonWaningCrescent, mdiWhiteBalanceSunny } from '@mdi/js'
+import { mdiLaptop, mdiMoonWaningCrescent, mdiThemeLightDark, mdiWhiteBalanceSunny } from '@mdi/js'
 import { useTranslation } from '@shared/lib/i18n/use-translation'
 import { Theme } from '@shared/types/theme-modes'
 
-import ThemeImage from '../assets/Theme.webp'
 import translationKeys from '../i18n/keys'
 import { setThemeToStorage } from '../model/set_theme/theme-storage'
 
@@ -23,16 +22,7 @@ function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
 
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
-    <v-img
-      :src="ThemeImage"
-      aspect-ratio="1"
-      width="120"
-      height="120"
-      cover
-      position="50% 10%"
-      rounded="shaped"
-      alt="Rei-Theme"
-    />
+    <v-icon :icon="mdiThemeLightDark" size="64"></v-icon>
   </v-col>
 
   <v-col cols="12" md="10" class="d-flex flex-column">
