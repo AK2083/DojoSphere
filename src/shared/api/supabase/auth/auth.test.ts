@@ -241,7 +241,6 @@ describe('onAuthStateChange', () => {
     const callback = vi.fn()
     const result = onAuthStateChange(callback)
 
-    // Assertions
     expect(result).toBe(mockSubscription)
     expect(supabase.auth.onAuthStateChange).toHaveBeenCalledWith(callback)
   })

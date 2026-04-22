@@ -4,6 +4,23 @@ import { supabase } from '../client'
 import type { AuthChangeEvent, AuthResponse, Session } from '../types/auth-user'
 
 /**
+ * Initiates the sign-in process using a one-time password (OTP) sent to the user's email.
+ *
+ * This function is a low-level wrapper around Supabase's `auth.signInWithOtp` method.
+ * It does not perform any error handling, mapping, or side effects.
+ * @param email - The email address of the user to sign in.
+ * @returns A promise that resolves to an AuthResponse.
+ */
+export async function signInWithOtp(email: string): Promise<AuthResponse> {
+  return await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false
+    }
+  })
+}
+
+/**
  * Retrieves the current session once.
  * This is used for one-time checks like route guards.
  * @returns The current session or null if no session exists or an error occurred.

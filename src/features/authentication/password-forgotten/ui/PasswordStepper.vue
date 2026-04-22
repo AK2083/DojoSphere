@@ -5,6 +5,7 @@ import { mdiCancel, mdiCheck } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
+import { useEmailStep } from '../model/use-email-step'
 import EmailStep from './EmailStep.vue'
 import NewPasswordStep from './NewPasswordStep.vue'
 import OtpStep from './OtpStep.vue'
@@ -14,12 +15,11 @@ const { t } = useTranslation()
 const step = ref<'0' | '1' | '2' | '3'>('0')
 
 // Email-Step 1
-const isEmailValid = ref(false)
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
+const { email, loading, isValid, submit } = useEmailStep()
 
 // Otp-Step 2
 const isOtpValid = ref(false)
-const email = ref('')
 const otp = ref<string | null>(null)
 const resendLoading = ref(false)
 
@@ -32,10 +32,12 @@ const confirmedPassword = ref('')
 const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
 const isPasswordConfirmationValid = ref(false)
 
-// Stepper
-function goNextStep() {
+async function goNextStep() {
   switch (step.value) {
     case '0':
+      const success = await submit()
+      if (!success) return
+
       step.value = '1'
       break
     case '1':
@@ -58,7 +60,7 @@ function cancel() {
   <v-card-text>
     <v-stepper v-model="step" alt-labels elevation="0" show-actions style="border: none">
       <v-stepper-header>
-        <v-stepper-item value="0" :complete="isEmailValid">
+        <v-stepper-item value="0" :complete="isValid">
           <template #title>{{ t(translationKeys.steps.email.title) }}</template>
         </v-stepper-item>
 
@@ -86,8 +88,8 @@ function cancel() {
             :labelTextField="t(translationKeys.steps.email.label)"
             :ariaLabelEmail="t(translationKeys.steps.email.ariaLabel)"
             :placeholder="t(translationKeys.steps.email.placeholder)"
-            :loading="false"
-            @valid-change="isEmailValid = $event"
+            :loading="loading"
+            @valid-change="isValid = $event"
             @update:email="email = $event"
           />
         </v-stepper-window-item>
@@ -146,7 +148,7 @@ function cancel() {
             :prepend-icon="mdiCheck"
             color="primary"
             :disabled="
-              (step === '0' && !isEmailValid) ||
+              (step === '0' && !isValid) ||
               (step === '1' && !isOtpValid) ||
               (step === '2' && !isPasswordConfirmationValid)
             "

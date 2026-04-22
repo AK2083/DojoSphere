@@ -3,9 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { AuthChangeEvent, Session, Subscription } from '../types/auth-user'
 import { onAuthStateChange } from './auth'
-import { watchAuthState } from './on-auth-state-change' // Pfad anpassen
+import { watchAuthState } from './on-auth-state-change'
 
-// Mocks
 vi.mock('./auth', () => ({
   onAuthStateChange: vi.fn()
 }))
