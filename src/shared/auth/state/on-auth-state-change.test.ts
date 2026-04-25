@@ -9,13 +9,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { watchAuthState } from './on-auth-state-change'
 
-vi.mock('@shared/api', () => ({
-  onAuthStateChange: vi.fn()
-}))
-
-vi.mock('@shared/lib', () => ({
-  captureException: vi.fn()
-}))
+vi.mock('@shared/api')
+vi.mock('@shared/lib')
 
 describe('watchAuthState', () => {
   beforeEach(() => {

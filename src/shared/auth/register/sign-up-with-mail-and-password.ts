@@ -1,7 +1,7 @@
 import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException, setUserContext } from '@shared/lib'
-import type { RegisterResult } from '@shared/types/register-result'
+import type { RegisterResult } from '@shared/types'
 
 /**
  * Registers a new user using Supabase authentication.

@@ -1,7 +1,6 @@
-import * as api from '@shared/api'
+import { type AuthError, type AuthResponse, mapSupabaseError, signInWithOtp } from '@shared/api'
 import { AppError } from '@shared/errors'
-import * as logging from '@shared/lib'
-import type { AuthError, AuthResponse } from '@supabase/supabase-js'
+import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { signInWithOneTimePassword } from './sign-in-with-otp'
@@ -22,12 +21,12 @@ describe('signInWithOneTimePassword', () => {
       error: null
     } satisfies AuthResponse
 
-    vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
+    vi.mocked(signInWithOtp).mockResolvedValue(response)
 
     const result = await signInWithOneTimePassword(email)
 
     expect(result).toEqual({ success: true })
-    expect(logging.captureException).not.toHaveBeenCalled()
+    expect(captureException).not.toHaveBeenCalled()
   })
 
   it('maps supabase error and returns AppError', async () => {
@@ -45,8 +44,8 @@ describe('signInWithOneTimePassword', () => {
       error: supabaseError
     } satisfies AuthResponse
 
-    vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
-    vi.spyOn(api, 'mapSupabaseError').mockReturnValue(mappedError)
+    vi.mocked(signInWithOtp).mockResolvedValue(response)
+    vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await signInWithOneTimePassword(email)
 
@@ -57,11 +56,7 @@ describe('signInWithOneTimePassword', () => {
     expect(err.code).toBe('otp_failed')
     expect(err.message).toBe('OTP failed')
 
-    expect(logging.captureException).toHaveBeenCalledWith(
-      mappedError,
-      'auth',
-      'signInWithOneTimePassword'
-    )
+    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signInWithOneTimePassword')
   })
 
   it('calls API with correct email', async () => {
@@ -70,10 +65,10 @@ describe('signInWithOneTimePassword', () => {
       error: null
     } satisfies AuthResponse
 
-    const spy = vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
+    vi.mocked(signInWithOtp).mockResolvedValue(response)
 
     await signInWithOneTimePassword(email)
 
-    expect(spy).toHaveBeenCalledWith(email)
+    expect(signInWithOtp).toHaveBeenCalledWith(email)
   })
 })

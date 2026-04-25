@@ -11,6 +11,7 @@ export type {
   AuthChangeEvent,
   AuthError,
   AuthEvent,
+  AuthOtpResponse,
   AuthResponse,
   AuthState,
   Session,

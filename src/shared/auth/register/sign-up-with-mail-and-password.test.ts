@@ -1,20 +1,18 @@
-import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
+import {
+  type AuthError,
+  type AuthResponse,
+  mapSupabaseError,
+  signUpByEmailPassword,
+  type User
+} from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException, setUserContext } from '@shared/lib'
-import { type AuthResponse, type User } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 
-vi.mock('@shared/api', () => ({
-  signUpByEmailPassword: vi.fn(),
-  mapSupabaseError: vi.fn()
-}))
-
-vi.mock('@shared/lib', () => ({
-  captureException: vi.fn(),
-  setUserContext: vi.fn()
-}))
+vi.mock('@shared/api')
+vi.mock('@shared/lib')
 
 describe('signUpWithMailAndPassword', () => {
   const email = 'test@test.com'
@@ -49,7 +47,13 @@ describe('signUpWithMailAndPassword', () => {
   })
 
   it('returns mapped error when supabase signup fails', async () => {
-    const supabaseError = new Error('signup failed')
+    const supabaseError = {
+      message: 'signup failed',
+      status: 400,
+      code: 'auth.email_exists',
+      name: 'AuthError'
+    } as AuthError
+
     const mappedError = new AppError('auth.email_exists')
 
     const response: AuthResponse = {

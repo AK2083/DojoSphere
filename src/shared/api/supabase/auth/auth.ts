@@ -1,4 +1,4 @@
-import { captureException } from '@shared/lib/glitchtip/logging'
+import { captureException } from '@shared/lib'
 
 import { supabase } from '../client'
 import type { AuthChangeEvent, AuthResponse, Session } from '../types/auth-user'

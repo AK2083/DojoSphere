@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { supabase } from '../client'
 import {
   type AuthError,
+  type AuthOtpResponse,
   type AuthResponse,
   type Session,
   type Subscription
@@ -91,7 +92,7 @@ describe('signInWithOtp', () => {
       error: null
     }
 
-    vi.mocked(supabase.auth.signInWithOtp).mockResolvedValue(mockResponse as AuthResponse)
+    vi.mocked(supabase.auth.signInWithOtp).mockResolvedValue(mockResponse as AuthOtpResponse)
 
     const result = await signInWithOtp(email)
 

@@ -1,19 +1,17 @@
-import { mapSupabaseError, verifyOneTimePasswordBySignUp } from '@shared/api'
+import {
+  type AuthError,
+  type AuthResponse,
+  mapSupabaseError,
+  verifyOneTimePasswordBySignUp
+} from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
-import { AuthError, type AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { checkOneTimePassword } from './check-otp'
 
-vi.mock('@shared/api', () => ({
-  verifyOneTimePasswordBySignUp: vi.fn(),
-  mapSupabaseError: vi.fn()
-}))
-
-vi.mock('@shared/lib', () => ({
-  captureException: vi.fn()
-}))
+vi.mock('@shared/api')
+vi.mock('@shared/lib')
 
 describe('checkOneTimePassword', () => {
   const email = 'test@test.com'
@@ -24,11 +22,16 @@ describe('checkOneTimePassword', () => {
   })
 
   it('returns mapped error when verification fails', async () => {
-    const supabaseError = new AuthError('Invalid OTP', 400, 'invalid_otp')
+    const authError = {
+      name: 'Invalid OTP',
+      message: 'Invalid OTP',
+      status: 400,
+      code: 'invalid_otp'
+    } as AuthError
 
     const response: AuthResponse = {
       data: { user: null, session: null },
-      error: supabaseError
+      error: authError
     }
 
     const mappedError = new AppError('auth.otp.errorInvalid')
@@ -38,9 +41,9 @@ describe('checkOneTimePassword', () => {
 
     const result = await checkOneTimePassword(email, token)
 
-    expect(captureException).toHaveBeenCalledWith(supabaseError, 'auth', 'checkOneTimePassword')
+    expect(captureException).toHaveBeenCalledWith(authError, 'auth', 'checkOneTimePassword')
 
-    expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
+    expect(mapSupabaseError).toHaveBeenCalledWith(authError)
 
     expect(result).toEqual({
       success: false,

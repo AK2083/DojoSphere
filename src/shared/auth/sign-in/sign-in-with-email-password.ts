@@ -1,8 +1,7 @@
-import { signInByEmailPassword } from '@shared/api'
-import { mapSupabaseError } from '@shared/api/supabase/map-supabase-error'
+import { mapSupabaseError, signInByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
-import type { RegisterResult } from '@shared/types/register-result'
+import { captureException, setUserContext } from '@shared/lib'
+import type { RegisterResult } from '@shared/types'
 
 /**
  * Signs in a user with email and password via Supabase.
