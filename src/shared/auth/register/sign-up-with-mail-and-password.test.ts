@@ -1,21 +1,17 @@
-import { AuthError, type AuthResponse, type User } from '@supabase/supabase-js'
+import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
+import { AppError } from '@shared/errors'
+import { captureException, setUserContext } from '@shared/lib'
+import { type AuthResponse, type User } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AppError } from '../../../errors/app-error'
-import { captureException, setUserContext } from '../../../lib/glitchtip/logging'
-import { mapSupabaseError } from '../map-supabase-error'
-import { signUpByEmailPassword } from './auth'
 import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 
-vi.mock('./auth', () => ({
-  signUpByEmailPassword: vi.fn()
-}))
-
-vi.mock('../map-supabase-error', () => ({
+vi.mock('@shared/api', () => ({
+  signUpByEmailPassword: vi.fn(),
   mapSupabaseError: vi.fn()
 }))
 
-vi.mock('../../../lib/glitchtip/logging', () => ({
+vi.mock('@shared/lib', () => ({
   captureException: vi.fn(),
   setUserContext: vi.fn()
 }))
@@ -26,31 +22,6 @@ describe('signUpWithMailAndPassword', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-  })
-
-  it('returns mapped error when supabase returns error', async () => {
-    const supabaseError = new AuthError('Invalid login', 400, 'invalid_credentials')
-
-    const response: AuthResponse = {
-      data: { user: null, session: null },
-      error: supabaseError
-    }
-
-    const mappedError = new AppError('auth.invalid_credentials')
-
-    vi.mocked(signUpByEmailPassword).mockResolvedValue(response)
-    vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
-
-    const result = await signUpWithMailAndPassword(email, password)
-
-    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signUpWithMailAndPassword')
-
-    expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
-
-    expect(result).toEqual({
-      success: false,
-      error: mappedError
-    })
   })
 
   it('returns AppError when no user is returned', async () => {
@@ -75,6 +46,29 @@ describe('signUpWithMailAndPassword', () => {
       expect(result.error).toBeInstanceOf(AppError)
       expect(result.error.message).toBe('User not found')
     }
+  })
+
+  it('returns mapped error when supabase signup fails', async () => {
+    const supabaseError = new Error('signup failed')
+    const mappedError = new AppError('auth.email_exists')
+
+    const response: AuthResponse = {
+      data: { user: null, session: null },
+      error: supabaseError
+    }
+
+    vi.mocked(signUpByEmailPassword).mockResolvedValue(response)
+    vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
+
+    const result = await signUpWithMailAndPassword(email, password)
+
+    expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
+    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signUpWithMailAndPassword')
+    expect(setUserContext).not.toHaveBeenCalled()
+    expect(result).toEqual({
+      success: false,
+      error: mappedError
+    })
   })
 
   it('returns success and sets user context when signup succeeds', async () => {

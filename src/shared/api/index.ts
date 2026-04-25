@@ -1,14 +1,18 @@
-export { getCurrentSession } from './supabase/auth/auth'
-export { checkOneTimePassword } from './supabase/auth/check-otp'
-export { watchAuthState } from './supabase/auth/on-auth-state-change'
-export { resendSignUpConfirmationEmail } from './supabase/auth/resend-sign-up-confirmation'
-export { signInWithEmailPassword } from './supabase/auth/sign-in-with-email-password'
-export { signInWithOneTimePassword } from './supabase/auth/sign-in-with-otp'
-export { signUpWithMailAndPassword } from './supabase/auth/sign-up-with-mail-and-password'
+export {
+  onAuthStateChange,
+  resendSignUpConfirmation,
+  signInByEmailPassword,
+  signInWithOtp,
+  signUpByEmailPassword,
+  verifyOneTimePasswordBySignUp
+} from './supabase/auth/auth'
+export { mapSupabaseError } from './supabase/map-supabase-error'
 export type {
   AuthChangeEvent,
   AuthError,
+  AuthEvent,
   AuthResponse,
+  AuthState,
   Session,
   Subscription,
   User

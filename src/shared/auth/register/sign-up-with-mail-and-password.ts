@@ -1,9 +1,7 @@
-import { mapSupabaseError } from '@shared/api/supabase/map-supabase-error'
+import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
+import { captureException, setUserContext } from '@shared/lib'
 import type { RegisterResult } from '@shared/types/register-result'
-
-import { signUpByEmailPassword } from './auth'
 
 /**
  * Registers a new user using Supabase authentication.
@@ -25,11 +23,13 @@ export async function signUpWithMailAndPassword(
   const { data, error } = await signUpByEmailPassword(email, password)
 
   if (error) {
-    saveException(mapSupabaseError(error))
+    const mappedError = mapSupabaseError(error)
+
+    saveException(mappedError)
 
     return {
       success: false,
-      error: mapSupabaseError(error)
+      error: mappedError
     }
   }
 

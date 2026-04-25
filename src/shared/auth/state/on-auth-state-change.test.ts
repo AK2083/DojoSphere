@@ -1,11 +1,15 @@
+import {
+  type AuthChangeEvent,
+  onAuthStateChange,
+  type Session,
+  type Subscription
+} from '@shared/api'
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { AuthChangeEvent, Session, Subscription } from '../types/auth-user'
-import { onAuthStateChange } from './auth'
 import { watchAuthState } from './on-auth-state-change'
 
-vi.mock('./auth', () => ({
+vi.mock('@shared/api', () => ({
   onAuthStateChange: vi.fn()
 }))
 

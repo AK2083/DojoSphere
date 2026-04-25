@@ -1,8 +1,6 @@
+import { mapSupabaseError, resendSignUpConfirmation } from '@shared/api'
 import { captureException } from '@shared/lib'
 import type { RegisterResult } from '@shared/types'
-
-import { mapSupabaseError } from '../map-supabase-error'
-import { resendSignUpConfirmation } from './auth'
 
 /**
  * Resends a sign-up confirmation email via Supabase.

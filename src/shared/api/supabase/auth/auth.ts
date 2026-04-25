@@ -124,7 +124,10 @@ export async function signInByEmailPassword(
  * (e.g. features or entities), where error handling, logging, and domain-specific
  * logic should be implemented.
  */
-export async function verifyOneTimePassword(email: string, token: string): Promise<AuthResponse> {
+export async function verifyOneTimePasswordBySignUp(
+  email: string,
+  token: string
+): Promise<AuthResponse> {
   return await supabase.auth.verifyOtp({
     email,
     token,

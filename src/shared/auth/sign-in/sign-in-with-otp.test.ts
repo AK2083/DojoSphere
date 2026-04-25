@@ -1,0 +1,79 @@
+import * as api from '@shared/api'
+import { AppError } from '@shared/errors'
+import * as logging from '@shared/lib'
+import type { AuthError, AuthResponse } from '@supabase/supabase-js'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+import { signInWithOneTimePassword } from './sign-in-with-otp'
+
+vi.mock('@shared/api')
+vi.mock('@shared/lib')
+
+describe('signInWithOneTimePassword', () => {
+  const email = 'test@example.com'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns success when OTP request succeeds', async () => {
+    const response = {
+      data: { user: null, session: null },
+      error: null
+    } satisfies AuthResponse
+
+    vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
+
+    const result = await signInWithOneTimePassword(email)
+
+    expect(result).toEqual({ success: true })
+    expect(logging.captureException).not.toHaveBeenCalled()
+  })
+
+  it('maps supabase error and returns AppError', async () => {
+    const supabaseError = {
+      message: 'OTP failed',
+      status: 400,
+      code: 'otp_failed',
+      name: 'AuthError'
+    } as AuthError
+
+    const mappedError = new AppError('otp_failed', 'OTP failed')
+
+    const response = {
+      data: { user: null, session: null },
+      error: supabaseError
+    } satisfies AuthResponse
+
+    vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
+    vi.spyOn(api, 'mapSupabaseError').mockReturnValue(mappedError)
+
+    const result = await signInWithOneTimePassword(email)
+
+    expect(result).toMatchObject({ success: false })
+
+    const err = (result as { success: false; error: AppError }).error
+
+    expect(err.code).toBe('otp_failed')
+    expect(err.message).toBe('OTP failed')
+
+    expect(logging.captureException).toHaveBeenCalledWith(
+      mappedError,
+      'auth',
+      'signInWithOneTimePassword'
+    )
+  })
+
+  it('calls API with correct email', async () => {
+    const response = {
+      data: { user: null, session: null },
+      error: null
+    } satisfies AuthResponse
+
+    const spy = vi.spyOn(api, 'signInWithOtp').mockResolvedValue(response)
+
+    await signInWithOneTimePassword(email)
+
+    expect(spy).toHaveBeenCalledWith(email)
+  })
+})

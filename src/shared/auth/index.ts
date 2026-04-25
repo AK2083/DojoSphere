@@ -1,0 +1,7 @@
+export { getCurrentSession } from '../api/supabase/auth/auth'
+export { signInWithOneTimePassword } from '../auth/sign-in/sign-in-with-otp'
+export { checkOneTimePassword } from './register/check-otp'
+export { resendSignUpConfirmationEmail } from './register/resend-sign-up-confirmation'
+export { signUpWithMailAndPassword } from './register/sign-up-with-mail-and-password'
+export { signInWithEmailPassword } from './sign-in/sign-in-with-email-password'
+export { watchAuthState } from './state/on-auth-state-change'

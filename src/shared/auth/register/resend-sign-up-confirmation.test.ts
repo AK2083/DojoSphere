@@ -1,17 +1,13 @@
+import { mapSupabaseError, resendSignUpConfirmation } from '@shared/api'
+import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import type { AuthError, AuthOtpResponse, AuthResponse } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { AppError } from '../../../errors/app-error'
-import { mapSupabaseError } from '../map-supabase-error'
-import { resendSignUpConfirmation } from './auth'
 import { resendSignUpConfirmationEmail } from './resend-sign-up-confirmation'
 
-vi.mock('./auth', () => ({
-  resendSignUpConfirmation: vi.fn()
-}))
-
-vi.mock('../map-supabase-error', () => ({
+vi.mock('@shared/api', () => ({
+  resendSignUpConfirmation: vi.fn(),
   mapSupabaseError: vi.fn()
 }))
 

@@ -1,9 +1,7 @@
+import { mapSupabaseError, signInWithOtp } from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import type { RegisterResult } from '@shared/types'
-
-import { mapSupabaseError } from '../map-supabase-error'
-import { signInWithOtp } from './auth'
 
 /**
  * Initiates the sign-in process using a one-time password (OTP) sent to the user's email.

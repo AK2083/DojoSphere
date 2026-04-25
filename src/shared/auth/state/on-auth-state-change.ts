@@ -1,7 +1,5 @@
+import { type AuthEvent, type AuthState, onAuthStateChange } from '@shared/api'
 import { captureException } from '@shared/lib'
-
-import type { AuthEvent, AuthState } from '../types/auth-user'
-import { onAuthStateChange } from './auth'
 
 /**
  * Monitors authentication state changes with mapped events and error tracking.

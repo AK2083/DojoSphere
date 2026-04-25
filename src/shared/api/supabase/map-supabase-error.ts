@@ -1,6 +1,6 @@
+import { AppError } from '@shared/errors'
 import type { AuthError } from '@supabase/supabase-js'
 
-import { AppError } from '../../errors/app-error'
 import translationKeys from '../../lib/i18n/keys'
 
 /**

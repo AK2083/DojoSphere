@@ -1,8 +1,6 @@
+import { mapSupabaseError, verifyOneTimePasswordBySignUp } from '@shared/api'
 import { captureException } from '@shared/lib'
 import type { RegisterResult } from '@shared/types'
-
-import { mapSupabaseError } from '../map-supabase-error'
-import { verifyOneTimePassword } from './auth'
 
 /**
  * Verifies a one-time password (OTP) for a user's email during sign-up.
@@ -28,7 +26,7 @@ import { verifyOneTimePassword } from './auth'
  * ```
  */
 export async function checkOneTimePassword(email: string, token: string): Promise<RegisterResult> {
-  const { error } = await verifyOneTimePassword(email, token)
+  const { error } = await verifyOneTimePasswordBySignUp(email, token)
 
   if (error) {
     captureException(error, 'auth', 'checkOneTimePassword')

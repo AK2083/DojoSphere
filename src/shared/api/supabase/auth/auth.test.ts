@@ -12,13 +12,15 @@ import {
   onAuthStateChange,
   resendSignUpConfirmation,
   signInByEmailPassword,
+  signInWithOtp,
   signUpByEmailPassword,
-  verifyOneTimePassword
+  verifyOneTimePasswordBySignUp
 } from './auth'
 
 vi.mock('../client', () => ({
   supabase: {
     auth: {
+      signInWithOtp: vi.fn(),
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
       verifyOtp: vi.fn(),
@@ -76,6 +78,33 @@ describe('signUpByEmailPassword', () => {
   })
 })
 
+describe('signInWithOtp', () => {
+  const email = 'otp@example.com'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.signInWithOtp with shouldCreateUser false', async () => {
+    const mockResponse = {
+      data: { user: null, session: null },
+      error: null
+    }
+
+    vi.mocked(supabase.auth.signInWithOtp).mockResolvedValue(mockResponse as AuthResponse)
+
+    const result = await signInWithOtp(email)
+
+    expect(supabase.auth.signInWithOtp).toHaveBeenCalledWith({
+      email,
+      options: {
+        shouldCreateUser: false
+      }
+    })
+    expect(result).toEqual(mockResponse)
+  })
+})
+
 describe('signInByEmailPassword', () => {
   const email = 'test@example.com'
   const password = 'password123'
@@ -129,23 +158,13 @@ describe('checkOtp', () => {
       error: null
     })
 
-    await verifyOneTimePassword('test@test.de', '123456')
+    await verifyOneTimePasswordBySignUp('test@test.de', '123456')
 
     expect(supabase.auth.verifyOtp).toHaveBeenCalledWith({
       email: 'test@test.de',
       token: '123456',
       type: 'signup'
     })
-  })
-
-  it('calls verifyOtp exactly once', async () => {
-    vi.mocked(supabase.auth.verifyOtp).mockResolvedValue({
-      data: { session: null, user: null },
-      error: null
-    })
-
-    await verifyOneTimePassword('test@test.de', '123456')
-
     expect(supabase.auth.verifyOtp).toHaveBeenCalledTimes(1)
   })
 })
@@ -167,16 +186,6 @@ describe('resendSignUpConfirmation', () => {
       type: 'signup',
       email: 'test@test.de'
     })
-  })
-
-  it('calls resend exactly once', async () => {
-    vi.mocked(supabase.auth.resend).mockResolvedValue({
-      data: { user: null, session: null },
-      error: null
-    })
-
-    await resendSignUpConfirmation('test@test.de')
-
     expect(supabase.auth.resend).toHaveBeenCalledTimes(1)
   })
 })

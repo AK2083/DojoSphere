@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { signInWithOneTimePassword } from '@shared/api'
+import { signInWithOneTimePassword } from '@shared/auth'
 
 /**
  * Composable for the email step of the password forgotten flow.

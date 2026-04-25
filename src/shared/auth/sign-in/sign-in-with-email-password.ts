@@ -1,9 +1,8 @@
+import { signInByEmailPassword } from '@shared/api'
 import { mapSupabaseError } from '@shared/api/supabase/map-supabase-error'
 import { AppError } from '@shared/errors'
 import { captureException, setUserContext } from '@shared/lib/glitchtip/logging'
 import type { RegisterResult } from '@shared/types/register-result'
-
-import { signInByEmailPassword } from './auth'
 
 /**
  * Signs in a user with email and password via Supabase.
@@ -30,7 +29,7 @@ export async function signInWithEmailPassword(
     }
   }
 
-  if (!data.user) {
+  if (!data || !data.user) {
     const err = new AppError('unknown', 'User not found')
     captureException(err, 'auth', 'signInWithEmailPassword')
 
