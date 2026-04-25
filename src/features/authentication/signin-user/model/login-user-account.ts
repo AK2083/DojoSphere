@@ -1,4 +1,4 @@
-import { signInWithEmailPassword } from '@shared/api'
+import { signInWithEmailPassword } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'

@@ -1,11 +1,11 @@
-import { signInWithEmailPassword } from '@shared/api'
+import { signInWithEmailPassword } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { loginUserAccount } from './login-user-account'
 
-vi.mock('@shared/api', () => ({
+vi.mock('@shared/auth', () => ({
   signInWithEmailPassword: vi.fn()
 }))
 

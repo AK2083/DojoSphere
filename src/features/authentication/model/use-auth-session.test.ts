@@ -1,5 +1,5 @@
-import { getCurrentSession, watchAuthState } from '@shared/api'
-import type { Session, User } from '@supabase/supabase-js'
+import type { Session, User } from '@shared/api'
+import { getCurrentSession, watchAuthState } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAuthSession } from './use-auth-session'
@@ -24,7 +24,7 @@ vi.mock('vue', async () => {
   }
 })
 
-vi.mock('@shared/api', () => ({
+vi.mock('@shared/auth', () => ({
   getCurrentSession: vi.fn(),
   watchAuthState: vi.fn()
 }))

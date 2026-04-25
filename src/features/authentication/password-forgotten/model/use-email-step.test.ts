@@ -1,4 +1,4 @@
-import * as auth from '@shared/auth'
+import { signInWithOneTimePassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useEmailStep } from './use-email-step'
@@ -16,7 +16,7 @@ describe('useEmailStep', () => {
     const result = await submit()
 
     expect(result).toBe(false)
-    expect(auth.signInWithOneTimePassword).not.toHaveBeenCalled()
+    expect(signInWithOneTimePassword).not.toHaveBeenCalled()
   })
 
   it('returns false when already loading', async () => {
@@ -27,11 +27,11 @@ describe('useEmailStep', () => {
     const result = await submit()
 
     expect(result).toBe(false)
-    expect(auth.signInWithOneTimePassword).not.toHaveBeenCalled()
+    expect(signInWithOneTimePassword).not.toHaveBeenCalled()
   })
 
   it('returns true and clears error on successful submit', async () => {
-    vi.spyOn(auth, 'signInWithOneTimePassword').mockResolvedValue({ success: true })
+    vi.mocked(signInWithOneTimePassword).mockResolvedValue({ success: true })
 
     const { submit, email, isValid, error, loading } = useEmailStep()
     email.value = 'test@example.com'
@@ -43,13 +43,14 @@ describe('useEmailStep', () => {
     expect(result).toBe(true)
     expect(error.value).toBeNull()
     expect(loading.value).toBe(false)
-    expect(auth.signInWithOneTimePassword).toHaveBeenCalledWith('test@example.com')
+    expect(signInWithOneTimePassword).toHaveBeenCalledWith('test@example.com')
   })
 
   it('stores mapped message when submit fails', async () => {
-    vi.spyOn(auth, 'signInWithOneTimePassword').mockResolvedValue({
+    vi.mocked(signInWithOneTimePassword).mockResolvedValue({
       success: false,
       error: {
+        name: 'AuthError',
         code: 'auth.invalid_credentials',
         message: 'Invalid credentials'
       }
@@ -67,7 +68,7 @@ describe('useEmailStep', () => {
   })
 
   it('resets loading when api call throws', async () => {
-    vi.spyOn(auth, 'signInWithOneTimePassword').mockRejectedValue(new Error('network'))
+    vi.mocked(signInWithOneTimePassword).mockRejectedValue(new Error('network'))
 
     const { submit, email, isValid, loading } = useEmailStep()
     email.value = 'test@example.com'
