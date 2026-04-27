@@ -77,4 +77,16 @@ describe('useEmailStep', () => {
     await expect(submit()).rejects.toThrow('network')
     expect(loading.value).toBe(false)
   })
+
+  it('uses empty string fallback when email is null', async () => {
+    vi.mocked(signInWithOneTimePassword).mockResolvedValue({ success: true })
+
+    const { submit, isValid } = useEmailStep()
+    isValid.value = true
+
+    const result = await submit()
+
+    expect(result).toBe(true)
+    expect(signInWithOneTimePassword).toHaveBeenCalledWith('')
+  })
 })

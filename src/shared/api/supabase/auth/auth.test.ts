@@ -15,6 +15,7 @@ import {
   signInByEmailPassword,
   signInWithOtp,
   signUpByEmailPassword,
+  verifyOneTimePasswordByRecovery,
   verifyOneTimePasswordBySignUp
 } from './auth'
 
@@ -165,6 +166,28 @@ describe('checkOtp', () => {
       email: 'test@test.de',
       token: '123456',
       type: 'signup'
+    })
+    expect(supabase.auth.verifyOtp).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('verifyOneTimePasswordByRecovery', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.verifyOtp with recovery type', async () => {
+    vi.mocked(supabase.auth.verifyOtp).mockResolvedValue({
+      data: { session: null, user: null },
+      error: null
+    })
+
+    await verifyOneTimePasswordByRecovery('recovery@test.de', '654321')
+
+    expect(supabase.auth.verifyOtp).toHaveBeenCalledWith({
+      email: 'recovery@test.de',
+      token: '654321',
+      type: 'recovery'
     })
     expect(supabase.auth.verifyOtp).toHaveBeenCalledTimes(1)
   })
