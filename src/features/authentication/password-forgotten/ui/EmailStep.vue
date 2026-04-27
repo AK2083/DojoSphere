@@ -18,7 +18,7 @@ defineProps<{
 
 const emit = defineEmits<{
   (eventname: 'update:email', value: string): void
-  (eventname: 'valid-change', value: boolean): void
+  (eventname: 'update:valid', value: boolean): void
 }>()
 
 const form = ref<VForm | null>(null)
@@ -32,7 +32,7 @@ async function handleSubmit() {
 }
 
 watch(isValid, (val) => {
-  emit('valid-change', val)
+  emit('update:valid', val)
 })
 </script>
 

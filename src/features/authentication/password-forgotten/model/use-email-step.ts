@@ -16,9 +16,9 @@ import { signInWithOneTimePassword } from '@shared/auth'
  * const { email, loading, error, isValid, submit } = useEmailStep()
  */
 export function useEmailStep() {
-  const email = ref('')
-  const loading = ref(false)
+  const email = ref<string | null>(null)
   const error = ref<string | null>(null)
+  const loading = ref(false)
   const isValid = ref(false)
 
   async function submit() {
@@ -28,7 +28,7 @@ export function useEmailStep() {
     error.value = null
 
     try {
-      const result = await signInWithOneTimePassword(email.value)
+      const result = await signInWithOneTimePassword(email.value ?? '')
 
       if (!result.success) {
         error.value = result.error.message

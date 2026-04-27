@@ -16,15 +16,14 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (eventname: 'update:otp', value: string): void
-  (eventname: 'clear-error'): void
-  (eventname: 'resend'): void
-  (eventname: 'valid-change', value: boolean): void
+  (e: 'update:otp', value: string): void
+  (e: 'update:valid', value: boolean): void
+  (e: 'resend'): void
 }>()
 
 watch(
   () => props.otp,
-  (val) => emit('valid-change', (val?.length ?? 0) === 6),
+  (val) => emit('update:valid', (val?.length ?? 0) === 6),
   { immediate: true }
 )
 </script>
@@ -53,7 +52,6 @@ watch(
         autocomplete="one-time-code"
         autofocus
         @update:model-value="emit('update:otp', $event)"
-        @finish="emit('clear-error')"
       ></OtpInput>
     </v-card-text>
     <v-card-actions>

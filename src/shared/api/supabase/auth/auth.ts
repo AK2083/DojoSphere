@@ -136,6 +136,26 @@ export async function verifyOneTimePasswordBySignUp(
 }
 
 /**
+ * Verifies a one-time password (OTP) for password recovery.
+ *
+ * This wraps Supabase's `auth.verifyOtp` with type 'recovery'.
+ * No error handling or side effects.
+ * @param email - The email address associated with the OTP.
+ * @param token - The one-time password sent to the user's email for recovery.
+ * @returns The raw Supabase authentication response.
+ */
+export async function verifyOneTimePasswordByRecovery(
+  email: string,
+  token: string
+): Promise<AuthResponse> {
+  return await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'recovery'
+  })
+}
+
+/**
  * Resends the email confirmation link for a sign-up flow.
  *
  * This is a low-level API wrapper around Supabase's `auth.resend` method.

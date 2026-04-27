@@ -4,6 +4,7 @@ export {
   signInByEmailPassword,
   signInWithOtp,
   signUpByEmailPassword,
+  verifyOneTimePasswordByRecovery,
   verifyOneTimePasswordBySignUp
 } from './supabase/auth/auth'
 export { mapSupabaseError } from './supabase/map-supabase-error'

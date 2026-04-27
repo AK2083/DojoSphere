@@ -16,6 +16,7 @@
     "electron:start": "concurrently -k --success=first \"npm run dev\" \"npm run electron\"",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
+    "type:check": "vue-tsc --build --noEmit",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
     "test": "vitest",

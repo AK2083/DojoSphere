@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { resendOtp } from './resend-otp'
 
-vi.mock('@shared/api', () => ({
+vi.mock('@shared/auth', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
@@ -13,7 +13,7 @@ vi.mock('../../monitoring/monitoring', () => ({
   }
 }))
 
-import { resendSignUpConfirmationEmail } from '@shared/api'
+import { resendSignUpConfirmationEmail } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
 describe('resendOtp', () => {

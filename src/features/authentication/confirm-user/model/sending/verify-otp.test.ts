@@ -1,4 +1,4 @@
-import { checkOneTimePassword } from '@shared/api'
+import { checkOneTimePassword } from '@shared/auth'
 import type { AppError } from '@shared/errors/app-error'
 import type { RegisterResult } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +16,7 @@ const { monitorInformationMock, checkOneTimePasswordMock, MONITORING_EVENTS_MOCK
   })
 )
 
-vi.mock('@shared/api', () => ({
+vi.mock('@shared/auth', () => ({
   checkOneTimePassword: checkOneTimePasswordMock
 }))
 

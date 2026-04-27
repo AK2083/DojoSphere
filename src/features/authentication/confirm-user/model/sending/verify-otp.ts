@@ -1,4 +1,4 @@
-import { checkOneTimePassword } from '@shared/api'
+import { checkOneTimePassword } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'

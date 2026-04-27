@@ -9,8 +9,7 @@ import '@fontsource/roboto/400.css'
 import '@fontsource/roboto/500.css'
 import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
-
-import 'vuetify/styles'
+import 'vuetify/styles/main.css'
 
 export const vuetify = createVuetify({
   directives,

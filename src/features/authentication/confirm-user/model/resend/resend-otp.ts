@@ -1,4 +1,4 @@
-import { resendSignUpConfirmationEmail } from '@shared/api'
+import { resendSignUpConfirmationEmail } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
 import {
