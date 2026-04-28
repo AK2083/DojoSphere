@@ -6,6 +6,7 @@ import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 import { useEmailStep } from '../model/use-email-step'
+import { useNewPasswordStep } from '../model/use-new-password-step'
 import { useVerifyOtpByRecovery } from '../model/use-recovery-otp-step'
 import EmailStep from './EmailStep.vue'
 import NewPasswordStep from './NewPasswordStep.vue'
@@ -38,16 +39,24 @@ const {
 function resendConfirmation() {}
 
 // NewPassword-Step 3
-const password = ref('')
+const {
+  password: newPasswordStepPassword,
+  loading: newPasswordStepLoading,
+  error: newPasswordStepError,
+  isValid: newPasswordStepIsValid,
+  submit: newPasswordStepSubmit
+} = useNewPasswordStep()
+
 const confirmedPassword = ref('')
 const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
-const isPasswordConfirmationValid = ref(false)
 
 async function goNextStep() {
   switch (step.value) {
     case '0':
       const emailStepSuccess = await emailStepSubmit()
       if (!emailStepSuccess) return
+
+      otpStepEmail.value = emailStepEmail.value
 
       step.value = '1'
       break
@@ -58,6 +67,9 @@ async function goNextStep() {
       step.value = '2'
       break
     case '2':
+      const newPasswordStepSuccess = await newPasswordStepSubmit()
+      if (!newPasswordStepSuccess) return
+
       step.value = '3'
       break
     default:
@@ -86,7 +98,7 @@ function cancel() {
 
         <v-divider />
 
-        <v-stepper-item value="2" :complete="isPasswordConfirmationValid">
+        <v-stepper-item value="2" :complete="newPasswordStepIsValid">
           <template #title>{{ t(translationKeys.steps.newPassword.title) }}</template>
         </v-stepper-item>
       </v-stepper-header>
@@ -117,7 +129,7 @@ function cancel() {
             :otpAriaLabel="t(translationKeys.steps.otp.ariaLabel)"
             :resendLabel="t(translationKeys.steps.otp.resend.resendLabel)"
             :resendAriaLabel="t(translationKeys.steps.otp.resend.ariaResendLabel)"
-            :isMailAvailable="!!otpStepEmail"
+            :isMailAvailable="!!emailStepEmail"
             :loading="otpStepLoading"
             @update:valid="otpStepIsValid = $event"
             @update:otp="otpStepToken = $event"
@@ -126,20 +138,21 @@ function cancel() {
         </v-stepper-window-item>
 
         <v-stepper-window-item value="2">
-          <v-alert v-if="false" :text="''" :type="'error'" class="mt-2" />
+          <v-alert v-if="false" :text="newPasswordStepError ?? ''" :type="'error'" class="mt-2" />
           <NewPasswordStep
             :step-title="t(translationKeys.steps.newPassword.title)"
             :step-sub-title="t(translationKeys.steps.newPassword.description)"
-            :password="password"
+            :password="newPasswordStepPassword ?? ''"
             :repeatedPassword="confirmedPassword"
             :rules="translatedPasswordRules"
             :labelPassword="t(translationKeys.steps.newPassword.passwordLabel)"
             :ariaLabelPassword="t(translationKeys.steps.newPassword.ariaPasswordLabel)"
             :labelRepeatedPassword="t(translationKeys.steps.newPassword.newPasswordLabel)"
             :ariaLabelRepeatedPassword="t(translationKeys.steps.newPassword.ariaNewPasswordLabel)"
-            @update:password="password = $event"
+            :loading="newPasswordStepLoading"
+            @update:password="newPasswordStepPassword = $event"
             @update:repassword="confirmedPassword = $event"
-            @valid-change="isPasswordConfirmationValid = $event"
+            @valid-change="newPasswordStepIsValid = $event"
           />
         </v-stepper-window-item>
       </v-stepper-window>
@@ -163,7 +176,7 @@ function cancel() {
             :disabled="
               (step === '0' && !emailStepIsValid) ||
               (step === '1' && !otpStepIsValid) ||
-              (step === '2' && !isPasswordConfirmationValid)
+              (step === '2' && !newPasswordStepIsValid)
             "
             @click="goNextStep"
           >

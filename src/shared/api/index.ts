@@ -4,6 +4,7 @@ export {
   signInByEmailPassword,
   signInWithOtp,
   signUpByEmailPassword,
+  updateUserPassword,
   verifyOneTimePasswordByRecovery,
   verifyOneTimePasswordBySignUp
 } from './supabase/auth/auth'

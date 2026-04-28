@@ -172,3 +172,18 @@ export async function resendSignUpConfirmation(
     email
   })
 }
+
+/**
+ * Updates the user's password.
+ *
+ * This function is a low-level wrapper around Supabase's `auth.updateUser` method,
+ * specifically for updating the password. It does not perform any error handling,
+ * mapping, or side effects.
+ * @param newPassword - The new password to set for the user.
+ * @returns A promise that resolves to the raw Supabase response from `updateUser`.
+ */
+export async function updateUserPassword(
+  newPassword: string
+): Promise<Awaited<ReturnType<typeof supabase.auth.updateUser>>> {
+  return await supabase.auth.updateUser({ password: newPassword })
+}
