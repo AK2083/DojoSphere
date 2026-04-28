@@ -15,6 +15,7 @@ import {
   signInByEmailPassword,
   signInWithOtp,
   signUpByEmailPassword,
+  updateUserPassword,
   verifyOneTimePasswordByRecovery,
   verifyOneTimePasswordBySignUp
 } from './auth'
@@ -27,6 +28,7 @@ vi.mock('../client', () => ({
       signInWithPassword: vi.fn(),
       verifyOtp: vi.fn(),
       resend: vi.fn(),
+      updateUser: vi.fn(),
       getSession: vi.fn(),
       onAuthStateChange: vi.fn()
     }
@@ -276,5 +278,27 @@ describe('onAuthStateChange', () => {
 
     expect(result).toBe(mockSubscription)
     expect(supabase.auth.onAuthStateChange).toHaveBeenCalledWith(callback)
+  })
+})
+
+describe('updateUserPassword', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.updateUser with the new password', async () => {
+    const mockResponse = {
+      data: { user: null },
+      error: null
+    }
+
+    vi.mocked(supabase.auth.updateUser).mockResolvedValue(mockResponse as never)
+
+    const result = await updateUserPassword('new-password-123')
+
+    expect(supabase.auth.updateUser).toHaveBeenCalledWith({
+      password: 'new-password-123'
+    })
+    expect(result).toEqual(mockResponse)
   })
 })
