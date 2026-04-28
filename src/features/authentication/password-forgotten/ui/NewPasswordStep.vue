@@ -21,7 +21,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (eventname: 'update:password', value: string): void
   (eventname: 'update:repassword', value: string): void
-  (eventname: 'valid-change', value: boolean): void
+  (eventname: 'update:valid', value: boolean): void
 }>()
 
 const form = ref<VForm | null>(null)
@@ -50,7 +50,7 @@ async function handleSubmit() {
 watch(
   [isValid, passwordsMatch],
   ([formValid, match]) => {
-    emit('valid-change', formValid && match)
+    emit('update:valid', formValid && match)
   },
   { immediate: true }
 )

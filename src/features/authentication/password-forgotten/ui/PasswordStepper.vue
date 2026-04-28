@@ -14,66 +14,47 @@ import OtpStep from './OtpStep.vue'
 
 const router = useRouter()
 const { t } = useTranslation()
-const step = ref<'0' | '1' | '2' | '3'>('0')
+const step = ref(0)
 
 // Email-Step 1
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
-const {
-  email: emailStepEmail,
-  loading: emailStepLoading,
-  error: emailStepError,
-  isValid: emailStepIsValid,
-  submit: emailStepSubmit
-} = useEmailStep()
+const emailStep = useEmailStep()
 
 // Otp-Step 2
-const {
-  email: otpStepEmail,
-  token: otpStepToken,
-  loading: otpStepLoading,
-  error: otpStepError,
-  isValid: otpStepIsValid,
-  submit: otpStepSubmit
-} = useVerifyOtpByRecovery()
+const otpStep = useVerifyOtpByRecovery()
 
 function resendConfirmation() {}
 
 // NewPassword-Step 3
-const {
-  password: newPasswordStepPassword,
-  loading: newPasswordStepLoading,
-  error: newPasswordStepError,
-  isValid: newPasswordStepIsValid,
-  submit: newPasswordStepSubmit
-} = useNewPasswordStep()
+const newPasswordStep = useNewPasswordStep()
 
 const confirmedPassword = ref('')
 const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
 
 async function goNextStep() {
   switch (step.value) {
-    case '0':
-      const emailStepSuccess = await emailStepSubmit()
+    case 0:
+      const emailStepSuccess = await emailStep.submit()
       if (!emailStepSuccess) return
 
-      otpStepEmail.value = emailStepEmail.value
+      otpStep.email.value = emailStep.email.value
 
-      step.value = '1'
+      step.value = 1
       break
-    case '1':
-      const otpStepSuccess = await otpStepSubmit()
+    case 1:
+      const otpStepSuccess = await otpStep.submit()
       if (!otpStepSuccess) return
 
-      step.value = '2'
+      step.value = 2
       break
-    case '2':
-      const newPasswordStepSuccess = await newPasswordStepSubmit()
+    case 2:
+      const newPasswordStepSuccess = await newPasswordStep.submit()
       if (!newPasswordStepSuccess) return
 
-      step.value = '3'
+      step.value = 3
       break
     default:
-      step.value = '0'
+      step.value = 0
   }
 }
 
@@ -86,73 +67,88 @@ function cancel() {
   <v-card-text>
     <v-stepper v-model="step" alt-labels elevation="0" show-actions style="border: none">
       <v-stepper-header>
-        <v-stepper-item value="0" :complete="emailStepIsValid">
+        <v-stepper-item value="0" :complete="emailStep.isValid.value">
           <template #title>{{ t(translationKeys.steps.email.title) }}</template>
         </v-stepper-item>
 
         <v-divider />
 
-        <v-stepper-item value="1" :complete="otpStepIsValid">
+        <v-stepper-item value="1" :complete="otpStep.isValid.value">
           <template #title>{{ t(translationKeys.steps.otp.title) }}</template>
         </v-stepper-item>
 
         <v-divider />
 
-        <v-stepper-item value="2" :complete="newPasswordStepIsValid">
+        <v-stepper-item value="2" :complete="newPasswordStep.isValid.value">
           <template #title>{{ t(translationKeys.steps.newPassword.title) }}</template>
         </v-stepper-item>
       </v-stepper-header>
 
       <v-stepper-window>
         <v-stepper-window-item value="0">
-          <v-alert v-if="false" :text="emailStepError ?? ''" :type="'error'" class="mt-2" />
+          <v-alert
+            v-if="emailStep.error"
+            :text="emailStep.error.value ?? ''"
+            :type="'error'"
+            class="mt-2"
+          />
           <EmailStep
             :step-title="t(translationKeys.steps.email.title)"
             :step-sub-title="t(translationKeys.steps.email.description)"
-            :email="emailStepEmail ?? ''"
+            :email="emailStep.email.value"
             :rules="translatedEmailRules"
             :labelTextField="t(translationKeys.steps.email.label)"
             :ariaLabelEmail="t(translationKeys.steps.email.ariaLabel)"
             :placeholder="t(translationKeys.steps.email.placeholder)"
-            :loading="emailStepLoading"
-            @update:valid="emailStepIsValid = $event"
-            @update:email="emailStepEmail = $event"
+            :loading="emailStep.loading.value"
+            @update:valid="emailStep.isValid.value = $event"
+            @update:email="emailStep.email.value = $event"
           />
         </v-stepper-window-item>
 
         <v-stepper-window-item value="1">
-          <v-alert v-if="false" :text="otpStepError ?? ''" :type="'error'" class="mt-2" />
+          <v-alert
+            v-if="otpStep.error.value"
+            :text="otpStep.error.value ?? ''"
+            :type="'error'"
+            class="mt-2"
+          />
           <OtpStep
             :step-title="t(translationKeys.steps.otp.title)"
             :step-sub-title="t(translationKeys.steps.otp.description)"
-            :otp="otpStepToken"
+            :otp="otpStep.token.value"
             :otpAriaLabel="t(translationKeys.steps.otp.ariaLabel)"
             :resendLabel="t(translationKeys.steps.otp.resend.resendLabel)"
             :resendAriaLabel="t(translationKeys.steps.otp.resend.ariaResendLabel)"
-            :isMailAvailable="!!emailStepEmail"
-            :loading="otpStepLoading"
-            @update:valid="otpStepIsValid = $event"
-            @update:otp="otpStepToken = $event"
+            :isMailAvailable="!!emailStep.email.value"
+            :loading="otpStep.loading.value"
+            @update:valid="otpStep.isValid.value = $event"
+            @update:otp="otpStep.token.value = $event"
             @resend="resendConfirmation"
           />
         </v-stepper-window-item>
 
         <v-stepper-window-item value="2">
-          <v-alert v-if="false" :text="newPasswordStepError ?? ''" :type="'error'" class="mt-2" />
+          <v-alert
+            v-if="newPasswordStep.error.value"
+            :text="newPasswordStep.error.value ?? ''"
+            :type="'error'"
+            class="mt-2"
+          />
           <NewPasswordStep
             :step-title="t(translationKeys.steps.newPassword.title)"
             :step-sub-title="t(translationKeys.steps.newPassword.description)"
-            :password="newPasswordStepPassword ?? ''"
+            :password="newPasswordStep.password.value"
             :repeatedPassword="confirmedPassword"
             :rules="translatedPasswordRules"
             :labelPassword="t(translationKeys.steps.newPassword.passwordLabel)"
             :ariaLabelPassword="t(translationKeys.steps.newPassword.ariaPasswordLabel)"
             :labelRepeatedPassword="t(translationKeys.steps.newPassword.newPasswordLabel)"
             :ariaLabelRepeatedPassword="t(translationKeys.steps.newPassword.ariaNewPasswordLabel)"
-            :loading="newPasswordStepLoading"
-            @update:password="newPasswordStepPassword = $event"
+            :loading="newPasswordStep.loading.value"
+            @update:password="newPasswordStep.password.value = $event"
             @update:repassword="confirmedPassword = $event"
-            @valid-change="newPasswordStepIsValid = $event"
+            @update:valid="newPasswordStep.isValid.value = $event"
           />
         </v-stepper-window-item>
       </v-stepper-window>
@@ -174,9 +170,9 @@ function cancel() {
             :prepend-icon="mdiCheck"
             color="primary"
             :disabled="
-              (step === '0' && !emailStepIsValid) ||
-              (step === '1' && !otpStepIsValid) ||
-              (step === '2' && !newPasswordStepIsValid)
+              (step === 0 && !emailStep.isValid.value) ||
+              (step === 1 && !otpStep.isValid.value) ||
+              (step === 2 && !newPasswordStep.isValid.value)
             "
             @click="goNextStep"
           >

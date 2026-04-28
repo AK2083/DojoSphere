@@ -8,7 +8,7 @@ import { setNewPassword } from '@shared/auth'
  * @returns An object containing the password input, loading state, error message, validation status, and submit function.
  */
 export function useNewPasswordStep() {
-  const password = ref<string | null>(null)
+  const password = ref<string>('')
   const error = ref<string | null>(null)
   const loading = ref(false)
   const isValid = ref(false)

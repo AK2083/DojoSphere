@@ -10,8 +10,8 @@ import { checkOneTimePasswordByRecovery } from '@shared/auth'
  * @returns An object containing the loading state, error, and verification status.
  */
 export function useVerifyOtpByRecovery() {
-  const email = ref<string | null>(null)
-  const token = ref<string | null>(null)
+  const email = ref<string>('')
+  const token = ref<string>('')
   const error = ref<string | null>(null)
   const loading = ref(false)
   const isValid = ref(false)
@@ -20,7 +20,7 @@ export function useVerifyOtpByRecovery() {
     loading.value = true
     error.value = null
 
-    const response = await checkOneTimePasswordByRecovery(email.value ?? '', token.value ?? '')
+    const response = await checkOneTimePasswordByRecovery(email.value, token.value)
 
     loading.value = false
 
