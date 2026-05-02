@@ -5,7 +5,8 @@ import type {
   AuthResponse,
   Session,
   Subscription,
-  User
+  User,
+  UserResponse
 } from '@supabase/supabase-js'
 
 export type {
@@ -15,7 +16,8 @@ export type {
   AuthResponse,
   Session,
   Subscription,
-  User
+  User,
+  UserResponse
 }
 
 export type AuthEvent =

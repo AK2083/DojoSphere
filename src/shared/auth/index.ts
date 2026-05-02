@@ -6,4 +6,5 @@ export { signUpWithMailAndPassword } from './register/sign-up-with-mail-and-pass
 export { checkOneTimePasswordByRecovery } from './reset-password/check-otp-by-recovery'
 export { setNewPassword } from './reset-password/set-new-password'
 export { signInWithEmailPassword } from './sign-in/sign-in-with-email-password'
+export { getCurrentUserState } from './state/get-current-user'
 export { watchAuthState } from './state/on-auth-state-change'

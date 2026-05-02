@@ -1,7 +1,7 @@
 import { captureException } from '@shared/lib'
 
 import { supabase } from '../client'
-import type { AuthChangeEvent, AuthResponse, Session } from '../types/auth-user'
+import type { AuthChangeEvent, AuthResponse, Session, UserResponse } from '../types/auth-user'
 
 /**
  * Initiates the sign-in process using a one-time password (OTP) sent to the user's email.
@@ -18,6 +18,18 @@ export async function signInWithOtp(email: string): Promise<AuthResponse> {
       shouldCreateUser: false
     }
   })
+}
+
+/**
+ * Retrieves the current authenticated user.
+ *
+ * This function is a low-level wrapper around Supabase's `auth.getUser` method.
+ * It performs no error handling or mapping and returns the raw user data or null.
+ *
+ * @returns The current authenticated user or null if no user is logged in or an error occurs.
+ */
+export async function getCurrentUser(): Promise<UserResponse> {
+  return await supabase.auth.getUser()
 }
 
 /**

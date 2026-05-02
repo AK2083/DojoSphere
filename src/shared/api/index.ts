@@ -1,4 +1,5 @@
 export {
+  getCurrentUser,
   onAuthStateChange,
   resendSignUpConfirmation,
   signInByEmailPassword,
@@ -18,5 +19,6 @@ export type {
   AuthState,
   Session,
   Subscription,
-  User
+  User,
+  UserResponse
 } from './supabase/types/auth-user'
