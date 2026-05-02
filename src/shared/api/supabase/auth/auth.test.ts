@@ -10,6 +10,7 @@ import {
 } from '../types/auth-user'
 import {
   getCurrentSession,
+  getCurrentUser,
   onAuthStateChange,
   resendSignUpConfirmation,
   signInByEmailPassword,
@@ -29,6 +30,7 @@ vi.mock('../client', () => ({
       verifyOtp: vi.fn(),
       resend: vi.fn(),
       updateUser: vi.fn(),
+      getUser: vi.fn(),
       getSession: vi.fn(),
       onAuthStateChange: vi.fn()
     }
@@ -255,6 +257,28 @@ describe('getCurrentSession', () => {
     const result = await getCurrentSession()
 
     expect(result).toBeNull()
+  })
+})
+
+describe('getCurrentUser', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('returns user response from supabase unchanged', async () => {
+    const mockResponse = {
+      data: {
+        user: { id: 'user-123' }
+      },
+      error: null
+    }
+
+    vi.mocked(supabase.auth.getUser).mockResolvedValue(mockResponse as never)
+
+    const result = await getCurrentUser()
+
+    expect(supabase.auth.getUser).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(mockResponse)
   })
 })
 
