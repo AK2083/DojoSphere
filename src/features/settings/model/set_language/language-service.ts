@@ -1,8 +1,6 @@
-import {
-  getLanguageFromStorage,
-  setLanguageToStorage
-} from '@features/settings/model/set_language/language-storage'
-import { AvailableLanguages, FallbackLanguage, LanguageCode } from '@shared/lib/i18n/languages'
+import { AvailableLanguages, FallbackLanguage, LanguageCode } from '@shared/lib'
+
+import { getLanguageFromStorage, setLanguageToStorage } from './language-storage'
 
 /**
  * Detects the user's preferred language based on the browser settings.

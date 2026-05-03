@@ -7,4 +7,4 @@ export type {
   LowLevelAuthEvent
 } from '../types/auth-identity'
 export type { AuthActionResult } from './register-result'
-export type { Theme, ThemePreference } from './theme-modes'
+export { Theme, type ThemePreference } from './theme-modes'

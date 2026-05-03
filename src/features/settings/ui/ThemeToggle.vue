@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
 import { mdiLaptop, mdiMoonWaningCrescent, mdiThemeLightDark, mdiWhiteBalanceSunny } from '@mdi/js'
-import { useTranslation } from '@shared/lib/i18n/use-translation'
+import { useTranslation } from '@shared/lib'
 import { Theme } from '@shared/types/theme-modes'
 
 import translationKeys from '../i18n/keys'

@@ -1,6 +1,5 @@
 import { getCurrentSession as getCurrentSessionLowLevel } from '@shared/api'
-
-import type { AuthSession } from '../../types/auth-identity'
+import type { AuthSession } from '@shared/types'
 
 /**
  * Returns the current auth session via the high-level auth facade.

@@ -1,8 +1,6 @@
-import {
-  getThemeFromStorage,
-  setThemeToStorage
-} from '@features/settings/model/set_theme/theme-storage'
-import { Theme, type ThemePreference } from '@shared/types/theme-modes'
+import { Theme, type ThemePreference } from '@shared/types'
+
+import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 
 /**
  * Detects the user's preferred color scheme from the operating system.

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Confirmation } from '@features/authentication'
+import { Confirmation } from '@features/authentication/confirm-user'
 </script>
 
 <template>

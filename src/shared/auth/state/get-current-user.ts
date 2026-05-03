@@ -1,7 +1,6 @@
 import { getCurrentUser } from '@shared/api'
 import { captureException } from '@shared/lib'
-
-import type { CurrentUserState } from '../../types/auth-identity'
+import type { CurrentUserState } from '@shared/types'
 
 /**
  * Fetches the current authenticated user from the API.
