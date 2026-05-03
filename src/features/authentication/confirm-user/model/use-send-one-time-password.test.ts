@@ -2,8 +2,8 @@ import router from '@app/providers/router'
 import { checkOneTimePassword, getCurrentSession } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getRegisterEmailFromStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { getRegisterEmailFromStorage } from './register-storage'
 import { useSendOneTimePassword, verifyOtp } from './use-send-one-time-password'
 
 let onMountedHandler: (() => Promise<void>) | undefined
@@ -30,7 +30,7 @@ vi.mock('@shared/auth', () => ({
   getCurrentSession: vi.fn()
 }))
 
-vi.mock('../../model/register-storage', () => ({
+vi.mock('./register-storage', () => ({
   getRegisterEmailFromStorage: vi.fn()
 }))
 

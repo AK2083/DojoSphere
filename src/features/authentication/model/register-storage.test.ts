@@ -1,15 +1,15 @@
-import { getStorageItem, setStorageItem } from '@shared/lib'
+import { addBreadcrumb, getStorageItem, setStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import {
-  getIsOtpActiveFromStorage,
-  getRegisterEmailFromStorage,
   setIsOtpActiveToStorage,
   setRegisterEmailToStorage
-} from './register-storage'
+} from '../register-user/model/register-storage'
+import { getIsOtpActiveFromStorage } from './register-storage'
 
 vi.mock('@shared/lib', () => ({
+  addBreadcrumb: vi.fn(),
   getStorageItem: vi.fn(),
   setStorageItem: vi.fn()
 }))
@@ -27,6 +27,7 @@ vi.mock('../monitoring/monitoring', () => ({
 describe('otp-storage (unit)', () => {
   const OTPKEY = 'dojosphere.auth.register.otpActive'
   const EMAILKEY = 'dojosphere.auth.register.email'
+  const REGISTER_USER_CATEGORY = 'authentication.registerUser'
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -37,9 +38,12 @@ describe('otp-storage (unit)', () => {
 
     setIsOtpActiveToStorage(isActive)
 
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.STORAGE_OTP_READ, {
-      isActive
-    })
+    expect(addBreadcrumb).toHaveBeenCalledWith(
+      MONITORING_EVENTS.STORAGE_OTP_READ,
+      REGISTER_USER_CATEGORY,
+      'info',
+      { isActive }
+    )
     expect(setStorageItem).toHaveBeenCalledWith(OTPKEY, isActive)
   })
 
@@ -48,9 +52,12 @@ describe('otp-storage (unit)', () => {
 
     setRegisterEmailToStorage(email)
 
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ, {
-      email
-    })
+    expect(addBreadcrumb).toHaveBeenCalledWith(
+      MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ,
+      REGISTER_USER_CATEGORY,
+      'info',
+      { email }
+    )
     expect(setStorageItem).toHaveBeenCalledWith(EMAILKEY, email)
   })
 
@@ -62,19 +69,6 @@ describe('otp-storage (unit)', () => {
     expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.STORAGE_OTP_WRITE, { OTPKEY })
     expect(getStorageItem).toHaveBeenCalledWith(OTPKEY)
     expect(result).toBe(true)
-  })
-
-  it('reads registration email from storage and logs event', () => {
-    vi.mocked(getStorageItem).mockReturnValue('test@test.com')
-
-    const result = getRegisterEmailFromStorage()
-
-    expect(monitorInformation).toHaveBeenCalledWith(
-      MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_WRITE,
-      { EMAILKEY }
-    )
-    expect(getStorageItem).toHaveBeenCalledWith(EMAILKEY)
-    expect(result).toBe('test@test.com')
   })
 
   it('returns null when nothing is stored', () => {

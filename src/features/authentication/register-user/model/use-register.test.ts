@@ -1,15 +1,15 @@
 import { signUpWithMailAndPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
 import { registerUserAccount, useRegister } from './use-register'
 
 vi.mock('@shared/auth', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 
-vi.mock('../../model/register-storage', () => ({
+vi.mock('./register-storage', () => ({
   setIsOtpActiveToStorage: vi.fn(),
   setRegisterEmailToStorage: vi.fn()
 }))
