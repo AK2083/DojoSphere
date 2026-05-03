@@ -1,6 +1,5 @@
 import { ref } from 'vue'
-import { signInWithEmailPassword } from '@shared/auth'
-import type { RegisterResult } from '@shared/types'
+import { type AuthActionResult, signInWithEmailPassword } from '@shared/auth'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
@@ -44,7 +43,7 @@ export function useLogin() {
  * @param password - User password
  * @returns A promise resolving to the sign-in result (success or mapped error).
  */
-export function loginUserAccount(email: string, password: string): Promise<RegisterResult> {
+export function loginUserAccount(email: string, password: string): Promise<AuthActionResult> {
   monitorInformation(MONITORING_EVENTS.AUTH_LOGIN_SUBMITTED)
   return signInWithEmailPassword(email, password)
 }

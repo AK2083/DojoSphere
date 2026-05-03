@@ -1,7 +1,7 @@
 import { mapSupabaseError, signInByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException, setUserContext } from '@shared/lib'
-import type { RegisterResult } from '@shared/types'
+import type { AuthActionResult } from '@shared/types'
 
 /**
  * Signs in a user with email and password via Supabase.
@@ -15,7 +15,7 @@ import type { RegisterResult } from '@shared/types'
 export async function signInWithEmailPassword(
   email: string,
   password: string
-): Promise<RegisterResult> {
+): Promise<AuthActionResult> {
   const { data, error } = await signInByEmailPassword(email, password)
 
   if (error) {

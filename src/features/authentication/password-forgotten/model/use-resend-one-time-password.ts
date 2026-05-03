@@ -1,6 +1,5 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
-import { signInWithOneTimePassword } from '@shared/auth'
-import type { RegisterResult } from '@shared/types'
+import { type AuthActionResult, signInWithOneTimePassword } from '@shared/auth'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
@@ -73,9 +72,9 @@ export function useResendOneTimePassword(): UseResendReturn {
  * Triggers resend of a recovery OTP and records monitoring data.
  *
  * @param {string} email - The email address to resend confirmation to.
- * @returns {Promise<RegisterResult>} Result of resend attempt.
+ * @returns {Promise<AuthActionResult>} Result of resend attempt.
  */
-export function resendOtp(email: string): Promise<RegisterResult> {
+export function resendOtp(email: string): Promise<AuthActionResult> {
   monitorInformation(MONITORING_EVENTS.RESEND_OTP)
   return signInWithOneTimePassword(email)
 }

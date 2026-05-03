@@ -1,7 +1,7 @@
 import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException, setUserContext } from '@shared/lib'
-import type { RegisterResult } from '@shared/types'
+import type { AuthActionResult } from '@shared/types'
 
 /**
  * Registers a new user using Supabase authentication.
@@ -14,12 +14,12 @@ import type { RegisterResult } from '@shared/types'
  * @param {string} email - The email address for the new user account.
  * @param {string} password - The password for the new user account.
  *
- * @returns {Promise<RegisterResult>} The registration result returned.
+ * @returns {Promise<AuthActionResult>} The registration result returned.
  */
 export async function signUpWithMailAndPassword(
   email: string,
   password: string
-): Promise<RegisterResult> {
+): Promise<AuthActionResult> {
   const { data, error } = await signUpByEmailPassword(email, password)
 
   if (error) {

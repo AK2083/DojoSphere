@@ -1,5 +1,6 @@
 export { getCurrentSession } from '../api/supabase/auth/auth'
 export { signInWithOneTimePassword } from '../auth/reset-password/sign-in-with-otp'
+export type { AuthActionResult } from '../types'
 export { checkOneTimePassword } from './register/check-otp'
 export { resendSignUpConfirmationEmail } from './register/resend-sign-up-confirmation'
 export { signUpWithMailAndPassword } from './register/sign-up-with-mail-and-password'

@@ -1,7 +1,7 @@
 import { signInWithEmailPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { MONITORING_EVENTS, monitorInformation } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { loginUserAccount, useLogin } from './use-login'
 
 vi.mock('@shared/auth', () => ({

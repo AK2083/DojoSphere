@@ -1,6 +1,6 @@
 import { mapSupabaseError, resendSignUpConfirmation } from '@shared/api'
 import { captureException } from '@shared/lib'
-import type { RegisterResult } from '@shared/types'
+import type { AuthActionResult } from '@shared/types'
 
 /**
  * Resends a sign-up confirmation email via Supabase.
@@ -9,9 +9,9 @@ import type { RegisterResult } from '@shared/types'
  * and forwarding them to monitoring.
  *
  * @param {string} email - The email that should receive a new confirmation link.
- * @returns {Promise<RegisterResult>} Success flag or mapped error payload.
+ * @returns {Promise<AuthActionResult>} Success flag or mapped error payload.
  */
-export async function resendSignUpConfirmationEmail(email: string): Promise<RegisterResult> {
+export async function resendSignUpConfirmationEmail(email: string): Promise<AuthActionResult> {
   const { error } = await resendSignUpConfirmation(email)
 
   if (error) {

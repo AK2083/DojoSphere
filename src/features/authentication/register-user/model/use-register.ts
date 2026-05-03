@@ -1,6 +1,5 @@
 import { ref } from 'vue'
-import { signUpWithMailAndPassword } from '@shared/auth'
-import type { RegisterResult } from '@shared/types'
+import { type AuthActionResult, signUpWithMailAndPassword } from '@shared/auth'
 
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
@@ -60,7 +59,7 @@ export function useRegister() {
  * @param password - User password
  * @returns A promise resolving to the registration result indicating success or failure.
  */
-export function registerUserAccount(email: string, password: string): Promise<RegisterResult> {
+export function registerUserAccount(email: string, password: string): Promise<AuthActionResult> {
   monitorInformation(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
   return signUpWithMailAndPassword(email, password)
 }

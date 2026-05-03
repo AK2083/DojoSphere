@@ -1,7 +1,6 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
-import { checkOneTimePassword, getCurrentSession } from '@shared/auth'
-import type { RegisterResult } from '@shared/types'
+import { type AuthActionResult, checkOneTimePassword, getCurrentSession } from '@shared/auth'
 
 import { getRegisterEmailFromStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
@@ -83,7 +82,7 @@ export function useSendOneTimePassword() {
  * @param token - The one-time password (OTP) or verification token.
  * @returns A promise that resolves with the result of the registration process.
  */
-export function verifyOtp(email: string, token: string): Promise<RegisterResult> {
+export function verifyOtp(email: string, token: string): Promise<AuthActionResult> {
   monitorInformation(MONITORING_EVENTS.CHECK_OTP)
 
   return checkOneTimePassword(email, token)
