@@ -1,5 +1,4 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
-import { getRegisterEmailFromStorage } from '@features/authentication/register-user/model/register-storage'
 import { signInWithOneTimePassword } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
@@ -50,12 +49,6 @@ export function useResendOneTimePassword(): UseResendReturn {
 
     loading.value = true
     success.value = false
-
-    const storedEmail = getRegisterEmailFromStorage()
-
-    if (!email.value) {
-      email.value = storedEmail ?? ''
-    }
     try {
       const response = await resendOtp(email.value)
 
