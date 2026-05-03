@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff, mdiLogin } from '@mdi/js'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 import { useLogin } from '../model/use-login'
+import { useLoginRouting } from '../model/use-login-routing'
 
 const { t } = useTranslation()
-const route = useRoute()
-const router = useRouter()
 const { execute, errorCode, loading } = useLogin()
+const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
 
 const form = ref<VForm | null>(null)
 const email = ref('')
@@ -30,22 +29,11 @@ async function submit() {
   const success = await execute(email.value, password.value)
   if (!success) return
 
-  const redirect = route.query.redirect
-  if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
-    await router.push(redirect)
-    return
-  }
-
-  await router.push('/')
+  await navigateAfterLoginSuccess()
 }
 
-function goToPasswordReset() {
-  if (!email.value) {
-    router.push({ name: 'passwordreset' })
-    return
-  }
-
-  router.push({ name: 'passwordreset', query: { email: email.value } })
+async function handlePasswordResetNavigation() {
+  await goToPasswordReset(email.value)
 }
 </script>
 
@@ -111,7 +99,7 @@ function goToPasswordReset() {
             variant="text"
             class="mt-2"
             :aria-label="t(translationKeys.forgotPassword)"
-            @click="goToPasswordReset"
+            @click="handlePasswordResetNavigation"
           >
             {{ t(translationKeys.forgotPassword) }}
           </v-btn>
