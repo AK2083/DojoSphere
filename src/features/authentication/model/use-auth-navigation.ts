@@ -1,4 +1,4 @@
-import { getIsOtpActiveFromStorage } from '../register-user/model/register-storage'
+import { getIsOtpActiveFromStorage } from './register-storage'
 
 /**
  * Composable for resolving authentication-related navigation targets.

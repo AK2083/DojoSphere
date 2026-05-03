@@ -3,7 +3,7 @@ import router from '@app/providers/router'
 import { checkOneTimePassword, getCurrentSession } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
-import { getRegisterEmailFromStorage } from '../../register-user/model/register-storage'
+import { getRegisterEmailFromStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
 /**

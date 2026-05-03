@@ -1,7 +1,7 @@
 import { getStorageItem, setStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../register-user/monitoring/monitoring'
 import {
   getIsOtpActiveFromStorage,
   getRegisterEmailFromStorage,

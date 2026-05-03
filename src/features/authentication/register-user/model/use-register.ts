@@ -1,7 +1,9 @@
 import { ref } from 'vue'
+import { signUpWithMailAndPassword } from '@shared/auth'
+import type { RegisterResult } from '@shared/types'
 
-import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
-import { registerUserAccount } from './register-user-account'
+import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../../model/register-storage'
+import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
 /**
  * Composable for registering a new user account.
@@ -40,9 +42,25 @@ export function useRegister() {
 
     setIsOtpActiveToStorage(true)
     setRegisterEmailToStorage(email)
+
     errorCode.value = null
     return true
   }
 
   return { execute, errorCode, loading }
+}
+
+/**
+ * Executes the user registration use case.
+ *
+ * Triggers a monitoring event and delegates the actual sign-up process
+ * to the Supabase API wrapper.
+ *
+ * @param email - User email address
+ * @param password - User password
+ * @returns A promise resolving to the registration result indicating success or failure.
+ */
+export function registerUserAccount(email: string, password: string): Promise<RegisterResult> {
+  monitorInformation(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
+  return signUpWithMailAndPassword(email, password)
 }

@@ -1,7 +1,7 @@
 import { resendSignUpConfirmationEmail } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getRegisterEmailFromStorage } from '../../register-user/model/register-storage'
+import { getRegisterEmailFromStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
 
@@ -9,7 +9,7 @@ vi.mock('@shared/auth', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
-vi.mock('../../register-user/model/register-storage', () => ({
+vi.mock('../../model/register-storage', () => ({
   getRegisterEmailFromStorage: vi.fn()
 }))
 

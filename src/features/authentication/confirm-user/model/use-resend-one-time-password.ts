@@ -1,8 +1,8 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
-import { getRegisterEmailFromStorage } from '@features/authentication/register-user/model/register-storage'
 import { resendSignUpConfirmationEmail } from '@shared/auth'
 import type { RegisterResult } from '@shared/types'
 
+import { getRegisterEmailFromStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
 type UseResendReturn = {
