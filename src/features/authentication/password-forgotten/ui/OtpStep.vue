@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { watch } from 'vue'
 import { mdiEmailOutline } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 import OtpInput from '@shared/ui/OtpInput.vue'
 
 import translationKeys from '../i18n/keys'
 import { useVerifyOtpByRecovery } from '../model/use-recovery-otp-step'
+import ResendOneTimePassword from './ResendOneTimePassword.vue'
 
 const { t } = useTranslation()
 const otpStep = useVerifyOtpByRecovery()
@@ -22,8 +23,6 @@ const emit = defineEmits<{
 defineExpose({
   submit
 })
-
-const hasEmail = computed<boolean>(() => props.email.trim().length > 0)
 
 watch(
   () => props.email,
@@ -90,17 +89,7 @@ async function submit(): Promise<boolean> {
       ></OtpInput>
     </v-card-text>
     <v-card-actions>
-      <v-btn
-        block
-        color="primary"
-        variant="text"
-        :loading="otpStep.loading.value"
-        :disabled="!hasEmail"
-        :aria-label="t(translationKeys.steps.otp.resend.ariaResendLabel)"
-        @click="() => {}"
-      >
-        {{ t(translationKeys.steps.otp.resend.resendLabel) }}
-      </v-btn>
+      <ResendOneTimePassword :email="props.email" />
     </v-card-actions>
   </v-card>
 </template>
