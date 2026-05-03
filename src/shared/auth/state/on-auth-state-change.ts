@@ -1,5 +1,6 @@
-import { type AuthEvent, type AuthState, onAuthStateChange } from '@shared/api'
+import { onAuthStateChange } from '@shared/api'
 import { captureException } from '@shared/lib'
+import type { AuthEvent, AuthState, LowLevelAuthEvent } from '@shared/types'
 
 /**
  * Monitors authentication state changes with mapped events and error tracking.
@@ -11,7 +12,7 @@ import { captureException } from '@shared/lib'
  */
 export function watchAuthState(callback: (state: AuthState) => void) {
   const subscription = onAuthStateChange((supabaseEvent, session) => {
-    const eventMap: Record<string, AuthEvent> = {
+    const eventMap: Partial<Record<LowLevelAuthEvent, AuthEvent>> = {
       SIGNED_IN: 'SIGNED_IN',
       SIGNED_OUT: 'SIGNED_OUT',
       USER_UPDATED: 'USER_UPDATED',
@@ -19,7 +20,7 @@ export function watchAuthState(callback: (state: AuthState) => void) {
       INITIAL_SESSION: 'INITIAL_SESSION'
     }
 
-    const mappedEvent: AuthEvent = eventMap[supabaseEvent] || 'UNKNOWN'
+    const mappedEvent: AuthEvent = eventMap[supabaseEvent] ?? 'UNKNOWN'
 
     if (mappedEvent === 'UNKNOWN') {
       captureException(

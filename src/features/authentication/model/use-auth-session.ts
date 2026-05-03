@@ -5,8 +5,8 @@ import { type AuthSession, getCurrentSession, watchAuthState } from '@shared/aut
  * Composable for the current Supabase auth session (e.g. navigation, account page).
  *
  * On mount:
- * - Loads the initial session using `supabase.auth.getSession()`.
- * - Subscribes to `supabase.auth.onAuthStateChange` so that login, logout,
+ * - Loads the initial session via the shared auth facade.
+ * - Subscribes to auth state changes so that login, logout,
  *   and token refresh updates are reflected in the UI.
  *
  * On unmount, the subscription is removed to prevent lingering listeners.

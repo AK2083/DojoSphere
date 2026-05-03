@@ -1,10 +1,6 @@
-import {
-  type AuthChangeEvent,
-  onAuthStateChange,
-  type Session,
-  type Subscription
-} from '@shared/api'
+import { onAuthStateChange, type Subscription } from '@shared/api'
 import { captureException } from '@shared/lib'
+import type { AuthSession, LowLevelAuthEvent } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { watchAuthState } from './on-auth-state-change'
@@ -24,10 +20,10 @@ describe('watchAuthState', () => {
       unsubscribe: vi.fn()
     } as Subscription
 
-    const mockSession = { id: 'test-session' } as unknown as Session
+    const mockSession = { id: 'test-session' } as unknown as AuthSession
     const callback = vi.fn()
 
-    type AuthCallback = (event: AuthChangeEvent, session: Session | null) => void
+    type AuthCallback = (event: LowLevelAuthEvent, session: AuthSession | null) => void
     let capturedHandler: AuthCallback = () => {}
 
     vi.mocked(onAuthStateChange).mockImplementation((cb: AuthCallback) => {
@@ -50,7 +46,7 @@ describe('watchAuthState', () => {
   it('maps unknown events to UNKNOWN and logs exception', () => {
     const callback = vi.fn()
 
-    let capturedHandler: (event: AuthChangeEvent, session: Session | null) => void = () => {}
+    let capturedHandler: (event: LowLevelAuthEvent, session: AuthSession | null) => void = () => {}
 
     vi.mocked(onAuthStateChange).mockImplementation((cb) => {
       capturedHandler = cb
@@ -60,7 +56,7 @@ describe('watchAuthState', () => {
     watchAuthState(callback)
 
     const weirdEvent = 'SOME_NEW_EVENT'
-    capturedHandler(weirdEvent as AuthChangeEvent, null)
+    capturedHandler(weirdEvent as LowLevelAuthEvent, null)
 
     expect(callback).toHaveBeenCalledWith({
       event: 'UNKNOWN',
@@ -76,7 +72,7 @@ describe('watchAuthState', () => {
 
   it('logs exception when TOKEN_REFRESHED occurs without a session', () => {
     const callback = vi.fn()
-    let capturedHandler: (event: AuthChangeEvent, session: Session | null) => void = () => {}
+    let capturedHandler: (event: LowLevelAuthEvent, session: AuthSession | null) => void = () => {}
 
     vi.mocked(onAuthStateChange).mockImplementation((cb) => {
       capturedHandler = cb

@@ -14,10 +14,8 @@ export { mapSupabaseError } from './supabase/map-supabase-error'
 export type {
   AuthChangeEvent,
   AuthError,
-  AuthEvent,
   AuthOtpResponse,
   AuthResponse,
-  AuthState,
   Session,
   Subscription,
   User,
