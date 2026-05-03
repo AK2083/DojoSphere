@@ -1,54 +1,56 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import type { VForm } from 'vuetify/components/VForm'
+import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff, mdiLockReset } from '@mdi/js'
+import { mapRule, passwordRules, useTranslation } from '@shared/lib'
 
-type ValidationRule = string | ((value: unknown) => boolean | string)
+import translationKeys from '../i18n/keys'
+import { useNewPasswordStep } from '../model/use-new-password-step'
 
-const props = defineProps<{
-  stepTitle: string
-  stepSubTitle: string
-  password: string
-  repeatedPassword: string
-  rules: ValidationRule[]
-  labelPassword: string
-  ariaLabelPassword: string
-  labelRepeatedPassword: string
-  ariaLabelRepeatedPassword: string
-  loading?: boolean
-}>()
+const { t } = useTranslation()
+const newPasswordStep = useNewPasswordStep()
 
 const emit = defineEmits<{
-  (eventname: 'update:password', value: string): void
-  (eventname: 'update:repassword', value: string): void
-  (eventname: 'update:valid', value: boolean): void
+  (event: 'update:valid', value: boolean): void
 }>()
+
+defineExpose({
+  submit
+})
 
 const form = ref<VForm | null>(null)
 const showPassword = ref(false)
 const showRepeatedPassword = ref(false)
-const isValid = ref(false)
+const isFormValid = ref(false)
+const repeatedPassword = ref('')
 
+const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
 const passwordsMatch = computed<boolean>(
-  () => props.password === props.repeatedPassword && !!props.password
+  () =>
+    newPasswordStep.password.value === repeatedPassword.value && !!newPasswordStep.password.value
 )
+const repeatPasswordRules = computed(() => [
+  ...translatedPasswordRules,
+  (value: string) =>
+    value === newPasswordStep.password.value || t(translationKeys.steps.newPassword.error.mismatch)
+])
 
-const repeatPasswordRules = [
-  ...props.rules,
-  (v: string) => v === props.password || 'Passwörter stimmen nicht überein'
-]
+async function submit(): Promise<boolean> {
+  if (!form.value) {
+    return false
+  }
 
-async function handleSubmit() {
-  if (!form.value) return
+  const result = await form.value.validate()
 
-  const result = await form.value?.validate()
-  if (!result?.valid) return
+  if (!result.valid || !passwordsMatch.value) {
+    return false
+  }
 
-  if (!passwordsMatch.value) return
+  return newPasswordStep.submit()
 }
 
 watch(
-  [isValid, passwordsMatch],
+  [isFormValid, passwordsMatch],
   ([formValid, match]) => {
     emit('update:valid', formValid && match)
   },
@@ -57,14 +59,24 @@ watch(
 </script>
 
 <template>
-  <v-form ref="form" v-model="isValid" @submit.prevent="handleSubmit">
+  <v-alert
+    v-if="newPasswordStep.error.value"
+    :text="newPasswordStep.error.value ?? ''"
+    :type="'error'"
+    class="mt-2"
+  />
+  <v-form ref="form" v-model="isFormValid" validate-on="input">
     <v-card class="pa-4" variant="tonal">
       <template #title>
-        <div class="v-card-title" id="otpTitle">{{ stepTitle }}</div>
+        <div class="v-card-title" id="newPasswordTitle">
+          {{ t(translationKeys.steps.newPassword.title) }}
+        </div>
       </template>
 
       <template #subtitle>
-        <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+        <div class="v-card-subtitle" id="newPasswordDescription">
+          {{ t(translationKeys.steps.newPassword.description) }}
+        </div>
       </template>
 
       <template #prepend>
@@ -75,33 +87,34 @@ watch(
 
       <v-card-text>
         <v-text-field
-          :model-value="password"
+          :model-value="newPasswordStep.password.value"
           density="default"
           :rules="repeatPasswordRules"
-          :label="labelPassword"
+          :label="t(translationKeys.steps.newPassword.passwordLabel)"
           :type="showPassword ? 'text' : 'password'"
           required
           autofocus
           autocomplete="new-password"
           :append-inner-icon="showPassword ? mdiEyeOff : mdiEye"
+          :loading="newPasswordStep.loading.value"
           @click:append-inner="showPassword = !showPassword"
-          @update:model-value="emit('update:password', $event)"
-          aria-labelledby="titleId"
-          aria-describedby="descId"
+          @update:model-value="newPasswordStep.password.value = $event"
+          :aria-label="t(translationKeys.steps.newPassword.ariaPasswordLabel)"
         />
 
         <v-text-field
           :model-value="repeatedPassword"
           density="default"
           :rules="repeatPasswordRules"
-          :label="labelRepeatedPassword"
+          :label="t(translationKeys.steps.newPassword.newPasswordLabel)"
           :type="showRepeatedPassword ? 'text' : 'password'"
           required
           autocomplete="new-password"
+          :loading="newPasswordStep.loading.value"
           :append-inner-icon="showRepeatedPassword ? mdiEyeOff : mdiEye"
           @click:append-inner="showRepeatedPassword = !showRepeatedPassword"
-          @update:model-value="emit('update:repassword', $event)"
-          :aria-label="ariaLabelRepeatedPassword"
+          @update:model-value="repeatedPassword = $event"
+          :aria-label="t(translationKeys.steps.newPassword.ariaNewPasswordLabel)"
         />
       </v-card-text>
     </v-card>

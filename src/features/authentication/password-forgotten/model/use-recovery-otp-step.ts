@@ -17,21 +17,27 @@ export function useVerifyOtpByRecovery() {
   const isValid = ref(false)
 
   async function submit() {
+    if (loading.value) return false
+
     loading.value = true
     error.value = null
+    isValid.value = false
 
-    const response = await checkOneTimePasswordByRecovery(email.value, token.value)
+    try {
+      const response = await checkOneTimePasswordByRecovery(email.value, token.value)
 
-    loading.value = false
+      if (!response.success) {
+        error.value = response.error.code
+        return false
+      }
 
-    if (!response.success) {
-      error.value = response.error.code
-      return false
+      error.value = null
+      isValid.value = true
+
+      return true
+    } finally {
+      loading.value = false
     }
-
-    error.value = null
-    isValid.value = true
-    return true
   }
 
   return {

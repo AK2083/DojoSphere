@@ -14,21 +14,27 @@ export function useNewPasswordStep() {
   const isValid = ref(false)
 
   async function submit() {
+    if (loading.value) return false
+
     loading.value = true
     error.value = null
+    isValid.value = false
 
-    const response = await setNewPassword(password.value ?? '')
+    try {
+      const response = await setNewPassword(password.value ?? '')
 
-    loading.value = false
+      if (!response.success) {
+        error.value = response.error.code
+        return false
+      }
 
-    if (!response.success) {
-      error.value = response.error.code
-      return false
+      error.value = null
+      isValid.value = true
+
+      return true
+    } finally {
+      loading.value = false
     }
-
-    error.value = null
-    isValid.value = true
-    return true
   }
 
   return {

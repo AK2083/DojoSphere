@@ -48,6 +48,29 @@ describe('useNewPasswordStep', () => {
     expect(isValid.value).toBe(false)
   })
 
+  it('returns false when already loading', async () => {
+    const { submit, loading, password } = useNewPasswordStep()
+    password.value = 'new-password'
+    loading.value = true
+
+    const result = await submit()
+
+    expect(result).toBe(false)
+    expect(setNewPassword).not.toHaveBeenCalled()
+  })
+
+  it('resets loading when api call throws', async () => {
+    vi.mocked(setNewPassword).mockRejectedValue(new Error('network'))
+
+    const { submit, loading, password, isValid } = useNewPasswordStep()
+    password.value = 'new-password'
+    isValid.value = true
+
+    await expect(submit()).rejects.toThrow('network')
+    expect(loading.value).toBe(false)
+    expect(isValid.value).toBe(false)
+  })
+
   it('uses empty string fallback when password is null', async () => {
     vi.mocked(setNewPassword).mockResolvedValue({ success: true })
 

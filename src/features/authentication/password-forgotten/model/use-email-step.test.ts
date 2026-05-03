@@ -20,8 +20,8 @@ describe('useEmailStep', () => {
   })
 
   it('returns false when already loading', async () => {
-    const { submit, loading, isValid } = useEmailStep()
-    isValid.value = true
+    const { submit, email, loading } = useEmailStep()
+    email.value = 'test@example.com'
     loading.value = true
 
     const result = await submit()
@@ -33,10 +33,9 @@ describe('useEmailStep', () => {
   it('returns true and clears error on successful submit', async () => {
     vi.mocked(signInWithOneTimePassword).mockResolvedValue({ success: true })
 
-    const { submit, email, isValid, error, loading } = useEmailStep()
+    const { submit, email, error, loading } = useEmailStep()
     email.value = 'test@example.com'
     error.value = 'old error'
-    isValid.value = true
 
     const result = await submit()
 
@@ -56,9 +55,8 @@ describe('useEmailStep', () => {
       }
     })
 
-    const { submit, email, isValid, error, loading } = useEmailStep()
+    const { submit, email, error, loading } = useEmailStep()
     email.value = 'test@example.com'
-    isValid.value = true
 
     const result = await submit()
 
@@ -70,23 +68,21 @@ describe('useEmailStep', () => {
   it('resets loading when api call throws', async () => {
     vi.mocked(signInWithOneTimePassword).mockRejectedValue(new Error('network'))
 
-    const { submit, email, isValid, loading } = useEmailStep()
+    const { submit, email, loading } = useEmailStep()
     email.value = 'test@example.com'
-    isValid.value = true
 
     await expect(submit()).rejects.toThrow('network')
     expect(loading.value).toBe(false)
   })
 
-  it('uses empty string fallback when email is null', async () => {
+  it('returns false when email is empty', async () => {
     vi.mocked(signInWithOneTimePassword).mockResolvedValue({ success: true })
 
-    const { submit, isValid } = useEmailStep()
-    isValid.value = true
+    const { submit } = useEmailStep()
 
     const result = await submit()
 
-    expect(result).toBe(true)
-    expect(signInWithOneTimePassword).toHaveBeenCalledWith('')
+    expect(result).toBe(false)
+    expect(signInWithOneTimePassword).not.toHaveBeenCalled()
   })
 })

@@ -2,49 +2,67 @@
 import { ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { mdiEmailFastOutline } from '@mdi/js'
+import { emailRules, mapRule, useTranslation } from '@shared/lib'
 
-type ValidationRule = string | ((value: unknown) => boolean | string)
+import translationKeys from '../i18n/keys'
+import { useEmailStep } from '../model/use-email-step'
 
-defineProps<{
-  stepTitle: string
-  stepSubTitle: string
-  email: string
-  rules: ValidationRule[]
-  labelTextField: string
-  ariaLabelEmail: string
-  placeholder: string
-  loading?: boolean
-}>()
+const { t } = useTranslation()
+const emailStep = useEmailStep()
+const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 
 const emit = defineEmits<{
-  (eventname: 'update:email', value: string): void
-  (eventname: 'update:valid', value: boolean): void
+  (event: 'update:valid', value: boolean): void
+  (event: 'success', email: string): void
 }>()
 
+defineExpose({
+  submit
+})
+
 const form = ref<VForm | null>(null)
-const isValid = ref(false)
+const valid = ref(false)
 
-async function handleSubmit() {
-  if (!form.value) return
+async function submit(): Promise<boolean> {
+  if (!form.value) {
+    return false
+  }
 
-  const result = await form.value?.validate()
-  if (!result?.valid) return
+  const result = await form.value.validate()
+
+  if (!result.valid) {
+    return false
+  }
+
+  const success = await emailStep.submit()
+
+  if (!success) {
+    return false
+  }
+
+  emit('success', emailStep.email.value)
+
+  return true
 }
 
-watch(isValid, (val) => {
-  emit('update:valid', val)
+watch(valid, (value: boolean) => {
+  emit('update:valid', value)
 })
 </script>
 
 <template>
-  <v-form ref="form" v-model="isValid" @submit.prevent="handleSubmit">
+  <v-form ref="form" v-model="valid" validate-on="input">
     <v-card class="pa-4" variant="tonal">
       <template #title>
-        <div class="v-card-title" id="otpTitle">{{ stepTitle }}</div>
+        <div class="v-card-title" id="otpTitle">
+          {{ t(translationKeys.steps.email.title) }}
+        </div>
       </template>
 
       <template #subtitle>
-        <div class="v-card-subtitle" id="otpDescription">{{ stepSubTitle }}</div>
+        <div class="v-card-subtitle" id="otpDescription">
+          {{ t(translationKeys.steps.email.description) }}
+        </div>
       </template>
 
       <template #prepend>
@@ -55,17 +73,15 @@ watch(isValid, (val) => {
 
       <v-card-text>
         <v-text-field
-          :model-value="email"
-          @update:model-value="emit('update:email', $event)"
-          density="default"
-          :rules="rules"
-          :label="labelTextField"
-          :placeholder="placeholder"
+          v-model="emailStep.email.value"
+          :rules="translatedEmailRules"
+          :label="t(translationKeys.steps.email.label)"
+          :placeholder="t(translationKeys.steps.email.placeholder)"
+          :aria-label="t(translationKeys.steps.email.ariaLabel)"
           clearable
           autocomplete="email"
           required
           autofocus
-          :aria-label="ariaLabelEmail"
         />
       </v-card-text>
     </v-card>

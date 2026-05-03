@@ -9,20 +9,19 @@ import { signInWithOneTimePassword } from '@shared/auth'
  * - `email` – the email input value
  * - `loading` – whether the submission is in progress
  * - `error` – any error message from the submission attempt
- * - `isValid` – whether the current email input is valid
  * - `submit` – function to call to submit the email for OTP sign-in
  *
  * @example
- * const { email, loading, error, isValid, submit } = useEmailStep()
+ * const { email, loading, error, submit } = useEmailStep()
  */
 export function useEmailStep() {
   const email = ref<string>('')
   const error = ref<string | null>(null)
   const loading = ref(false)
-  const isValid = ref(false)
 
   async function submit() {
-    if (!isValid.value || loading.value) return false
+    if (loading.value) return false
+    if (!email.value.trim()) return false
 
     loading.value = true
     error.value = null
@@ -45,7 +44,6 @@ export function useEmailStep() {
     email,
     loading,
     error,
-    isValid,
     submit
   }
 }

@@ -1,4 +1,3 @@
-export { useEmailConfirmation } from './confirm-user/model/use-email-confirmation'
 export { useResendOneTimePassword } from './confirm-user/model/use-resend-one-time-password'
 export { useSendOneTimePassword } from './confirm-user/model/use-send-one-time-password'
 export { default as Confirmation } from './confirm-user/ui/Confirmation.vue'
