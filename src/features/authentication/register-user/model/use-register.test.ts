@@ -1,10 +1,7 @@
 import { signUpWithMailAndPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  setIsOtpActiveToStorage,
-  setRegisterEmailToStorage
-} from '../../model/register-storage'
+import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../../model/register-storage'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { registerUserAccount, useRegister } from './use-register'
 
