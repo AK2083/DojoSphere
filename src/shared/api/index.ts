@@ -1,4 +1,5 @@
 export {
+  getCurrentSession,
   getCurrentUser,
   onAuthStateChange,
   resendSignUpConfirmation,

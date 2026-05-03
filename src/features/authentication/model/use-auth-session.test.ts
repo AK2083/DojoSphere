@@ -1,10 +1,9 @@
-import type { Session, User } from '@shared/api'
-import { getCurrentSession, watchAuthState } from '@shared/auth'
+import { type AuthSession, type AuthUser, getCurrentSession, watchAuthState } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useAuthSession } from './use-auth-session'
 
-type AuthWatcherPayload = { event: string; session: Session | null }
+type AuthWatcherPayload = { event: string; session: AuthSession | null }
 type AuthWatcherCallback = (payload: AuthWatcherPayload) => void
 
 let onMountedHandler: (() => Promise<void>) | undefined
@@ -37,9 +36,9 @@ describe('useAuthSession', () => {
   })
 
   it('loads initial session and reacts to auth-state updates', async () => {
-    const initialUser = { id: 'user-1' } as User
-    const initialSession = { user: initialUser } as Session
-    const updatedSession = { user: { id: 'user-2' } as User } as Session
+    const initialUser = { id: 'user-1' } as AuthUser
+    const initialSession = { user: initialUser } as AuthSession
+    const updatedSession = { user: { id: 'user-2' } as AuthUser } as AuthSession
     const unsubscribe = vi.fn()
     let capturedCallback: AuthWatcherCallback | undefined
 

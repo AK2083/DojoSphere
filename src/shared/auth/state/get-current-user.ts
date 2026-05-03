@@ -1,28 +1,28 @@
-import { getCurrentUser, type UserResponse } from '@shared/api'
+import { getCurrentUser } from '@shared/api'
 import { captureException } from '@shared/lib'
+
+import type { CurrentUserState } from '../../types/auth-identity'
 
 /**
  * Fetches the current authenticated user from the API.
  *
- * @returns A promise that resolves to a `UserResponse` containing the user data or null if not authenticated.
- * In case of an error during the API call, the error is captured and logged, and the function returns a `UserResponse` with `user` set to null.
+ * @returns A promise with high-level user state.
+ * In case of an API error, the error is captured and returned alongside a `null` user.
  */
-export async function getCurrentUserState(): Promise<UserResponse> {
+export async function getCurrentUserState(): Promise<CurrentUserState> {
   const { data, error } = await getCurrentUser()
 
   if (error) {
     captureException(error, 'auth', 'getCurrentUser')
 
     return {
-      data: { user: null },
+      user: null,
       error
     }
   }
 
   return {
-    data: {
-      user: data.user ?? null
-    },
+    user: data.user ?? null,
     error: null
   }
 }

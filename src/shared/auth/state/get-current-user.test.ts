@@ -1,4 +1,4 @@
-import { getCurrentUser, type UserResponse } from '@shared/api'
+import { getCurrentUser } from '@shared/api'
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -17,12 +17,12 @@ describe('getCurrentUserState', () => {
     vi.mocked(getCurrentUser).mockResolvedValue({
       data: { user },
       error: null
-    } as unknown as UserResponse)
+    } as never)
 
     const result = await getCurrentUserState()
 
     expect(result).toEqual({
-      data: { user },
+      user,
       error: null
     })
   })
@@ -31,12 +31,12 @@ describe('getCurrentUserState', () => {
     vi.mocked(getCurrentUser).mockResolvedValue({
       data: { user: undefined },
       error: null
-    } as unknown as UserResponse)
+    } as never)
 
     const result = await getCurrentUserState()
 
     expect(result).toEqual({
-      data: { user: null },
+      user: null,
       error: null
     })
   })
@@ -47,13 +47,13 @@ describe('getCurrentUserState', () => {
     vi.mocked(getCurrentUser).mockResolvedValue({
       data: { user: null },
       error
-    } as unknown as UserResponse)
+    } as never)
 
     const result = await getCurrentUserState()
 
     expect(captureException).toHaveBeenCalledWith(error, 'auth', 'getCurrentUser')
     expect(result).toEqual({
-      data: { user: null },
+      user: null,
       error
     })
   })
