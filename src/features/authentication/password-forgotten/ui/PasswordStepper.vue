@@ -74,7 +74,9 @@ function cancel() {
         <v-divider />
 
         <v-stepper-item :value="1" :complete="isOtpStepValid">
-          <template #title>{{ t(translationKeys.steps.otp.title) }}</template>
+          <template #title>
+            {{ t(translationKeys.steps.otp.title, { email: otpStepEmail }) }}
+          </template>
         </v-stepper-item>
 
         <v-divider />

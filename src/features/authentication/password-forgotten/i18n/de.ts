@@ -10,7 +10,7 @@ export default {
       ariaLabel: 'E-Mail'
     },
     otp: {
-      title: 'Eingabe Bestätigungscode',
+      title: 'Eingabe Bestätigungscode für {email}',
       description:
         'Bitte gib den Bestätigungscode ein, den wir an deine E-Mail-Adresse gesendet haben.',
       ariaLabel: 'Eingabe Bestätigungscode',

@@ -66,7 +66,9 @@ async function submit(): Promise<boolean> {
   />
   <v-card class="pa-4" variant="tonal">
     <template #title>
-      <div class="v-card-title" id="otpTitle">{{ t(translationKeys.steps.otp.title) }}</div>
+      <div class="v-card-title" id="otpTitle">
+        {{ t(translationKeys.steps.otp.title, { email: props.email }) }}
+      </div>
     </template>
 
     <template #subtitle>

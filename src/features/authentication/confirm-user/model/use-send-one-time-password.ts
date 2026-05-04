@@ -26,9 +26,10 @@ export function useSendOneTimePassword() {
   const success = ref(false)
 
   onMounted(async () => {
+    const storedEmail = getRegisterEmailFromStorage()
     const session = await getCurrentSession()
 
-    email.value = session?.user?.email ?? ''
+    email.value = session?.user?.email ?? storedEmail ?? ''
   })
 
   async function execute() {

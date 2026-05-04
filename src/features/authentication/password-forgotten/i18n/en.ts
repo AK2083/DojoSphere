@@ -12,7 +12,7 @@ export default {
       ariaLabel: 'E-Mail'
     },
     otp: {
-      title: 'Enter verification code',
+      title: 'Enter verification code for {email}',
       description: 'Please enter the confirmation code we have sent to your email address.',
       ariaLabel: 'Enter verification code',
       resend: {
