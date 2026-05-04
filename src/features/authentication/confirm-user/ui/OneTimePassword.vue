@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { translationKeysPasswordForgotten, useSendOneTimePassword } from '@features/authentication'
+import { translationKeys } from '@features/authentication/password-forgotten'
 import { useTranslation } from '@shared/lib'
+
+import { useSendOneTimePassword } from '../model/use-send-one-time-password'
 
 const { t } = useTranslation()
 const sendOtp = useSendOneTimePassword()
@@ -11,7 +13,7 @@ const sendOtp = useSendOneTimePassword()
     v-model="sendOtp.token.value"
     length="6"
     type="number"
-    :aria-label="t(translationKeysPasswordForgotten.steps.otp.ariaLabel)"
+    :aria-label="t(translationKeys.steps.otp.ariaLabel)"
     @finish="sendOtp.execute()"
   />
   <v-alert

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import {
-  translationKeysPasswordForgotten,
-  useResendOneTimePassword
-} from '@features/authentication'
+import { translationKeys } from '@features/authentication/password-forgotten'
 import { useTranslation } from '@shared/lib'
+
+import { useResendOneTimePassword } from '../model/use-resend-one-time-password'
 
 const { t } = useTranslation()
 const resendOtp = useResendOneTimePassword()
@@ -16,9 +15,9 @@ const resendOtp = useResendOneTimePassword()
     variant="text"
     :loading="resendOtp.loading.value"
     :disabled="resendOtp.canResend.value"
-    :aria-label="t(translationKeysPasswordForgotten.steps.otp.resend.ariaResendLabel)"
+    :aria-label="t(translationKeys.steps.otp.resend.ariaResendLabel)"
     @click="resendOtp.resend()"
   >
-    {{ t(translationKeysPasswordForgotten.steps.otp.resend.resendLabel) }}
+    {{ t(translationKeys.steps.otp.resend.resendLabel) }}
   </v-btn>
 </template>

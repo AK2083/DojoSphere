@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PasswordStepper, translationKeysPasswordForgotten } from '@features/authentication'
+import { PasswordStepper, translationKeys } from '@features/authentication/password-forgotten'
 import { mdiLockReset } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
@@ -11,8 +11,8 @@ const { t } = useTranslation()
     <v-row class="w-100" justify="center">
       <v-col cols="12" lg="10">
         <v-card
-          :title="t(translationKeysPasswordForgotten.steps.title)"
-          :subtitle="t(translationKeysPasswordForgotten.steps.description)"
+          :title="t(translationKeys.steps.title)"
+          :subtitle="t(translationKeys.steps.description)"
           class="border px-4 py-4"
         >
           <template #prepend>

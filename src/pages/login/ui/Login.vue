@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoginForm } from '@features/authentication'
+import { LoginForm } from '@features/authentication/signin-user'
 </script>
 
 <template>

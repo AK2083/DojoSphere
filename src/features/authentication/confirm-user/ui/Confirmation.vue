@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { translationKeysPasswordForgotten } from '@features/authentication'
+import { translationKeys } from '@features/authentication/password-forgotten'
 import { useTranslation } from '@shared/lib'
 
 import OneTimePassword from './OneTimePassword.vue'
@@ -12,8 +12,8 @@ const { t } = useTranslation()
   <v-card
     width="420"
     class="pa-4"
-    :title="t(translationKeysPasswordForgotten.steps.otp.title)"
-    :subtitle="t(translationKeysPasswordForgotten.steps.otp.description)"
+    :title="t(translationKeys.steps.otp.title)"
+    :subtitle="t(translationKeys.steps.otp.description)"
     variant="tonal"
   >
     <v-card-text>

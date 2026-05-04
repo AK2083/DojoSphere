@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { LocalWork, RegisterForm } from '@features/authentication'
+import { RegisterForm } from '@features/authentication/register-user'
+import { LocalWork } from '@features/authentication/work-local'
 </script>
 
 <template>
