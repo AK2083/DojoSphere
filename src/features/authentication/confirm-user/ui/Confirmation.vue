@@ -22,6 +22,7 @@ const sendOtp = useSendOneTimePassword()
         v-model="sendOtp.token.value"
         length="6"
         type="number"
+        :loading="sendOtp.loading.value"
         :aria-label="t(translationKeys.steps.otp.ariaLabel)"
         @finish="sendOtp.execute()"
       />

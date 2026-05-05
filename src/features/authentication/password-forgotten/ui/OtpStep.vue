@@ -16,9 +16,10 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'update:valid', value: boolean): void
   (e: 'success', token: string): void
 }>()
+const validModel = defineModel<boolean>('valid', { default: false })
+const loadingModel = defineModel<boolean>('loading', { default: false })
 
 defineExpose({
   submit
@@ -35,7 +36,15 @@ watch(
 watch(
   () => otpStep.token.value,
   (value: string) => {
-    emit('update:valid', value.length === 6)
+    validModel.value = value.length === 6
+  },
+  { immediate: true }
+)
+
+watch(
+  () => otpStep.loading.value,
+  (value: boolean) => {
+    loadingModel.value = value
   },
   { immediate: true }
 )

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import { mdiTranslateVariant } from '@mdi/js'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
@@ -11,14 +11,23 @@ const { t, locale } = useTranslation()
 
 const { smAndDown } = useDisplay()
 const isMobile = computed(() => smAndDown.value)
+const isLanguageLoading = ref(false)
 
-const selectedLanguage = computed<LanguageCode>({
-  get: () => locale.value as LanguageCode,
-  set: (val) => {
+const selectedLanguage = computed(() => locale.value as LanguageCode)
+
+async function handleLanguageChange(val: LanguageCode) {
+  if (val === locale.value) return
+
+  isLanguageLoading.value = true
+  await nextTick()
+
+  try {
     locale.value = val
     setLanguageToStorage(val)
+  } finally {
+    isLanguageLoading.value = false
   }
-})
+}
 </script>
 <template>
   <v-col v-if="!isMobile" cols="2" class="d-flex justify-center">
@@ -34,14 +43,16 @@ const selectedLanguage = computed<LanguageCode>({
     </div>
 
     <v-select
-      v-model="selectedLanguage"
+      :model-value="selectedLanguage"
       class="mt-2"
       :label="t(translationKeys.language.title)"
       :items="AvailableLanguages"
+      :loading="isLanguageLoading"
       item-title="label"
       item-value="code"
       density="comfortable"
       hide-details
+      @update:model-value="handleLanguageChange"
     />
   </v-col>
 </template>

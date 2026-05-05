@@ -12,16 +12,16 @@ const emailStep = useEmailStep()
 const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 
 const emit = defineEmits<{
-  (event: 'update:valid', value: boolean): void
   (event: 'success', email: string): void
 }>()
+const validModel = defineModel<boolean>('valid', { default: false })
+const loadingModel = defineModel<boolean>('loading', { default: false })
 
 defineExpose({
   submit
 })
 
 const form = ref<VForm | null>(null)
-const valid = ref(false)
 
 async function submit(): Promise<boolean> {
   if (!form.value) {
@@ -45,13 +45,17 @@ async function submit(): Promise<boolean> {
   return true
 }
 
-watch(valid, (value: boolean) => {
-  emit('update:valid', value)
-})
+watch(
+  () => emailStep.loading.value,
+  (value: boolean) => {
+    loadingModel.value = value
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
-  <v-form ref="form" v-model="valid" validate-on="input">
+  <v-form ref="form" v-model="validModel" validate-on="input">
     <v-card class="pa-4" variant="tonal">
       <template #title>
         <div class="v-card-title" id="otpTitle">

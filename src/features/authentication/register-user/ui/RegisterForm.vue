@@ -13,6 +13,7 @@ const router = useRouter()
 const { execute, errorCode, loading } = useRegister()
 
 const form = ref<VForm | null>(null)
+const isFormValid = ref(false)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -37,7 +38,7 @@ async function submit() {
 </script>
 
 <template>
-  <v-form ref="form" @submit.prevent="submit">
+  <v-form v-model="isFormValid" ref="form" @submit.prevent="submit">
     <v-card
       :title="t(translationKeys.title)"
       :subtitle="t(translationKeys.description)"
@@ -80,7 +81,7 @@ async function submit() {
             variant="flat"
             color="success"
             :loading="loading"
-            :disabled="loading"
+            :disabled="!isFormValid"
           >
             {{ t(translationKeys.submit) }}
           </v-btn>

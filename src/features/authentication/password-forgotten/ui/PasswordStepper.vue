@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { mdiCancel, mdiCheck } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
@@ -16,15 +16,34 @@ const step = ref(0)
 // Email-Step 1
 const emailStepRef = ref<InstanceType<typeof EmailStep> | null>(null)
 const isEmailStepValid = ref(false)
+const isEmailStepLoading = ref(false)
 
 // Otp-Step 2
 const otpStepRef = ref<InstanceType<typeof OtpStep> | null>(null)
 const otpStepEmail = ref('')
 const isOtpStepValid = ref(false)
+const isOtpStepLoading = ref(false)
 
 // NewPassword-Step 3
 const newPasswordStepRef = ref<InstanceType<typeof NewPasswordStep> | null>(null)
 const isNewPasswordStepValid = ref(false)
+const isNewPasswordStepLoading = ref(false)
+
+const isCurrentStepValid = computed((): boolean => {
+  if (step.value === 0) return isEmailStepValid.value
+  if (step.value === 1) return isOtpStepValid.value
+  if (step.value === 2) return isNewPasswordStepValid.value
+
+  return false
+})
+
+const isCurrentStepLoading = computed((): boolean => {
+  if (step.value === 0) return isEmailStepLoading.value
+  if (step.value === 1) return isOtpStepLoading.value
+  if (step.value === 2) return isNewPasswordStepLoading.value
+
+  return false
+})
 
 function handleSuccess(email: string) {
   otpStepEmail.value = email
@@ -88,17 +107,28 @@ function cancel() {
 
       <v-stepper-window>
         <v-stepper-window-item :value="0">
-          <EmailStep ref="emailStepRef" @success="handleSuccess" v-model:valid="isEmailStepValid" />
+          <EmailStep
+            ref="emailStepRef"
+            @success="handleSuccess"
+            v-model:valid="isEmailStepValid"
+            v-model:loading="isEmailStepLoading"
+          />
         </v-stepper-window-item>
 
         <v-stepper-window-item :value="1">
-          <OtpStep ref="otpStepRef" :email="otpStepEmail" @update:valid="isOtpStepValid = $event" />
+          <OtpStep
+            ref="otpStepRef"
+            :email="otpStepEmail"
+            v-model:valid="isOtpStepValid"
+            v-model:loading="isOtpStepLoading"
+          />
         </v-stepper-window-item>
 
         <v-stepper-window-item :value="2">
           <NewPasswordStep
             ref="newPasswordStepRef"
-            @update:valid="isNewPasswordStepValid = $event"
+            v-model:valid="isNewPasswordStepValid"
+            v-model:loading="isNewPasswordStepLoading"
           />
         </v-stepper-window-item>
       </v-stepper-window>
@@ -119,11 +149,8 @@ function cancel() {
             :aria-label="t(translationKeys.ariaNextLabel)"
             :prepend-icon="mdiCheck"
             color="primary"
-            :disabled="
-              (step === 0 && !isEmailStepValid) ||
-              (step === 1 && !isOtpStepValid) ||
-              (step === 2 && !isNewPasswordStepValid)
-            "
+            :loading="isCurrentStepLoading"
+            :disabled="!isCurrentStepValid || isCurrentStepLoading"
             @click="goNextStep"
           >
             {{ t(translationKeys.nextLabel) }}

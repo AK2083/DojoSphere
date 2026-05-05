@@ -13,6 +13,7 @@ const { execute, errorCode, loading } = useLogin()
 const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
 
 const form = ref<VForm | null>(null)
+const isFormValid = ref(false)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
@@ -38,7 +39,7 @@ async function handlePasswordResetNavigation() {
 </script>
 
 <template>
-  <v-form ref="form" @submit.prevent="submit">
+  <v-form v-model="isFormValid" ref="form" @submit.prevent="submit">
     <v-card
       :title="t(translationKeys.title)"
       :subtitle="t(translationKeys.description)"
@@ -85,7 +86,7 @@ async function handlePasswordResetNavigation() {
             variant="flat"
             color="success"
             :loading="loading"
-            :disabled="loading"
+            :disabled="!isFormValid"
             :aria-label="t(translationKeys.submit)"
           >
             {{ t(translationKeys.submit) }}

@@ -10,9 +10,8 @@ import { useNewPasswordStep } from '../model/use-new-password-step'
 const { t } = useTranslation()
 const newPasswordStep = useNewPasswordStep()
 
-const emit = defineEmits<{
-  (event: 'update:valid', value: boolean): void
-}>()
+const validModel = defineModel<boolean>('valid', { default: false })
+const loadingModel = defineModel<boolean>('loading', { default: false })
 
 defineExpose({
   submit
@@ -52,7 +51,15 @@ async function submit(): Promise<boolean> {
 watch(
   [isFormValid, passwordsMatch],
   ([formValid, match]) => {
-    emit('update:valid', formValid && match)
+    validModel.value = formValid && match
+  },
+  { immediate: true }
+)
+
+watch(
+  () => newPasswordStep.loading.value,
+  (value: boolean) => {
+    loadingModel.value = value
   },
   { immediate: true }
 )
