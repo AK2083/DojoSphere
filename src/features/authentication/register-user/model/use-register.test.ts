@@ -75,6 +75,45 @@ describe('useRegister', () => {
     expect(setIsOtpActiveToStorage).toHaveBeenCalledWith(true)
     expect(setRegisterEmailToStorage).toHaveBeenCalledWith('user@mail.com')
   })
+
+  it('clears error through clearError helper', () => {
+    const { clearError, errorCode } = useRegister()
+
+    errorCode.value = 'auth.some_error'
+    clearError()
+
+    expect(errorCode.value).toBeNull()
+  })
+
+  it('does not trigger a second request while loading', async () => {
+    let resolveSignUp: (value: { success: true }) => void = () => undefined
+    const signUpPromise = new Promise<{ success: true }>((resolve) => {
+      resolveSignUp = resolve
+    })
+
+    vi.mocked(signUpWithMailAndPassword).mockReturnValue(signUpPromise)
+
+    const { execute, loading } = useRegister()
+    const pendingExecution = execute('user@mail.com', 'pw123456')
+
+    expect(loading.value).toBe(true)
+
+    const duplicateResult = await execute('user@mail.com', 'pw123456')
+    expect(duplicateResult).toBe(false)
+    expect(signUpWithMailAndPassword).toHaveBeenCalledTimes(1)
+
+    resolveSignUp({ success: true })
+    await pendingExecution
+  })
+
+  it('resets loading in finally when request throws', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(new Error('network down'))
+
+    const { execute, loading } = useRegister()
+
+    await expect(execute('user@mail.com', 'pw123456')).rejects.toThrow('network down')
+    expect(loading.value).toBe(false)
+  })
 })
 
 describe('registerUserAccount', () => {

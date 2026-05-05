@@ -20,6 +20,10 @@ export function useRegister() {
   const errorCode = ref<string | null>(null)
   const loading = ref(false)
 
+  function clearError() {
+    errorCode.value = null
+  }
+
   /**
    * Executes the user registration process.
    *
@@ -28,25 +32,29 @@ export function useRegister() {
    * @returns Promise resolving to `true` if registration was successful, otherwise `false`
    */
   async function execute(email: string, password: string) {
+    if (loading.value) return false
+
     loading.value = true
+    clearError()
 
-    const response = await registerUserAccount(email, password)
+    try {
+      const response = await registerUserAccount(email, password)
 
-    loading.value = false
+      if (!response.success) {
+        errorCode.value = response.error.code
+        return false
+      }
 
-    if (!response.success) {
-      errorCode.value = response.error.code
-      return false
+      setIsOtpActiveToStorage(true)
+      setRegisterEmailToStorage(email)
+
+      return true
+    } finally {
+      loading.value = false
     }
-
-    setIsOtpActiveToStorage(true)
-    setRegisterEmailToStorage(email)
-
-    errorCode.value = null
-    return true
   }
 
-  return { execute, errorCode, loading }
+  return { execute, clearError, errorCode, loading }
 }
 
 /**

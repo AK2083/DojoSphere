@@ -1,44 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import type { VForm } from 'vuetify/components'
 import { mdiAccountCircle, mdiEye, mdiEyeOff } from '@mdi/js'
-import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
+import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useRegister } from '../model/use-register'
+import { useRegisterForm } from '../model/use-register-form'
 
 const { t } = useTranslation()
-const router = useRouter()
-const { execute, errorCode, loading } = useRegister()
-
-const form = ref<VForm | null>(null)
-const isFormValid = ref(false)
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-
-const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
-const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
-
-async function submit() {
-  if (!form.value) return
-
-  const result = await form.value.validate()
-  if (!result.valid) return
-
-  const success = await execute(email.value, password.value)
-  if (!success) return
-
-  router.push({
-    name: 'emailverification',
-    query: { email: email.value }
-  })
-}
+const {
+  setFormRef,
+  isFormValid,
+  email,
+  password,
+  showPassword,
+  translatedEmailRules,
+  translatedPasswordRules,
+  submit,
+  errorCode,
+  loading
+} = useRegisterForm()
 </script>
 
 <template>
-  <v-form v-model="isFormValid" ref="form" @submit.prevent="submit">
+  <v-form v-model="isFormValid" :ref="setFormRef" @submit.prevent="submit">
     <v-card
       :title="t(translationKeys.title)"
       :subtitle="t(translationKeys.description)"
