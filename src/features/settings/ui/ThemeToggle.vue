@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed } from 'vue'
 import { useDisplay, useTheme } from 'vuetify'
 import { mdiLaptop, mdiMoonWaningCrescent, mdiThemeLightDark, mdiWhiteBalanceSunny } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
@@ -13,18 +13,10 @@ const { smAndDown } = useDisplay()
 const theme = useTheme()
 
 const isMobile = computed(() => smAndDown.value)
-const activeLoadingTheme = ref<(typeof Theme)[keyof typeof Theme] | null>(null)
 
-async function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
-  activeLoadingTheme.value = value
-  await nextTick()
-
-  try {
-    setThemeToStorage(value)
-    theme.change(value)
-  } finally {
-    activeLoadingTheme.value = null
-  }
+function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
+  setThemeToStorage(value)
+  theme.change(value)
 }
 </script>
 
@@ -45,19 +37,16 @@ async function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
       <v-btn-toggle class="border" divided density="default">
         <v-btn
           :icon="mdiLaptop"
-          :loading="activeLoadingTheme === Theme.SYSTEM"
           :aria-label="t(translationKeys.theme.tooltip.system)"
           @click="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
           :icon="mdiMoonWaningCrescent"
-          :loading="activeLoadingTheme === Theme.DARK"
           :aria-label="t(translationKeys.theme.tooltip.dark)"
           @click="handleChangeTheme(Theme.DARK)"
         />
         <v-btn
           :icon="mdiWhiteBalanceSunny"
-          :loading="activeLoadingTheme === Theme.LIGHT"
           :aria-label="t(translationKeys.theme.tooltip.light)"
           @click="handleChangeTheme(Theme.LIGHT)"
         />

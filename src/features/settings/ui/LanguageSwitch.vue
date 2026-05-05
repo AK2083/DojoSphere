@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { mdiTranslateVariant } from '@mdi/js'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
@@ -11,22 +11,14 @@ const { t, locale } = useTranslation()
 
 const { smAndDown } = useDisplay()
 const isMobile = computed(() => smAndDown.value)
-const isLanguageLoading = ref(false)
 
 const selectedLanguage = computed(() => locale.value as LanguageCode)
 
-async function handleLanguageChange(val: LanguageCode) {
+function handleLanguageChange(val: LanguageCode) {
   if (val === locale.value) return
 
-  isLanguageLoading.value = true
-  await nextTick()
-
-  try {
-    locale.value = val
-    setLanguageToStorage(val)
-  } finally {
-    isLanguageLoading.value = false
-  }
+  locale.value = val
+  setLanguageToStorage(val)
 }
 </script>
 <template>
@@ -47,7 +39,6 @@ async function handleLanguageChange(val: LanguageCode) {
       class="mt-2"
       :label="t(translationKeys.language.title)"
       :items="AvailableLanguages"
-      :loading="isLanguageLoading"
       item-title="label"
       item-value="code"
       density="comfortable"
