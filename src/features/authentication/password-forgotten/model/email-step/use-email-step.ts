@@ -2,29 +2,25 @@ import { ref } from 'vue'
 import { signInWithOneTimePassword } from '@shared/auth'
 
 /**
- * Composable for the email step of the password forgotten flow.
- * Manages the email input, loading state, error messages, and validation.
+ * Handles OTP mail request for the email step.
  *
- * @returns Refs and functions:
- * - `email` – the email input value
- * - `loading` – whether the submission is in progress
- * - `error` – any error message from the submission attempt
- * - `submit` – function to call to submit the email for OTP sign-in
- *
- * @example
- * const { email, loading, error, submit } = useEmailStep()
+ * @returns State and handlers for executing the email step request.
  */
 export function useEmailStep() {
-  const email = ref<string>('')
+  const email = ref('')
   const error = ref<string | null>(null)
   const loading = ref(false)
 
-  async function submit() {
+  function clearError() {
+    error.value = null
+  }
+
+  async function execute() {
     if (loading.value) return false
     if (!email.value.trim()) return false
 
     loading.value = true
-    error.value = null
+    clearError()
 
     try {
       const result = await signInWithOneTimePassword(email.value)
@@ -42,8 +38,9 @@ export function useEmailStep() {
 
   return {
     email,
-    loading,
     error,
-    submit
+    loading,
+    clearError,
+    execute
   }
 }

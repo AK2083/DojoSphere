@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import type { VForm } from 'vuetify/components'
 import { mdiEmailFastOutline } from '@mdi/js'
-import { emailRules, mapRule, useTranslation } from '@shared/lib'
+import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useEmailStep } from '../model/use-email-step'
+import { useEmailStepForm } from '../model/email-step/use-form'
 
 const { t } = useTranslation()
-const emailStep = useEmailStep()
-const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
 
 const emit = defineEmits<{
   (event: 'success', email: string): void
@@ -17,45 +13,22 @@ const emit = defineEmits<{
 const validModel = defineModel<boolean>('valid', { default: false })
 const loadingModel = defineModel<boolean>('loading', { default: false })
 
+const emailStep = useEmailStepForm({
+  loadingModel,
+  onSuccess: (email: string) => emit('success', email)
+})
+
 defineExpose({
   submit
 })
 
-const form = ref<VForm | null>(null)
-
 async function submit(): Promise<boolean> {
-  if (!form.value) {
-    return false
-  }
-
-  const result = await form.value.validate()
-
-  if (!result.valid) {
-    return false
-  }
-
-  const success = await emailStep.submit()
-
-  if (!success) {
-    return false
-  }
-
-  emit('success', emailStep.email.value)
-
-  return true
+  return emailStep.submit()
 }
-
-watch(
-  () => emailStep.loading.value,
-  (value: boolean) => {
-    loadingModel.value = value
-  },
-  { immediate: true }
-)
 </script>
 
 <template>
-  <v-form ref="form" v-model="validModel" validate-on="input">
+  <v-form :ref="emailStep.setFormRef" v-model="validModel" validate-on="input">
     <v-card class="pa-4" variant="tonal">
       <template #title>
         <div class="v-card-title" id="otpTitle">
@@ -78,7 +51,7 @@ watch(
       <v-card-text>
         <v-text-field
           v-model="emailStep.email.value"
-          :rules="translatedEmailRules"
+          :rules="emailStep.translatedEmailRules"
           :label="t(translationKeys.steps.email.label)"
           :placeholder="t(translationKeys.steps.email.placeholder)"
           :aria-label="t(translationKeys.steps.email.ariaLabel)"
