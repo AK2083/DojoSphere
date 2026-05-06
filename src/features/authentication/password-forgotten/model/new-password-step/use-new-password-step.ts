@@ -2,10 +2,9 @@ import { ref } from 'vue'
 import { setNewPassword } from '@shared/auth'
 
 /**
- * Hook for setting a new password during the password recovery process.
- * Manages the loading state, error messages, and validation status during the password reset process.
+ * Handles new-password request state for recovery flow.
  *
- * @returns An object containing the password input, loading state, error message, validation status, and submit function.
+ * @returns State and handlers for setting a new password.
  */
 export function useNewPasswordStep() {
   const password = ref<string>('')
@@ -13,11 +12,15 @@ export function useNewPasswordStep() {
   const loading = ref(false)
   const isValid = ref(false)
 
-  async function submit() {
+  function clearError() {
+    error.value = null
+  }
+
+  async function execute() {
     if (loading.value) return false
 
     loading.value = true
-    error.value = null
+    clearError()
     isValid.value = false
 
     try {
@@ -28,9 +31,7 @@ export function useNewPasswordStep() {
         return false
       }
 
-      error.value = null
       isValid.value = true
-
       return true
     } finally {
       loading.value = false
@@ -39,9 +40,10 @@ export function useNewPasswordStep() {
 
   return {
     password,
-    loading,
     error,
+    loading,
     isValid,
-    submit
+    clearError,
+    execute
   }
 }
