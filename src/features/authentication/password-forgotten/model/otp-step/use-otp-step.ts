@@ -2,25 +2,26 @@ import { ref } from 'vue'
 import { checkOneTimePasswordByRecovery } from '@shared/auth'
 
 /**
- * Hook for verifying a recovery OTP.
- * Manages the loading state, error messages, and verification status during the OTP verification process.
+ * Handles OTP verification request state for recovery flow.
  *
- * @param email The email address associated with the OTP to verify.
- * @param token The one-time password token to verify.
- * @returns An object containing the loading state, error, and verification status.
+ * @returns State and handlers for verifying recovery OTP.
  */
-export function useVerifyOtpByRecovery() {
-  const email = ref<string>('')
-  const token = ref<string>('')
+export function useOtpStep() {
+  const email = ref('')
+  const token = ref('')
   const error = ref<string | null>(null)
   const loading = ref(false)
   const isValid = ref(false)
 
-  async function submit() {
+  function clearError() {
+    error.value = null
+  }
+
+  async function execute() {
     if (loading.value) return false
 
     loading.value = true
-    error.value = null
+    clearError()
     isValid.value = false
 
     try {
@@ -31,9 +32,7 @@ export function useVerifyOtpByRecovery() {
         return false
       }
 
-      error.value = null
       isValid.value = true
-
       return true
     } finally {
       loading.value = false
@@ -43,9 +42,10 @@ export function useVerifyOtpByRecovery() {
   return {
     email,
     token,
-    loading,
     error,
+    loading,
     isValid,
-    submit
+    clearError,
+    execute
   }
 }

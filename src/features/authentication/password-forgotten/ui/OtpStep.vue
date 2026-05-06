@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+import { toRef } from 'vue'
 import { mdiEmailOutline } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 import OtpInput from '@shared/ui/OtpInput.vue'
 
 import translationKeys from '../i18n/keys'
-import { useVerifyOtpByRecovery } from '../model/use-recovery-otp-step'
+import { useOtpStepForm } from '../model/otp-step/use-form'
 import ResendOneTimePassword from './ResendOneTimePassword.vue'
 
 const { t } = useTranslation()
-const otpStep = useVerifyOtpByRecovery()
 
 const props = defineProps<{
   email: string
@@ -18,51 +17,23 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'success', token: string): void
 }>()
+
 const validModel = defineModel<boolean>('valid', { default: false })
 const loadingModel = defineModel<boolean>('loading', { default: false })
+
+const otpStep = useOtpStepForm({
+  emailModel: toRef(props, 'email'),
+  validModel,
+  loadingModel,
+  onSuccess: (token: string) => emit('success', token)
+})
 
 defineExpose({
   submit
 })
 
-watch(
-  () => props.email,
-  (value: string) => {
-    otpStep.email.value = value
-  },
-  { immediate: true }
-)
-
-watch(
-  () => otpStep.token.value,
-  (value: string) => {
-    validModel.value = value.length === 6
-  },
-  { immediate: true }
-)
-
-watch(
-  () => otpStep.loading.value,
-  (value: boolean) => {
-    loadingModel.value = value
-  },
-  { immediate: true }
-)
-
 async function submit(): Promise<boolean> {
-  if (otpStep.token.value.length !== 6) {
-    return false
-  }
-
-  const success = await otpStep.submit()
-
-  if (!success) {
-    return false
-  }
-
-  emit('success', otpStep.token.value)
-
-  return true
+  return otpStep.submit()
 }
 </script>
 

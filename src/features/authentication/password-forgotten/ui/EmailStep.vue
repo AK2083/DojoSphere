@@ -10,6 +10,7 @@ const { t } = useTranslation()
 const emit = defineEmits<{
   (event: 'success', email: string): void
 }>()
+
 const validModel = defineModel<boolean>('valid', { default: false })
 const loadingModel = defineModel<boolean>('loading', { default: false })
 
