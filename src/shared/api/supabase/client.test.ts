@@ -9,6 +9,7 @@ vi.mock('@supabase/supabase-js', () => ({
 describe('supabase client', () => {
   beforeEach(() => {
     vi.resetModules()
+    globalThis.localStorage.clear()
 
     vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co')
     vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', 'test-key')
@@ -18,10 +19,14 @@ describe('supabase client', () => {
     vi.unstubAllEnvs()
   })
 
-  it('creates supabase client with correct env variables', async () => {
+  it('creates supabase client with configured app storage key', async () => {
     const { supabase } = await import('./client')
 
-    expect(createClientMock).toHaveBeenCalledWith('https://test.supabase.co', 'test-key')
+    expect(createClientMock).toHaveBeenCalledWith('https://test.supabase.co', 'test-key', {
+      auth: {
+        storageKey: 'dojosphere.auth.session'
+      }
+    })
 
     expect(supabase).toEqual({ mockClient: true })
   })
