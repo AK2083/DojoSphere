@@ -1,45 +1,28 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { VForm } from 'vuetify/components'
 import { mdiEye, mdiEyeOff, mdiLogin } from '@mdi/js'
-import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
+import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useLogin } from '../model/use-login'
-import { useLoginRouting } from '../model/use-login-routing'
+import { useLoginForm } from '../model/use-form'
 
 const { t } = useTranslation()
-const { execute, errorCode, loading } = useLogin()
-const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
-
-const form = ref<VForm | null>(null)
-const isFormValid = ref(false)
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-
-const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
-const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
-
-async function submit() {
-  if (!form.value) return
-
-  const result = await form.value.validate()
-  if (!result.valid) return
-
-  const success = await execute(email.value, password.value)
-  if (!success) return
-
-  await navigateAfterLoginSuccess()
-}
-
-async function handlePasswordResetNavigation() {
-  await goToPasswordReset(email.value)
-}
+const {
+  isFormValid,
+  email,
+  password,
+  showPassword,
+  translatedEmailRules,
+  translatedPasswordRules,
+  errorCode,
+  loading,
+  setFormRef,
+  submit,
+  navigateToPasswordReset
+} = useLoginForm()
 </script>
 
 <template>
-  <v-form v-model="isFormValid" ref="form" @submit.prevent="submit">
+  <v-form v-model="isFormValid" :ref="setFormRef" @submit.prevent="submit">
     <v-card
       :title="t(translationKeys.title)"
       :subtitle="t(translationKeys.description)"
@@ -100,7 +83,7 @@ async function handlePasswordResetNavigation() {
             variant="text"
             class="mt-2"
             :aria-label="t(translationKeys.forgotPassword)"
-            @click="handlePasswordResetNavigation"
+            @click="navigateToPasswordReset"
           >
             {{ t(translationKeys.forgotPassword) }}
           </v-btn>

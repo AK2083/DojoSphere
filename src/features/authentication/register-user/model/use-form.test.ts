@@ -1,7 +1,7 @@
 import { nextTick, ref } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useRegisterForm } from './use-register-form'
+import { useRegisterForm } from './use-form'
 
 const executeMock = vi.fn()
 const clearErrorMock = vi.fn()
@@ -26,7 +26,7 @@ vi.mock('./use-register', () => ({
   })
 }))
 
-vi.mock('./use-register-routing', () => ({
+vi.mock('./use-routing', () => ({
   useRegisterRouting: () => ({
     navigateAfterRegisterSuccess: navigateAfterRegisterSuccessMock
   })
@@ -62,6 +62,15 @@ describe('useRegisterForm', () => {
 
     expect(validateMock).not.toHaveBeenCalled()
     expect(executeMock).not.toHaveBeenCalled()
+  })
+
+  it('stops when form ref is missing', async () => {
+    const registerForm = useRegisterForm()
+
+    await registerForm.submit()
+
+    expect(executeMock).not.toHaveBeenCalled()
+    expect(navigateAfterRegisterSuccessMock).not.toHaveBeenCalled()
   })
 
   it('navigates after successful submit', async () => {
@@ -100,5 +109,14 @@ describe('useRegisterForm', () => {
     await nextTick()
 
     expect(clearErrorMock).toHaveBeenCalled()
+  })
+
+  it('does not clear errors on input change when there is no error', async () => {
+    const registerForm = useRegisterForm()
+
+    registerForm.password.value = 'pw123456'
+    await nextTick()
+
+    expect(clearErrorMock).not.toHaveBeenCalled()
   })
 })

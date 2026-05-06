@@ -3,20 +3,20 @@ import { mdiAccountCircle, mdiEye, mdiEyeOff } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useRegisterForm } from '../model/use-register-form'
+import { useRegisterForm } from '../model/use-form'
 
 const { t } = useTranslation()
 const {
-  setFormRef,
   isFormValid,
   email,
   password,
   showPassword,
   translatedEmailRules,
   translatedPasswordRules,
-  submit,
   errorCode,
-  loading
+  loading,
+  setFormRef,
+  submit
 } = useRegisterForm()
 </script>
 

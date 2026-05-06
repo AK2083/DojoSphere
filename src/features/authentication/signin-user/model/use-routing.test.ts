@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useLoginRouting } from './use-login-routing'
+import { useLoginRouting } from './use-routing'
 
 const pushMock = vi.fn()
 const routeQuery = { redirect: undefined as unknown }

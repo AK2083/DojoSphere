@@ -9,11 +9,6 @@ vi.mock('@shared/auth', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 
-vi.mock('./register-storage', () => ({
-  setIsOtpActiveToStorage: vi.fn(),
-  setRegisterEmailToStorage: vi.fn()
-}))
-
 vi.mock('../monitoring/monitoring', () => ({
   MONITORING_EVENTS: {
     AUTH_REGISTER_SUBMITTED: 'AUTH_REGISTER_SUBMITTED'
@@ -21,18 +16,23 @@ vi.mock('../monitoring/monitoring', () => ({
   monitorInformation: vi.fn()
 }))
 
+vi.mock('./register-storage', () => ({
+  setIsOtpActiveToStorage: vi.fn(),
+  setRegisterEmailToStorage: vi.fn()
+}))
+
 describe('useRegister', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('sets loading and returns false with error code on failure', async () => {
+  it('sets error code and returns false on failed registration', async () => {
     vi.mocked(signUpWithMailAndPassword).mockResolvedValue({
       success: false,
       error: {
-        code: 'auth.email_exists',
         name: 'AuthError',
-        message: 'Email already exists'
+        code: 'auth.email_in_use',
+        message: 'E-Mail already in use'
       }
     })
 
@@ -42,77 +42,71 @@ describe('useRegister', () => {
 
     expect(result).toBe(false)
     expect(loading.value).toBe(false)
-    expect(errorCode.value).toBe('auth.email_exists')
+    expect(errorCode.value).toBe('auth.email_in_use')
     expect(setIsOtpActiveToStorage).not.toHaveBeenCalled()
     expect(setRegisterEmailToStorage).not.toHaveBeenCalled()
   })
 
-  it('stores otp/email and clears previous errors on success', async () => {
-    vi.mocked(signUpWithMailAndPassword)
-      .mockResolvedValueOnce({
-        success: false,
-        error: {
-          code: 'auth.temporary_error',
-          name: 'AuthError',
-          message: 'Temporary issue'
-        }
-      })
-      .mockResolvedValueOnce({ success: true })
+  it('stores register state and returns true on successful registration', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockResolvedValue({ success: true })
 
     const { execute, loading, errorCode } = useRegister()
 
-    await execute('user@mail.com', 'pw123456')
-    expect(errorCode.value).toBe('auth.temporary_error')
-
-    const promise = execute('user@mail.com', 'pw123456')
-    expect(loading.value).toBe(true)
-
-    const result = await promise
+    const result = await execute('success@mail.com', 'pw123456')
 
     expect(result).toBe(true)
     expect(loading.value).toBe(false)
     expect(errorCode.value).toBeNull()
     expect(setIsOtpActiveToStorage).toHaveBeenCalledWith(true)
-    expect(setRegisterEmailToStorage).toHaveBeenCalledWith('user@mail.com')
+    expect(setRegisterEmailToStorage).toHaveBeenCalledWith('success@mail.com')
   })
 
-  it('clears error through clearError helper', () => {
-    const { clearError, errorCode } = useRegister()
-
-    errorCode.value = 'auth.some_error'
-    clearError()
-
-    expect(errorCode.value).toBeNull()
-  })
-
-  it('does not trigger a second request while loading', async () => {
+  it('returns false when execute is called during loading', async () => {
     let resolveSignUp: (value: { success: true }) => void = () => undefined
     const signUpPromise = new Promise<{ success: true }>((resolve) => {
       resolveSignUp = resolve
     })
-
     vi.mocked(signUpWithMailAndPassword).mockReturnValue(signUpPromise)
 
     const { execute, loading } = useRegister()
-    const pendingExecution = execute('user@mail.com', 'pw123456')
 
+    const firstExecution = execute('user@mail.com', 'pw123456')
     expect(loading.value).toBe(true)
 
-    const duplicateResult = await execute('user@mail.com', 'pw123456')
-    expect(duplicateResult).toBe(false)
+    const secondResult = await execute('user@mail.com', 'pw123456')
+    expect(secondResult).toBe(false)
     expect(signUpWithMailAndPassword).toHaveBeenCalledTimes(1)
 
     resolveSignUp({ success: true })
-    await pendingExecution
+    await firstExecution
   })
 
-  it('resets loading in finally when request throws', async () => {
-    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(new Error('network down'))
+  it('resets loading state when registration throws', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockRejectedValue(new Error('network failure'))
 
     const { execute, loading } = useRegister()
 
-    await expect(execute('user@mail.com', 'pw123456')).rejects.toThrow('network down')
+    await expect(execute('user@mail.com', 'pw123456')).rejects.toThrow('network failure')
     expect(loading.value).toBe(false)
+  })
+
+  it('allows manually clearing error state', async () => {
+    vi.mocked(signUpWithMailAndPassword).mockResolvedValue({
+      success: false,
+      error: {
+        name: 'AuthError',
+        code: 'auth.email_in_use',
+        message: 'E-Mail already in use'
+      }
+    })
+
+    const { execute, clearError, errorCode } = useRegister()
+
+    await execute('user@mail.com', 'pw123456')
+    expect(errorCode.value).toBe('auth.email_in_use')
+
+    clearError()
+    expect(errorCode.value).toBeNull()
   })
 })
 
@@ -121,7 +115,7 @@ describe('registerUserAccount', () => {
     vi.clearAllMocks()
   })
 
-  it('tracks monitoring and delegates sign-up call', async () => {
+  it('tracks monitoring and delegates auth sign-up', async () => {
     vi.mocked(signUpWithMailAndPassword).mockResolvedValue({ success: true })
 
     const result = await registerUserAccount('track@mail.com', 'pw123456')

@@ -72,6 +72,54 @@ describe('useLogin', () => {
     expect(loading.value).toBe(false)
     expect(errorCode.value).toBeNull()
   })
+
+  it('returns false when execute is called during loading', async () => {
+    let resolveSignIn: (value: { success: true }) => void = () => undefined
+    const signInPromise = new Promise<{ success: true }>((resolve) => {
+      resolveSignIn = resolve
+    })
+    vi.mocked(signInWithEmailPassword).mockReturnValue(signInPromise)
+
+    const { execute, loading } = useLogin()
+
+    const firstExecution = execute('user@mail.com', 'pw123456')
+    expect(loading.value).toBe(true)
+
+    const secondResult = await execute('user@mail.com', 'pw123456')
+    expect(secondResult).toBe(false)
+    expect(signInWithEmailPassword).toHaveBeenCalledTimes(1)
+
+    resolveSignIn({ success: true })
+    await firstExecution
+  })
+
+  it('resets loading state when sign-in throws', async () => {
+    vi.mocked(signInWithEmailPassword).mockRejectedValue(new Error('network failure'))
+
+    const { execute, loading } = useLogin()
+
+    await expect(execute('user@mail.com', 'pw123456')).rejects.toThrow('network failure')
+    expect(loading.value).toBe(false)
+  })
+
+  it('allows manually clearing error state', async () => {
+    vi.mocked(signInWithEmailPassword).mockResolvedValue({
+      success: false,
+      error: {
+        name: 'AuthError',
+        code: 'auth.invalid_credentials',
+        message: 'Invalid credentials'
+      }
+    })
+
+    const { execute, clearError, errorCode } = useLogin()
+
+    await execute('user@mail.com', 'wrong-password')
+    expect(errorCode.value).toBe('auth.invalid_credentials')
+
+    clearError()
+    expect(errorCode.value).toBeNull()
+  })
 })
 
 describe('loginUserAccount', () => {

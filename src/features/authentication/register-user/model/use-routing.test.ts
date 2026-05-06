@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useRegisterRouting } from './use-register-routing'
+import { useRegisterRouting } from './use-routing'
 
 const pushMock = vi.fn()
 

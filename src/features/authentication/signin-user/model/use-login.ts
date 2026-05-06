@@ -14,23 +14,31 @@ export function useLogin() {
   const errorCode = ref<string | null>(null)
   const loading = ref(false)
 
-  async function execute(email: string, password: string) {
-    loading.value = true
-
-    const response = await loginUserAccount(email, password)
-
-    loading.value = false
-
-    if (!response.success) {
-      errorCode.value = response.error.code
-      return false
-    }
-
+  function clearError() {
     errorCode.value = null
-    return true
   }
 
-  return { execute, errorCode, loading }
+  async function execute(email: string, password: string) {
+    if (loading.value) return false
+
+    loading.value = true
+    clearError()
+
+    try {
+      const response = await loginUserAccount(email, password)
+
+      if (!response.success) {
+        errorCode.value = response.error.code
+        return false
+      }
+
+      return true
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return { execute, clearError, errorCode, loading }
 }
 
 /**

@@ -2,26 +2,27 @@ import { ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
-import { useRegister } from './use-register'
-import { useRegisterRouting } from './use-register-routing'
+import { useLogin } from './use-login'
+import { useLoginRouting } from './use-routing'
 
 /**
- * Composable for registering a new user account.
+ * Composable for handling login form state and submission flow.
  *
  * Handles:
- * - form validation
- * - error state for UI consumption
- * - navigation after successful registration
+ * - form state and validation
+ * - error reset on input changes
+ * - submit flow and success navigation
+ * - password reset navigation
  *
  * @returns Object containing form validation state, email and password fields, translated rules, submit function, error code and loading state
  *
  * @example
- * const { setFormRef, isFormValid, email, password, showPassword, translatedEmailRules, translatedPasswordRules, submit, errorCode, loading } = useRegisterForm()
+ * const { setFormRef, isFormValid, email, password, showPassword, translatedEmailRules, translatedPasswordRules, submit, navigateToPasswordReset, errorCode, loading } = useLoginForm()
  */
-export function useRegisterForm() {
+export function useLoginForm() {
   const { t } = useTranslation()
-  const { execute, clearError, errorCode, loading } = useRegister()
-  const { navigateAfterRegisterSuccess } = useRegisterRouting()
+  const { execute, clearError, errorCode, loading } = useLogin()
+  const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -47,23 +48,27 @@ export function useRegisterForm() {
     const result = await form.value.validate()
     if (!result.valid) return
 
-    const submittedEmail = email.value
-    const success = await execute(submittedEmail, password.value)
+    const success = await execute(email.value, password.value)
     if (!success) return
 
-    await navigateAfterRegisterSuccess(submittedEmail)
+    await navigateAfterLoginSuccess()
+  }
+
+  async function navigateToPasswordReset() {
+    await goToPasswordReset(email.value)
   }
 
   return {
-    setFormRef,
     isFormValid,
     email,
     password,
     showPassword,
     translatedEmailRules,
     translatedPasswordRules,
-    submit,
     errorCode,
-    loading
+    loading,
+    setFormRef,
+    submit,
+    navigateToPasswordReset
   }
 }
