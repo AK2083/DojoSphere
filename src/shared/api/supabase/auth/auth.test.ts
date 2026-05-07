@@ -12,6 +12,7 @@ import {
   getCurrentSession,
   getCurrentUser,
   onAuthStateChange,
+  requestPasswordRecovery,
   resendSignUpConfirmation,
   signInByEmailPassword,
   signInWithOtp,
@@ -25,6 +26,7 @@ vi.mock('../client', () => ({
   supabase: {
     auth: {
       signInWithOtp: vi.fn(),
+      resetPasswordForEmail: vi.fn(),
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
       verifyOtp: vi.fn(),
@@ -107,6 +109,28 @@ describe('signInWithOtp', () => {
         shouldCreateUser: false
       }
     })
+    expect(result).toEqual(mockResponse)
+  })
+})
+
+describe('requestPasswordRecovery', () => {
+  const email = 'recovery@example.com'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.resetPasswordForEmail with correct email', async () => {
+    const mockResponse = {
+      data: {},
+      error: null
+    }
+
+    vi.mocked(supabase.auth.resetPasswordForEmail).mockResolvedValue(mockResponse as never)
+
+    const result = await requestPasswordRecovery(email)
+
+    expect(supabase.auth.resetPasswordForEmail).toHaveBeenCalledWith(email)
     expect(result).toEqual(mockResponse)
   })
 })

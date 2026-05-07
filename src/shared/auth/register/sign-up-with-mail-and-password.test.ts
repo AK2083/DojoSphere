@@ -50,11 +50,11 @@ describe('signUpWithMailAndPassword', () => {
     const supabaseError = {
       message: 'signup failed',
       status: 400,
-      code: 'auth.email_exists',
+      code: 'shared.error.unknown',
       name: 'AuthError'
     } as AuthError
 
-    const mappedError = new AppError('auth.email_exists')
+    const mappedError = new AppError('shared.error.unknown')
 
     const response: AuthResponse = {
       data: { user: null, session: null },

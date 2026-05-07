@@ -39,7 +39,7 @@ describe('signInWithEmailPassword', () => {
     expect(setUserContext).toHaveBeenCalledWith({ id: 'user-1' })
   })
 
-  it('maps supabase error and returns AppError with correct code', async () => {
+  it('maps invalid credentials and does not capture expected auth errors', async () => {
     const supabaseError = {
       message: 'Invalid login',
       status: 400,
@@ -71,6 +71,33 @@ describe('signInWithEmailPassword', () => {
 
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
 
+    expect(captureException).not.toHaveBeenCalled()
+  })
+
+  it('captures unexpected mapped auth errors', async () => {
+    const supabaseError = {
+      message: 'Auth degraded',
+      status: 500,
+      code: 'unexpected_failure',
+      name: 'AuthError'
+    } as AuthError
+
+    const mappedError = new AppError('shared.error.unknown', 'Auth degraded')
+
+    const response = {
+      data: { user: null, session: null },
+      error: supabaseError
+    } satisfies AuthResponse
+
+    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
+    vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
+
+    const result = await signInWithEmailPassword(email, password)
+
+    expect(result).toEqual({
+      success: false,
+      error: mappedError
+    })
     expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signInWithEmailPassword')
   })
 

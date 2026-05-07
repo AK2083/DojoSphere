@@ -20,7 +20,11 @@ export async function signInWithEmailPassword(
 
   if (error) {
     const mapped = mapSupabaseError(error)
-    captureException(mapped, 'auth', 'signInWithEmailPassword')
+
+    // Invalid credentials are an expected user-facing outcome and should not be tracked as exceptions.
+    if (mapped.code !== 'auth.invalid_credentials' && mapped.code !== 'invalid_credentials') {
+      captureException(mapped, 'auth', 'signInWithEmailPassword')
+    }
 
     return {
       success: false,

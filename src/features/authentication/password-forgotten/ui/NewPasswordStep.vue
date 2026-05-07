@@ -26,7 +26,7 @@ async function submit(): Promise<boolean> {
 <template>
   <v-alert
     v-if="newPasswordStep.error.value"
-    :text="newPasswordStep.error.value ?? ''"
+    :text="t(newPasswordStep.error.value ?? '')"
     :type="'error'"
     class="mt-2"
   />

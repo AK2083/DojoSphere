@@ -31,8 +31,8 @@ describe('useRegister', () => {
       success: false,
       error: {
         name: 'AuthError',
-        code: 'auth.email_in_use',
-        message: 'E-Mail already in use'
+        code: 'shared.error.unknown',
+        message: 'Unknown error'
       }
     })
 
@@ -42,7 +42,7 @@ describe('useRegister', () => {
 
     expect(result).toBe(false)
     expect(loading.value).toBe(false)
-    expect(errorCode.value).toBe('auth.email_in_use')
+    expect(errorCode.value).toBe('shared.error.unknown')
     expect(setIsOtpActiveToStorage).not.toHaveBeenCalled()
     expect(setRegisterEmailToStorage).not.toHaveBeenCalled()
   })
@@ -95,15 +95,15 @@ describe('useRegister', () => {
       success: false,
       error: {
         name: 'AuthError',
-        code: 'auth.email_in_use',
-        message: 'E-Mail already in use'
+        code: 'shared.error.unknown',
+        message: 'Unknown error'
       }
     })
 
     const { execute, clearError, errorCode } = useRegister()
 
     await execute('user@mail.com', 'pw123456')
-    expect(errorCode.value).toBe('auth.email_in_use')
+    expect(errorCode.value).toBe('shared.error.unknown')
 
     clearError()
     expect(errorCode.value).toBeNull()

@@ -1,4 +1,4 @@
-import { type AuthError, type AuthResponse, mapSupabaseError, signInWithOtp } from '@shared/api'
+import { type AuthError, mapSupabaseError, requestPasswordRecovery } from '@shared/api'
 import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -19,9 +19,9 @@ describe('signInWithOneTimePassword', () => {
     const response = {
       data: { user: null, session: null },
       error: null
-    } satisfies AuthResponse
+    }
 
-    vi.mocked(signInWithOtp).mockResolvedValue(response)
+    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
 
     const result = await signInWithOneTimePassword(email)
 
@@ -42,9 +42,9 @@ describe('signInWithOneTimePassword', () => {
     const response = {
       data: { user: null, session: null },
       error: supabaseError
-    } satisfies AuthResponse
+    }
 
-    vi.mocked(signInWithOtp).mockResolvedValue(response)
+    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await signInWithOneTimePassword(email)
@@ -63,12 +63,12 @@ describe('signInWithOneTimePassword', () => {
     const response = {
       data: { user: null, session: null },
       error: null
-    } satisfies AuthResponse
+    }
 
-    vi.mocked(signInWithOtp).mockResolvedValue(response)
+    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
 
     await signInWithOneTimePassword(email)
 
-    expect(signInWithOtp).toHaveBeenCalledWith(email)
+    expect(requestPasswordRecovery).toHaveBeenCalledWith(email)
   })
 })

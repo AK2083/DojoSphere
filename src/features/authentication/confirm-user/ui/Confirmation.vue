@@ -27,8 +27,8 @@ const sendOtp = useSendOneTimePassword()
         @finish="sendOtp.execute()"
       />
       <v-alert
-        v-if="sendOtp.errorCode !== null"
-        :text="sendOtp.errorCode.value ?? ''"
+        v-if="sendOtp.errorCode.value"
+        :text="t(sendOtp.errorCode.value)"
         type="error"
         class="mt-2"
       ></v-alert>

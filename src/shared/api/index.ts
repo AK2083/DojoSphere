@@ -2,6 +2,7 @@ export {
   getCurrentSession,
   getCurrentUser,
   onAuthStateChange,
+  requestPasswordRecovery,
   resendSignUpConfirmation,
   signInByEmailPassword,
   signInWithOtp,

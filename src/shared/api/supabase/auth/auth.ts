@@ -21,6 +21,21 @@ export async function signInWithOtp(email: string): Promise<AuthResponse> {
 }
 
 /**
+ * Triggers the password-recovery email flow.
+ *
+ * This low-level wrapper uses Supabase `auth.resetPasswordForEmail`.
+ * It does not perform mapping, logging, or side effects.
+ *
+ * @param email - The email address of the user requesting password recovery.
+ * @returns Raw Supabase password recovery response.
+ */
+export async function requestPasswordRecovery(
+  email: string
+): Promise<Awaited<ReturnType<typeof supabase.auth.resetPasswordForEmail>>> {
+  return await supabase.auth.resetPasswordForEmail(email)
+}
+
+/**
  * Retrieves the current authenticated user.
  *
  * This function is a low-level wrapper around Supabase's `auth.getUser` method.

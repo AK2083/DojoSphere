@@ -24,7 +24,8 @@ describe('supabase client', () => {
 
     expect(createClientMock).toHaveBeenCalledWith('https://test.supabase.co', 'test-key', {
       auth: {
-        storageKey: 'dojosphere.auth.session'
+        storageKey: 'dojosphere.auth.session',
+        debug: false
       }
     })
 

@@ -7,6 +7,7 @@ export default {
     email: {
       title: 'Enter your email address',
       description: 'Please enter the email address you used to register.',
+      successInfo: 'If the address is registered, you will receive an email shortly.',
       label: 'E-Mail',
       placeholder: 'Your E-Mail Address',
       ariaLabel: 'E-Mail'

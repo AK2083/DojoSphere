@@ -38,9 +38,10 @@ async function submit(): Promise<boolean> {
 </script>
 
 <template>
+  <v-alert :text="t(translationKeys.steps.email.successInfo)" :type="'info'" class="mb-2" />
   <v-alert
     v-if="otpStep.error.value"
-    :text="otpStep.error.value ?? ''"
+    :text="t(otpStep.error.value ?? '')"
     :type="'error'"
     class="mt-2"
   />
