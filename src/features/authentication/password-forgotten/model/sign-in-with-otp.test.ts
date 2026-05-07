@@ -16,12 +16,10 @@ describe('signInWithOneTimePassword', () => {
   })
 
   it('returns success when OTP request succeeds', async () => {
-    const response = {
+    vi.mocked(requestPasswordRecovery).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    }
-
-    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
+    } as never)
 
     const result = await signInWithOneTimePassword(email)
 
@@ -36,36 +34,25 @@ describe('signInWithOneTimePassword', () => {
       code: 'otp_failed',
       name: 'AuthError'
     } as AuthError
-
     const mappedError = new AppError('otp_failed', 'OTP failed')
 
-    const response = {
+    vi.mocked(requestPasswordRecovery).mockResolvedValue({
       data: { user: null, session: null },
       error: supabaseError
-    }
-
-    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
+    } as never)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await signInWithOneTimePassword(email)
 
-    expect(result).toMatchObject({ success: false })
-
-    const err = (result as { success: false; error: AppError }).error
-
-    expect(err.code).toBe('otp_failed')
-    expect(err.message).toBe('OTP failed')
-
+    expect(result).toEqual({ success: false, error: mappedError })
     expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signInWithOneTimePassword')
   })
 
   it('calls API with correct email', async () => {
-    const response = {
+    vi.mocked(requestPasswordRecovery).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    }
-
-    vi.mocked(requestPasswordRecovery).mockResolvedValue(response as never)
+    } as never)
 
     await signInWithOneTimePassword(email)
 

@@ -6,15 +6,9 @@ import type { AuthActionResult } from '@shared/types'
 /**
  * Registers a new user using Supabase authentication.
  *
- * The function sends the provided email and password to Supabase to
- * create a new user account. If Supabase returns an error, the error
- * is captured via {@link captureException}, mapped to an application-
- * specific {@link AppError} using {@link mapSupabaseError}, and then thrown.
- *
- * @param {string} email - The email address for the new user account.
- * @param {string} password - The password for the new user account.
- *
- * @returns {Promise<AuthActionResult>} The registration result returned.
+ * @param email - The email address of the user to sign up.
+ * @param password - The password of the user to sign up.
+ * @returns A promise that resolves to an AuthActionResult.
  */
 export async function signUpWithMailAndPassword(
   email: string,
@@ -24,7 +18,6 @@ export async function signUpWithMailAndPassword(
 
   if (error) {
     const mappedError = mapSupabaseError(error)
-
     saveException(mappedError)
 
     return {

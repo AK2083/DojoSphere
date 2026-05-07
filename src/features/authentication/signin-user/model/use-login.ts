@@ -1,7 +1,8 @@
 import { ref } from 'vue'
-import { type AuthActionResult, signInWithEmailPassword } from '@shared/auth'
+import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { signInWithEmailPassword } from './sign-in-with-email-password'
 
 /**
  * Runs sign-in via {@link loginUserAccount}.

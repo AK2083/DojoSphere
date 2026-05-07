@@ -1,9 +1,9 @@
-import { setNewPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { setNewPassword } from './set-new-password'
 import { useNewPasswordStep } from './use-new-password-step'
 
-vi.mock('@shared/auth')
+vi.mock('./set-new-password')
 
 describe('useNewPasswordStep', () => {
   beforeEach(() => {

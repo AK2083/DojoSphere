@@ -1,14 +1,14 @@
-import { signInWithOneTimePassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { signInWithOneTimePassword } from '../sign-in-with-otp'
 import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
 
-vi.mock('@shared/auth', () => ({
+vi.mock('../sign-in-with-otp', () => ({
   signInWithOneTimePassword: vi.fn()
 }))
 
-vi.mock('../monitoring/monitoring', () => ({
+vi.mock('../../monitoring/monitoring', () => ({
   MONITORING_EVENTS: {
     RESEND_OTP: 'RESEND_OTP'
   },

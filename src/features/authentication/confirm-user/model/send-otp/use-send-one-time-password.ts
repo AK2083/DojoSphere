@@ -1,9 +1,11 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
-import { type AuthActionResult, checkOneTimePassword, getCurrentSession } from '@shared/auth'
+import { getCurrentSession } from '@shared/auth'
+import type { AuthActionResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { getRegisterEmailFromStorage } from '../register-storage'
+import { checkOneTimePassword } from './check-one-time-password'
 
 /**
  * Composable for handling OTP (one-time password) verification.

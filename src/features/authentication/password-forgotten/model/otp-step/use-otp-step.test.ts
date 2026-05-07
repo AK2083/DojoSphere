@@ -1,9 +1,9 @@
-import { checkOneTimePasswordByRecovery } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { checkOneTimePasswordByRecovery } from './check-otp-by-recovery'
 import { useOtpStep } from './use-otp-step'
 
-vi.mock('@shared/auth')
+vi.mock('./check-otp-by-recovery')
 
 describe('useOtpStep', () => {
   beforeEach(() => {

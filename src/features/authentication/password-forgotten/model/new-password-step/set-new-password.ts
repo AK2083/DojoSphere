@@ -4,10 +4,9 @@ import { captureException } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 /**
- * Sends a password reset email to the user. The email contains a link that allows the user to set a new password.
- *
- * @param password - The new password that the user wants to set.
- * @returns A promise that resolves to an object indicating whether the operation was successful or if there was an error.
+ * Updates the currently authenticated user's password.
+ * @param password - The new password that should be stored for the current user.
+ * @returns Result containing success state or mapped error details.
  */
 export async function setNewPassword(password: string): Promise<AuthActionResult> {
   const { error } = await updateUserPassword(password)

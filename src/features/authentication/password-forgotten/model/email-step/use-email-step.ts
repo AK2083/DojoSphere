@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import { signInWithOneTimePassword } from '@shared/auth'
+
+import { signInWithOneTimePassword } from '../sign-in-with-otp'
 
 /**
  * Handles OTP mail request for the email step.

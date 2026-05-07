@@ -1,11 +1,11 @@
-import { signUpWithMailAndPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
+import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 import { registerUserAccount, useRegister } from './use-register'
 
-vi.mock('@shared/auth', () => ({
+vi.mock('./sign-up-with-mail-and-password', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 

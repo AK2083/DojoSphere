@@ -1,8 +1,9 @@
 import { ref } from 'vue'
-import { type AuthActionResult, signUpWithMailAndPassword } from '@shared/auth'
+import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
+import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 
 /**
  * Composable for registering a new user account.

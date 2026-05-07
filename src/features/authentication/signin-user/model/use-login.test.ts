@@ -1,10 +1,10 @@
-import { signInWithEmailPassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { signInWithEmailPassword } from './sign-in-with-email-password'
 import { loginUserAccount, useLogin } from './use-login'
 
-vi.mock('@shared/auth', () => ({
+vi.mock('./sign-in-with-email-password', () => ({
   signInWithEmailPassword: vi.fn()
 }))
 

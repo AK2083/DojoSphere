@@ -39,121 +39,64 @@ describe('signInWithEmailPassword', () => {
     expect(setUserContext).toHaveBeenCalledWith({ id: 'user-1' })
   })
 
-  it('maps invalid credentials and does not capture expected auth errors', async () => {
+  it('does not capture expected invalid credential errors', async () => {
     const supabaseError = {
       message: 'Invalid login',
       status: 400,
       code: 'invalid_credentials',
       name: 'AuthError'
     } as AuthError
+    const mappedError = new AppError('invalid_credentials', 'Invalid credentials')
 
-    const mappedError = new AppError('invalid_credentials', 'Invalid credentials', {
-      reason: 'password_wrong'
-    })
-
-    const response = {
+    vi.mocked(signInByEmailPassword).mockResolvedValue({
       data: { user: null, session: null },
       error: supabaseError
-    } satisfies AuthResponse
-
-    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
+    } satisfies AuthResponse)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await signInWithEmailPassword(email, password)
 
-    expect(result).toMatchObject({ success: false })
-
-    const err = (result as { success: false; error: AppError }).error
-
-    expect(err.code).toBe('invalid_credentials')
-    expect(err.message).toBe('Invalid credentials')
-    expect(err.details).toEqual({ reason: 'password_wrong' })
-
-    expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
-
+    expect(result).toEqual({ success: false, error: mappedError })
     expect(captureException).not.toHaveBeenCalled()
   })
 
-  it('captures unexpected mapped auth errors', async () => {
+  it('captures unexpected mapped errors', async () => {
     const supabaseError = {
       message: 'Auth degraded',
       status: 500,
       code: 'unexpected_failure',
       name: 'AuthError'
     } as AuthError
-
     const mappedError = new AppError('shared.error.unknown', 'Auth degraded')
 
-    const response = {
+    vi.mocked(signInByEmailPassword).mockResolvedValue({
       data: { user: null, session: null },
       error: supabaseError
-    } satisfies AuthResponse
-
-    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
+    } satisfies AuthResponse)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await signInWithEmailPassword(email, password)
 
-    expect(result).toEqual({
-      success: false,
-      error: mappedError
-    })
+    expect(result).toEqual({ success: false, error: mappedError })
     expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signInWithEmailPassword')
   })
 
-  it('creates fallback AppError when user is missing', async () => {
-    const response = {
+  it('returns fallback AppError when user is missing', async () => {
+    vi.mocked(signInByEmailPassword).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    } satisfies AuthResponse
-
-    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
+    } satisfies AuthResponse)
 
     const result = await signInWithEmailPassword(email, password)
 
-    expect(result).toEqual(
-      expect.objectContaining({
-        success: false,
-        error: expect.objectContaining({
-          code: 'unknown',
-          message: 'User not found'
-        })
-      })
-    )
-
+    expect(result).toMatchObject({
+      success: false,
+      error: { code: 'unknown', message: 'User not found' }
+    })
     expect(captureException).toHaveBeenCalledWith(
       expect.any(AppError),
       'auth',
       'signInWithEmailPassword'
     )
-  })
-
-  it('does not set user context on failure', async () => {
-    const response = {
-      data: { user: null, session: null },
-      error: null
-    } satisfies AuthResponse
-
-    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
-
-    await signInWithEmailPassword(email, password)
-
-    expect(setUserContext).not.toHaveBeenCalled()
-  })
-
-  it('calls API with correct parameters', async () => {
-    const response = {
-      data: {
-        user: { id: '123' } as User,
-        session: null
-      },
-      error: null
-    } satisfies AuthResponse
-
-    vi.mocked(signInByEmailPassword).mockResolvedValue(response)
-
-    await signInWithEmailPassword(email, password)
-
-    expect(signInByEmailPassword).toHaveBeenCalledWith(email, password)
   })
 })

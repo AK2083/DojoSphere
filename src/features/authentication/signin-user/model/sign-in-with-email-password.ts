@@ -6,11 +6,10 @@ import type { AuthActionResult } from '@shared/types'
 /**
  * Signs in a user with email and password via Supabase.
  *
- * On failure, maps the Supabase error and reports it via {@link captureException}.
- *
- * @param email - The user's email address
- * @param password - The user's password
- * @returns Success or a mapped {@link AppError}
+ * On failure, maps the Supabase error and reports it via captureException.
+ * @param email - User email address.
+ * @param password - User password.
+ * @returns Result containing success state or mapped error details.
  */
 export async function signInWithEmailPassword(
   email: string,

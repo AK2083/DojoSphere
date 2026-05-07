@@ -44,10 +44,7 @@ describe('setNewPassword', () => {
 
     const result = await setNewPassword('123')
 
-    expect(result).toEqual({
-      success: false,
-      error: mappedError
-    })
+    expect(result).toEqual({ success: false, error: mappedError })
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
     expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'setNewPassword')
   })

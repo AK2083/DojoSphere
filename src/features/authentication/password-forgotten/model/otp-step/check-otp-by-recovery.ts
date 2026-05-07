@@ -3,12 +3,10 @@ import { captureException } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 /**
- * Checks the validity of a one-time password (OTP) for password recovery.
- * This function calls the Supabase API to verify the OTP associated with the provided email address.
- *
- * @param email The email address associated with the OTP to verify.
- * @param token The one-time password token to verify.
- * @returns A promise that resolves to an AuthActionResult indicating success or failure of the OTP verification.
+ * Checks a one-time password (OTP) for password recovery.
+ * @param email - User email address associated with the recovery flow.
+ * @param token - One-time password sent to the user.
+ * @returns Result containing success state or mapped error details.
  */
 export async function checkOneTimePasswordByRecovery(
   email: string,

@@ -3,7 +3,7 @@ import { watch } from 'vue'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useResendOneTimePassword } from '../model/use-resend-one-time-password'
+import { useResendOneTimePassword } from '../model/resend-otp/use-resend-one-time-password'
 
 const props = defineProps<{
   email: string

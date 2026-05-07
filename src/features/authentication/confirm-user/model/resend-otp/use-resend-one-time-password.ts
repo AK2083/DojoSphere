@@ -1,7 +1,9 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
-import { type AuthActionResult, signInWithOneTimePassword } from '@shared/auth'
+import type { AuthActionResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { getRegisterEmailFromStorage } from '../register-storage'
+import { resendSignUpConfirmationEmail } from './resend-sign-up-confirmation'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>
@@ -21,7 +23,7 @@ type UseResendReturn = {
  * @example
  * const { resend, loading, success, errorCode } = useResend()
  *
- * await resend()
+ * await resend('test@example.com')
  *
  * if (success.value) {
  *   console.log('OTP was sent successfully')
@@ -37,44 +39,46 @@ export function useResendOneTimePassword(): UseResendReturn {
   const canResend = computed(() => email.value.trim().length > 0)
 
   /**
-   * Resends an OTP to the current email state.
+   * Resends an OTP to the given email address.
    *
+   * @param email - The email address to send the OTP to
    * @returns Resolves to `true` if successful, otherwise `false`
    */
   async function resend(): Promise<boolean> {
-    if (loading.value || !canResend.value) {
+    loading.value = true
+    success.value = false
+
+    const storedEmail = getRegisterEmailFromStorage()
+
+    if (!email.value) {
+      email.value = storedEmail ?? ''
+    }
+
+    const response = await resendOtp(email.value)
+
+    loading.value = false
+
+    if (!response.success) {
+      errorCode.value = response.error.code
       return false
     }
 
-    loading.value = true
-    success.value = false
-    try {
-      const response = await resendOtp(email.value)
+    errorCode.value = null
+    success.value = true
 
-      if (!response.success) {
-        errorCode.value = response.error.code
-        return false
-      }
-
-      errorCode.value = null
-      success.value = true
-
-      return true
-    } finally {
-      loading.value = false
-    }
+    return true
   }
 
   return { resend, canResend, email, errorCode, loading, success }
 }
 
 /**
- * Triggers resend of a recovery OTP and records monitoring data.
+ * Triggers resend of the sign-up confirmation mail and records monitoring data.
  *
  * @param {string} email - The email address to resend confirmation to.
  * @returns {Promise<AuthActionResult>} Result of resend attempt.
  */
 export function resendOtp(email: string): Promise<AuthActionResult> {
   monitorInformation(MONITORING_EVENTS.RESEND_OTP)
-  return signInWithOneTimePassword(email)
+  return resendSignUpConfirmationEmail(email)
 }

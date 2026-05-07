@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import { setNewPassword } from '@shared/auth'
+
+import { setNewPassword } from './set-new-password'
 
 /**
  * Handles new-password request state for recovery flow.

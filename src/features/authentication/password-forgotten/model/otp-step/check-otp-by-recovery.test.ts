@@ -28,15 +28,12 @@ describe('checkOneTimePasswordByRecovery', () => {
       status: 400,
       code: 'invalid_otp'
     } as AuthError
-
-    const response: AuthResponse = {
-      data: { user: null, session: null },
-      error: authError
-    }
-
     const mappedError = new AppError('auth.otp.errorInvalid')
 
-    vi.mocked(verifyOneTimePasswordByRecovery).mockResolvedValue(response)
+    vi.mocked(verifyOneTimePasswordByRecovery).mockResolvedValue({
+      data: { user: null, session: null },
+      error: authError
+    } satisfies AuthResponse)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await checkOneTimePasswordByRecovery(email, token)
@@ -47,25 +44,18 @@ describe('checkOneTimePasswordByRecovery', () => {
       'checkOneTimePasswordByRecovery'
     )
     expect(mapSupabaseError).toHaveBeenCalledWith(authError)
-    expect(result).toEqual({
-      success: false,
-      error: mappedError
-    })
+    expect(result).toEqual({ success: false, error: mappedError })
   })
 
   it('returns success when verification succeeds', async () => {
-    const response: AuthResponse = {
+    vi.mocked(verifyOneTimePasswordByRecovery).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    }
-
-    vi.mocked(verifyOneTimePasswordByRecovery).mockResolvedValue(response)
+    } satisfies AuthResponse)
 
     const result = await checkOneTimePasswordByRecovery(email, token)
 
-    expect(result).toEqual({
-      success: true
-    })
+    expect(result).toEqual({ success: true })
     expect(captureException).not.toHaveBeenCalled()
     expect(mapSupabaseError).not.toHaveBeenCalled()
   })

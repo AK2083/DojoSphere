@@ -1,9 +1,9 @@
-import { signInWithOneTimePassword } from '@shared/auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { signInWithOneTimePassword } from '../sign-in-with-otp'
 import { useEmailStep } from './use-email-step'
 
-vi.mock('@shared/auth', () => ({
+vi.mock('../sign-in-with-otp', () => ({
   signInWithOneTimePassword: vi.fn()
 }))
 

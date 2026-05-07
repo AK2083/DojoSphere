@@ -26,15 +26,12 @@ describe('resendSignUpConfirmationEmail', () => {
       status: 400,
       code: 'invalid_email'
     } as AuthError
-
     const mappedError = new AppError('auth.invalid_email', '')
 
-    const response: AuthResponse = {
+    vi.mocked(resendSignUpConfirmation).mockResolvedValue({
       data: { user: null, session: null },
       error: authError
-    }
-
-    vi.mocked(resendSignUpConfirmation).mockResolvedValue(response)
+    } satisfies AuthResponse)
     vi.mocked(mapSupabaseError).mockReturnValue(mappedError)
 
     const result = await resendSignUpConfirmationEmail('test@mail.com')
@@ -45,19 +42,14 @@ describe('resendSignUpConfirmationEmail', () => {
       'resendSignUpConfirmationEmail'
     )
     expect(mapSupabaseError).toHaveBeenCalledWith(authError)
-    expect(result).toEqual({
-      success: false,
-      error: mappedError
-    })
+    expect(result).toEqual({ success: false, error: mappedError })
   })
 
   it('returns success when supabase resend succeeds', async () => {
-    const response: AuthOtpResponse = {
+    vi.mocked(resendSignUpConfirmation).mockResolvedValue({
       data: { user: null, session: null },
       error: null
-    }
-
-    vi.mocked(resendSignUpConfirmation).mockResolvedValue(response)
+    } satisfies AuthOtpResponse)
 
     const result = await resendSignUpConfirmationEmail('test@mail.com')
 
