@@ -1,5 +1,8 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { type AuthSession, getCurrentSession, watchAuthState } from '@shared/auth'
+import type { AuthSession } from '@shared/types'
+
+import { getCurrentSession } from './get-current-session'
+import { watchAuthState } from './on-auth-state-change'
 
 /**
  * Composable for the current Supabase auth session (e.g. navigation, account page).
@@ -28,7 +31,7 @@ export function useAuthSession() {
     const initial = await getCurrentSession()
     session.value = initial
 
-    subscription = watchAuthState(({ event: _, session: newSession }) => {
+    subscription = watchAuthState(({ session: newSession }) => {
       session.value = newSession
     })
   })

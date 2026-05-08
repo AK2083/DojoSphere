@@ -1,6 +1,6 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
-import { getCurrentSession } from '@shared/auth'
+import { getCurrentSession } from '@features/authentication/model/get-current-session'
 import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'

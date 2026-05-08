@@ -1,6 +1,8 @@
-import { type AuthSession, type AuthUser, getCurrentSession, watchAuthState } from '@shared/auth'
+import type { AuthSession, AuthState, AuthUser } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { getCurrentSession } from './get-current-session'
+import { watchAuthState } from './on-auth-state-change'
 import { useAuthSession } from './use-auth-session'
 
 type AuthWatcherPayload = { event: string; session: AuthSession | null }
@@ -23,8 +25,11 @@ vi.mock('vue', async () => {
   }
 })
 
-vi.mock('@shared/auth', () => ({
-  getCurrentSession: vi.fn(),
+vi.mock('./get-current-session', () => ({
+  getCurrentSession: vi.fn()
+}))
+
+vi.mock('./on-auth-state-change', () => ({
   watchAuthState: vi.fn()
 }))
 
@@ -44,7 +49,7 @@ describe('useAuthSession', () => {
 
     vi.mocked(getCurrentSession).mockResolvedValue(initialSession)
 
-    vi.mocked(watchAuthState).mockImplementation((callback) => {
+    vi.mocked(watchAuthState).mockImplementation((callback: (state: AuthState) => void) => {
       capturedCallback = callback as AuthWatcherCallback
       return {
         id: 'subscription-1',

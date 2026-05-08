@@ -1,5 +1,5 @@
 import router from '@app/providers/router'
-import { getCurrentSession } from '@shared/auth'
+import { getCurrentSession } from '@features/authentication/model/get-current-session'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
@@ -26,7 +26,7 @@ vi.mock('@app/providers/router', () => ({
   }
 }))
 
-vi.mock('@shared/auth', () => ({
+vi.mock('@features/authentication/model/get-current-session', () => ({
   getCurrentSession: vi.fn()
 }))
 

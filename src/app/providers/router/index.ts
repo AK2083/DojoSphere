@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { getCurrentSession } from '@shared/auth'
+import { getCurrentSession } from '@features/authentication/model/get-current-session'
 
 const routes = [
   {
