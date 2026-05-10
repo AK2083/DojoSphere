@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
-import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
+import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../service/register-storage'
+import { signUpWithMailAndPassword } from '../service/sign-up-with-mail-and-password'
 import { registerUserAccount, useRegister } from './use-register'
 
-vi.mock('./sign-up-with-mail-and-password', () => ({
+vi.mock('../service/sign-up-with-mail-and-password', () => ({
   signUpWithMailAndPassword: vi.fn()
 }))
 
@@ -16,7 +16,7 @@ vi.mock('../monitoring/monitoring', () => ({
   monitorInformation: vi.fn()
 }))
 
-vi.mock('./register-storage', () => ({
+vi.mock('../service/register-storage', () => ({
   setIsOtpActiveToStorage: vi.fn(),
   setRegisterEmailToStorage: vi.fn()
 }))

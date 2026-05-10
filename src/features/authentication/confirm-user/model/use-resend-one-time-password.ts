@@ -1,9 +1,9 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
 import type { AuthActionResult } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { getRegisterEmailFromStorage } from '../register-storage'
-import { resendSignUpConfirmationEmail } from './resend-sign-up-confirmation'
+import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { resendSignUpConfirmationEmail } from '../service/resend-sign-up-confirmation'
+import { getRegisterEmailFromStorage } from './register-storage'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>

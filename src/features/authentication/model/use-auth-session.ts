@@ -1,8 +1,8 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { AuthSession } from '@shared/types'
 
-import { getCurrentSession } from './get-current-session'
-import { watchAuthState } from './on-auth-state-change'
+import { getCurrentSession } from '../service/get-current-session'
+import { watchAuthState } from '../service/on-auth-state-change'
 
 /**
  * Composable for the current Supabase auth session (e.g. navigation, account page).

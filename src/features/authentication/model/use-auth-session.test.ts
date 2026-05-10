@@ -1,8 +1,8 @@
 import type { AuthSession, AuthState, AuthUser } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getCurrentSession } from './get-current-session'
-import { watchAuthState } from './on-auth-state-change'
+import { getCurrentSession } from '../service/get-current-session'
+import { watchAuthState } from '../service/on-auth-state-change'
 import { useAuthSession } from './use-auth-session'
 
 type AuthWatcherPayload = { event: string; session: AuthSession | null }
@@ -25,11 +25,11 @@ vi.mock('vue', async () => {
   }
 })
 
-vi.mock('./get-current-session', () => ({
+vi.mock('../service/get-current-session', () => ({
   getCurrentSession: vi.fn()
 }))
 
-vi.mock('./on-auth-state-change', () => ({
+vi.mock('../service/on-auth-state-change', () => ({
   watchAuthState: vi.fn()
 }))
 

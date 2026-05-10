@@ -2,7 +2,7 @@
 import { translationKeys } from '@features/authentication/password-forgotten'
 import { useTranslation } from '@shared/lib'
 
-import { useSendOneTimePassword } from '../model/send-otp/use-send-one-time-password'
+import { useSendOneTimePassword } from '../model/use-send-one-time-password'
 import ResendOneTimePassword from './ResendOneTimePassword.vue'
 
 const { t } = useTranslation()

@@ -2,7 +2,7 @@
 import { translationKeys } from '@features/authentication/password-forgotten'
 import { useTranslation } from '@shared/lib'
 
-import { useResendOneTimePassword } from '../model/resend-otp/use-resend-one-time-password'
+import { useResendOneTimePassword } from '../model/use-resend-one-time-password'
 
 const { t } = useTranslation()
 const resendOtp = useResendOneTimePassword()

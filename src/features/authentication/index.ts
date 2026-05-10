@@ -1,5 +1,5 @@
 export { default as authDe } from './i18n/authDe'
 export { default as authEn } from './i18n/authEn'
 export { default as translationKeys } from './i18n/keys'
-export { useAuthNavigation } from './model/use-auth-navigation'
 export { useAuthSession } from './model/use-auth-session'
+export { useAuthNavigation } from './service/use-auth-navigation'
