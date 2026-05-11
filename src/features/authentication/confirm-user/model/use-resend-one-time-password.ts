@@ -3,7 +3,7 @@ import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { resendSignUpConfirmationEmail } from '../service/resend-sign-up-confirmation'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { getRegisterEmailFromStorage } from '../service/register-storage'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>

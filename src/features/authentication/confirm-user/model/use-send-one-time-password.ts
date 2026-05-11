@@ -5,7 +5,7 @@ import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { checkOneTimePassword } from '../service/check-one-time-password'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { getRegisterEmailFromStorage } from '../service/register-storage'
 
 /**
  * Composable for handling OTP (one-time password) verification.

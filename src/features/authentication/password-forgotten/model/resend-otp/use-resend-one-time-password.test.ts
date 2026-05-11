@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { signInWithOneTimePassword } from '../sign-in-with-otp'
+import { signInWithOneTimePassword } from '../../service/sign-in-with-otp'
 import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
 
-vi.mock('../sign-in-with-otp', () => ({
+vi.mock('../../service/sign-in-with-otp', () => ({
   signInWithOneTimePassword: vi.fn()
 }))
 

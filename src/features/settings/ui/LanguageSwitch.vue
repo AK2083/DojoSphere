@@ -5,7 +5,7 @@ import { mdiTranslateVariant } from '@mdi/js'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { setLanguageToStorage } from '../model/set-language/language-storage'
+import { setLanguageToStorage } from '../service/set-language/language-storage'
 
 const { t, locale } = useTranslation()
 

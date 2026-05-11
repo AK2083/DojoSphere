@@ -2,14 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { resendSignUpConfirmationEmail } from '../service/resend-sign-up-confirmation'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { getRegisterEmailFromStorage } from '../service/register-storage'
 import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
 
 vi.mock('../service/resend-sign-up-confirmation', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
-vi.mock('./register-storage', () => ({
+vi.mock('../service/register-storage', () => ({
   getRegisterEmailFromStorage: vi.fn()
 }))
 

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { setNewPassword } from './set-new-password'
+import { setNewPassword } from '../../service/new-password-step/set-new-password'
 import { useNewPasswordStep } from './use-new-password-step'
 
-vi.mock('./set-new-password')
+vi.mock('../../service/new-password-step/set-new-password')
 
 describe('useNewPasswordStep', () => {
   beforeEach(() => {

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { checkOneTimePassword } from '../service/check-one-time-password'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { getRegisterEmailFromStorage } from '../service/register-storage'
 import { useSendOneTimePassword, verifyOtp } from './use-send-one-time-password'
 
 let onMountedHandler: (() => Promise<void>) | undefined
@@ -34,7 +34,7 @@ vi.mock('../service/check-one-time-password', () => ({
   checkOneTimePassword: vi.fn()
 }))
 
-vi.mock('./register-storage', () => ({
+vi.mock('../service/register-storage', () => ({
   getRegisterEmailFromStorage: vi.fn()
 }))
 

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-import { setNewPassword } from './set-new-password'
+import { setNewPassword } from '../../service/new-password-step/set-new-password'
 
 /**
  * Handles new-password request state for recovery flow.

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 
-import { checkOneTimePasswordByRecovery } from './check-otp-by-recovery'
+import { checkOneTimePasswordByRecovery } from '../../service/otp-step/check-otp-by-recovery'
 
 /**
  * Handles OTP verification request state for recovery flow.

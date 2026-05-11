@@ -6,7 +6,7 @@ import { useTranslation } from '@shared/lib'
 import { Theme } from '@shared/types/theme-modes'
 
 import translationKeys from '../i18n/keys'
-import { setThemeToStorage } from '../model/set-theme/theme-storage'
+import { setThemeToStorage } from '../service/set-theme/theme-storage'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
