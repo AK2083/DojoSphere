@@ -1,5 +1,7 @@
 import { ref } from 'vue'
+import type { AuthActionResult } from '@shared/types'
 
+import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
 import { signInWithOneTimePassword } from '../../service/sign-in-with-otp'
 
 /**
@@ -24,7 +26,7 @@ export function useEmailStep() {
     clearError()
 
     try {
-      const result = await signInWithOneTimePassword(email.value)
+      const result = await signInByEmail(email.value)
 
       if (!result.success) {
         error.value = result.error.message
@@ -44,4 +46,20 @@ export function useEmailStep() {
     clearError,
     execute
   }
+}
+
+/**
+ * Registers a user account by validating a one-time password (OTP).
+ *
+ * This function triggers a monitoring event for a verification attempt
+ * and then verifies the provided token against the given email.
+ *
+ * @param email - The user's email address used for registration.
+ * @param token - The one-time password (OTP) or verification token.
+ * @returns A promise that resolves with the result of the registration process.
+ */
+export function signInByEmail(email: string): Promise<AuthActionResult> {
+  monitorInformation(MONITORING_EVENTS.SIGN_IN_BY_EMAIL_SUBMITTED)
+
+  return signInWithOneTimePassword(email)
 }

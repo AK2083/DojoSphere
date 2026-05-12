@@ -18,7 +18,7 @@ export async function signUpWithMailAndPassword(
 
   if (error) {
     const mappedError = mapSupabaseError(error)
-    saveException(mappedError)
+    captureException(mappedError, 'auth', 'signUpWithMailAndPassword')
 
     return {
       success: false,
@@ -28,7 +28,7 @@ export async function signUpWithMailAndPassword(
 
   if (!data.user) {
     const err = new AppError('unknown', 'User not found')
-    saveException(err)
+    captureException(err, 'auth', 'signUpWithMailAndPassword')
 
     return {
       success: false,
@@ -38,8 +38,4 @@ export async function signUpWithMailAndPassword(
 
   setUserContext({ id: data.user.id })
   return { success: true }
-}
-
-function saveException(error: AppError) {
-  captureException(error, 'auth', 'signUpWithMailAndPassword')
 }

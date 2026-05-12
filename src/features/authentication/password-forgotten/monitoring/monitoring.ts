@@ -15,14 +15,10 @@ export const CATEGORY = 'authentication'
  * consistent event naming across the application.
  */
 export const MONITORING_EVENTS = {
-  AUTH_REGISTER_SUBMITTED: 'auth.register.submitted',
-  AUTH_LOGIN_SUBMITTED: 'auth.login.submitted',
-  CHECK_OTP: 'auth.otp.verify',
-  RESEND_OTP: 'auth.otp.resend',
-  STORAGE_OTP_READ: 'auth.otp.storage.read',
-  STORAGE_OTP_WRITE: 'auth.otp.storage.write',
-  STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
-  STORAGE_REGISTER_EMAIL_WRITE: 'auth.register.email.storage.write'
+  SIGN_IN_BY_EMAIL_SUBMITTED: 'auth.password-forgotten.email.submitted',
+  RENEW_PASSWORD_SUBMITTED: 'auth.password-forgotten.renew-password.submitted',
+  CHECK_OTP_SUBMITTED: 'auth.password-forgotten.otp.submitted',
+  RESEND_OTP: 'auth.otp.resend'
 }
 
 /**

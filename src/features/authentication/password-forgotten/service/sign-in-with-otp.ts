@@ -1,5 +1,4 @@
 import { mapSupabaseError, requestPasswordRecovery } from '@shared/api'
-import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
@@ -13,7 +12,7 @@ export async function signInWithOneTimePassword(email: string): Promise<AuthActi
 
   if (error) {
     const mappedError = mapSupabaseError(error)
-    saveException(mappedError)
+    captureException(mappedError, 'auth', 'signInWithOneTimePassword')
 
     return {
       success: false,
@@ -22,8 +21,4 @@ export async function signInWithOneTimePassword(email: string): Promise<AuthActi
   }
 
   return { success: true }
-}
-
-function saveException(error: AppError) {
-  captureException(error, 'auth', 'signInWithOneTimePassword')
 }
