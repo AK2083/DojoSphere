@@ -2,10 +2,9 @@ import router from '@app/providers/router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { checkOneTimePassword } from '../service/check-one-time-password'
+import { checkOneTimePassword } from '../api/check-one-time-password'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
-import { useSendOneTimePassword, verifyOtp } from './use-send-one-time-password'
+import { useSendOneTimePassword } from './use-send-one-time-password'
 
 let onMountedHandler: (() => Promise<void>) | undefined
 
@@ -30,7 +29,7 @@ vi.mock('@features/authentication/service/get-current-session', () => ({
   getCurrentSession: vi.fn()
 }))
 
-vi.mock('../service/check-one-time-password', () => ({
+vi.mock('../api/check-one-time-password', () => ({
   checkOneTimePassword: vi.fn()
 }))
 
@@ -40,7 +39,12 @@ vi.mock('../service/register-storage', () => ({
 
 vi.mock('../monitoring/monitoring', () => ({
   MONITORING_EVENTS: {
-    CHECK_OTP: 'CHECK_OTP'
+    STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
+    CHECK_OTP_SUBMITTED: 'auth.otp.verify.submitted',
+    CHECK_OTP_VALIDATION_FAILED: 'auth.otp.verify.validation.failed',
+    CHECK_OTP_REQUEST_STARTED: 'auth.otp.verify.request.started',
+    CHECK_OTP_FAILED: 'auth.otp.verify.failed',
+    CHECK_OTP_SUCCEEDED: 'auth.otp.verify.succeeded'
   },
   monitorInformation: vi.fn()
 }))
@@ -74,26 +78,42 @@ describe('useSendOneTimePassword', () => {
   })
 
   it('returns false when token is empty', async () => {
-    const { execute } = useSendOneTimePassword()
+    const { send } = useSendOneTimePassword()
 
-    const result = await execute()
+    const result = await send()
 
     expect(result).toBe(false)
     expect(checkOneTimePassword).not.toHaveBeenCalled()
   })
 
-  it('uses stored email and navigates on success', async () => {
+  it('uses stored email and returns false when email is initially missing', async () => {
     vi.mocked(getRegisterEmailFromStorage).mockReturnValue('stored@mail.com')
-    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
 
-    const { execute, email, token, success, errorCode, loading } = useSendOneTimePassword()
+    const { send, email, token, success, errorCode, loading } = useSendOneTimePassword()
     token.value = '123456'
 
-    const result = await execute()
+    const result = await send()
+
+    expect(result).toBe(false)
+    expect(email.value).toBe('stored@mail.com')
+    expect(checkOneTimePassword).not.toHaveBeenCalled()
+    expect(success.value).toBe(false)
+    expect(errorCode.value).toBeNull()
+    expect(loading.value).toBe(false)
+    expect(router.push).not.toHaveBeenCalled()
+  })
+
+  it('navigates on successful otp verification', async () => {
+    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
+
+    const { send, email, token, success, errorCode, loading } = useSendOneTimePassword()
+    email.value = 'existing@mail.com'
+    token.value = '123456'
+
+    const result = await send()
 
     expect(result).toBe(true)
-    expect(email.value).toBe('stored@mail.com')
-    expect(checkOneTimePassword).toHaveBeenCalledWith('stored@mail.com', '123456')
+    expect(checkOneTimePassword).toHaveBeenCalledWith('existing@mail.com', '123456')
     expect(success.value).toBe(true)
     expect(errorCode.value).toBeNull()
     expect(loading.value).toBe(false)
@@ -110,11 +130,11 @@ describe('useSendOneTimePassword', () => {
       }
     })
 
-    const { execute, email, token, success, errorCode, loading } = useSendOneTimePassword()
+    const { send, email, token, success, errorCode, loading } = useSendOneTimePassword()
     email.value = 'existing@mail.com'
     token.value = '654321'
 
-    const result = await execute()
+    const result = await send()
 
     expect(result).toBe(false)
     expect(checkOneTimePassword).toHaveBeenCalledWith('existing@mail.com', '654321')
@@ -124,33 +144,16 @@ describe('useSendOneTimePassword', () => {
     expect(router.push).not.toHaveBeenCalled()
   })
 
-  it('falls back to empty email when storage has no value', async () => {
+  it('falls back to empty email and returns false when storage has no value', async () => {
     vi.mocked(getRegisterEmailFromStorage).mockReturnValue(null)
-    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
 
-    const { execute, token, email } = useSendOneTimePassword()
+    const { send, token, email } = useSendOneTimePassword()
     token.value = '999000'
 
-    const result = await execute()
+    const result = await send()
 
-    expect(result).toBe(true)
+    expect(result).toBe(false)
     expect(email.value).toBe('')
-    expect(checkOneTimePassword).toHaveBeenCalledWith('', '999000')
-  })
-})
-
-describe('verifyOtp', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('tracks monitoring and delegates otp check', async () => {
-    vi.mocked(checkOneTimePassword).mockResolvedValue({ success: true })
-
-    const result = await verifyOtp('test@mail.com', '111222')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.CHECK_OTP)
-    expect(checkOneTimePassword).toHaveBeenCalledWith('test@mail.com', '111222')
-    expect(result).toEqual({ success: true })
+    expect(checkOneTimePassword).not.toHaveBeenCalled()
   })
 })

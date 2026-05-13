@@ -15,9 +15,18 @@ export const CATEGORY = 'authentication'
  * consistent event naming across the application.
  */
 export const MONITORING_EVENTS = {
-  CHECK_OTP: 'auth.otp.verify',
-  RESEND_OTP: 'auth.otp.resend',
-  STORAGE_REGISTER_EMAIL_WRITE: 'auth.register.email.storage.write'
+  CHECK_OTP_VALIDATION_FAILED: 'auth.otp.verify.validation.failed',
+  CHECK_OTP_REQUEST_STARTED: 'auth.otp.verify.request.started',
+  CHECK_OTP_FAILED: 'auth.otp.verify.failed',
+  CHECK_OTP_SUCCEEDED: 'auth.otp.verify.succeeded',
+  CHECK_OTP_SUBMITTED: 'auth.otp.verify.submitted',
+  STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
+
+  RESEND_OTP_SUBMITTED: 'auth.otp.resend.submitted',
+  RESEND_OTP_VALIDATION_FAILED: 'auth.otp.resend.validation.failed',
+  RESEND_OTP_REQUEST_STARTED: 'auth.otp.resend.request.started',
+  RESEND_OTP_FAILED: 'auth.otp.resend.failed',
+  RESEND_OTP_SUCCEEDED: 'auth.otp.resend.succeeded'
 }
 
 /**

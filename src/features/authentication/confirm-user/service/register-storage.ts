@@ -12,6 +12,6 @@ const EMAILKEY = 'dojosphere.auth.register.email'
  * @returns The registration email address from storage.
  */
 export function getRegisterEmailFromStorage() {
-  monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_WRITE, { EMAILKEY })
+  monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ, { EMAILKEY })
   return getStorageItem<string>(EMAILKEY)
 }

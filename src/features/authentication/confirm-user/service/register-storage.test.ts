@@ -11,7 +11,7 @@ vi.mock('@shared/lib', () => ({
 vi.mock('../monitoring/monitoring', () => ({
   monitorInformation: vi.fn(),
   MONITORING_EVENTS: {
-    STORAGE_REGISTER_EMAIL_WRITE: 'auth.register.email.storage.write'
+    STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read'
   }
 }))
 
@@ -27,12 +27,9 @@ describe('confirm-user register-storage (unit)', () => {
 
     const result = getRegisterEmailFromStorage()
 
-    expect(monitorInformation).toHaveBeenCalledWith(
-      MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_WRITE,
-      {
-        EMAILKEY
-      }
-    )
+    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ, {
+      EMAILKEY
+    })
     expect(getStorageItem).toHaveBeenCalledWith(EMAILKEY)
     expect(result).toBe('user@test.com')
   })

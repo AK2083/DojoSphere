@@ -1,10 +1,9 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
-import type { AuthActionResult } from '@shared/types'
 
+import { checkOneTimePassword } from '../api/check-one-time-password'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { checkOneTimePassword } from '../service/check-one-time-password'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
 
 /**
@@ -28,36 +27,52 @@ export function useSendOneTimePassword() {
   const success = ref(false)
 
   onMounted(async () => {
+    monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ)
     const storedEmail = getRegisterEmailFromStorage()
     const session = await getCurrentSession()
 
     email.value = session?.user?.email ?? storedEmail ?? ''
   })
 
-  async function execute() {
+  async function send() {
+    monitorInformation(MONITORING_EVENTS.CHECK_OTP_SUBMITTED)
     const storedEmail = getRegisterEmailFromStorage()
 
     if (!token.value) {
+      monitorInformation(MONITORING_EVENTS.CHECK_OTP_VALIDATION_FAILED, {
+        reason: 'missing_token'
+      })
       return false
     }
 
     if (!email.value) {
+      monitorInformation(MONITORING_EVENTS.CHECK_OTP_VALIDATION_FAILED, {
+        reason: 'missing_email'
+      })
       email.value = storedEmail ?? ''
-    }
-
-    loading.value = true
-    success.value = false
-
-    const response = await verifyOtp(email.value, token.value)
-
-    loading.value = false
-
-    if (!response.success) {
-      errorCode.value = response.error.code
       return false
     }
 
     errorCode.value = null
+    loading.value = true
+    success.value = false
+
+    monitorInformation(MONITORING_EVENTS.CHECK_OTP_REQUEST_STARTED)
+    const response = await checkOneTimePassword(email.value, token.value)
+
+    loading.value = false
+
+    if (!response.success) {
+      monitorInformation(MONITORING_EVENTS.CHECK_OTP_FAILED, {
+        errorCode: response.error.code
+      })
+
+      errorCode.value = response.error.code
+      return false
+    }
+
+    monitorInformation(MONITORING_EVENTS.CHECK_OTP_SUCCEEDED)
+
     success.value = true
 
     await router.push({ name: 'settings' })
@@ -66,27 +81,11 @@ export function useSendOneTimePassword() {
   }
 
   return {
-    execute,
+    send,
     email,
     token,
     errorCode,
     loading,
     success
   }
-}
-
-/**
- * Registers a user account by validating a one-time password (OTP).
- *
- * This function triggers a monitoring event for a verification attempt
- * and then verifies the provided token against the given email.
- *
- * @param email - The user's email address used for registration.
- * @param token - The one-time password (OTP) or verification token.
- * @returns A promise that resolves with the result of the registration process.
- */
-export function verifyOtp(email: string, token: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.CHECK_OTP)
-
-  return checkOneTimePassword(email, token)
 }

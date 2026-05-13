@@ -1,6 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
 
+import { monitorInformation, MONITORING_EVENTS } from './monitoring'
+
 const routes = [
   {
     path: '/',
@@ -51,6 +53,13 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.afterEach((to, from) => {
+  monitorInformation(MONITORING_EVENTS.ROUTE_CHANGED, {
+    from: from.name,
+    to: to.name
+  })
 })
 
 router.beforeEach(async (to) => {

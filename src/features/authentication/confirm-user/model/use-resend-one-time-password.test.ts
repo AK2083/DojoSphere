@@ -1,11 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { resendSignUpConfirmationEmail } from '../api/resend-sign-up-confirmation'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
-import { resendSignUpConfirmationEmail } from '../service/resend-sign-up-confirmation'
-import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
+import { useResendOneTimePassword } from './use-resend-one-time-password'
 
-vi.mock('../service/resend-sign-up-confirmation', () => ({
+vi.mock('../api/resend-sign-up-confirmation', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
 
@@ -15,7 +14,12 @@ vi.mock('../service/register-storage', () => ({
 
 vi.mock('../monitoring/monitoring', () => ({
   MONITORING_EVENTS: {
-    RESEND_OTP: 'RESEND_OTP'
+    RESEND_OTP_SUBMITTED: 'auth.otp.resend.submitted',
+    STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
+    RESEND_OTP_VALIDATION_FAILED: 'auth.otp.resend.validation.failed',
+    RESEND_OTP_REQUEST_STARTED: 'auth.otp.resend.request.started',
+    RESEND_OTP_FAILED: 'auth.otp.resend.failed',
+    RESEND_OTP_SUCCEEDED: 'auth.otp.resend.succeeded'
   },
   monitorInformation: vi.fn()
 }))
@@ -35,17 +39,31 @@ describe('useResendOneTimePassword', () => {
     expect(canResend.value).toBe(true)
   })
 
-  it('uses stored email and returns true when resend succeeds', async () => {
+  it('uses stored email and returns false when email is initially missing', async () => {
     vi.mocked(getRegisterEmailFromStorage).mockReturnValue('stored@mail.com')
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue({ success: true })
 
     const { resend, email, success, errorCode, loading } = useResendOneTimePassword()
 
     const result = await resend()
 
-    expect(result).toBe(true)
+    expect(result).toBe(false)
     expect(email.value).toBe('stored@mail.com')
-    expect(resendSignUpConfirmationEmail).toHaveBeenCalledWith('stored@mail.com')
+    expect(resendSignUpConfirmationEmail).not.toHaveBeenCalled()
+    expect(success.value).toBe(false)
+    expect(errorCode.value).toBeNull()
+    expect(loading.value).toBe(false)
+  })
+
+  it('returns true when resend succeeds with an existing email', async () => {
+    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue({ success: true })
+
+    const { resend, email, success, errorCode, loading } = useResendOneTimePassword()
+    email.value = 'existing@mail.com'
+
+    const result = await resend()
+
+    expect(result).toBe(true)
+    expect(resendSignUpConfirmationEmail).toHaveBeenCalledWith('existing@mail.com')
     expect(success.value).toBe(true)
     expect(errorCode.value).toBeNull()
     expect(loading.value).toBe(false)
@@ -73,32 +91,15 @@ describe('useResendOneTimePassword', () => {
     expect(loading.value).toBe(false)
   })
 
-  it('falls back to empty email when storage has no value', async () => {
+  it('falls back to empty email and returns false when storage has no value', async () => {
     vi.mocked(getRegisterEmailFromStorage).mockReturnValue(null)
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue({ success: true })
 
     const { resend, email } = useResendOneTimePassword()
 
     const result = await resend()
 
-    expect(result).toBe(true)
+    expect(result).toBe(false)
     expect(email.value).toBe('')
-    expect(resendSignUpConfirmationEmail).toHaveBeenCalledWith('')
-  })
-})
-
-describe('resendOtp', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('tracks monitoring and delegates resend call', async () => {
-    vi.mocked(resendSignUpConfirmationEmail).mockResolvedValue({ success: true })
-
-    const result = await resendOtp('track@mail.com')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.RESEND_OTP)
-    expect(resendSignUpConfirmationEmail).toHaveBeenCalledWith('track@mail.com')
-    expect(result).toEqual({ success: true })
+    expect(resendSignUpConfirmationEmail).not.toHaveBeenCalled()
   })
 })

@@ -24,7 +24,7 @@ const sendOtp = useSendOneTimePassword()
         type="number"
         :loading="sendOtp.loading.value"
         :aria-label="t(translationKeys.steps.otp.ariaLabel)"
-        @finish="sendOtp.execute()"
+        @finish="sendOtp.send()"
       />
       <v-alert
         v-if="sendOtp.errorCode.value"

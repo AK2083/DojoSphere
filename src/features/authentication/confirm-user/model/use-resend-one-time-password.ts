@@ -1,9 +1,8 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
-import type { AuthActionResult } from '@shared/types'
 
+import { resendSignUpConfirmationEmail } from '../api/resend-sign-up-confirmation'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
-import { resendSignUpConfirmationEmail } from '../service/resend-sign-up-confirmation'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>
@@ -45,24 +44,39 @@ export function useResendOneTimePassword(): UseResendReturn {
    * @returns Resolves to `true` if successful, otherwise `false`
    */
   async function resend(): Promise<boolean> {
+    monitorInformation(MONITORING_EVENTS.RESEND_OTP_SUBMITTED)
+    errorCode.value = null
     loading.value = true
     success.value = false
 
+    monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ)
     const storedEmail = getRegisterEmailFromStorage()
 
     if (!email.value) {
+      monitorInformation(MONITORING_EVENTS.RESEND_OTP_VALIDATION_FAILED, {
+        reason: 'missing_email'
+      })
+
       email.value = storedEmail ?? ''
+      loading.value = false
+      return false
     }
 
-    const response = await resendOtp(email.value)
+    monitorInformation(MONITORING_EVENTS.RESEND_OTP_REQUEST_STARTED)
+    const response = await resendSignUpConfirmationEmail(email.value)
 
     loading.value = false
 
     if (!response.success) {
+      monitorInformation(MONITORING_EVENTS.RESEND_OTP_FAILED, {
+        errorCode: response.error.code
+      })
+
       errorCode.value = response.error.code
       return false
     }
 
+    monitorInformation(MONITORING_EVENTS.RESEND_OTP_SUCCEEDED)
     errorCode.value = null
     success.value = true
 
@@ -70,15 +84,4 @@ export function useResendOneTimePassword(): UseResendReturn {
   }
 
   return { resend, canResend, email, errorCode, loading, success }
-}
-
-/**
- * Triggers resend of the sign-up confirmation mail and records monitoring data.
- *
- * @param {string} email - The email address to resend confirmation to.
- * @returns {Promise<AuthActionResult>} Result of resend attempt.
- */
-export function resendOtp(email: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.RESEND_OTP)
-  return resendSignUpConfirmationEmail(email)
 }
