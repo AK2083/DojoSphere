@@ -1,8 +1,7 @@
 import { ref } from 'vue'
-import type { AuthActionResult } from '@shared/types'
 
+import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { signInWithOneTimePassword } from '../../service/sign-in-with-otp'
 
 /**
  * Handles OTP mail request for the email step.
@@ -19,20 +18,37 @@ export function useEmailStep() {
   }
 
   async function execute() {
-    if (loading.value) return false
-    if (!email.value.trim()) return false
+    monitorInformation(MONITORING_EVENTS.EMAIL_STEP_EXECUTE_STARTED)
+
+    if (loading.value) {
+      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_ALREADY_LOADING)
+      return false
+    }
+
+    if (!email.value.trim()) {
+      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_VALIDATION_FAILED, {
+        reason: 'missing_email'
+      })
+
+      return false
+    }
 
     loading.value = true
     clearError()
 
     try {
-      const result = await signInByEmail(email.value)
+      const result = await signInWithOneTimePassword(email.value)
 
       if (!result.success) {
+        monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SIGN_IN_FAILED, {
+          errorCode: result.error.code
+        })
+
         error.value = result.error.message
         return false
       }
 
+      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SIGN_IN_SUCCEEDED)
       return true
     } finally {
       loading.value = false
@@ -46,20 +62,4 @@ export function useEmailStep() {
     clearError,
     execute
   }
-}
-
-/**
- * Registers a user account by validating a one-time password (OTP).
- *
- * This function triggers a monitoring event for a verification attempt
- * and then verifies the provided token against the given email.
- *
- * @param email - The user's email address used for registration.
- * @param token - The one-time password (OTP) or verification token.
- * @returns A promise that resolves with the result of the registration process.
- */
-export function signInByEmail(email: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.SIGN_IN_BY_EMAIL_SUBMITTED)
-
-  return signInWithOneTimePassword(email)
 }

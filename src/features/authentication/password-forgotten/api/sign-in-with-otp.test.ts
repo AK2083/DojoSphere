@@ -3,7 +3,7 @@ import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { signInWithOneTimePassword } from './sign-in-with-otp'
+import { signInWithOneTimePassword } from '../api/sign-in-with-otp'
 
 vi.mock('@shared/api')
 vi.mock('@shared/lib')

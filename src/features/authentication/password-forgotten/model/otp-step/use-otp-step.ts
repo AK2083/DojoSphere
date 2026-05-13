@@ -1,8 +1,7 @@
 import { ref } from 'vue'
-import type { AuthActionResult } from '@shared/types'
 
+import { checkOneTimePasswordByRecovery } from '../../api/check-otp-by-recovery'
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { checkOneTimePasswordByRecovery } from '../../service/otp-step/check-otp-by-recovery'
 
 /**
  * Handles OTP verification request state for recovery flow.
@@ -21,20 +20,39 @@ export function useOtpStep() {
   }
 
   async function execute() {
-    if (loading.value) return false
+    monitorInformation(MONITORING_EVENTS.OTP_EXECUTE_STARTED)
+
+    if (loading.value) {
+      monitorInformation(MONITORING_EVENTS.OTP_ALREADY_LOADING)
+      return false
+    }
+
+    if (!email.value.trim() || !token.value.trim()) {
+      monitorInformation(MONITORING_EVENTS.OTP_VALIDATION_FAILED, {
+        hasEmail: !!email.value.trim(),
+        hasToken: !!token.value.trim()
+      })
+
+      return false
+    }
 
     loading.value = true
     clearError()
     isValid.value = false
 
     try {
-      const response = await checkOtp(email.value, token.value)
+      const response = await checkOneTimePasswordByRecovery(email.value, token.value)
 
       if (!response.success) {
+        monitorInformation(MONITORING_EVENTS.OTP_CHECK_FAILED, {
+          errorCode: response.error.code
+        })
+
         error.value = response.error.code
         return false
       }
 
+      monitorInformation(MONITORING_EVENTS.OTP_CHECK_SUCCEEDED)
       isValid.value = true
       return true
     } finally {
@@ -51,18 +69,4 @@ export function useOtpStep() {
     clearError,
     execute
   }
-}
-
-/**
- * Checks a one-time password (OTP) for password recovery.
- *
- * @param password - The new password that should be stored for the current user.
- * @param email - User email address associated with the recovery flow.
- * @param token - One-time password sent to the user.
- * @returns Result containing success state or mapped error details.
- */
-export function checkOtp(email: string, token: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.CHECK_OTP_SUBMITTED)
-
-  return checkOneTimePasswordByRecovery(email, token)
 }

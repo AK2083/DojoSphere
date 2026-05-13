@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { setNewPassword } from '../../service/new-password-step/set-new-password'
+import { setNewPassword } from '../../api/set-new-password'
 import { useNewPasswordStep } from './use-new-password-step'
 
-vi.mock('../../service/new-password-step/set-new-password')
+vi.mock('../../api/set-new-password', () => ({
+  setNewPassword: vi.fn()
+}))
 
 describe('useNewPasswordStep', () => {
   beforeEach(() => {
@@ -75,14 +77,13 @@ describe('useNewPasswordStep', () => {
     vi.mocked(setNewPassword).mockResolvedValue({ success: true })
 
     const newPasswordStep = useNewPasswordStep()
-    const passwordRef = newPasswordStep.password as { value: string | null }
-    passwordRef.value = null
+    newPasswordStep.password.value = ''
 
     const result = await newPasswordStep.execute()
 
-    expect(result).toBe(true)
-    expect(setNewPassword).toHaveBeenCalledWith('')
-    expect(newPasswordStep.isValid.value).toBe(true)
+    expect(result).toBe(false)
+    expect(setNewPassword).not.toHaveBeenCalled()
+    expect(newPasswordStep.isValid.value).toBe(false)
   })
 
   it('allows manually clearing error state', () => {

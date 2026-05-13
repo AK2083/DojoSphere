@@ -1,8 +1,7 @@
 import { ref } from 'vue'
-import type { AuthActionResult } from '@shared/types'
 
+import { setNewPassword } from '../../api/set-new-password'
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { setNewPassword } from '../../service/new-password-step/set-new-password'
 
 /**
  * Handles new-password request state for recovery flow.
@@ -20,20 +19,38 @@ export function useNewPasswordStep() {
   }
 
   async function execute() {
-    if (loading.value) return false
+    monitorInformation(MONITORING_EVENTS.NEW_PASSWORD_EXECUTE_STARTED)
+
+    if (loading.value) {
+      monitorInformation(MONITORING_EVENTS.NEW_PASSWORD_ALREADY_LOADING)
+      return false
+    }
+
+    if (!password.value.trim()) {
+      monitorInformation(MONITORING_EVENTS.NEW_PASSWORD_VALIDATION_FAILED, {
+        reason: 'missing_password'
+      })
+
+      return false
+    }
 
     loading.value = true
     clearError()
     isValid.value = false
 
     try {
-      const response = await setConfirmedPassword(password.value ?? '')
+      const response = await setNewPassword(password.value)
 
       if (!response.success) {
+        monitorInformation(MONITORING_EVENTS.NEW_PASSWORD_FAILED, {
+          errorCode: response.error.code
+        })
+
         error.value = response.error.code
         return false
       }
 
+      monitorInformation(MONITORING_EVENTS.NEW_PASSWORD_SUCCEEDED)
       isValid.value = true
       return true
     } finally {
@@ -49,16 +66,4 @@ export function useNewPasswordStep() {
     clearError,
     execute
   }
-}
-
-/**
- * Updates the currently authenticated user's password.
- *
- * @param password - The new password that should be stored for the current user.
- * @returns Result containing success state or mapped error details.
- */
-export function setConfirmedPassword(password: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.RENEW_PASSWORD_SUBMITTED)
-
-  return setNewPassword(password)
 }

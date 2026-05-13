@@ -8,7 +8,7 @@ import { AppError } from '@shared/errors'
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { checkOneTimePasswordByRecovery } from './check-otp-by-recovery'
+import { checkOneTimePasswordByRecovery } from '../api/check-otp-by-recovery'
 
 vi.mock('@shared/api')
 vi.mock('@shared/lib')

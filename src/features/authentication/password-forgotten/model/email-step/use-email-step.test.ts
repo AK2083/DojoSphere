@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { signInWithOneTimePassword } from '../../service/sign-in-with-otp'
+import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
 import { useEmailStep } from './use-email-step'
 
-vi.mock('../../service/sign-in-with-otp', () => ({
+vi.mock('../../api/sign-in-with-otp', () => ({
   signInWithOneTimePassword: vi.fn()
 }))
 

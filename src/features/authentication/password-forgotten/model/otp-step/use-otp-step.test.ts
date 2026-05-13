@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { checkOneTimePasswordByRecovery } from '../../service/otp-step/check-otp-by-recovery'
+import { checkOneTimePasswordByRecovery } from '../../api/check-otp-by-recovery'
 import { useOtpStep } from './use-otp-step'
 
-vi.mock('../../service/otp-step/check-otp-by-recovery')
+vi.mock('../../api/check-otp-by-recovery', () => ({
+  checkOneTimePasswordByRecovery: vi.fn()
+}))
 
 describe('useOtpStep', () => {
   beforeEach(() => {

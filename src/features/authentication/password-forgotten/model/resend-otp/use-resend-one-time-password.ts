@@ -1,8 +1,8 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
 import type { AuthActionResult } from '@shared/types'
 
+import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
 import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { signInWithOneTimePassword } from '../../service/sign-in-with-otp'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>
