@@ -1,7 +1,5 @@
 import { getStorageItem, type LanguageCode, setStorageItem } from '@shared/lib'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-
 /**
  * Storage key used to persist the user's preferred language.
  */
@@ -17,7 +15,6 @@ const LANGUAGEKEY = 'dojosphere.settings.language'
  * @param {LanguageCode} language - The language code to store.
  */
 export function setLanguageToStorage(language: LanguageCode) {
-  monitorInformation(MONITORING_EVENTS.SETTINGS_LANG_WRITE, { language })
   setStorageItem(LANGUAGEKEY, language)
 }
 
@@ -31,6 +28,5 @@ export function setLanguageToStorage(language: LanguageCode) {
  * @returns {LanguageCode | undefined} The stored language code if available.
  */
 export function getLanguageFromStorage() {
-  monitorInformation(MONITORING_EVENTS.SETTINGS_LANG_READ, { LANGUAGEKEY })
   return getStorageItem<LanguageCode>(LANGUAGEKEY)
 }

@@ -1,18 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { signInWithEmailPassword } from '../service/sign-in-with-email-password'
-import { loginUserAccount, useLogin } from './use-login'
+import { useLogin } from './use-login'
 
 vi.mock('../service/sign-in-with-email-password', () => ({
   signInWithEmailPassword: vi.fn()
-}))
-
-vi.mock('../monitoring/monitoring', () => ({
-  MONITORING_EVENTS: {
-    AUTH_LOGIN_SUBMITTED: 'AUTH_LOGIN_SUBMITTED'
-  },
-  monitorInformation: vi.fn()
 }))
 
 describe('useLogin', () => {
@@ -119,21 +111,5 @@ describe('useLogin', () => {
 
     clearError()
     expect(errorCode.value).toBeNull()
-  })
-})
-
-describe('loginUserAccount', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('tracks monitoring and delegates auth sign-in', async () => {
-    vi.mocked(signInWithEmailPassword).mockResolvedValue({ success: true })
-
-    const result = await loginUserAccount('track@mail.com', 'pw123456')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.AUTH_LOGIN_SUBMITTED)
-    expect(signInWithEmailPassword).toHaveBeenCalledWith('track@mail.com', 'pw123456')
-    expect(result).toEqual({ success: true })
   })
 })

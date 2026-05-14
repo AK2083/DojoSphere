@@ -2,20 +2,11 @@ import { getStorageItem, setStorageItem } from '@shared/lib'
 import { type ThemePreference } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation } from '../../monitoring/monitoring'
 import { getThemeFromStorage, setThemeToStorage } from './theme-storage'
 
 vi.mock('@shared/lib', () => ({
   getStorageItem: vi.fn(),
   setStorageItem: vi.fn()
-}))
-
-vi.mock('../../monitoring/monitoring', () => ({
-  monitorInformation: vi.fn(),
-  MONITORING_EVENTS: {
-    SETTINGS_THEME_WRITE: 'SETTINGS_THEME_WRITE',
-    SETTINGS_THEME_READ: 'SETTINGS_THEME_READ'
-  }
 }))
 
 describe('theme-storage (unit)', () => {
@@ -30,7 +21,6 @@ describe('theme-storage (unit)', () => {
 
     setThemeToStorage(theme)
 
-    expect(monitorInformation).toHaveBeenCalledWith('SETTINGS_THEME_WRITE', { theme })
     expect(setStorageItem).toHaveBeenCalledWith(THEME_KEY, theme)
   })
 
@@ -41,7 +31,6 @@ describe('theme-storage (unit)', () => {
 
     const result = getThemeFromStorage()
 
-    expect(monitorInformation).toHaveBeenCalledWith('SETTINGS_THEME_READ', { THEMEKEY: THEME_KEY })
     expect(getStorageItem).toHaveBeenCalledWith(THEME_KEY)
     expect(result).toBe(theme)
   })

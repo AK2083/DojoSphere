@@ -15,14 +15,20 @@ export const CATEGORY = 'authentication'
  * consistent event naming across the application.
  */
 export const MONITORING_EVENTS = {
-  AUTH_REGISTER_SUBMITTED: 'auth.register.submitted',
-  AUTH_LOGIN_SUBMITTED: 'auth.login.submitted',
-  CHECK_OTP: 'auth.otp.verify',
-  RESEND_OTP: 'auth.otp.resend',
-  STORAGE_OTP_READ: 'auth.otp.storage.read',
-  STORAGE_OTP_WRITE: 'auth.otp.storage.write',
-  STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
-  STORAGE_REGISTER_EMAIL_WRITE: 'auth.register.email.storage.write'
+  LOGIN_EXECUTE_STARTED: 'auth.login.execute.started',
+  LOGIN_ALREADY_LOADING: 'auth.login.already.loading',
+  LOGIN_FAILED: 'auth.login.failed',
+  LOGIN_SUCCEEDED: 'auth.login.succeeded',
+  LOGIN_EXCEPTION: 'auth.login.exception',
+
+  LOGIN_FORM_SUBMITTED: 'auth.login.form.submitted',
+  LOGIN_FORM_ALREADY_LOADING: 'auth.login.form.already.loading',
+  LOGIN_FORM_MISSING: 'auth.login.form.missing',
+  LOGIN_FORM_INVALID: 'auth.login.form.invalid',
+  LOGIN_FORM_EXECUTE_FAILED: 'auth.login.form.execute.failed',
+  LOGIN_FORM_SUCCEEDED: 'auth.login.form.succeeded',
+  LOGIN_FORM_NAVIGATION_STARTED: 'auth.login.form.navigation.started',
+  PASSWORD_RESET_NAVIGATION_STARTED: 'auth.login.password-reset.navigation.started'
 }
 
 /**

@@ -6,7 +6,7 @@ import { addBreadcrumb } from '@shared/lib'
  * This category groups all monitoring breadcrumbs that originate
  * from authentication flows (e.g. login, register).
  */
-export const CATEGORY = 'authentication'
+export const CATEGORY = 'authentication.confirmUser'
 
 /**
  * Collection of monitoring event identifiers related to authentication.

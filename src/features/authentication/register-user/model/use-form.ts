@@ -2,6 +2,7 @@ import { ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 
+import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { useRegister } from './use-register'
 import { useRegisterRouting } from './use-routing'
 
@@ -42,14 +43,35 @@ export function useRegisterForm() {
   })
 
   async function submit() {
-    if (loading.value || !form.value) return
+    monitorInformation(MONITORING_EVENTS.REGISTER_FORM_SUBMITTED)
+
+    if (loading.value) {
+      monitorInformation(MONITORING_EVENTS.REGISTER_FORM_ALREADY_LOADING)
+      return
+    }
+
+    if (!form.value) {
+      monitorInformation(MONITORING_EVENTS.REGISTER_FORM_MISSING)
+      return
+    }
 
     const result = await form.value.validate()
-    if (!result.valid) return
+
+    if (!result.valid) {
+      monitorInformation(MONITORING_EVENTS.REGISTER_FORM_INVALID)
+      return
+    }
 
     const submittedEmail = email.value
     const success = await execute(submittedEmail, password.value)
-    if (!success) return
+
+    if (!success) {
+      monitorInformation(MONITORING_EVENTS.REGISTER_FORM_EXECUTE_FAILED)
+      return
+    }
+
+    monitorInformation(MONITORING_EVENTS.REGISTER_FORM_SUCCEEDED)
+    monitorInformation(MONITORING_EVENTS.REGISTER_FORM_NAVIGATION_STARTED)
 
     await navigateAfterRegisterSuccess(submittedEmail)
   }

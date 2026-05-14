@@ -1,8 +1,6 @@
 import { getStorageItem, setStorageItem } from '@shared/lib'
 import type { ThemePreference } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-
 /**
  * Storage key used to persist the user's preferred theme mode.
  */
@@ -18,7 +16,6 @@ const THEMEKEY = 'dojosphere.settings.theme'
  * @param {ThemePreference} theme - The theme preference to store.
  */
 export function setThemeToStorage(theme: ThemePreference) {
-  monitorInformation(MONITORING_EVENTS.SETTINGS_THEME_WRITE, { theme })
   setStorageItem(THEMEKEY, theme)
 }
 
@@ -32,6 +29,5 @@ export function setThemeToStorage(theme: ThemePreference) {
  * @returns {ThemePreference | undefined} The stored theme preference if available.
  */
 export function getThemeFromStorage() {
-  monitorInformation(MONITORING_EVENTS.SETTINGS_THEME_READ, { THEMEKEY })
   return getStorageItem<ThemePreference>(THEMEKEY)
 }

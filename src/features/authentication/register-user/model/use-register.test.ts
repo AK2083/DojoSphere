@@ -1,19 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { signUpWithMailAndPassword } from '../api/sign-up-with-mail-and-password'
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../service/register-storage'
-import { signUpWithMailAndPassword } from '../service/sign-up-with-mail-and-password'
-import { registerUserAccount, useRegister } from './use-register'
+import { useRegister } from './use-register'
 
-vi.mock('../service/sign-up-with-mail-and-password', () => ({
+vi.mock('../api/sign-up-with-mail-and-password', () => ({
   signUpWithMailAndPassword: vi.fn()
-}))
-
-vi.mock('../monitoring/monitoring', () => ({
-  MONITORING_EVENTS: {
-    AUTH_REGISTER_SUBMITTED: 'AUTH_REGISTER_SUBMITTED'
-  },
-  monitorInformation: vi.fn()
 }))
 
 vi.mock('../service/register-storage', () => ({
@@ -107,21 +99,5 @@ describe('useRegister', () => {
 
     clearError()
     expect(errorCode.value).toBeNull()
-  })
-})
-
-describe('registerUserAccount', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('tracks monitoring and delegates auth sign-up', async () => {
-    vi.mocked(signUpWithMailAndPassword).mockResolvedValue({ success: true })
-
-    const result = await registerUserAccount('track@mail.com', 'pw123456')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.AUTH_REGISTER_SUBMITTED)
-    expect(signUpWithMailAndPassword).toHaveBeenCalledWith('track@mail.com', 'pw123456')
-    expect(result).toEqual({ success: true })
   })
 })

@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import type { AuthActionResult } from '@shared/types'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { signInWithEmailPassword } from '../service/sign-in-with-email-password'
@@ -20,18 +19,29 @@ export function useLogin() {
   }
 
   async function execute(email: string, password: string) {
-    if (loading.value) return false
+    monitorInformation(MONITORING_EVENTS.LOGIN_EXECUTE_STARTED)
+
+    if (loading.value) {
+      monitorInformation(MONITORING_EVENTS.LOGIN_ALREADY_LOADING)
+      return false
+    }
 
     loading.value = true
     clearError()
 
     try {
-      const response = await loginUserAccount(email, password)
+      const response = await signInWithEmailPassword(email, password)
 
       if (!response.success) {
+        monitorInformation(MONITORING_EVENTS.LOGIN_FAILED, {
+          errorCode: response.error.code
+        })
+
         errorCode.value = response.error.code
         return false
       }
+
+      monitorInformation(MONITORING_EVENTS.LOGIN_SUCCEEDED)
 
       return true
     } finally {
@@ -40,19 +50,4 @@ export function useLogin() {
   }
 
   return { execute, clearError, errorCode, loading }
-}
-
-/**
- * Executes the email/password sign-in use case.
- *
- * Records a monitoring breadcrumb and delegates authentication to the
- * Supabase API wrapper {@link signInWithEmailPassword}.
- *
- * @param email - User email address
- * @param password - User password
- * @returns A promise resolving to the sign-in result (success or mapped error).
- */
-export function loginUserAccount(email: string, password: string): Promise<AuthActionResult> {
-  monitorInformation(MONITORING_EVENTS.AUTH_LOGIN_SUBMITTED)
-  return signInWithEmailPassword(email, password)
 }
