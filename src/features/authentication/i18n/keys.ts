@@ -5,7 +5,9 @@ const translationKeys = {
     signIn: 'auth.common.navigation.signIn',
     ariaSignIn: 'auth.common.navigation.ariaSignIn',
     signUp: 'auth.common.navigation.signUp',
-    ariaSignUp: 'auth.common.navigation.ariaSignUp'
+    ariaSignUp: 'auth.common.navigation.ariaSignUp',
+    logout: 'auth.common.navigation.logout',
+    ariaLogout: 'auth.common.navigation.ariaLogout'
   }
 }
 

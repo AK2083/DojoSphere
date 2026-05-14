@@ -12,6 +12,8 @@ export default {
     signIn: 'Einloggen',
     ariaSignIn: 'Einloggen',
     signUp: 'Registrieren',
-    ariaSignUp: 'Registrieren'
+    ariaSignUp: 'Registrieren',
+    logout: 'Abmelden',
+    ariaLogout: 'Abmelden'
   }
 }

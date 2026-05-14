@@ -60,6 +60,17 @@ describe('useOtpStep', () => {
     expect(checkOneTimePasswordByRecovery).not.toHaveBeenCalled()
   })
 
+  it('returns false when token is missing', async () => {
+    const otpStep = useOtpStep()
+    otpStep.email.value = 'test@example.com'
+    otpStep.token.value = '   '
+
+    const result = await otpStep.execute()
+
+    expect(result).toBe(false)
+    expect(checkOneTimePasswordByRecovery).not.toHaveBeenCalled()
+  })
+
   it('resets loading and validity when verification throws', async () => {
     vi.mocked(checkOneTimePasswordByRecovery).mockRejectedValue(new Error('network'))
 

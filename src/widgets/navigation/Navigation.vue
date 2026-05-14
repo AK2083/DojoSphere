@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { translationKeys, useAuthNavigation, useAuthSession } from '@features/authentication'
-import { mdiAccount, mdiCardAccountDetails, mdiCog } from '@mdi/js'
+import { mdiAccount, mdiCardAccountDetails, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 const drawer = ref(false)
@@ -34,6 +34,9 @@ watch(
       >
         <v-icon :icon="mdiAccount"></v-icon>
       </v-btn>
+      <v-btn v-if="isLoggedIn" icon :aria-label="t(translationKeys.navigation.ariaLogout)" exact>
+        <v-icon :icon="mdiLogout"></v-icon>
+      </v-btn>
       <v-btn
         v-else
         icon
@@ -58,6 +61,14 @@ watch(
           :to="{ name: 'account' }"
           :title="t(translationKeys.navigation.signUp)"
           :aria-label="t(translationKeys.navigation.ariaSignUp)"
+          exact
+        />
+        <v-list-item
+          v-if="isLoggedIn"
+          :prepend-icon="mdiLogout"
+          :title="t(translationKeys.navigation.logout)"
+          :to="{ name: 'account' }"
+          :aria-label="t(translationKeys.navigation.ariaLogout)"
           exact
         />
         <v-list-item
