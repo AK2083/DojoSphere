@@ -129,6 +129,18 @@ export async function signInByEmailPassword(
 }
 
 /**
+ * Signs out the current user session from Supabase auth.
+ *
+ * This is a low-level API wrapper around Supabase's `auth.signOut` method.
+ * It does not perform error handling, mapping, or side effects.
+ *
+ * @returns Raw Supabase sign-out response.
+ */
+export async function signOut(): Promise<Awaited<ReturnType<typeof supabase.auth.signOut>>> {
+  return await supabase.auth.signOut()
+}
+
+/**
  * Verifies a one-time password (OTP) for email-based sign-up using Supabase.
  *
  * This function wraps Supabase's `auth.verifyOtp` method and confirms a user's

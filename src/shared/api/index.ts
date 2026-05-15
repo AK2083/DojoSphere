@@ -6,6 +6,7 @@ export {
   resendSignUpConfirmation,
   signInByEmailPassword,
   signInWithOtp,
+  signOut,
   signUpByEmailPassword,
   updateUserPassword,
   verifyOneTimePasswordByRecovery,

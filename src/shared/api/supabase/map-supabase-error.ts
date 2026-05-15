@@ -3,6 +3,19 @@ import type { AuthError } from '@supabase/supabase-js'
 
 import translationKeys from '../../lib/i18n/keys'
 
+function isLikelyNetworkError(error: AuthError): boolean {
+  const message = error.message.toLowerCase()
+  const code = error.code?.toLowerCase() ?? ''
+
+  return (
+    error.status === 0 ||
+    code.includes('network') ||
+    message.includes('failed to fetch') ||
+    message.includes('network error') ||
+    message.includes('load failed')
+  )
+}
+
 /**
  * Maps a Supabase authentication error to an application-specific {@link AppError}.
  *
@@ -17,6 +30,10 @@ import translationKeys from '../../lib/i18n/keys'
  * translation key and optional additional details.
  */
 export function mapSupabaseError(error: AuthError): AppError {
+  if (isLikelyNetworkError(error)) {
+    return new AppError(translationKeys.error.retry)
+  }
+
   switch (error.code) {
     // Sign-up collision
     case 'user_already_exists':

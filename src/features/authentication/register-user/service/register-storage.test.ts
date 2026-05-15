@@ -1,11 +1,16 @@
-import { setStorageItem } from '@shared/lib'
+import { removeStorageItem, setStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from './register-storage'
+import {
+  clearRegisterStorage,
+  setIsOtpActiveToStorage,
+  setRegisterEmailToStorage
+} from './register-storage'
 
 vi.mock('@shared/lib', () => ({
-  setStorageItem: vi.fn()
+  setStorageItem: vi.fn(),
+  removeStorageItem: vi.fn()
 }))
 
 vi.mock('../monitoring/monitoring', () => ({
@@ -44,5 +49,13 @@ describe('register-user register-storage (unit)', () => {
       email
     })
     expect(setStorageItem).toHaveBeenCalledWith(EMAILKEY, email)
+  })
+
+  it('clears register-related storage keys', () => {
+    clearRegisterStorage()
+
+    expect(removeStorageItem).toHaveBeenCalledWith(EMAILKEY)
+    expect(removeStorageItem).toHaveBeenCalledWith(OTPKEY)
+    expect(removeStorageItem).toHaveBeenCalledTimes(2)
   })
 })

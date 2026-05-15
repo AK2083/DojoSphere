@@ -1,4 +1,4 @@
-import { setStorageItem } from '@shared/lib'
+import { removeStorageItem, setStorageItem } from '@shared/lib'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
@@ -26,4 +26,15 @@ export function setRegisterEmailToStorage(email: string) {
 export function setIsOtpActiveToStorage(isActive: boolean) {
   monitorInformation(MONITORING_EVENTS.STORAGE_OTP_READ, { isActive })
   setStorageItem(OTPKEY, isActive)
+}
+
+/**
+ * Clears persisted registration progress from storage.
+ *
+ * This should be called after a completed logout to avoid stale
+ * register/otp state affecting future account routing.
+ */
+export function clearRegisterStorage() {
+  removeStorageItem(EMAILKEY)
+  removeStorageItem(OTPKEY)
 }

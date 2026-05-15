@@ -16,6 +16,7 @@ import {
   resendSignUpConfirmation,
   signInByEmailPassword,
   signInWithOtp,
+  signOut,
   signUpByEmailPassword,
   updateUserPassword,
   verifyOneTimePasswordByRecovery,
@@ -29,6 +30,7 @@ vi.mock('../client', () => ({
       resetPasswordForEmail: vi.fn(),
       signUp: vi.fn(),
       signInWithPassword: vi.fn(),
+      signOut: vi.fn(),
       verifyOtp: vi.fn(),
       resend: vi.fn(),
       updateUser: vi.fn(),
@@ -174,6 +176,25 @@ describe('signInByEmailPassword', () => {
     const result = await signInByEmailPassword(email, password)
 
     expect(result.error).toBe(mockError)
+  })
+})
+
+describe('signOut', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('calls supabase.auth.signOut and returns its response', async () => {
+    const mockResponse = {
+      error: null
+    }
+
+    vi.mocked(supabase.auth.signOut).mockResolvedValue(mockResponse as never)
+
+    const result = await signOut()
+
+    expect(supabase.auth.signOut).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(mockResponse)
   })
 })
 

@@ -4,11 +4,11 @@ import { describe, expect, it } from 'vitest'
 
 import { mapSupabaseError } from './map-supabase-error'
 
-function createAuthError(code: string, message = 'supabase error'): AuthError {
+function createAuthError(code = 'unexpected', message = 'supabase error', status = 400): AuthError {
   return {
     code,
     message,
-    status: 400,
+    status,
     name: 'AuthError'
   } as AuthError
 }
@@ -22,6 +22,23 @@ describe('mapSupabaseError', () => {
     expect(result).toBeInstanceOf(AppError)
     expect(result.code).toBe('shared.error.unknown')
     expect(result.message).toBe('')
+  })
+
+  it('maps network-like errors to retry error', () => {
+    const resultByCode = mapSupabaseError(createAuthError('network_error', 'failed request'))
+    const resultByMessage = mapSupabaseError(createAuthError('unexpected', 'Failed to fetch'))
+    const resultByStatus = mapSupabaseError(createAuthError('unexpected', 'offline', 0))
+    const resultByMessageWithoutCode = mapSupabaseError({
+      name: 'AuthError',
+      message: 'Load failed while contacting auth',
+      status: 400,
+      code: undefined
+    } as unknown as AuthError)
+
+    expect(resultByCode.code).toBe('shared.error.retry')
+    expect(resultByMessage.code).toBe('shared.error.retry')
+    expect(resultByStatus.code).toBe('shared.error.retry')
+    expect(resultByMessageWithoutCode.code).toBe('shared.error.retry')
   })
 
   it('maps invalid_credentials to auth.invalid_credentials', () => {

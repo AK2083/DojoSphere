@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import { useAuthNavigation, useAuthSession } from '@features/authentication'
+import { useAuthNavigation, useAuthSession, useSignOut } from '@features/authentication'
 import { mdiAccount, mdiCardAccountDetails, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
@@ -11,9 +11,26 @@ const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { getAccountRoute } = useAuthNavigation()
 const { isLoggedIn } = useAuthSession()
+const {
+  logout,
+  loading: isSigningOut,
+  errorCode: logoutErrorCode,
+  clearError: clearLogoutError
+} = useSignOut()
 const { t } = useTranslation()
 
 const isMobile = computed(() => smAndDown.value)
+const showLogoutError = ref(false)
+
+async function handleLogout() {
+  const success = await logout()
+  showLogoutError.value = !success
+}
+
+function closeLogoutError() {
+  showLogoutError.value = false
+  clearLogoutError()
+}
 
 watch(
   smAndDown,
@@ -36,7 +53,15 @@ watch(
       >
         <v-icon :icon="mdiAccount"></v-icon>
       </v-btn>
-      <v-btn v-if="isLoggedIn" icon :aria-label="t(translationKeys.navigation.ariaLogout)" exact>
+      <v-btn
+        v-if="isLoggedIn"
+        icon
+        :loading="isSigningOut"
+        :disabled="isSigningOut"
+        :aria-label="t(translationKeys.navigation.ariaLogout)"
+        exact
+        @click="handleLogout"
+      >
         <v-icon :icon="mdiLogout"></v-icon>
       </v-btn>
       <v-btn
@@ -69,9 +94,10 @@ watch(
           v-if="isLoggedIn"
           :prepend-icon="mdiLogout"
           :title="t(translationKeys.navigation.logout)"
-          :to="{ name: 'account' }"
+          :disabled="isSigningOut"
           :aria-label="t(translationKeys.navigation.ariaLogout)"
           exact
+          @click="handleLogout"
         />
         <v-list-item
           v-else
@@ -85,4 +111,17 @@ watch(
       </v-list>
     </template>
   </v-navigation-drawer>
+
+  <v-snackbar
+    v-model="showLogoutError"
+    color="error"
+    location="top"
+    timeout="5000"
+    @update:model-value="(value) => !value && closeLogoutError()"
+  >
+    {{ t(logoutErrorCode ?? 'shared.error.unknown') }}
+    <template #actions>
+      <v-btn variant="text" @click="closeLogoutError">OK</v-btn>
+    </template>
+  </v-snackbar>
 </template>

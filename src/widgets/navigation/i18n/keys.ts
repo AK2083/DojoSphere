@@ -1,13 +1,13 @@
 const translationKeys = {
-  label: 'auth.common.label',
-  ariaLabel: 'auth.common.ariaLabel',
+  label: 'navigation.label',
+  ariaLabel: 'navigation.ariaLabel',
   navigation: {
-    signIn: 'auth.common.navigation.signIn',
-    ariaSignIn: 'auth.common.navigation.ariaSignIn',
-    signUp: 'auth.common.navigation.signUp',
-    ariaSignUp: 'auth.common.navigation.ariaSignUp',
-    logout: 'auth.common.navigation.logout',
-    ariaLogout: 'auth.common.navigation.ariaLogout'
+    signIn: 'navigation.navigation.signIn',
+    ariaSignIn: 'navigation.navigation.ariaSignIn',
+    signUp: 'navigation.navigation.signUp',
+    ariaSignUp: 'navigation.navigation.ariaSignUp',
+    logout: 'navigation.navigation.logout',
+    ariaLogout: 'navigation.navigation.ariaLogout'
   }
 }
 
