@@ -1,3 +1,4 @@
+import { confirmUserDe } from '../confirm-user/i18n'
 import { passwordForgottenDe } from '../password-forgotten/i18n'
 import { registerUserDe } from '../register-user/i18n'
 import { signInDe } from '../signin-user/i18n'
@@ -13,5 +14,6 @@ export default {
   workLocal: workLocalDe,
   signIn: signInDe,
   registerUser: registerUserDe,
+  confirmUser: confirmUserDe,
   passwordForgotten: passwordForgottenDe
 }

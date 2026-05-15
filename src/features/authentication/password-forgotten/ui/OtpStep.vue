@@ -71,8 +71,6 @@ async function submit(): Promise<boolean> {
         @update:model-value="otpStep.token.value = $event"
       ></OtpInput>
     </v-card-text>
-    <v-card-actions>
-      <ResendOneTimePassword :email="props.email" />
-    </v-card-actions>
+    <ResendOneTimePassword :email="props.email" />
   </v-card>
 </template>
