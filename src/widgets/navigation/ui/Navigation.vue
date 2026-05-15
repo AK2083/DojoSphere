@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import { translationKeys, useAuthNavigation, useAuthSession } from '@features/authentication'
+import { useAuthNavigation, useAuthSession } from '@features/authentication'
 import { mdiAccount, mdiCardAccountDetails, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
+
+import translationKeys from '../i18n/keys'
 
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
