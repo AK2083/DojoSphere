@@ -13,7 +13,10 @@ import { defineConfig, devices } from '@playwright/test'
  */
 export default defineConfig({
   testDir: '.',
-  testMatch: ['src/{widgets,features,shared}/**/ui/**/*.e2e.spec.ts'],
+  testMatch: [
+    'src/{widgets,features,pages}/**/ui/**/*.e2e.spec.ts',
+    'src/shared/ui/**/*.e2e.spec.ts'
+  ],
   testIgnore: ['**/node_modules/**', '**/dist/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,
