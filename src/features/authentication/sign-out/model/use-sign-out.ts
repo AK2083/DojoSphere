@@ -31,7 +31,7 @@ export function useSignOut() {
         return false
       }
 
-      await router.push({ name: 'datasource' })
+      await router.push({ name: 'login' })
       return true
     } finally {
       loading.value = false

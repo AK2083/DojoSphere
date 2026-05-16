@@ -82,31 +82,32 @@ watch(
   <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
       <v-list nav density="compact">
-        <v-list-item
-          v-if="isLoggedIn"
-          :prepend-icon="mdiAccount"
-          :to="{ name: 'account' }"
-          :title="t(translationKeys.navigation.signUp)"
-          :aria-label="t(translationKeys.navigation.ariaSignUp)"
-          exact
-        />
-        <v-list-item
-          v-if="isLoggedIn"
-          :prepend-icon="mdiLogout"
-          :title="t(translationKeys.navigation.logout)"
-          :disabled="isSigningOut"
-          :aria-label="t(translationKeys.navigation.ariaLogout)"
-          exact
-          @click="handleLogout"
-        />
-        <v-list-item
-          v-else
-          :prepend-icon="mdiCardAccountDetails"
-          :to="getAccountRoute()"
-          :title="t(translationKeys.ariaLabel)"
-          :aria-label="t(translationKeys.ariaLabel)"
-          exact
-        />
+        <template v-if="!isLoggedIn">
+          <v-list-item
+            :prepend-icon="mdiAccount"
+            :to="{ name: 'account' }"
+            :title="t(translationKeys.navigation.signUp)"
+            :aria-label="t(translationKeys.navigation.ariaSignUp)"
+            exact
+          />
+        </template>
+        <template v-else>
+          <v-list-item
+            :prepend-icon="mdiCardAccountDetails"
+            :to="getAccountRoute()"
+            :title="t(translationKeys.ariaLabel)"
+            :aria-label="t(translationKeys.ariaLabel)"
+            exact
+          />
+          <v-list-item
+            :prepend-icon="mdiLogout"
+            :title="t(translationKeys.navigation.logout)"
+            :disabled="isSigningOut"
+            :aria-label="t(translationKeys.navigation.ariaLogout)"
+            exact
+            @click="handleLogout"
+          />
+        </template>
         <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />
       </v-list>
     </template>

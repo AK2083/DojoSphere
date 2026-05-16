@@ -1,9 +1,13 @@
 import router from '@app/providers/router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { clearIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { checkOneTimePassword } from '../api/check-one-time-password'
-import { getRegisterEmailFromStorage } from '../service/register-storage'
+import {
+  clearRegisterEmailFromStorage,
+  getRegisterEmailFromStorage
+} from '../service/register-storage'
 import { useSendOneTimePassword } from './use-send-one-time-password'
 
 let onMountedHandler: (() => Promise<void>) | undefined
@@ -29,12 +33,17 @@ vi.mock('@features/authentication/service/get-current-session', () => ({
   getCurrentSession: vi.fn()
 }))
 
+vi.mock('@features/authentication/service/register-storage', () => ({
+  clearIsOtpActiveFromStorage: vi.fn()
+}))
+
 vi.mock('../api/check-one-time-password', () => ({
   checkOneTimePassword: vi.fn()
 }))
 
 vi.mock('../service/register-storage', () => ({
-  getRegisterEmailFromStorage: vi.fn()
+  getRegisterEmailFromStorage: vi.fn(),
+  clearRegisterEmailFromStorage: vi.fn()
 }))
 
 vi.mock('../monitoring/monitoring', () => ({
@@ -117,6 +126,8 @@ describe('useSendOneTimePassword', () => {
     expect(success.value).toBe(true)
     expect(errorCode.value).toBeNull()
     expect(loading.value).toBe(false)
+    expect(clearIsOtpActiveFromStorage).toHaveBeenCalledTimes(1)
+    expect(clearRegisterEmailFromStorage).toHaveBeenCalledTimes(1)
     expect(router.push).toHaveBeenCalledWith({ name: 'settings' })
   })
 

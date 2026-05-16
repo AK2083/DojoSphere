@@ -26,22 +26,22 @@ describe('useLoginRouting', () => {
       expect(pushMock).toHaveBeenCalledWith('/dashboard')
     })
 
-    it('falls back to root for invalid redirect values', async () => {
+    it('falls back to account route for invalid redirect values', async () => {
       routeQuery.redirect = '//evil.example'
       const { navigateAfterLoginSuccess } = useLoginRouting()
 
       await navigateAfterLoginSuccess()
 
-      expect(pushMock).toHaveBeenCalledWith('/')
+      expect(pushMock).toHaveBeenCalledWith({ name: 'account' })
     })
 
-    it('falls back to root when redirect is not a string', async () => {
+    it('falls back to account route when redirect is not a string', async () => {
       routeQuery.redirect = ['not-allowed']
       const { navigateAfterLoginSuccess } = useLoginRouting()
 
       await navigateAfterLoginSuccess()
 
-      expect(pushMock).toHaveBeenCalledWith('/')
+      expect(pushMock).toHaveBeenCalledWith({ name: 'account' })
     })
   })
 

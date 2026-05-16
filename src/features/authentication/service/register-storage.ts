@@ -1,4 +1,4 @@
-import { getStorageItem } from '@shared/lib'
+import { getStorageItem, removeStorageItem } from '@shared/lib'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 
@@ -14,4 +14,14 @@ const OTPKEY = 'dojosphere.auth.register.otpActive'
 export function getIsOtpActiveFromStorage() {
   monitorInformation(MONITORING_EVENTS.STORAGE_OTP_WRITE, { OTPKEY })
   return getStorageItem<boolean>(OTPKEY)
+}
+
+/**
+ * Clears the OTP activation status from storage.
+ *
+ * Used after successful confirmation so account navigation
+ * no longer routes back to email verification.
+ */
+export function clearIsOtpActiveFromStorage() {
+  removeStorageItem(OTPKEY)
 }

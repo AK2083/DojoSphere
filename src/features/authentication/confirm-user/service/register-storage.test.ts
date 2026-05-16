@@ -1,11 +1,12 @@
-import { getStorageItem } from '@shared/lib'
+import { getStorageItem, removeStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { getRegisterEmailFromStorage } from './register-storage'
+import { clearRegisterEmailFromStorage, getRegisterEmailFromStorage } from './register-storage'
 
 vi.mock('@shared/lib', () => ({
-  getStorageItem: vi.fn()
+  getStorageItem: vi.fn(),
+  removeStorageItem: vi.fn()
 }))
 
 vi.mock('../monitoring/monitoring', () => ({
@@ -40,5 +41,12 @@ describe('confirm-user register-storage (unit)', () => {
     const result = getRegisterEmailFromStorage()
 
     expect(result).toBeNull()
+  })
+
+  it('clears the registration email from storage', () => {
+    clearRegisterEmailFromStorage()
+
+    expect(removeStorageItem).toHaveBeenCalledWith(EMAILKEY)
+    expect(removeStorageItem).toHaveBeenCalledTimes(1)
   })
 })

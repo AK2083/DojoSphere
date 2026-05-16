@@ -1,10 +1,14 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { clearIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 
 import { checkOneTimePassword } from '../api/check-one-time-password'
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { getRegisterEmailFromStorage } from '../service/register-storage'
+import {
+  clearRegisterEmailFromStorage,
+  getRegisterEmailFromStorage
+} from '../service/register-storage'
 
 /**
  * Composable for handling OTP (one-time password) verification.
@@ -74,6 +78,8 @@ export function useSendOneTimePassword() {
     monitorInformation(MONITORING_EVENTS.CHECK_OTP_SUCCEEDED)
 
     success.value = true
+    clearIsOtpActiveFromStorage()
+    clearRegisterEmailFromStorage()
 
     await router.push({ name: 'settings' })
 

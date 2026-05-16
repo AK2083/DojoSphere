@@ -1,11 +1,12 @@
-import { getStorageItem } from '@shared/lib'
+import { getStorageItem, removeStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-import { getIsOtpActiveFromStorage } from './register-storage'
+import { clearIsOtpActiveFromStorage, getIsOtpActiveFromStorage } from './register-storage'
 
 vi.mock('@shared/lib', () => ({
-  getStorageItem: vi.fn()
+  getStorageItem: vi.fn(),
+  removeStorageItem: vi.fn()
 }))
 
 vi.mock('../monitoring/monitoring', () => ({
@@ -41,5 +42,12 @@ describe('otp-storage (unit)', () => {
     const result = getIsOtpActiveFromStorage()
 
     expect(result).toBeNull()
+  })
+
+  it('clears otp state from storage', () => {
+    clearIsOtpActiveFromStorage()
+
+    expect(removeStorageItem).toHaveBeenCalledWith(OTPKEY)
+    expect(removeStorageItem).toHaveBeenCalledTimes(1)
   })
 })

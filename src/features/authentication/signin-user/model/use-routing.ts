@@ -16,7 +16,7 @@ export function useLoginRouting() {
       return
     }
 
-    await router.push('/')
+    await router.push({ name: 'account' })
   }
 
   async function goToPasswordReset(email?: string) {

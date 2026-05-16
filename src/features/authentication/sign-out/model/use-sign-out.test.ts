@@ -20,7 +20,7 @@ describe('useSignOut', () => {
     vi.clearAllMocks()
   })
 
-  it('navigates to datasource when logout succeeds', async () => {
+  it('navigates to login when logout succeeds', async () => {
     vi.mocked(signOutUser).mockResolvedValue({ success: true })
     const { logout, loading, errorCode } = useSignOut()
 
@@ -29,7 +29,7 @@ describe('useSignOut', () => {
     expect(result).toBe(true)
     expect(loading.value).toBe(false)
     expect(errorCode.value).toBeNull()
-    expect(pushMock).toHaveBeenCalledWith({ name: 'datasource' })
+    expect(pushMock).toHaveBeenCalledWith({ name: 'login' })
   })
 
   it('stores mapped error code when logout fails', async () => {
