@@ -1,4 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
+import os from 'node:os'
+
+const logicalCpuCount = os.cpus().length
+const derivedWorkerCount = Math.max(2, Math.floor(logicalCpuCount * 0.75))
 
 /**
  * Read environment variables from file.
@@ -23,11 +27,11 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 1 : 0,
+  /* Use one strategy for local and CI to maximize parallelism. */
+  workers: derivedWorkerCount,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: process.env.CI ? 'line' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: 'http://127.0.0.1:4173',

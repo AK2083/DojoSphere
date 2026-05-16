@@ -1,48 +1,45 @@
 import { expect, test } from '@playwright/test'
+import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-const LANGUAGE_STORAGE_KEY = 'dojosphere.settings.language'
 const THEME_STORAGE_KEY = 'dojosphere.settings.theme'
 
 test.describe('ThemeToggle', () => {
   test('persists system, dark and light mode selections', async ({ page }) => {
+    await setEnglishLanguage(page)
     await page.addInitScript(
-      ([languageKey, themeKey]) => {
-        globalThis.localStorage?.setItem(languageKey, JSON.stringify('en'))
+      ([themeKey]) => {
         globalThis.localStorage?.setItem(themeKey, JSON.stringify('system'))
       },
-      [LANGUAGE_STORAGE_KEY, THEME_STORAGE_KEY]
+      [THEME_STORAGE_KEY]
     )
 
     await page.goto('/#/settings')
 
     await page.getByLabel('Dark Mode', { exact: true }).click()
-    await expect
-      .poll(async () =>
-        page.evaluate(
-          ([themeKey]) => JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null'),
-          [THEME_STORAGE_KEY]
-        )
-      )
-      .toBe('dark')
+    let storedTheme = await page.evaluate(
+      ([themeKey]) => {
+        return JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null')
+      },
+      [THEME_STORAGE_KEY]
+    )
+    expect(storedTheme).toBe('dark')
 
     await page.getByLabel('Light Mode', { exact: true }).click()
-    await expect
-      .poll(async () =>
-        page.evaluate(
-          ([themeKey]) => JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null'),
-          [THEME_STORAGE_KEY]
-        )
-      )
-      .toBe('light')
+    storedTheme = await page.evaluate(
+      ([themeKey]) => {
+        return JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null')
+      },
+      [THEME_STORAGE_KEY]
+    )
+    expect(storedTheme).toBe('light')
 
     await page.getByLabel('System Setting', { exact: true }).click()
-    await expect
-      .poll(async () =>
-        page.evaluate(
-          ([themeKey]) => JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null'),
-          [THEME_STORAGE_KEY]
-        )
-      )
-      .toBe('system')
+    storedTheme = await page.evaluate(
+      ([themeKey]) => {
+        return JSON.parse(globalThis.localStorage?.getItem(themeKey) ?? 'null')
+      },
+      [THEME_STORAGE_KEY]
+    )
+    expect(storedTheme).toBe('system')
   })
 })

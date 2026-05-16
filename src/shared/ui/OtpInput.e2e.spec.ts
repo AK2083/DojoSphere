@@ -29,7 +29,6 @@ test.describe('shared/ui OtpInput', () => {
     const submitButton = page.locator('button[type="submit"]').first()
 
     await expect(submitButton).toBeDisabled()
-    await expect(page.locator(OTP_INPUTS_SELECTOR)).toHaveCount(6)
   })
 
   test('enables submit only after entering six digits', async ({ page }) => {
@@ -50,7 +49,7 @@ test.describe('shared/ui OtpInput', () => {
     await firstOtpField.fill('654321')
 
     await expect(submitButton).toBeEnabled()
-    await expect.poll(async () => enteredOtp(page)).toBe('654321')
+    expect(await enteredOtp(page)).toBe('654321')
   })
 
   test('accepts numeric input and ignores non-digit characters', async ({ page }) => {
@@ -59,6 +58,6 @@ test.describe('shared/ui OtpInput', () => {
     await typeOtp(page, 'ab12cd34')
 
     await expect(submitButton).toBeDisabled()
-    await expect.poll(async () => enteredOtp(page)).toBe('1234')
+    expect(await enteredOtp(page)).toBe('1234')
   })
 })

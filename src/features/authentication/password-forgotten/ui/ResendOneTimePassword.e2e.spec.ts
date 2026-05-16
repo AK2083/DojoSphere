@@ -1,36 +1,15 @@
-import { expect, type Page, test } from '@playwright/test'
-
-const LANGUAGE_STORAGE_KEY = 'dojosphere.settings.language'
-
-async function mockRecoveryRequest(page: Page): Promise<void> {
-  await page.route('**/auth/v1/recover**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: '{}'
-    })
-  })
-}
-
-async function goToOtpStep(page: Page): Promise<void> {
-  await page.goto('/#/passwordreset')
-  await page.locator('input[autocomplete="email"]').first().fill('user@example.com')
-  await page.getByRole('button', { name: 'Continue', exact: true }).click()
-}
+import { expect, test } from '@playwright/test'
+import { goToPasswordResetOtpStep, mockRecoveryRequest } from '@shared/tests/e2e/password-recovery'
+import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('ResendOneTimePassword (password-forgotten)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(
-      ([languageKey]) => {
-        globalThis.localStorage?.setItem(languageKey, JSON.stringify('en'))
-      },
-      [LANGUAGE_STORAGE_KEY]
-    )
+    await setEnglishLanguage(page)
     await mockRecoveryRequest(page)
   })
 
   test('shows resend action on otp step', async ({ page }) => {
-    await goToOtpStep(page)
+    await goToPasswordResetOtpStep(page)
 
     const resendButton = page.getByRole('button', {
       name: 'Send me a new confirmation code',

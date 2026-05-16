@@ -1,15 +1,9 @@
 import { expect, test } from '@playwright/test'
-
-const LANGUAGE_STORAGE_KEY = 'dojosphere.settings.language'
+import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('LanguageSwitch', () => {
   test('changes language to German and persists selection', async ({ page }) => {
-    await page.addInitScript(
-      ([languageKey]) => {
-        globalThis.localStorage?.setItem(languageKey, JSON.stringify('en'))
-      },
-      [LANGUAGE_STORAGE_KEY]
-    )
+    await setEnglishLanguage(page)
 
     await page.goto('/#/settings')
 
@@ -25,13 +19,9 @@ test.describe('LanguageSwitch', () => {
       page.locator('label.font-weight-medium').getByText('Sprache', { exact: true })
     ).toBeVisible()
 
-    await expect
-      .poll(async () =>
-        page.evaluate(
-          ([languageKey]) => JSON.parse(globalThis.localStorage?.getItem(languageKey) ?? 'null'),
-          [LANGUAGE_STORAGE_KEY]
-        )
-      )
-      .toBe('de')
+    const storedLanguage = await page.evaluate(() =>
+      JSON.parse(globalThis.localStorage?.getItem('dojosphere.settings.language') ?? 'null')
+    )
+    expect(storedLanguage).toBe('de')
   })
 })
