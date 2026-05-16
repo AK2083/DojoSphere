@@ -1,4 +1,17 @@
 
+# [1.2.0](https://github.com/AK2083/DojoSphere/compare/v1.1.0...v1.2.0) (2026-05-16)
+
+
+### Bug Fixes
+
+* fix routing ([44cb680](https://github.com/AK2083/DojoSphere/commit/44cb6803082222c7b1a79b32e5e402fe03193cf2))
+
+
+### Features
+
+* add logout button ([30b9325](https://github.com/AK2083/DojoSphere/commit/30b93253abbf30cf6af27368870b85b563a4bd54))
+* add logout service ([c3fd79b](https://github.com/AK2083/DojoSphere/commit/c3fd79b3c8d5822a99d2ed85b6e83d74e75596ef))
+
 # [1.1.0](https://github.com/AK2083/DojoSphere/compare/v1.0.0...v1.1.0) (2026-05-06)
 
 
