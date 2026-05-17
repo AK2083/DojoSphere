@@ -1,4 +1,12 @@
 
+# [1.3.0](https://github.com/AK2083/DojoSphere/compare/v1.2.0...v1.3.0) (2026-05-17)
+
+
+### Features
+
+* add playwright (e2e) ([1b4bf65](https://github.com/AK2083/DojoSphere/commit/1b4bf65f89c46a514b53823a951ea98fb0ec7122))
+* add tooltips ([584e60b](https://github.com/AK2083/DojoSphere/commit/584e60bb7488f9ece4eb020b3f4ab04502fe4829))
+
 # [1.2.0](https://github.com/AK2083/DojoSphere/compare/v1.1.0...v1.2.0) (2026-05-16)
 
 
