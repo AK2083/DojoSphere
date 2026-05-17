@@ -64,14 +64,29 @@ async function submit(): Promise<boolean> {
           required
           autofocus
           autocomplete="new-password"
-          :append-inner-icon="newPasswordStep.showPassword.value ? mdiEyeOff : mdiEye"
           :loading="newPasswordStep.loading.value"
-          @click:append-inner="
-            newPasswordStep.showPassword.value = !newPasswordStep.showPassword.value
-          "
           @update:model-value="newPasswordStep.password.value = $event"
           :aria-label="t(translationKeys.steps.newPassword.ariaPasswordLabel)"
-        />
+        >
+          <template #append-inner>
+            <v-tooltip
+              :text="t(translationKeys.steps.newPassword.passwordDisplayToggle)"
+              location="bottom"
+            >
+              <template #activator="{ props }">
+                <v-btn
+                  type="button"
+                  variant="text"
+                  size="small"
+                  v-bind="props"
+                  :aria-label="t(translationKeys.steps.newPassword.passwordDisplayToggle)"
+                  :icon="newPasswordStep.showPassword.value ? mdiEyeOff : mdiEye"
+                  @click="newPasswordStep.showPassword.value = !newPasswordStep.showPassword.value"
+                />
+              </template>
+            </v-tooltip>
+          </template>
+        </v-text-field>
 
         <v-text-field
           :model-value="newPasswordStep.repeatedPassword.value"
@@ -82,13 +97,31 @@ async function submit(): Promise<boolean> {
           required
           autocomplete="new-password"
           :loading="newPasswordStep.loading.value"
-          :append-inner-icon="newPasswordStep.showRepeatedPassword.value ? mdiEyeOff : mdiEye"
-          @click:append-inner="
-            newPasswordStep.showRepeatedPassword.value = !newPasswordStep.showRepeatedPassword.value
-          "
           @update:model-value="newPasswordStep.repeatedPassword.value = $event"
           :aria-label="t(translationKeys.steps.newPassword.ariaNewPasswordLabel)"
-        />
+        >
+          <template #append-inner>
+            <v-tooltip
+              :text="t(translationKeys.steps.newPassword.repeatPasswordDisplayToggle)"
+              location="bottom"
+            >
+              <template #activator="{ props }">
+                <v-btn
+                  type="button"
+                  variant="text"
+                  size="small"
+                  v-bind="props"
+                  :aria-label="t(translationKeys.steps.newPassword.repeatPasswordDisplayToggle)"
+                  :icon="newPasswordStep.showRepeatedPassword.value ? mdiEyeOff : mdiEye"
+                  @click="
+                    newPasswordStep.showRepeatedPassword.value =
+                      !newPasswordStep.showRepeatedPassword.value
+                  "
+                />
+              </template>
+            </v-tooltip>
+          </template>
+        </v-text-field>
       </v-card-text>
     </v-card>
   </v-form>

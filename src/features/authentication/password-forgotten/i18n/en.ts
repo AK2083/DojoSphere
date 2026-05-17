@@ -31,8 +31,10 @@ export default {
       description: 'Request a confirmation code and set a new password.',
       passwordLabel: 'New password',
       ariaPasswordLabel: 'New password',
+      passwordDisplayToggle: 'Show or hide password',
       newPasswordLabel: 'Repeat password',
       ariaNewPasswordLabel: 'Repeat password',
+      repeatPasswordDisplayToggle: 'Show or hide repeated password',
       error: {
         mismatch: 'Passwords do not match!'
       }

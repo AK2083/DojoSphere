@@ -35,21 +35,36 @@ function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
 
     <div class="d-flex justify-end mt-2">
       <v-btn-toggle class="border" divided density="default">
-        <v-btn
-          :icon="mdiLaptop"
-          :aria-label="t(translationKeys.theme.tooltip.system)"
-          @click="handleChangeTheme(Theme.SYSTEM)"
-        />
-        <v-btn
-          :icon="mdiMoonWaningCrescent"
-          :aria-label="t(translationKeys.theme.tooltip.dark)"
-          @click="handleChangeTheme(Theme.DARK)"
-        />
-        <v-btn
-          :icon="mdiWhiteBalanceSunny"
-          :aria-label="t(translationKeys.theme.tooltip.light)"
-          @click="handleChangeTheme(Theme.LIGHT)"
-        />
+        <v-tooltip :text="t(translationKeys.theme.tooltip.system)" location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :icon="mdiLaptop"
+              :aria-label="t(translationKeys.theme.tooltip.system)"
+              @click="handleChangeTheme(Theme.SYSTEM)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip :text="t(translationKeys.theme.tooltip.dark)" location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :icon="mdiMoonWaningCrescent"
+              :aria-label="t(translationKeys.theme.tooltip.dark)"
+              @click="handleChangeTheme(Theme.DARK)"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip :text="t(translationKeys.theme.tooltip.light)" location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              :icon="mdiWhiteBalanceSunny"
+              :aria-label="t(translationKeys.theme.tooltip.light)"
+              @click="handleChangeTheme(Theme.LIGHT)"
+            />
+          </template>
+        </v-tooltip>
       </v-btn-toggle>
     </div>
   </v-col>

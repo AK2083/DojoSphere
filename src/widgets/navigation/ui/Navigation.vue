@@ -44,38 +44,62 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-btn
-        v-if="isLoggedIn"
-        icon
-        :aria-label="t(translationKeys.label)"
-        :to="{ name: 'account' }"
-        exact
-      >
-        <v-icon :icon="mdiAccount"></v-icon>
-      </v-btn>
-      <v-btn
-        v-if="isLoggedIn"
-        icon
-        :loading="isSigningOut"
-        :disabled="isSigningOut"
-        :aria-label="t(translationKeys.navigation.ariaLogout)"
-        exact
-        @click="handleLogout"
-      >
-        <v-icon :icon="mdiLogout"></v-icon>
-      </v-btn>
-      <v-btn
-        v-else
-        icon
-        :aria-label="t(translationKeys.navigation.ariaSignUp)"
-        :to="getAccountRoute()"
-        exact
-      >
-        <v-icon :icon="mdiCardAccountDetails"></v-icon>
-      </v-btn>
-      <v-btn icon aria-label="Settings" :to="{ name: 'settings' }">
-        <v-icon :icon="mdiCog"></v-icon>
-      </v-btn>
+      <v-tooltip v-if="isLoggedIn" :text="t(translationKeys.label)" location="bottom">
+        <template #activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+            :aria-label="t(translationKeys.label)"
+            :to="{ name: 'account' }"
+            exact
+          >
+            <v-icon :icon="mdiAccount"></v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+
+      <v-tooltip v-if="isLoggedIn" :text="t(translationKeys.navigation.logout)" location="bottom">
+        <template #activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+            :loading="isSigningOut"
+            :disabled="isSigningOut"
+            :aria-label="t(translationKeys.navigation.ariaLogout)"
+            exact
+            @click="handleLogout"
+          >
+            <v-icon :icon="mdiLogout"></v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+
+      <v-tooltip v-else :text="t(translationKeys.navigation.signUp)" location="bottom">
+        <template #activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+            :aria-label="t(translationKeys.navigation.ariaSignUp)"
+            :to="getAccountRoute()"
+            exact
+          >
+            <v-icon :icon="mdiAccount"></v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+
+      <v-tooltip :text="t(translationKeys.navigation.settings)" location="bottom">
+        <template #activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+            :aria-label="t(translationKeys.navigation.ariaSettings)"
+            :to="{ name: 'settings' }"
+          >
+            <v-icon :icon="mdiCog"></v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-app-bar>
 
@@ -108,7 +132,12 @@ watch(
             @click="handleLogout"
           />
         </template>
-        <v-list-item :prepend-icon="mdiCog" :to="{ name: 'settings' }" title="Settings" />
+        <v-list-item
+          :prepend-icon="mdiCog"
+          :to="{ name: 'settings' }"
+          :title="t(translationKeys.navigation.settings)"
+          :aria-label="t(translationKeys.navigation.ariaSettings)"
+        />
       </v-list>
     </template>
   </v-navigation-drawer>
