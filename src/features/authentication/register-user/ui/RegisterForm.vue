@@ -51,9 +51,23 @@ const {
           :type="showPassword ? 'text' : 'password'"
           required
           autocomplete="new-password"
-          :append-inner-icon="showPassword ? mdiEyeOff : mdiEye"
-          @click:append-inner="showPassword = !showPassword"
-        ></v-text-field>
+        >
+          <template #append-inner>
+            <v-tooltip :text="t(translationKeys.password.displayToggle)" location="bottom">
+              <template #activator="{ props }">
+                <v-btn
+                  type="button"
+                  variant="text"
+                  size="small"
+                  v-bind="props"
+                  :aria-label="t(translationKeys.password.displayToggle)"
+                  :icon="showPassword ? mdiEyeOff : mdiEye"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </v-tooltip>
+          </template>
+        </v-text-field>
       </v-card-text>
 
       <template #actions>

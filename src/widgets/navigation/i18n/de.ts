@@ -7,6 +7,8 @@ export default {
     signUp: 'Registrieren',
     ariaSignUp: 'Registrieren',
     logout: 'Abmelden',
-    ariaLogout: 'Abmelden'
+    ariaLogout: 'Abmelden',
+    settings: 'Einstellungen',
+    ariaSettings: 'Einstellungen'
   }
 }

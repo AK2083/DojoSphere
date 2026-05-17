@@ -29,8 +29,11 @@ const translationKeys = {
       description: 'auth.passwordForgotten.steps.newPassword.description',
       passwordLabel: 'auth.passwordForgotten.steps.newPassword.passwordLabel',
       ariaPasswordLabel: 'auth.passwordForgotten.steps.newPassword.ariaPasswordLabel',
+      passwordDisplayToggle: 'auth.passwordForgotten.steps.newPassword.passwordDisplayToggle',
       newPasswordLabel: 'auth.passwordForgotten.steps.newPassword.newPasswordLabel',
       ariaNewPasswordLabel: 'auth.passwordForgotten.steps.newPassword.ariaNewPasswordLabel',
+      repeatPasswordDisplayToggle:
+        'auth.passwordForgotten.steps.newPassword.repeatPasswordDisplayToggle',
       error: {
         mismatch: 'auth.passwordForgotten.steps.newPassword.error.mismatch'
       }

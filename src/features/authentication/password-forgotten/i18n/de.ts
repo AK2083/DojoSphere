@@ -30,8 +30,10 @@ export default {
       description: 'Fordere einen Bestätigungscode an und setze ein neues Passwort',
       passwordLabel: 'Neues Passwort',
       ariaPasswordLabel: 'Neues Passwort',
+      passwordDisplayToggle: 'Passwort ein- oder ausblenden',
       newPasswordLabel: 'Passwort wiederholen',
       ariaNewPasswordLabel: 'Passwort wiederholen',
+      repeatPasswordDisplayToggle: 'Wiederholtes Passwort ein- oder ausblenden',
       error: {
         mismatch: 'Die Passwörter stimmen nicht überein!'
       }
