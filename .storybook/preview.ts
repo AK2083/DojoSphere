@@ -59,10 +59,9 @@ const preview: Preview = {
       template: `
         <v-app>
           <v-layout style="min-height: 520px;">
-            <story />
-            <v-main class="pa-6">
-              <v-card class="pa-4" variant="tonal">Storybook Content Area</v-card>
-            </v-main>
+            <div style="width: 100%;">
+              <story />
+            </div>
           </v-layout>
         </v-app>
       `

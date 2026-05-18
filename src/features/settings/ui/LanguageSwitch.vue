@@ -38,11 +38,13 @@ function handleLanguageChange(val: LanguageCode) {
       :model-value="selectedLanguage"
       class="mt-2"
       :label="t(translationKeys.language.title)"
+      :aria-label="t(translationKeys.language.title)"
       :items="AvailableLanguages"
       item-title="label"
       item-value="code"
       density="comfortable"
       hide-details
+      :menu-props="{ eager: true, id: 'settings-language-menu' }"
       @update:model-value="handleLanguageChange"
     />
   </v-col>

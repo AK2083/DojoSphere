@@ -14,4 +14,39 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const hasClick = (element: unknown): element is { click: () => void } =>
+      typeof (element as { click?: unknown })?.click === 'function'
+
+    const nav = canvasElement.querySelector(
+      '[role="navigation"][aria-label="Authentication"], [role="navigation"][aria-label="Authentifizierung"]'
+    )
+
+    if (!nav) {
+      throw new Error('Navigation landmark not found.')
+    }
+
+    const settingsControl = canvasElement.querySelector(
+      '[aria-label="Settings"], [aria-label="Einstellungen"], a[href$="#/settings"]'
+    )
+
+    if (!settingsControl) {
+      throw new Error('Settings control not found.')
+    }
+
+    const registerControl = canvasElement.querySelector(
+      '[aria-label="Register"], [aria-label="Registrieren"]'
+    )
+
+    if (!registerControl) {
+      throw new Error('Register control not found.')
+    }
+
+    if (!hasClick(settingsControl)) {
+      throw new Error('Settings control is not an HTML element.')
+    }
+
+    settingsControl.click()
+  }
+}

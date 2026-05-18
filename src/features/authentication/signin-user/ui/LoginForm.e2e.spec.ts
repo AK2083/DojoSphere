@@ -12,6 +12,12 @@ test.describe('LoginForm', () => {
     await expect(page.locator('form')).toHaveCount(1)
     await expect(page.locator('input[autocomplete="email"]')).toHaveCount(1)
     await expect(page.locator('input[autocomplete="current-password"]')).toHaveCount(1)
+    await expect(
+      page.locator(
+        'button[aria-label="Passwort ein- oder ausblenden"], button[title="Passwort ein- oder ausblenden"]'
+      )
+    ).toHaveCount(1)
+    await expect(page.locator('[role="tooltip"]')).toHaveCount(0)
     await expect(page.locator('button[type="submit"]')).toBeDisabled()
     await expect(page.locator('a[href$="#/datasource"]').first()).toBeVisible()
   })

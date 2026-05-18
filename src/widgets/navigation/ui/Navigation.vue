@@ -105,7 +105,7 @@ watch(
 
   <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
-      <v-list nav density="compact">
+      <v-list density="compact" role="navigation" :aria-label="t(translationKeys.label)">
         <template v-if="!isLoggedIn">
           <v-list-item
             :prepend-icon="mdiAccount"

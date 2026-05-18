@@ -10,6 +10,30 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [vue()],
+  optimizeDeps: {
+    include: [
+      'vuetify/components/VAlert',
+      'vuetify/components/VAppBar',
+      'vuetify/components/VAvatar',
+      'vuetify/components/VBtn',
+      'vuetify/components/VBtnToggle',
+      'vuetify/components/VCard',
+      'vuetify/components/VDivider',
+      'vuetify/components/VForm',
+      'vuetify/components/VGrid',
+      'vuetify/components/VIcon',
+      'vuetify/components/VList',
+      'vuetify/components/VNavigationDrawer',
+      'vuetify/components/VOtpInput',
+      'vuetify/components/VProgressLinear',
+      'vuetify/components/VSelect',
+      'vuetify/components/VSheet',
+      'vuetify/components/VSnackbar',
+      'vuetify/components/VStepper',
+      'vuetify/components/VTextField',
+      'vuetify/components/VTooltip'
+    ]
+  },
   resolve: {
     alias: {
       '@shared': path.resolve(__dirname, 'src/shared'),
