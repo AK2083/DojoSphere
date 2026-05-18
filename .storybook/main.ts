@@ -1,0 +1,31 @@
+import path from 'path'
+import type { StorybookConfig } from '@storybook/vue3-vite'
+import { fileURLToPath } from 'node:url'
+import { mergeConfig } from 'vite'
+import vuetify from 'vite-plugin-vuetify'
+
+const dirname =
+  typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
+
+const config: StorybookConfig = {
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  addons: ['@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs'],
+  framework: '@storybook/vue3-vite',
+  async viteFinal(baseConfig) {
+    return mergeConfig(baseConfig, {
+      plugins: [vuetify()],
+      resolve: {
+        alias: {
+          '@': path.resolve(dirname, '../src'),
+          '@shared': path.resolve(dirname, '../src/shared'),
+          '@app': path.resolve(dirname, '../src/app'),
+          '@features': path.resolve(dirname, '../src/features'),
+          '@widgets': path.resolve(dirname, '../src/widgets'),
+          '@pages': path.resolve(dirname, '../src/pages')
+        }
+      }
+    })
+  }
+}
+
+export default config

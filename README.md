@@ -28,7 +28,7 @@ Open-source Electron application for managing Judo tournaments.
 - **Internationalization:** [vue-i18n](https://vue-i18n.intlify.dev/)
 - **Backend Services:** [Supabase](https://supabase.com/)
 - **Monitoring:** [Sentry for Vue](https://docs.sentry.io/platforms/javascript/guides/vue/), [GlitchTip](https://glitchtip.com/)
-- **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E)
+- **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E), [Storybook](https://storybook.js.org/) (UI components)
 - **Code Quality:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
 
 ## Requirements
@@ -48,6 +48,12 @@ Run desktop and frontend together:
 
 ```bash
 npm run electron:start
+```
+
+Run Storybook for isolated UI development:
+
+```bash
+npm run storybook
 ```
 
 Create a production build:
@@ -72,6 +78,8 @@ npm run build
 - `npm run test:coverage` runs tests and generates a coverage report.
 - `npm run test:e2e` runs end-to-end tests with Playwright.
 - `npm run test:e2e:ui` opens Playwright in UI mode.
+- `npm run storybook` starts Storybook (uses the next free port if `6006` is already occupied).
+- `npm run build-storybook` creates a static Storybook build.
 - `npm run supabase:start` starts local Supabase services.
 - `npm run supabase:stop` stops local Supabase services.
 - `npm run supabase:status` shows the status of local Supabase services.
