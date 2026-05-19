@@ -4,3 +4,4 @@ dist-electron
 build
 coverage
 docs
+storybook-static

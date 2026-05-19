@@ -12,12 +12,13 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-otp-input
-    :model-value="modelValue"
-    length="6"
-    type="number"
-    :aria-label="ariaLabel"
-    @update:model-value="emit('update:modelValue', $event)"
-    @finish="emit('finish')"
-  />
+  <div role="group" :aria-label="ariaLabel">
+    <v-otp-input
+      :model-value="modelValue"
+      length="6"
+      type="number"
+      @update:model-value="emit('update:modelValue', $event)"
+      @finish="emit('finish')"
+    />
+  </div>
 </template>

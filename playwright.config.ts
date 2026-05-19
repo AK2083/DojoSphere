@@ -3,6 +3,7 @@ import os from 'node:os'
 
 const logicalCpuCount = os.cpus().length
 const derivedWorkerCount = Math.max(2, Math.floor(logicalCpuCount * 0.75))
+const localWorkerCount = Math.min(4, derivedWorkerCount)
 
 /**
  * Read environment variables from file.
@@ -29,7 +30,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
   /* Use one strategy for local and CI to maximize parallelism. */
-  workers: derivedWorkerCount,
+  workers: process.env.CI ? derivedWorkerCount : localWorkerCount,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'line' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
