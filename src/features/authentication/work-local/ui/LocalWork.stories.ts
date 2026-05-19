@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/WorkLocal/LocalWork',
   component: LocalWork,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof LocalWork>
 

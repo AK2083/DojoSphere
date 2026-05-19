@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/ConfirmUser/ResendOneTimePassword',
   component: ResendOneTimePassword,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof ResendOneTimePassword>
 

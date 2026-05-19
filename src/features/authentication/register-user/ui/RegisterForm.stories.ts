@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/RegisterUser/RegisterForm',
   component: RegisterForm,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof RegisterForm>
 

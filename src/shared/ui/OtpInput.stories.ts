@@ -6,7 +6,7 @@ const meta = {
   title: 'Shared/UI/OtpInput',
   component: OtpInput,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   },
   args: {
     modelValue: '',

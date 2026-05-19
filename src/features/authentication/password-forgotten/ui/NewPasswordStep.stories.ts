@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/PasswordForgotten/NewPasswordStep',
   component: NewPasswordStep,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof NewPasswordStep>
 

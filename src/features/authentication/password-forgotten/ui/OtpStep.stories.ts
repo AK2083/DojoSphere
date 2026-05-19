@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/PasswordForgotten/OtpStep',
   component: OtpStep,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   },
   args: {
     email: 'user@example.com'

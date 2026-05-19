@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/PasswordForgotten/EmailStep',
   component: EmailStep,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof EmailStep>
 

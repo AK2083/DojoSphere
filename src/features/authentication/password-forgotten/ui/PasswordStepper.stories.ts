@@ -6,7 +6,7 @@ const meta = {
   title: 'Features/Authentication/PasswordForgotten/PasswordStepper',
   component: PasswordStepper,
   parameters: {
-    layout: 'centered'
+    layout: 'fullscreen'
   }
 } satisfies Meta<typeof PasswordStepper>
 

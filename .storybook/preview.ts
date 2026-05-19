@@ -54,18 +54,34 @@ setup((app) => {
 
 const preview: Preview = {
   decorators: [
-    (story) => ({
-      components: { story },
-      template: `
-        <v-app>
-          <v-layout style="min-height: 520px;">
-            <div style="width: 100%;">
-              <story />
-            </div>
-          </v-layout>
-        </v-app>
-      `
-    })
+    (story, context) => {
+      const isCentered =
+        context.parameters.layout === 'centered' ||
+        context.title.startsWith('Features/') ||
+        context.title.startsWith('Shared/') ||
+        context.title.startsWith('Pages/')
+      const wrapperStyle = isCentered
+        ? 'width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: rgb(var(--v-theme-background));'
+        : 'width: 100%; min-height: 100vh; background: rgb(var(--v-theme-background));'
+      const contentStyle = isCentered
+        ? 'display: block; width: min(100%, 900px);'
+        : 'display: block; width: 100%;'
+
+      return {
+        components: { story },
+        template: `
+          <v-app>
+            <v-layout style="width: 100%; min-height: 100vh;">
+              <div style="${wrapperStyle}">
+                <div style="${contentStyle}">
+                  <story />
+                </div>
+              </div>
+            </v-layout>
+          </v-app>
+        `
+      }
+    }
   ],
   parameters: {
     controls: {
