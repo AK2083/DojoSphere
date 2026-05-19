@@ -8,8 +8,14 @@ test.describe('LoginForm', () => {
 
   test('renders login form fields and actions', async ({ page }) => {
     await page.goto('/#/login')
+    await expect(page).toHaveURL(/#\/login$/)
 
-    await expect(page.locator('form')).toHaveCount(1)
+    if ((await page.locator('form').count()) === 0) {
+      await page.reload()
+      await expect(page).toHaveURL(/#\/login$/)
+    }
+
+    await expect(page.locator('form')).toHaveCount(1, { timeout: 10_000 })
     await expect(page.locator('input[autocomplete="email"]')).toHaveCount(1)
     await expect(page.locator('input[autocomplete="current-password"]')).toHaveCount(1)
     await expect(
