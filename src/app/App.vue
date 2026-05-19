@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { Navigation } from '@widgets/navigation'
+import { BottomNavigation, Navigation } from '@widgets/navigation'
 </script>
 
 <template>
   <v-app>
-    <v-layout>
+    <v-layout class="h-screen">
       <Navigation />
       <v-main><router-view /></v-main>
+      <BottomNavigation />
     </v-layout>
   </v-app>
 </template>

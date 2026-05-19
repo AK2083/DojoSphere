@@ -35,7 +35,7 @@ test.describe('Navigation widget', () => {
   test('includes account-related navigation action', async ({ page }) => {
     await page.goto('/')
 
-    const accountActions = page.locator('a[href$="#/account"]')
+    const accountActions = page.locator('a[href$="#/datasource"], a[href$="#/emailverification"]')
     await expect(accountActions.first()).toBeVisible()
   })
 })
