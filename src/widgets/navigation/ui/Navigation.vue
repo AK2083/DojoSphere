@@ -46,13 +46,7 @@ watch(
     <template #append>
       <v-tooltip v-if="isLoggedIn" :text="t(translationKeys.label)" location="bottom">
         <template #activator="{ props }">
-          <v-btn
-            icon
-            v-bind="props"
-            :aria-label="t(translationKeys.label)"
-            :to="{ name: 'account' }"
-            exact
-          >
+          <v-btn icon v-bind="props" :aria-label="t(translationKeys.label)" :to="getAccountRoute()">
             <v-icon :icon="mdiAccount"></v-icon>
           </v-btn>
         </template>
@@ -81,7 +75,6 @@ watch(
             v-bind="props"
             :aria-label="t(translationKeys.navigation.ariaSignUp)"
             :to="getAccountRoute()"
-            exact
           >
             <v-icon :icon="mdiAccount"></v-icon>
           </v-btn>
@@ -105,33 +98,30 @@ watch(
 
   <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
-      <v-list density="compact" role="navigation" :aria-label="t(translationKeys.label)">
-        <template v-if="!isLoggedIn">
-          <v-list-item
-            :prepend-icon="mdiAccount"
-            :to="{ name: 'account' }"
-            :title="t(translationKeys.navigation.signUp)"
-            :aria-label="t(translationKeys.navigation.ariaSignUp)"
-            exact
-          />
-        </template>
-        <template v-else>
-          <v-list-item
-            :prepend-icon="mdiCardAccountDetails"
-            :to="getAccountRoute()"
-            :title="t(translationKeys.ariaLabel)"
-            :aria-label="t(translationKeys.ariaLabel)"
-            exact
-          />
-          <v-list-item
-            :prepend-icon="mdiLogout"
-            :title="t(translationKeys.navigation.logout)"
-            :disabled="isSigningOut"
-            :aria-label="t(translationKeys.navigation.ariaLogout)"
-            exact
-            @click="handleLogout"
-          />
-        </template>
+      <v-list density="compact" role="navigation" :aria-label="t(translationKeys.label)" nav>
+        <v-list-item
+          v-if="!isLoggedIn"
+          :prepend-icon="mdiAccount"
+          :to="getAccountRoute()"
+          :title="t(translationKeys.navigation.signUp)"
+          :aria-label="t(translationKeys.navigation.ariaSignUp)"
+        />
+        <v-list-item
+          v-if="isLoggedIn"
+          :prepend-icon="mdiCardAccountDetails"
+          :to="getAccountRoute()"
+          :title="t(translationKeys.ariaLabel)"
+          :aria-label="t(translationKeys.ariaLabel)"
+        />
+        <v-list-item
+          v-if="isLoggedIn"
+          :prepend-icon="mdiLogout"
+          :title="t(translationKeys.navigation.logout)"
+          :disabled="isSigningOut"
+          :aria-label="t(translationKeys.navigation.ariaLogout)"
+          exact
+          @click="handleLogout"
+        />
         <v-list-item
           :prepend-icon="mdiCog"
           :to="{ name: 'settings' }"
