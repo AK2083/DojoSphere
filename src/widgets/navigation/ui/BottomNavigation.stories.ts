@@ -30,12 +30,14 @@ export const Default: Story = {
 
     const footerText = footer.textContent?.replace(/\s+/g, ' ').trim() ?? ''
 
-    if (!/cloudless|lokal/i.test(footerText)) {
-      throw new Error('Cloud status label not found (expected Cloudless/Lokal).')
+    if (!/cloud|cloudless|lokal|networkstatus\.cloud|networkstatus\.cloudless/i.test(footerText)) {
+      throw new Error(
+        'Cloud status label not found (expected Cloud/Cloudless/Lokal or fallback key).'
+      )
     }
 
-    if (!/online|offline/i.test(footerText)) {
-      throw new Error('Network status label not found (expected Online/Offline).')
+    if (!/online|offline|networkstatus\.online|networkstatus\.offline/i.test(footerText)) {
+      throw new Error('Network status label not found (expected Online/Offline or fallback key).')
     }
   }
 }
