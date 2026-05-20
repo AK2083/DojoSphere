@@ -22,10 +22,16 @@ export const Default: Story = {
       throw new Error('Bottom navigation footer not found.')
     }
 
-    const branchLabel = canvasElement.querySelector('span')
+    const chips = footer.querySelectorAll('.v-chip')
 
-    if (!branchLabel || !branchLabel.textContent?.trim()) {
-      throw new Error('Branch label is missing in bottom navigation.')
+    if (chips.length !== 2) {
+      throw new Error(`Expected 2 status chips, found ${chips.length}.`)
+    }
+
+    const icons = footer.querySelectorAll('.v-icon')
+
+    if (icons.length < 2) {
+      throw new Error(`Expected at least 2 status icons, found ${icons.length}.`)
     }
   }
 }

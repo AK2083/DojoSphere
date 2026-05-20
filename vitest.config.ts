@@ -18,6 +18,7 @@ export default defineConfig({
       'vuetify/components/VBtn',
       'vuetify/components/VBtnToggle',
       'vuetify/components/VCard',
+      'vuetify/components/VChip',
       'vuetify/components/VDivider',
       'vuetify/components/VFooter',
       'vuetify/components/VForm',

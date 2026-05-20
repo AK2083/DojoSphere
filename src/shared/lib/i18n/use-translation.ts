@@ -17,7 +17,7 @@ export function useTranslation(): {
   t: import('vue-i18n').Composer['t']
   locale: import('vue-i18n').Composer['locale']
 } {
-  const { t, locale } = useI18n()
+  const { t, locale } = useI18n({ useScope: 'global' })
 
   return {
     t,
