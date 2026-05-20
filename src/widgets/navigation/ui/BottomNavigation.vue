@@ -1,8 +1,11 @@
+<script setup lang="ts">
+import { NetworkStatus } from '@features/network-status'
+</script>
+
 <template>
-  <v-footer app height="28" class="px-2">
+  <v-footer app height="40">
     <v-spacer />
 
-    <v-icon size="16">mdi-source-branch</v-icon>
-    <span class="ml-1">feature/login</span>
+    <NetworkStatus />
   </v-footer>
 </template>

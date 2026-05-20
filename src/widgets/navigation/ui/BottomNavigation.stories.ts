@@ -22,10 +22,20 @@ export const Default: Story = {
       throw new Error('Bottom navigation footer not found.')
     }
 
-    const branchLabel = canvasElement.querySelector('span')
+    const chips = footer.querySelectorAll('.v-chip')
 
-    if (!branchLabel || !branchLabel.textContent?.trim()) {
-      throw new Error('Branch label is missing in bottom navigation.')
+    if (chips.length !== 2) {
+      throw new Error(`Expected 2 status chips, found ${chips.length}.`)
+    }
+
+    const footerText = footer.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+
+    if (!/cloudless|lokal/i.test(footerText)) {
+      throw new Error('Cloud status label not found (expected Cloudless/Lokal).')
+    }
+
+    if (!/online|offline/i.test(footerText)) {
+      throw new Error('Network status label not found (expected Online/Offline).')
     }
   }
 }
