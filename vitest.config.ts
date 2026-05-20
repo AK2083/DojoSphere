@@ -46,6 +46,9 @@ export default defineConfig({
     }
   },
   test: {
+    api: {
+      host: '127.0.0.1'
+    },
     coverage: {
       provider: 'v8',
       reportsDirectory: './coverage',
@@ -103,6 +106,10 @@ export default defineConfig({
           name: 'storybook',
           browser: {
             enabled: true,
+            api: {
+              host: '127.0.0.1',
+              port: 42123
+            },
             headless: true,
             provider: playwright({}),
             instances: [

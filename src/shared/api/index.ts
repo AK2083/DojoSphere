@@ -12,6 +12,7 @@ export {
   verifyOneTimePasswordByRecovery,
   verifyOneTimePasswordBySignUp
 } from './supabase/auth/auth'
+export { heartbeat } from './supabase/edge-functions/func'
 export { mapSupabaseError } from './supabase/map-supabase-error'
 export type {
   AuthChangeEvent,

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { mdiCloud, mdiCloudOff, mdiWeb, mdiWebOff } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
+import { useNetworkStatus } from '../model/use-network-status'
 
-const isOnline = ref(true)
-const isCloudUsed = ref(false)
+const { isOnline, isCloudUsed } = useNetworkStatus()
 
 const { t } = useTranslation()
 </script>
