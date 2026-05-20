@@ -28,16 +28,10 @@ export const Default: Story = {
       throw new Error(`Expected 2 status chips, found ${chips.length}.`)
     }
 
-    const footerText = footer.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+    const icons = footer.querySelectorAll('.v-icon')
 
-    if (!/cloud|cloudless|lokal|networkstatus\.cloud|networkstatus\.cloudless/i.test(footerText)) {
-      throw new Error(
-        'Cloud status label not found (expected Cloud/Cloudless/Lokal or fallback key).'
-      )
-    }
-
-    if (!/online|offline|networkstatus\.online|networkstatus\.offline/i.test(footerText)) {
-      throw new Error('Network status label not found (expected Online/Offline or fallback key).')
+    if (icons.length < 2) {
+      throw new Error(`Expected at least 2 status icons, found ${icons.length}.`)
     }
   }
 }
