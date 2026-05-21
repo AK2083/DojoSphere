@@ -67,12 +67,35 @@ jobs:
         if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
         run: npx prettier --write CHANGELOG.md
 
-      - name: Create Pull Request for changelog
+      - name: Detect changelog changes
+        id: changelog_changes
         if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        run: |
+          if git diff --quiet -- CHANGELOG.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes in CHANGELOG.md detected."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "CHANGELOG.md changed and will be committed."
+          fi
+
+      - name: Debug changelog git state
+        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        run: |
+          echo "---- git status --porcelain ----"
+          git status --porcelain
+          echo "---- git diff --name-only ----"
+          git diff --name-only
+          echo "---- git diff -- CHANGELOG.md (first 200 lines) ----"
+          git diff -- CHANGELOG.md | sed -n '1,200p'
+
+      - name: Create Pull Request for changelog
+        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '' && steps.changelog_changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           sign-commits: true
           token: ${{ secrets.GITHUB_TOKEN }}
+          add-paths: CHANGELOG.md
           commit-message: 'docs: update CHANGELOG'
           branch: chore/update-changelog
           title: 'PR DOCS: Update CHANGELOG'
