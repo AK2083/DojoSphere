@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { bootstrapNetworkStatus } from '@shared/model'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
+
+void bootstrapNetworkStatus()
 </script>
 
 <template>

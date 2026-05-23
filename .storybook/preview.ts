@@ -7,6 +7,8 @@ import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
 import { i18n } from '../src/app/providers/i18n'
+import { pinia } from '../src/app/providers/pinia'
+import { useCloudStatusStore, useNetworkStatusStore } from '../src/shared/store/network'
 
 import '@fontsource/roboto/100.css'
 import '@fontsource/roboto/300.css'
@@ -50,6 +52,11 @@ setup((app) => {
   app.use(i18n)
   app.use(router)
   app.use(vuetify)
+  app.use(pinia)
+
+  // Ensure network stores are initialized in Storybook environment.
+  useNetworkStatusStore(pinia).setOnline(true)
+  useCloudStatusStore(pinia).setCloudUsed(false)
 })
 
 const preview: Preview = {
