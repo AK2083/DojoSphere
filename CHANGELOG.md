@@ -1,3 +1,11 @@
+# [1.4.0](https://github.com/AK2083/DojoSphere/compare/v1.3.0...v1.4.0) (2026-05-21)
+
+### Features
+
+- add bottom bar ([#105](https://github.com/AK2083/DojoSphere/issues/105)) ([ff923b4](https://github.com/AK2083/DojoSphere/commit/ff923b437aa41dfed923c4d1ba4e185fc84a33f0))
+- add lan and cloud buttons ([#106](https://github.com/AK2083/DojoSphere/issues/106)) ([878c83a](https://github.com/AK2083/DojoSphere/commit/878c83ac54874fe7328e36d431727d92e16ce167))
+- add netowork status service ([#108](https://github.com/AK2083/DojoSphere/issues/108)) ([e79b964](https://github.com/AK2083/DojoSphere/commit/e79b964c6728cce26160486556129b6649d58e56))
+
 # [1.3.0](https://github.com/AK2083/DojoSphere/compare/v1.2.0...v1.3.0) (2026-05-17)
 
 ### Features
