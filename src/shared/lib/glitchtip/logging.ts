@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/vue'
 
 import type { LogLevel } from './log-level'
+import { isMonitoringEnabled } from './monitoring-guard'
 
 /**
  * Sets the current user context for the logging provider.
@@ -12,6 +13,10 @@ import type { LogLevel } from './log-level'
  * @param user.id
  */
 export function setUserContext(user: { id: string }) {
+  if (!isMonitoringEnabled()) {
+    return
+  }
+
   Sentry.setUser(user)
 }
 
@@ -22,6 +27,10 @@ export function setUserContext(user: { id: string }) {
  * subsequent events from being associated with the previous user.
  */
 export function clearUserContext() {
+  if (!isMonitoringEnabled()) {
+    return
+  }
+
   Sentry.setUser(null)
 }
 
@@ -36,6 +45,10 @@ export function clearUserContext() {
  * @param {string} action - The specific action that triggered the error (e.g. `signUp`, `getStorageItem`).
  */
 export function captureException(error: Error, service: string, action: string) {
+  if (!isMonitoringEnabled()) {
+    return
+  }
+
   Sentry.captureException(error, {
     tags: { service, action },
     extra: { message: error.message }
@@ -59,6 +72,10 @@ export function addBreadcrumb(
   level: LogLevel,
   data?: object
 ) {
+  if (!isMonitoringEnabled()) {
+    return
+  }
+
   Sentry.addBreadcrumb({
     category: category,
     message: monitoringEvent,
