@@ -1,4 +1,4 @@
-import { newStore } from '@shared/lib'
+import { newStore } from '@shared/lib/pinia/store-define'
 
 export const useCloudStatusStore = newStore('cloud-status', {
   state: () => ({
