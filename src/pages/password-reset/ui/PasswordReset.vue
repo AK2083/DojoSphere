@@ -7,7 +7,7 @@ const { t } = useTranslation()
 </script>
 
 <template>
-  <v-container class="fill-height d-flex align-center justify-center">
+  <v-container class="h-100 d-flex align-start align-md-center justify-center overflow-y-auto py-4">
     <v-row class="w-100" justify="center">
       <v-col cols="12" lg="10">
         <v-card

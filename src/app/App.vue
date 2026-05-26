@@ -9,8 +9,15 @@ void bootstrapNetworkStatus()
   <v-app>
     <v-layout class="h-screen">
       <Navigation />
-      <v-main><router-view /></v-main>
+      <v-main class="app-main"><router-view /></v-main>
       <BottomNavigation />
     </v-layout>
   </v-app>
 </template>
+
+<style scoped>
+.app-main {
+  min-height: 0;
+  overflow-y: auto;
+}
+</style>

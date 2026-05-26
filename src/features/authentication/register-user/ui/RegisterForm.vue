@@ -13,6 +13,9 @@ const {
   showPassword,
   translatedEmailRules,
   translatedPasswordRules,
+  registerUnavailableHintCode,
+  isRegistrationDisabled,
+  isSubmitDisabled,
   errorCode,
   loading,
   setFormRef,
@@ -39,6 +42,7 @@ const {
           :rules="translatedEmailRules"
           :label="t(translationKeys.mail.title)"
           :placeholder="t(translationKeys.mail.placeholder)"
+          :disabled="isRegistrationDisabled"
           clearable
           autocomplete="email"
           required
@@ -49,6 +53,7 @@ const {
           :rules="translatedPasswordRules"
           :label="t(translationKeys.password.title)"
           :type="showPassword ? 'text' : 'password'"
+          :disabled="isRegistrationDisabled"
           required
           autocomplete="new-password"
         >
@@ -60,6 +65,7 @@ const {
               :title="t(translationKeys.password.displayToggle)"
               :aria-label="t(translationKeys.password.displayToggle)"
               :icon="showPassword ? mdiEyeOff : mdiEye"
+              :disabled="isRegistrationDisabled"
               @click="showPassword = !showPassword"
             />
           </template>
@@ -74,10 +80,16 @@ const {
             variant="flat"
             color="success"
             :loading="loading"
-            :disabled="!isFormValid"
+            :disabled="isSubmitDisabled"
           >
             {{ t(translationKeys.submit) }}
           </v-btn>
+          <v-alert
+            v-if="registerUnavailableHintCode"
+            :text="t(registerUnavailableHintCode)"
+            type="warning"
+            class="mt-2"
+          ></v-alert>
           <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
 
           <div class="d-flex align-center justify-center w-100 mt-2">
