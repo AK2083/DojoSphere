@@ -103,6 +103,7 @@ const {
               {{ t(translationKeys.noAccount) }}
             </span>
             <v-btn
+              type="button"
               variant="plain"
               :to="{ name: 'datasource' }"
               :aria-label="t(translationKeys.register)"

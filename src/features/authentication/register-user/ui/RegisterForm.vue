@@ -85,6 +85,7 @@ const {
               {{ t(translationKeys.alreadyAccount) }}
             </span>
             <v-btn
+              type="button"
               variant="plain"
               :to="{ name: 'login' }"
               :aria-label="t(translationKeys.logMeIn)"
