@@ -53,14 +53,19 @@ export async function getCurrentUser(): Promise<UserResponse> {
  * @returns The current session or null if no session exists or an error occurred.
  */
 export async function getCurrentSession(): Promise<Session | null> {
-  const { data, error } = await supabase.auth.getSession()
+  try {
+    const { data, error } = await supabase.auth.getSession()
 
-  if (error) {
-    captureException(error, 'auth', 'getCurrentSession')
+    if (error) {
+      captureException(error, 'auth', 'getCurrentSession')
+      return null
+    }
+
+    return data.session
+  } catch (error) {
+    captureException(error as Error, 'auth', 'getCurrentSession')
     return null
   }
-
-  return data.session
 }
 
 /**

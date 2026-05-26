@@ -63,7 +63,8 @@ router.afterEach((to, from) => {
 })
 
 router.beforeEach(async (to) => {
-  const session = await getCurrentSession()
+  const requiresSessionCheck = Boolean(to.meta.requiresAuth || to.meta.guestOnly)
+  const session = requiresSessionCheck ? await getCurrentSession() : null
 
   if (to.meta.requiresAuth && !session) {
     return {
