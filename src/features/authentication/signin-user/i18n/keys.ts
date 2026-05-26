@@ -2,6 +2,10 @@ const translationKeys = {
   title: 'auth.signIn.title',
   description: 'auth.signIn.description',
   submit: 'auth.signIn.submit',
+  unavailable: {
+    offline: 'auth.signIn.unavailable.offline',
+    cloud: 'auth.signIn.unavailable.cloud'
+  },
   forgotPassword: 'auth.signIn.forgotPassword',
   noAccount: 'auth.signIn.noAccount',
   register: 'auth.signIn.register',

@@ -1,6 +1,7 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
+import { useNetworkStatusState } from '@shared/model'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { useLogin } from './use-login'
@@ -24,6 +25,7 @@ export function useLoginForm() {
   const { t } = useTranslation()
   const { execute, clearError, errorCode, loading } = useLogin()
   const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
+  const { isOnline, isCloudUsed } = useNetworkStatusState()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -33,6 +35,25 @@ export function useLoginForm() {
 
   const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
   const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
+  const loginUnavailableHintCode = computed<string | null>(() => {
+    if (!isCloudUsed.value) {
+      return 'auth.signIn.unavailable.cloud'
+    }
+
+    if (!isOnline.value) {
+      return 'auth.signIn.unavailable.offline'
+    }
+
+    return null
+  })
+  const isLoginDisabled = computed(() => Boolean(loginUnavailableHintCode.value))
+  const isSubmitDisabled = computed(() => {
+    if (isLoginDisabled.value || loading.value) {
+      return true
+    }
+
+    return !isFormValid.value && !email.value && !password.value
+  })
 
   function setFormRef(value: unknown) {
     form.value = value as VForm | null
@@ -45,6 +66,10 @@ export function useLoginForm() {
 
   async function submit() {
     monitorInformation(MONITORING_EVENTS.LOGIN_FORM_SUBMITTED)
+
+    if (isLoginDisabled.value) {
+      return
+    }
 
     if (loading.value) {
       monitorInformation(MONITORING_EVENTS.LOGIN_FORM_ALREADY_LOADING)
@@ -76,6 +101,10 @@ export function useLoginForm() {
   }
 
   async function navigateToPasswordReset() {
+    if (isLoginDisabled.value) {
+      return
+    }
+
     await goToPasswordReset(email.value)
   }
 
@@ -86,6 +115,9 @@ export function useLoginForm() {
     showPassword,
     translatedEmailRules,
     translatedPasswordRules,
+    loginUnavailableHintCode,
+    isLoginDisabled,
+    isSubmitDisabled,
     errorCode,
     loading,
     setFormRef,

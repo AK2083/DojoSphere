@@ -13,6 +13,9 @@ const {
   showPassword,
   translatedEmailRules,
   translatedPasswordRules,
+  loginUnavailableHintCode,
+  isLoginDisabled,
+  isSubmitDisabled,
   errorCode,
   loading,
   setFormRef,
@@ -41,6 +44,7 @@ const {
           :rules="translatedEmailRules"
           :label="t(translationKeys.mail.title)"
           :placeholder="t(translationKeys.mail.placeholder)"
+          :disabled="isLoginDisabled"
           clearable
           autocomplete="email"
           required
@@ -53,6 +57,7 @@ const {
           :rules="translatedPasswordRules"
           :label="t(translationKeys.password.title)"
           :type="showPassword ? 'text' : 'password'"
+          :disabled="isLoginDisabled"
           required
           autocomplete="current-password"
           :aria-label="t(translationKeys.password.title)"
@@ -65,6 +70,7 @@ const {
               :title="t(translationKeys.password.displayToggle)"
               :aria-label="t(translationKeys.password.displayToggle)"
               :icon="showPassword ? mdiEyeOff : mdiEye"
+              :disabled="isLoginDisabled"
               @click="showPassword = !showPassword"
             />
           </template>
@@ -79,12 +85,18 @@ const {
             variant="flat"
             color="success"
             :loading="loading"
-            :disabled="!isFormValid"
+            :disabled="isSubmitDisabled"
             :aria-label="t(translationKeys.submit)"
           >
             {{ t(translationKeys.submit) }}
           </v-btn>
 
+          <v-alert
+            v-if="loginUnavailableHintCode"
+            :text="t(loginUnavailableHintCode)"
+            type="warning"
+            class="mt-2"
+          ></v-alert>
           <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
 
           <v-btn
@@ -93,6 +105,7 @@ const {
             variant="text"
             class="mt-2"
             :aria-label="t(translationKeys.forgotPassword)"
+            :disabled="isLoginDisabled"
             @click="navigateToPasswordReset"
           >
             {{ t(translationKeys.forgotPassword) }}
