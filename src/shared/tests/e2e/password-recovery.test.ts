@@ -8,31 +8,48 @@ import {
   mockRecoveryVerify
 } from './password-recovery'
 
-function createPageDouble() {
+function createPageDouble(options: { emailInputCount?: number } = {}) {
   const fill = vi.fn().mockResolvedValue(undefined)
   const click = vi.fn().mockResolvedValue(undefined)
   const route = vi.fn().mockResolvedValue(undefined)
   const goto = vi.fn().mockResolvedValue(undefined)
+  const reload = vi.fn().mockResolvedValue(undefined)
   const keyboardType = vi.fn().mockResolvedValue(undefined)
+  const count = vi.fn().mockResolvedValue(options.emailInputCount ?? 1)
+
+  const emailLocator = {
+    count,
+    first: vi.fn().mockReturnValue({
+      fill,
+      click
+    })
+  }
 
   const page = {
     route,
     goto,
+    reload,
     keyboard: {
       type: keyboardType
     },
-    locator: vi.fn().mockReturnValue({
-      first: vi.fn().mockReturnValue({
-        fill,
-        click
-      })
+    locator: vi.fn().mockImplementation((selector: string) => {
+      if (selector === 'input[autocomplete="email"]') {
+        return emailLocator
+      }
+
+      return {
+        first: vi.fn().mockReturnValue({
+          fill,
+          click
+        })
+      }
     }),
     getByRole: vi.fn().mockReturnValue({
       click
     })
   }
 
-  return { page, route, goto, fill, click, keyboardType }
+  return { page, route, goto, reload, fill, click, keyboardType, count }
 }
 
 describe('password-recovery e2e helpers', () => {
@@ -99,6 +116,17 @@ describe('password-recovery e2e helpers', () => {
     await goToPasswordResetOtpStep(page as never, 'custom@example.com')
 
     expect(fill).toHaveBeenCalledWith('custom@example.com')
+  })
+
+  it('reloads once when email input is initially missing', async () => {
+    const { page, goto, reload } = createPageDouble({ emailInputCount: 0 })
+
+    await goToPasswordResetOtpStep(page as never)
+
+    expect(reload).toHaveBeenCalledTimes(1)
+    expect(goto).toHaveBeenCalledTimes(2)
+    expect(goto).toHaveBeenNthCalledWith(1, '/#/passwordreset')
+    expect(goto).toHaveBeenNthCalledWith(2, '/#/passwordreset')
   })
 
   it('navigates from otp to new-password step with defaults', async () => {

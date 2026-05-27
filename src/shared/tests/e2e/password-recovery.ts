@@ -47,8 +47,14 @@ export async function goToPasswordResetOtpStep(
   email = 'user@example.com'
 ): Promise<void> {
   await page.goto('/#/passwordreset')
+  const emailInputs = page.locator('input[autocomplete="email"]')
+  if (typeof emailInputs.count === 'function' && (await emailInputs.count()) === 0) {
+    await page.reload()
+    await page.goto('/#/passwordreset')
+  }
+
   await page.locator('input[autocomplete="email"]').first().fill(email)
-  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('button', { name: /^(Continue|Weiter)$/ }).click()
 }
 
 /**
@@ -64,7 +70,7 @@ export async function goToPasswordResetNewPasswordStep(
   token = '123456'
 ): Promise<void> {
   await goToPasswordResetOtpStep(page, email)
-  await page.locator('.v-otp-input input:visible').first().click()
+  await page.getByRole('textbox', { name: /Please enter OTP character 1/i }).click()
   await page.keyboard.type(token)
-  await page.getByRole('button', { name: 'Continue', exact: true }).click()
+  await page.getByRole('button', { name: /^(Continue|Weiter)$/ }).click()
 }

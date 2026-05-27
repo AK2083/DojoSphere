@@ -1,6 +1,7 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
+import { useNetworkStatusState } from '@shared/model'
 
 import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { useRegister } from './use-register'
@@ -23,6 +24,7 @@ export function useRegisterForm() {
   const { t } = useTranslation()
   const { execute, clearError, errorCode, loading } = useRegister()
   const { navigateAfterRegisterSuccess } = useRegisterRouting()
+  const { isOnline, isCloudUsed } = useNetworkStatusState()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -32,6 +34,26 @@ export function useRegisterForm() {
 
   const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
   const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
+  const registerUnavailableHintCode = computed<string | null>(() => {
+    if (!isCloudUsed.value) {
+      return 'auth.registerUser.unavailable.cloud'
+    }
+
+    if (!isOnline.value) {
+      return 'auth.registerUser.unavailable.offline'
+    }
+
+    return null
+  })
+  const isRegistrationDisabled = computed(() => Boolean(registerUnavailableHintCode.value))
+  const isSubmitDisabled = computed(() => {
+    if (isRegistrationDisabled.value || loading.value) {
+      return true
+    }
+
+    // Keep initial disabled state, but avoid a stale "invalid" lock after mode switches.
+    return !isFormValid.value && !email.value && !password.value
+  })
 
   function setFormRef(value: unknown) {
     form.value = value as VForm | null
@@ -44,6 +66,10 @@ export function useRegisterForm() {
 
   async function submit() {
     monitorInformation(MONITORING_EVENTS.REGISTER_FORM_SUBMITTED)
+
+    if (isRegistrationDisabled.value) {
+      return
+    }
 
     if (loading.value) {
       monitorInformation(MONITORING_EVENTS.REGISTER_FORM_ALREADY_LOADING)
@@ -83,6 +109,9 @@ export function useRegisterForm() {
     showPassword,
     translatedEmailRules,
     translatedPasswordRules,
+    registerUnavailableHintCode,
+    isRegistrationDisabled,
+    isSubmitDisabled,
     errorCode,
     loading,
     setFormRef,

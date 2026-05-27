@@ -1,3 +1,4 @@
+import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { supabase } from '../client'
@@ -302,6 +303,15 @@ describe('getCurrentSession', () => {
     const result = await getCurrentSession()
 
     expect(result).toBeNull()
+  })
+
+  it('returns null when getSession throws unexpectedly', async () => {
+    vi.mocked(supabase.auth.getSession).mockRejectedValue(new Error('Network offline'))
+
+    const result = await getCurrentSession()
+
+    expect(result).toBeNull()
+    expect(captureException).toHaveBeenCalledTimes(1)
   })
 })
 

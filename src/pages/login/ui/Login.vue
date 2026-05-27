@@ -3,9 +3,9 @@ import { LoginForm } from '@features/authentication/signin-user'
 </script>
 
 <template>
-  <v-container class="fill-height d-flex align-center justify-center">
+  <v-container class="h-100 d-flex align-start align-md-center justify-center overflow-y-auto py-4">
     <v-row class="w-100" justify="center">
-      <v-col cols="12" sm="10" lg="8">
+      <v-col cols="12" lg="8">
         <LoginForm />
       </v-col>
     </v-row>

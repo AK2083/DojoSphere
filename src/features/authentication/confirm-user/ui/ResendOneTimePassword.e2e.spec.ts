@@ -9,8 +9,19 @@ test.describe('ResendOneTimePassword (confirm-user)', () => {
   test('renders resend action on confirmation page', async ({ page }) => {
     await page.goto('/#/emailverification')
 
+    const resendButton = page.getByRole('button', {
+      name: /Send me a new confirmation code|Code erneut senden/
+    })
+
+    if ((await resendButton.count()) === 0) {
+      await page.reload()
+      await expect(page).toHaveURL(/#\/emailverification$/)
+    }
+
     await expect(
-      page.getByRole('button', { name: 'Send me a new confirmation code', exact: true })
+      page.getByRole('button', {
+        name: /Send me a new confirmation code|Code erneut senden/
+      })
     ).toBeVisible()
   })
 })

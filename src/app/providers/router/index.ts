@@ -1,5 +1,11 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import DataSourcePage from '@pages/data-source'
+import LoginPage from '@pages/login'
+import PasswordResetPage from '@pages/password-reset'
+import SettingsPage from '@pages/settings'
+import { getActiveStore, getNavigatorOnline } from '@shared/lib'
+import { useNetworkStatusStore } from '@shared/store/network'
 
 import { monitorInformation, MONITORING_EVENTS } from './monitoring'
 
@@ -11,7 +17,7 @@ const routes = [
   {
     path: '/datasource',
     name: 'datasource',
-    component: () => import('@pages/data-source')
+    component: DataSourcePage
   },
   {
     path: '/emailverification',
@@ -23,13 +29,13 @@ const routes = [
     path: '/login',
     name: 'login',
     meta: { guestOnly: true },
-    component: () => import('@pages/login')
+    component: LoginPage
   },
   {
     path: '/passwordreset',
     name: 'passwordreset',
     meta: { guestOnly: true },
-    component: () => import('@pages/password-reset')
+    component: PasswordResetPage
   },
   {
     path: '/dashboard',
@@ -46,7 +52,7 @@ const routes = [
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('@pages/settings')
+    component: SettingsPage
   }
 ]
 
@@ -54,6 +60,29 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
+
+const SESSION_CHECK_TIMEOUT_MS = 1200
+
+function isOfflineModeEnabled(): boolean {
+  const navigatorOffline = !getNavigatorOnline()
+  const activeStore = getActiveStore()
+
+  if (!activeStore) {
+    return navigatorOffline
+  }
+
+  const storeOffline = !useNetworkStatusStore(activeStore).isOnline
+  return navigatorOffline || storeOffline
+}
+
+async function getCurrentSessionWithTimeout() {
+  return await Promise.race([
+    getCurrentSession(),
+    new Promise<null>((resolve) => {
+      globalThis.setTimeout(() => resolve(null), SESSION_CHECK_TIMEOUT_MS)
+    })
+  ])
+}
 
 router.afterEach((to, from) => {
   monitorInformation(MONITORING_EVENTS.ROUTE_CHANGED, {
@@ -63,17 +92,34 @@ router.afterEach((to, from) => {
 })
 
 router.beforeEach(async (to) => {
-  const session = await getCurrentSession()
+  const requiresAuth = Boolean(to.meta.requiresAuth)
+  const guestOnly = Boolean(to.meta.guestOnly)
+  const isOffline = isOfflineModeEnabled()
 
-  if (to.meta.requiresAuth && !session) {
-    return {
-      name: 'login',
-      query: { redirect: to.fullPath }
+  if (requiresAuth) {
+    const session = await getCurrentSessionWithTimeout()
+
+    if (!session) {
+      return {
+        name: 'login',
+        query: { redirect: to.fullPath }
+      }
     }
+
+    return
   }
 
-  if (to.meta.guestOnly && session) {
-    return { name: 'dashboard' }
+  // Never block guest-route navigation in offline mode.
+  if (guestOnly && isOffline) {
+    return
+  }
+
+  if (guestOnly) {
+    const session = await getCurrentSessionWithTimeout()
+
+    if (session) {
+      return { name: 'dashboard' }
+    }
   }
 })
 

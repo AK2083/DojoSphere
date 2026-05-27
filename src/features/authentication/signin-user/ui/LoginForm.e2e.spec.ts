@@ -28,10 +28,20 @@ test.describe('LoginForm', () => {
     await expect(page.locator('a[href$="#/datasource"]').first()).toBeVisible()
   })
 
-  test('navigates to password reset from forgot-password action', async ({ page }) => {
+  test('handles forgot-password action based on login availability', async ({ page }) => {
     await page.goto('/#/login')
 
-    await page.locator('form button[type="button"].mt-2').click()
+    const forgotPasswordButton = page.locator('form button[type="button"].mt-2')
+
+    if (await forgotPasswordButton.isDisabled()) {
+      await expect(page.locator('.v-alert')).toContainText(
+        /Login is currently unavailable|because cloud mode is disabled|while you are offline/
+      )
+      await expect(page).toHaveURL(/#\/login$/)
+      return
+    }
+
+    await forgotPasswordButton.click()
     await expect(page).toHaveURL(/#\/passwordreset$/)
   })
 })

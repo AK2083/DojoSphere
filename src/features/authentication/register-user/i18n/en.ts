@@ -11,5 +11,9 @@ export default {
     title: 'Password',
     displayToggle: 'Show or hide password'
   },
-  submit: 'Register me'
+  submit: 'Register me',
+  unavailable: {
+    offline: 'Registration is currently unavailable while you are offline.',
+    cloud: 'Registration is currently unavailable because cloud mode is disabled.'
+  }
 }

@@ -4,7 +4,7 @@ import { LocalWork } from '@features/authentication/work-local'
 </script>
 
 <template>
-  <v-container class="fill-height d-flex align-center justify-start h-100">
+  <v-container class="h-100 d-flex align-start align-md-center justify-start overflow-y-auto py-4">
     <v-row class="w-100">
       <v-col cols="12" md="6"><RegisterForm /></v-col>
       <v-col cols="12" md="6"><LocalWork /></v-col>
