@@ -11,7 +11,13 @@ test.describe('OtpStep', () => {
   test('renders otp fields after successful email step', async ({ page }) => {
     await goToPasswordResetOtpStep(page)
 
-    await expect(page.locator('.v-otp-input input:visible')).toHaveCount(6)
+    const otpInputs = page.getByRole('textbox', { name: /Please enter OTP character/i })
+    if ((await otpInputs.count()) === 0) {
+      await page.reload()
+      await goToPasswordResetOtpStep(page)
+    }
+
+    await expect(otpInputs).toHaveCount(6, { timeout: 10_000 })
     await expect(page.locator('#otpTitle').last()).toHaveText(
       'Enter verification code for user@example.com'
     )

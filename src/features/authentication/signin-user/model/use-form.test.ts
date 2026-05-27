@@ -87,6 +87,12 @@ describe('useLoginForm', () => {
     expect(executeMock).not.toHaveBeenCalled()
   })
 
+  it('keeps submit disabled when form is untouched', () => {
+    const loginForm = useLoginForm()
+
+    expect(loginForm.isSubmitDisabled.value).toBe(true)
+  })
+
   it('does not submit when login is disabled in offline mode', async () => {
     isOnline.value = false
     isCloudUsed.value = true
@@ -190,6 +196,13 @@ describe('useLoginForm', () => {
 
     expect(loginForm.loginUnavailableHintCode.value).toBeNull()
     expect(loginForm.isLoginDisabled.value).toBe(false)
+    expect(loginForm.isSubmitDisabled.value).toBe(false)
+  })
+
+  it('enables submit when form validity turns true', () => {
+    const loginForm = useLoginForm()
+    loginForm.isFormValid.value = true
+
     expect(loginForm.isSubmitDisabled.value).toBe(false)
   })
 })

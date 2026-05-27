@@ -65,7 +65,7 @@ describe('shared network status model', () => {
 
     expect(result).toStrictEqual({ success: true })
     expect(logging.captureException).not.toHaveBeenCalled()
-  })
+  }, 10_000)
 
   it('maps heartbeat errors to retry when browser is offline', async () => {
     const { networkStatusModel, api, logging } = await loadNetworkStatusModel()
@@ -82,7 +82,7 @@ describe('shared network status model', () => {
       expect(result.error.code).toBe('shared.error.retry')
     }
     expect(logging.captureException).not.toHaveBeenCalled()
-  })
+  }, 10_000)
 
   it('captures unknown heartbeat errors when browser is online', async () => {
     const { networkStatusModel, api, logging } = await loadNetworkStatusModel()

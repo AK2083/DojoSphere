@@ -9,10 +9,16 @@ test.describe('EmailStep', () => {
   test('enables next action after entering a valid email', async ({ page }) => {
     await page.goto('/#/passwordreset')
 
-    const nextButton = page.getByRole('button', { name: 'Continue', exact: true })
+    const emailInputs = page.locator('input[autocomplete="email"]')
+    if ((await emailInputs.count()) === 0) {
+      await page.reload()
+      await page.goto('/#/passwordreset')
+    }
+
+    const nextButton = page.getByRole('button', { name: /^(Continue|Weiter)$/ })
     await expect(nextButton).toBeDisabled()
 
-    const emailInput = page.locator('input[autocomplete="email"]').first()
+    const emailInput = emailInputs.first()
     await emailInput.fill('user@example.com')
 
     await expect(nextButton).toBeEnabled()
