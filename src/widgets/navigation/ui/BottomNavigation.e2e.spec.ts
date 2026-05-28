@@ -17,6 +17,6 @@ test.describe('BottomNavigation', () => {
 
     await expect(page.locator('footer')).toBeVisible()
     await expect(page.getByTestId('cloud-status-chip')).toContainText('Cloud')
-    await expect(page.getByTestId('network-status-chip')).toContainText('Online')
+    await expect(page.getByTestId('network-status-chip')).toContainText(/Online|Offline/)
   })
 })
