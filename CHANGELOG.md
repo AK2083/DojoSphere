@@ -1,3 +1,9 @@
+## [1.4.1](https://github.com/AK2083/DojoSphere/compare/v1.4.0...v1.4.1) (2026-05-23)
+
+### Bug Fixes
+
+- refactor error logging on offline status ([#113](https://github.com/AK2083/DojoSphere/issues/113)) ([c41bb2b](https://github.com/AK2083/DojoSphere/commit/c41bb2bf7b1a67da33f7090629833017d4082e20))
+
 # [1.4.0](https://github.com/AK2083/DojoSphere/compare/v1.3.0...v1.4.0) (2026-05-21)
 
 ### Features
