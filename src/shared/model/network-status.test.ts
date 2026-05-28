@@ -29,8 +29,9 @@ async function loadNetworkStatusModel() {
   const api = await import('@shared/api')
   const logging = await import('@shared/lib')
   const stores = await import('@shared/store/network')
+  const cloudStatus = await import('@features/cloud-status')
 
-  return { networkStatusModel, api, logging, stores }
+  return { networkStatusModel, api, logging, stores, cloudStatus }
 }
 
 async function loadNetworkStatusModelWithoutActiveStore() {
@@ -118,7 +119,7 @@ describe('shared network status model', () => {
   })
 
   it('initializes stores and browser listeners on bootstrap', async () => {
-    const { networkStatusModel, api, stores } = await loadNetworkStatusModel()
+    const { networkStatusModel, api, stores, cloudStatus } = await loadNetworkStatusModel()
     const addListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
     vi.mocked(api.heartbeat).mockResolvedValue({
       data: { status: 'ok', timestamp: '2026-05-20T10:00:00.000Z' },
@@ -128,7 +129,7 @@ describe('shared network status model', () => {
     await networkStatusModel.bootstrapNetworkStatus()
 
     const networkStore = stores.useNetworkStatusStore()
-    const cloudStore = stores.useCloudStatusStore()
+    const cloudStore = cloudStatus.useCloudStatusStore()
     expect(networkStore.isOnline).toBe(true)
     expect(cloudStore.isCloudUsed).toBe(true)
 
@@ -140,7 +141,7 @@ describe('shared network status model', () => {
     setNavigatorOnline(false)
     ;(offlineHandler as (event: unknown) => void)(new globalThis.Event('offline'))
     expect(networkStore.isOnline).toBe(false)
-    expect(cloudStore.isCloudUsed).toBe(false)
+    expect(cloudStore.isCloudUsed).toBe(true)
 
     setNavigatorOnline(true)
     ;(onlineHandler as (event: unknown) => void)(new globalThis.Event('online'))
@@ -167,8 +168,8 @@ describe('shared network status model', () => {
     expect(api.heartbeat).not.toHaveBeenCalled()
   })
 
-  it('sets both stores offline when recheck runs without internet', async () => {
-    const { networkStatusModel, api, stores } = await loadNetworkStatusModel()
+  it('sets only network store offline when recheck runs without internet', async () => {
+    const { networkStatusModel, api, stores, cloudStatus } = await loadNetworkStatusModel()
     setNavigatorOnline(false)
 
     const reachable = await networkStatusModel.recheckNetworkStatusAfterFailedUserAction()
@@ -176,11 +177,11 @@ describe('shared network status model', () => {
     expect(reachable).toBe(false)
     expect(api.heartbeat).not.toHaveBeenCalled()
     expect(stores.useNetworkStatusStore().isOnline).toBe(false)
-    expect(stores.useCloudStatusStore().isCloudUsed).toBe(false)
+    expect(cloudStatus.useCloudStatusStore().isCloudUsed).toBe(true)
   })
 
-  it('updates both stores from heartbeat result when internet is available', async () => {
-    const { networkStatusModel, api, stores } = await loadNetworkStatusModel()
+  it('updates network store from heartbeat result when internet is available', async () => {
+    const { networkStatusModel, api, stores, cloudStatus } = await loadNetworkStatusModel()
     setNavigatorOnline(true)
     vi.mocked(api.heartbeat).mockResolvedValue({
       data: { status: 'ok', timestamp: '2026-05-20T10:00:00.000Z' },
@@ -191,13 +192,13 @@ describe('shared network status model', () => {
 
     expect(reachable).toBe(true)
     expect(stores.useNetworkStatusStore().isOnline).toBe(true)
-    expect(stores.useCloudStatusStore().isCloudUsed).toBe(true)
+    expect(cloudStatus.useCloudStatusStore().isCloudUsed).toBe(true)
   })
 
   it('exposes reactive refs from both stores', async () => {
-    const { networkStatusModel, stores } = await loadNetworkStatusModel()
+    const { networkStatusModel, stores, cloudStatus } = await loadNetworkStatusModel()
     const networkStore = stores.useNetworkStatusStore()
-    const cloudStore = stores.useCloudStatusStore()
+    const cloudStore = cloudStatus.useCloudStatusStore()
     networkStore.setOnline(false)
     cloudStore.setCloudUsed(false)
 
@@ -214,7 +215,7 @@ describe('shared network status model', () => {
     const state = networkStatusModel.useNetworkStatusState()
 
     expect(state.isOnline.value).toBe(false)
-    expect(state.isCloudUsed.value).toBe(false)
+    expect(state.isCloudUsed.value).toBe(true)
   })
 
   it('handles non-browser runtime in bootstrap without listeners', async () => {

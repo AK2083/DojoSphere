@@ -6,9 +6,10 @@ import {
   getActiveStore,
   getNavigatorOnline,
   isBrowserRuntime,
-  newStoreToRefs
+  newStoreToRefs,
+  useCloudStatusStore
 } from '@shared/lib'
-import { useCloudStatusStore, useNetworkStatusStore } from '@shared/store/network'
+import { useNetworkStatusStore } from '@shared/store/network'
 
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
 
@@ -55,7 +56,6 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
 
 function setOfflineState() {
   useNetworkStatusStore().setOnline(false)
-  useCloudStatusStore().setCloudUsed(false)
 }
 
 async function runHeartbeatCheck(): Promise<boolean> {
@@ -66,7 +66,6 @@ async function runHeartbeatCheck(): Promise<boolean> {
 
   const isReachable = (await checkHeartbeatConnectivity()).success
   useNetworkStatusStore().setOnline(isReachable)
-  useCloudStatusStore().setCloudUsed(isReachable)
 
   return isReachable
 }
@@ -84,7 +83,6 @@ export async function bootstrapNetworkStatus(): Promise<void> {
   hasNetworkStatusBootstrap = true
 
   useNetworkStatusStore().setOnline(getNavigatorOnline())
-  useCloudStatusStore().setCloudUsed(false)
 
   if (getNavigatorOnline()) {
     await runHeartbeatCheck()
@@ -118,7 +116,7 @@ export function useNetworkStatusState() {
   if (!activeStore) {
     return {
       isOnline: ref(getNavigatorOnline()),
-      isCloudUsed: ref(false)
+      isCloudUsed: ref(true)
     }
   }
 

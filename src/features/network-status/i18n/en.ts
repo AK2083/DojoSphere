@@ -1,6 +1,4 @@
 export default {
   online: 'Online',
-  offline: 'Offline',
-  cloud: 'Cloud',
-  cloudless: 'Local'
+  offline: 'Offline'
 }
