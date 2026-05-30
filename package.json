@@ -28,13 +28,15 @@
     "supabase:status": "supabase status",
     "supabase:init": "supabase init",
     "storybook": "storybook dev -p 6006 --ci",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "rebuild-sqlite": "npm install better-sqlite3 --target=42.3.0 --runtime=electron --dist-url=https://electronjs.org/headers"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",
     "@mdi/js": "^7.4.47",
     "@sentry/vue": "^10.55.0",
     "@supabase/supabase-js": "^2.106.2",
+    "better-sqlite3": "^12.10.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.35",
     "vue-i18n": "^11.4.4",
@@ -42,6 +44,7 @@
     "vuetify": "^4.0.8"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
     "@eslint/css": "^1.3.0",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.0.0",

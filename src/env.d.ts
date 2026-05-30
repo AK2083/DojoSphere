@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+import 'vue-router'
 
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string
@@ -11,11 +12,21 @@ declare module '*.vue' {
   export default component
 }
 
-import 'vue-router'
-
 declare module 'vue-router' {
   interface RouteMeta {
     guestOnly?: boolean
     requiresAuth?: boolean
+  }
+}
+
+export interface IElectronAPI {
+  getUsers: () => Promise<any[]>
+  addUser: (user: { name: string; data: any }) => Promise<any>
+  dbHealthcheck: () => Promise<{ ok: boolean; version: string }>
+}
+
+declare global {
+  interface Window {
+    api: IElectronAPI
   }
 }
