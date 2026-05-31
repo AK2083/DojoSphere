@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/AK2083/DojoSphere/compare/v1.4.1...v1.5.0) (2026-05-27)
+
+### Features
+
+- add offline behaviour ([#115](https://github.com/AK2083/DojoSphere/issues/115)) ([f728def](https://github.com/AK2083/DojoSphere/commit/f728def351b00088ff82244418b94a5070a7f122))
+
 ## [1.4.1](https://github.com/AK2083/DojoSphere/compare/v1.4.0...v1.4.1) (2026-05-23)
 
 ### Bug Fixes
