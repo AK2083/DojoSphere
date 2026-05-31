@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu } = require('electron')
+const { initDatabase } = require('./database/connection.js')
 const fs = require('fs')
 const path = require('path')
 
@@ -73,7 +74,14 @@ function createWindow() {
   })
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  try {
+    initDatabase()
+  } catch (error) {
+    console.error('Datenbank-Initialisierung fehlgeschlagen:', error)
+  }
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
