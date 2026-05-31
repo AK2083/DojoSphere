@@ -2,7 +2,13 @@
 import { onMounted, ref } from 'vue'
 import { LoginForm } from '@features/authentication/signin-user'
 
-const users = ref<any[]>([])
+type LoginUser = {
+  id: number
+  name: string
+  data: unknown
+}
+
+const users = ref<LoginUser[]>([])
 
 onMounted(async () => {
   try {

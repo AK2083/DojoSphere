@@ -20,8 +20,8 @@ declare module 'vue-router' {
 }
 
 export interface IElectronAPI {
-  getUsers: () => Promise<any[]>
-  addUser: (user: { name: string; data: any }) => Promise<any>
+  getUsers: () => Promise<Array<{ id: number; name: string; data: unknown }>>
+  addUser: (user: { name: string; data: unknown }) => Promise<unknown>
   dbHealthcheck: () => Promise<{ ok: boolean; version: string }>
 }
 
