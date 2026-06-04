@@ -1,5 +1,6 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const { initDatabase } = require('./database/connection.js')
+const { runMigrations } = require('./database/migrate.js')
 const fs = require('fs')
 const path = require('path')
 
@@ -76,7 +77,8 @@ function createWindow() {
 
 app.whenReady().then(() => {
   try {
-    initDatabase()
+    const db = initDatabase()
+    runMigrations(db)
   } catch (error) {
     console.error('Datenbank-Initialisierung fehlgeschlagen:', error)
   }
