@@ -7,29 +7,25 @@ function createDatabase(dbPath) {
   try {
     const BetterSqlite3 = require('better-sqlite3')
 
-    const betterDb = new BetterSqlite3(dbPath)
-    betterDb.exec('PRAGMA journal_mode = WAL')
-
-    return betterDb
+    return new BetterSqlite3(dbPath)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
     console.warn(`better-sqlite3 nicht verfuegbar (${errorMessage}). Nutze node:sqlite Fallback.`)
 
     const { DatabaseSync } = require('node:sqlite')
-    const sqliteDb = new DatabaseSync(dbPath)
-    sqliteDb.exec('PRAGMA journal_mode = WAL')
-
-    return sqliteDb
+    return new DatabaseSync(dbPath)
   }
 }
 
 function initDatabase() {
-  if (db) return
+  if (db) return db
 
   const dbPath = path.join(app.getPath('userData'), 'database.db')
   db = createDatabase(dbPath)
 
   db.exec('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
+
+  return db
 }
 
 ipcMain.handle('get-users', () => {
