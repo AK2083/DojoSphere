@@ -13,5 +13,9 @@ module.exports = [
   {
     id: '003_create_role_permissions',
     sql: fs.readFileSync(path.join(__dirname, '003_create_role_permissions.sql'), 'utf8')
+  },
+  {
+    id: '004_create_users',
+    sql: fs.readFileSync(path.join(__dirname, '004_create_users.sql'), 'utf8')
   }
 ]

@@ -23,8 +23,6 @@ function initDatabase() {
   const dbPath = path.join(app.getPath('userData'), 'database.db')
   db = createDatabase(dbPath)
 
-  db.exec('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
-
   return db
 }
 
