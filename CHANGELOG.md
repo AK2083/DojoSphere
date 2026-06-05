@@ -1,3 +1,9 @@
+# [1.6.0](https://github.com/AK2083/DojoSphere/compare/v1.5.0...v1.6.0) (2026-05-31)
+
+### Features
+
+- add local database ([#124](https://github.com/AK2083/DojoSphere/issues/124)) ([5194cab](https://github.com/AK2083/DojoSphere/commit/5194cabed7cb26502a51f49499788d6017657005))
+
 # [1.5.0](https://github.com/AK2083/DojoSphere/compare/v1.4.1...v1.5.0) (2026-05-27)
 
 ### Features
