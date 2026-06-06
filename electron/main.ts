@@ -1,17 +1,19 @@
-const { app, BrowserWindow, Menu } = require('electron')
-const { initDatabase } = require('./database/connection.js')
-const { runMigrations } = require('./database/migrate.js')
-const fs = require('fs')
-const path = require('path')
+import fs from 'node:fs'
+import path from 'node:path'
 
-const DEV_SERVER_URL = 'http://localhost:5173'
+import { app, BrowserWindow, Menu } from 'electron'
+
+import { initDatabase } from './database/connection'
+import { runMigrations } from './database/migrate'
+
+const DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL ?? 'http://localhost:5173'
 const DIST_INDEX_PATH = path.join(__dirname, '../dist/index.html')
 
-function toHtmlDataUrl(content) {
+function toHtmlDataUrl(content: string) {
   return `data:text/html;charset=UTF-8,${encodeURIComponent(content)}`
 }
 
-async function loadRenderer(win) {
+async function loadRenderer(win: BrowserWindow) {
   if (app.isPackaged) {
     await win.loadFile(DIST_INDEX_PATH)
     return

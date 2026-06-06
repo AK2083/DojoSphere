@@ -1,7 +1,8 @@
-const migrations = require('./migrations')
+import migrations from './migrations'
+import type { SqliteDatabase } from './types'
 
-function applyPragmas(db) {
-  if (typeof db.pragma === 'function') {
+function applyPragmas(db: SqliteDatabase) {
+  if ('pragma' in db && typeof db.pragma === 'function') {
     db.pragma('journal_mode = WAL')
     db.pragma('foreign_keys = ON')
     db.pragma('busy_timeout = 5000')
@@ -13,7 +14,7 @@ function applyPragmas(db) {
   db.exec('PRAGMA busy_timeout = 5000')
 }
 
-function ensureMigrationsTable(db) {
+function ensureMigrationsTable(db: SqliteDatabase) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS _migrations (
       id TEXT PRIMARY KEY,
@@ -22,8 +23,8 @@ function ensureMigrationsTable(db) {
   `)
 }
 
-function runInTransaction(db, fn) {
-  if (typeof db.transaction === 'function') {
+function runInTransaction(db: SqliteDatabase, fn: () => void) {
+  if ('transaction' in db && typeof db.transaction === 'function') {
     return db.transaction(fn)()
   }
 
@@ -37,7 +38,7 @@ function runInTransaction(db, fn) {
   }
 }
 
-function runMigrations(db) {
+export function runMigrations(db: SqliteDatabase) {
   applyPragmas(db)
   ensureMigrationsTable(db)
 
@@ -45,7 +46,7 @@ function runMigrations(db) {
     db
       .prepare('SELECT id FROM _migrations')
       .all()
-      .map((row) => row.id)
+      .map((row) => (row as { id: string }).id)
   )
 
   const insertMigration = db.prepare('INSERT INTO _migrations (id) VALUES (?)')
@@ -59,5 +60,3 @@ function runMigrations(db) {
     })
   }
 }
-
-module.exports = { runMigrations }

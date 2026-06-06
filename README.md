@@ -42,7 +42,7 @@ DojoSphere stores tournament data locally in the Electron main process using SQL
 - **Primary:** [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) — synchronous, high-performance native bindings suited to Electron's main process.
 - **Fallback:** Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (`DatabaseSync`) when the native module is unavailable (for example after a Node/Electron version mismatch).
 
-Connection logic lives in `electron/database/connection.js`.
+Connection logic lives in `electron/database/connection.ts`. The main process is built to `dist-electron/` via `vite-plugin-electron`.
 
 ### Database file
 
@@ -60,12 +60,12 @@ Schema changes are applied automatically on startup via versioned SQL files in `
 
 To add a migration:
 
-1. Create a new `.sql` file in `electron/database/migrations/`.
-2. Register it in `electron/database/migrations/index.js` with a unique `id`.
+1. Create a new `.sql` file in `electron/database/migrations/` using the naming pattern `V<number>__<description>.sql` (for example `V003__add_tournaments.sql`).
+2. Register it in `electron/database/migrations/index.ts` with a matching `id` (import the `.sql` file with `?raw`).
 
 ### IPC API
 
-The preload script (`electron/preload.js`) exposes these methods on `window.api`:
+The preload script (`electron/preload.ts`) exposes these methods on `window.api`:
 
 - `dbHealthcheck()` — returns SQLite version and connection status
 - `getUsers()` / `addUser(user)` — example handlers (subject to change as the schema evolves)
@@ -97,7 +97,13 @@ npm install
 npm run dev
 ```
 
-Run desktop and frontend together:
+Run the desktop app (Vite dev server + Electron):
+
+```bash
+npm run dev
+```
+
+Or use the alias:
 
 ```bash
 npm run electron:start
@@ -117,14 +123,14 @@ npm run build
 
 ## Available Scripts
 
-- `npm run dev` starts the Vite development server.
-- `npm run build` runs type checks and creates a production build.
+- `npm run dev` starts the Vite development server and Electron (via `vite-plugin-electron`).
+- `npm run build` runs type checks and creates a production build (renderer in `dist/`, Electron in `dist-electron/`).
 - `npm run preview` serves a local preview of the production build.
-- `npm run electron` starts the Electron app.
-- `npm run electron:start` runs Vite and Electron in parallel.
+- `npm run electron` starts Electron against the last build (`dist-electron/main.js`).
+- `npm run electron:start` alias for `npm run dev`.
 - `npm run lint:check` runs ESLint checks.
 - `npm run lint:fix` auto-fixes supported ESLint issues.
-- `npm run type:check` runs TypeScript and Vue type checks without building.
+- `npm run type:check` runs TypeScript checks for Vue, Vite config, and Electron without building.
 - `npm run format:check` checks formatting with Prettier.
 - `npm run format:fix` formats files using Prettier.
 - `npm run test` runs unit tests with Vitest.
@@ -154,7 +160,7 @@ npm run build
 - `src/features/` contains domain-focused feature slices (for example authentication and settings).
 - `src/widgets/` contains reusable, composed UI blocks that combine multiple features/entities.
 - `src/shared/` (if present) contains cross-cutting utilities, types, and configuration with no business ownership.
-- `electron/` contains main and preload logic for the desktop runtime.
+- `electron/` contains TypeScript main and preload logic for the desktop runtime (built to `dist-electron/`).
 - `electron/database/` contains SQLite connection setup, migration runner, and versioned schema files.
 
 ## Dependencies

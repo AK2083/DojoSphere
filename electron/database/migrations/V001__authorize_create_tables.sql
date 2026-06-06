@@ -1,3 +1,32 @@
+CREATE TABLE IF NOT EXISTS roles (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  label_key TEXT NOT NULL,
+  description_key TEXT,
+  is_system INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS permissions (
+  id TEXT PRIMARY KEY,
+  resource TEXT NOT NULL,
+  action TEXT NOT NULL,
+  label_key TEXT NOT NULL,
+  description_key TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (resource, action)
+);
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+  role_id TEXT NOT NULL,
+  permission_id TEXT NOT NULL,
+
+  PRIMARY KEY (role_id, permission_id),
+
+  FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+  FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
 

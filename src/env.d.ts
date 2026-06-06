@@ -19,14 +19,10 @@ declare module 'vue-router' {
   }
 }
 
-export interface IElectronAPI {
-  getUsers: () => Promise<Array<{ id: number; name: string; data: unknown }>>
-  addUser: (user: { name: string; data: unknown }) => Promise<unknown>
-  dbHealthcheck: () => Promise<{ ok: boolean; version: string }>
-}
+import type { ElectronAPI } from '@shared/types/electron-api'
 
 declare global {
   interface Window {
-    api: IElectronAPI
+    api: ElectronAPI
   }
 }

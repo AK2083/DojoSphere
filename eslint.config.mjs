@@ -14,7 +14,15 @@ import jsdoc from 'eslint-plugin-jsdoc'
 
 export default defineConfig([
   {
-    ignores: ['node_modules', 'dist', 'coverage', '.vscode', '*.min.js', 'storybook-static']
+    ignores: [
+      'node_modules',
+      'dist',
+      'dist-electron',
+      'coverage',
+      '.vscode',
+      '*.min.js',
+      'storybook-static'
+    ]
   },
   {
     files: ['src/**/*.{js,mjs,cjs}'],
@@ -33,16 +41,15 @@ export default defineConfig([
     }
   },
   {
-    files: ['electron/**/*.js'],
+    files: ['electron/**/*.ts'],
     plugins: { security },
     languageOptions: {
-      sourceType: 'commonjs',
+      sourceType: 'module',
       globals: globals.node
     },
     rules: {
       ...security.configs.recommended.rules,
       '@typescript-eslint/no-require-imports': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
       'security/detect-object-injection': 'off'
     }
   },
