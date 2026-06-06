@@ -25,7 +25,7 @@ export default defineConfig([
     ]
   },
   {
-    files: ['src/renderer/**/*.{js,mjs,cjs}', 'src/shared/**/*.{js,mjs,cjs}'],
+    files: ['src/renderer/**/*.{js,mjs,cjs}'],
     ...js.configs.recommended,
     languageOptions: {
       globals: {
@@ -35,7 +35,7 @@ export default defineConfig([
   },
   ...tseslint.configs.recommended,
   {
-    files: ['src/renderer/**/*.{ts,vue}', 'src/shared/**/*.{ts,vue}'],
+    files: ['src/renderer/**/*.{ts,vue}'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'off'
     }
@@ -55,10 +55,10 @@ export default defineConfig([
   },
   ...pluginVue.configs['flat/strongly-recommended'].map((config) => ({
     ...config,
-    files: ['src/renderer/**/*.vue', 'src/shared/**/*.vue']
+    files: ['src/renderer/**/*.vue']
   })),
   {
-    files: ['src/renderer/**/*.vue', 'src/shared/**/*.vue'],
+    files: ['src/renderer/**/*.vue'],
     languageOptions: {
       parserOptions: {
         parser: tseslint.parser
@@ -69,7 +69,7 @@ export default defineConfig([
     }
   },
   {
-    files: ['src/renderer/**/*.{js,ts,vue}', 'src/shared/**/*.{js,ts,vue}'],
+    files: ['src/renderer/**/*.{js,ts,vue}'],
     plugins: {
       'unused-imports': unusedImports,
       'simple-import-sort': simpleImportSort
@@ -96,7 +96,7 @@ export default defineConfig([
     }
   },
   {
-    files: ['src/renderer/**/*.{ts,js}', 'src/shared/**/*.{ts,js}'],
+    files: ['src/renderer/**/*.{ts,js}'],
     plugins: {
       jsdoc
     },

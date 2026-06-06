@@ -18,12 +18,12 @@
     "isolatedModules": true,
 
     "paths": {
-      "@shared/*": ["./src/shared/*"],
+      "@shared/*": ["./src/renderer/shared/*"],
       "@app/*": ["./src/renderer/app/*"],
       "@features/*": ["./src/renderer/features/*"],
       "@widgets/*": ["./src/renderer/widgets/*"],
       "@pages/*": ["./src/renderer/pages/*"]
     }
   },
-  "include": ["src/renderer/**/*.ts", "src/renderer/**/*.vue", "src/shared/**/*.ts"]
+  "include": ["src/renderer/**/*.ts", "src/renderer/**/*.vue"]
 }

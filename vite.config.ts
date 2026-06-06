@@ -17,7 +17,7 @@ export default defineConfig({
         vite: {
           resolve: {
             alias: {
-              '@shared': path.resolve(__dirname, 'src/shared')
+              '@shared': path.resolve(__dirname, 'src/renderer/shared')
             }
           },
           build: {
@@ -32,7 +32,7 @@ export default defineConfig({
         vite: {
           resolve: {
             alias: {
-              '@shared': path.resolve(__dirname, 'src/shared')
+              '@shared': path.resolve(__dirname, 'src/renderer/shared')
             }
           }
         }
@@ -42,7 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src/renderer'),
-      '@shared': path.resolve(__dirname, 'src/shared'),
+      '@shared': path.resolve(__dirname, 'src/renderer/shared'),
       '@app': path.resolve(__dirname, 'src/renderer/app'),
       '@features': path.resolve(__dirname, 'src/renderer/features'),
       '@widgets': path.resolve(__dirname, 'src/renderer/widgets'),

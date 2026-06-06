@@ -18,10 +18,7 @@ const localWorkerCount = Math.min(4, derivedWorkerCount)
  */
 export default defineConfig({
   testDir: '.',
-  testMatch: [
-    'src/renderer/{widgets,features,pages}/**/ui/**/*.e2e.spec.ts',
-    'src/shared/ui/**/*.e2e.spec.ts'
-  ],
+  testMatch: ['src/renderer/{widgets,features,pages,shared}/**/ui/**/*.e2e.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/dist/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,

@@ -18,8 +18,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@shared/*": ["./src/shared/*"]
+      "@shared/*": ["./src/renderer/shared/*"]
     }
   },
-  "include": ["src/main/**/*.ts", "src/main/**/*.d.ts", "src/shared/types/electron-api.ts"]
+  "include": ["src/main/**/*.ts", "src/main/**/*.d.ts", "src/renderer/shared/types/electron-api.ts"]
 }

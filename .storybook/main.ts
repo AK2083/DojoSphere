@@ -17,7 +17,7 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           '@': path.resolve(dirname, '../src/renderer'),
-          '@shared': path.resolve(dirname, '../src/shared'),
+          '@shared': path.resolve(dirname, '../src/renderer/shared'),
           '@app': path.resolve(dirname, '../src/renderer/app'),
           '@features': path.resolve(dirname, '../src/renderer/features'),
           '@widgets': path.resolve(dirname, '../src/renderer/widgets'),
