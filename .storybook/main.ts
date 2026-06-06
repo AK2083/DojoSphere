@@ -8,7 +8,7 @@ const dirname =
   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/renderer/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   addons: ['@storybook/addon-vitest', '@storybook/addon-a11y', '@storybook/addon-docs'],
   framework: '@storybook/vue3-vite',
   async viteFinal(baseConfig) {
@@ -16,12 +16,12 @@ const config: StorybookConfig = {
       plugins: [vuetify()],
       resolve: {
         alias: {
-          '@': path.resolve(dirname, '../src'),
+          '@': path.resolve(dirname, '../src/renderer'),
           '@shared': path.resolve(dirname, '../src/shared'),
-          '@app': path.resolve(dirname, '../src/app'),
-          '@features': path.resolve(dirname, '../src/features'),
-          '@widgets': path.resolve(dirname, '../src/widgets'),
-          '@pages': path.resolve(dirname, '../src/pages')
+          '@app': path.resolve(dirname, '../src/renderer/app'),
+          '@features': path.resolve(dirname, '../src/renderer/features'),
+          '@widgets': path.resolve(dirname, '../src/renderer/widgets'),
+          '@pages': path.resolve(dirname, '../src/renderer/pages')
         }
       }
     })

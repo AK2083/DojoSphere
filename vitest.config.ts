@@ -40,10 +40,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@shared': path.resolve(__dirname, 'src/shared'),
-      '@app': path.resolve(__dirname, 'src/app'),
-      '@features': path.resolve(__dirname, 'src/features'),
-      '@widgets': path.resolve(__dirname, 'src/widgets'),
-      '@pages': path.resolve(__dirname, 'src/pages')
+      '@app': path.resolve(__dirname, 'src/renderer/app'),
+      '@features': path.resolve(__dirname, 'src/renderer/features'),
+      '@widgets': path.resolve(__dirname, 'src/renderer/widgets'),
+      '@pages': path.resolve(__dirname, 'src/renderer/pages')
     }
   },
   test: {
@@ -55,7 +55,7 @@ export default defineConfig({
       reportsDirectory: './coverage',
       reporter: ['text', 'html', 'lcov'],
       clean: true,
-      include: ['src/**/*.{ts,tsx}'],
+      include: ['src/renderer/**/*.{ts,tsx}', 'src/shared/**/*.{ts,tsx}'],
       exclude: [
         'env.d.ts',
         'index.ts',
@@ -91,7 +91,12 @@ export default defineConfig({
         test: {
           globals: true,
           environment: 'jsdom',
-          include: ['src/**/*.test.ts', 'src/**/*.test.tsx']
+          include: [
+            'src/renderer/**/*.test.ts',
+            'src/renderer/**/*.test.tsx',
+            'src/shared/**/*.test.ts',
+            'src/shared/**/*.test.tsx'
+          ]
         }
       },
       ...(includeStorybookProject

@@ -10,7 +10,7 @@ export default defineConfig({
     vuetify(),
     electron({
       main: {
-        entry: 'electron/main.ts',
+        entry: 'src/main/main.ts',
         onstart({ startup }) {
           startup(['.', '--no-sandbox', '--remote-debugging-port=9223', '--inspect=9229'])
         },
@@ -28,7 +28,7 @@ export default defineConfig({
         }
       },
       preload: {
-        input: path.join(__dirname, 'electron/preload.ts'),
+        input: path.join(__dirname, 'src/main/preload.ts'),
         vite: {
           resolve: {
             alias: {
@@ -41,12 +41,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@': path.resolve(__dirname, 'src/renderer'),
       '@shared': path.resolve(__dirname, 'src/shared'),
-      '@app': path.resolve(__dirname, 'src/app'),
-      '@features': path.resolve(__dirname, 'src/features'),
-      '@widgets': path.resolve(__dirname, 'src/widgets'),
-      '@pages': path.resolve(__dirname, 'src/pages')
+      '@app': path.resolve(__dirname, 'src/renderer/app'),
+      '@features': path.resolve(__dirname, 'src/renderer/features'),
+      '@widgets': path.resolve(__dirname, 'src/renderer/widgets'),
+      '@pages': path.resolve(__dirname, 'src/renderer/pages')
     }
   },
   build: {

@@ -19,7 +19,7 @@ const localWorkerCount = Math.min(4, derivedWorkerCount)
 export default defineConfig({
   testDir: '.',
   testMatch: [
-    'src/{widgets,features,pages}/**/ui/**/*.e2e.spec.ts',
+    'src/renderer/{widgets,features,pages}/**/ui/**/*.e2e.spec.ts',
     'src/shared/ui/**/*.e2e.spec.ts'
   ],
   testIgnore: ['**/node_modules/**', '**/dist/**'],
@@ -81,7 +81,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1 --port 4173',
+    command: 'npm run electron:start -- --host 127.0.0.1 --port 4173',
     url: 'http://127.0.0.1:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000

@@ -15,7 +15,7 @@
     "electron:start": "vite",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
-    "type:check": "vue-tsc --build --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "type:check": "vue-tsc --build --noEmit && tsc -p tsconfig.main.json --noEmit",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
     "test": "vitest",
