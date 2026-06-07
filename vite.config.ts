@@ -28,7 +28,7 @@ export default defineConfig({
         }
       },
       preload: {
-        input: path.join(__dirname, 'src/main/preload.ts'),
+        input: path.join(__dirname, 'src/main/preload/preload.ts'),
         vite: {
           resolve: {
             alias: {

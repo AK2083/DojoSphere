@@ -1,62 +1,41 @@
 import migrations from './migrations'
+import { applyPragmas } from './pragmas'
+import { runInTransaction } from './transactions'
 import type { SqliteDatabase } from './types'
-
-function applyPragmas(db: SqliteDatabase) {
-  if ('pragma' in db && typeof db.pragma === 'function') {
-    db.pragma('journal_mode = WAL')
-    db.pragma('foreign_keys = ON')
-    db.pragma('busy_timeout = 5000')
-    return
-  }
-
-  db.exec('PRAGMA journal_mode = WAL')
-  db.exec('PRAGMA foreign_keys = ON')
-  db.exec('PRAGMA busy_timeout = 5000')
-}
 
 function ensureMigrationsTable(db: SqliteDatabase) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS _migrations (
       id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
       applied_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `)
 }
 
-function runInTransaction(db: SqliteDatabase, fn: () => void) {
-  if ('transaction' in db && typeof db.transaction === 'function') {
-    return db.transaction(fn)()
-  }
-
-  db.exec('BEGIN')
-  try {
-    fn()
-    db.exec('COMMIT')
-  } catch (error) {
-    db.exec('ROLLBACK')
-    throw error
-  }
+function getAppliedMigrationIds(db: SqliteDatabase) {
+  return new Set(
+    db
+      .prepare('SELECT id FROM _migrations')
+      .all()
+      .map((row) => (row as { id: string }).id)
+  )
 }
 
 export function runMigrations(db: SqliteDatabase) {
   applyPragmas(db)
   ensureMigrationsTable(db)
 
-  const applied = new Set(
-    db
-      .prepare('SELECT id FROM _migrations')
-      .all()
-      .map((row) => (row as { id: string }).id)
-  )
+  const applied = getAppliedMigrationIds(db)
+  const insertMigration = db.prepare('INSERT INTO _migrations (id, name) VALUES (?, ?)')
+  const sortedMigrations = [...migrations].sort((a, b) => a.name.localeCompare(b.name))
 
-  const insertMigration = db.prepare('INSERT INTO _migrations (id) VALUES (?)')
-
-  for (const { id, sql } of migrations) {
+  for (const { id, name, sql } of sortedMigrations) {
     if (applied.has(id)) continue
 
     runInTransaction(db, () => {
       db.exec(sql)
-      insertMigration.run(id)
+      insertMigration.run(id, name)
     })
   }
 }

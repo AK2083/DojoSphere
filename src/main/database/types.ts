@@ -5,5 +5,6 @@ export type SqliteDatabase = BetterSqlite3.Database | DatabaseSync
 
 export interface Migration {
   id: string
+  name: string
   sql: string
 }
