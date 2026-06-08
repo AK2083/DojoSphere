@@ -2,7 +2,7 @@ import path from 'node:path'
 import { app } from 'electron'
 
 import { loadBetterSqlite3Database, loadNodeSqliteDatabase } from './drivers'
-import type { SqliteDatabase } from './types'
+import type { SqliteDatabase } from './types/database'
 
 let db: SqliteDatabase | undefined
 

@@ -1,7 +1,7 @@
 import migrations from './migrations'
 import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
-import type { SqliteDatabase } from './types'
+import type { SqliteDatabase } from './types/database'
 
 function ensureMigrationsTable(db: SqliteDatabase) {
   db.exec(`

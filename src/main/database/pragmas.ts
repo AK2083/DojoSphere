@@ -1,4 +1,4 @@
-import type { SqliteDatabase } from './types'
+import type { SqliteDatabase } from './types/database'
 
 export function applyPragmas(db: SqliteDatabase) {
   if ('pragma' in db && typeof db.pragma === 'function') {

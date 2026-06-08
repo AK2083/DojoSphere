@@ -1,4 +1,4 @@
-import type { SqliteDatabase } from './types'
+import type { SqliteDatabase } from './types/database'
 
 export function loadBetterSqlite3Database(dbPath: string): SqliteDatabase {
   const BetterSqlite3 = require('better-sqlite3') as typeof import('better-sqlite3')

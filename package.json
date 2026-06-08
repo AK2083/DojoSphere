@@ -1,17 +1,33 @@
 {
   "name": "dojosphere",
-  "private": false,
-  "version": "0.0.1",
-  "main": "dist-electron/main.js",
+  "version": "0.0.0",
+  "description": "Open-source Electron application for managing Judo tournaments.",
+  "keywords": [
+    "judo",
+    "tournament"
+  ],
+  "homepage": "https://github.com/AK2083/DojoSphere#readme",
+  "bugs": {
+    "url": "https://github.com/AK2083/DojoSphere/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Adrian Helmchen",
+    "url": "https://github.com/AK2083"
+  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:AK2083/DojoSphere.git"
+    "url": "git+https://github.com/AK2083/DojoSphere.git"
+  },
+  "private": true,
+  "main": "dist-electron/main.js",
+  "engines": {
+    "node": ">=24"
   },
   "sideEffects": false,
   "scripts": {
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "electron": "electron .",
     "electron:start": "vite",
     "lint:check": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -28,8 +44,8 @@
     "supabase:status": "supabase status",
     "supabase:init": "supabase init",
     "storybook": "storybook dev -p 6006 --ci",
-    "build-storybook": "storybook build",
-    "rebuild-sqlite": "npm install better-sqlite3 --target=42.3.0 --runtime=electron --dist-url=https://electronjs.org/headers"
+    "storybook:build": "storybook build",
+    "sqlite:rebuild": "npm install better-sqlite3 --target=42.3.0 --runtime=electron --dist-url=https://electronjs.org/headers"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",

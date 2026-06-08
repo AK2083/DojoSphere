@@ -4,7 +4,7 @@ import path from 'node:path'
 
 import { vi } from 'vitest'
 
-import type { SqliteDatabase } from '../database/types'
+import type { SqliteDatabase } from '../database/types/database'
 import { app } from './electron-mock'
 
 let testUserDataDir: string | undefined

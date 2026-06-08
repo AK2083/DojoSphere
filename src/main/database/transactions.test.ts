@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { createMemoryDatabase } from '../test/database'
 import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
-import type { SqliteDatabase } from './types'
+import type { SqliteDatabase } from './types/database'
 
 describe('applyPragmas', () => {
   it('uses the pragma API when the driver supports it', () => {
