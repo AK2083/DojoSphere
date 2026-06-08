@@ -1,9 +1,10 @@
 import { app } from 'electron'
 
-import { createWindow } from './window/main-window'
+import { resolveDevServerUrl } from '../../config/dev'
 import { bootstrap } from './app/bootstrap'
+import { createWindow } from './window/main-window'
 
-const DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL ?? 'http://localhost:5173'
+const DEV_SERVER_URL = resolveDevServerUrl()
 
 app.whenReady().then(() => {
   try {

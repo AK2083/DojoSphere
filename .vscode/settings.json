@@ -9,8 +9,6 @@
     "source.fixAll.eslint": "always"
   },
 
-  "js/ts.preferences.includePackageJsonAutoImports": "auto",
-
   "[vue]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -22,7 +20,6 @@
   },
 
   "files.eol": "\n",
-  "js/ts.tsdk.path": "node_modules/typescript/lib",
   "dbcode.connections": [
     {
       "connectionId": "qpG8Mnm2b7lxNm9eZK_E2",

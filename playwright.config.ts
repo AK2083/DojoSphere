@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test'
 import os from 'node:os'
 
+import { DEV_HOST, E2E_BASE_URL, E2E_SERVER_PORT } from './config/dev'
+
 const logicalCpuCount = os.cpus().length
 const derivedWorkerCount = Math.max(2, Math.floor(logicalCpuCount * 0.75))
 const localWorkerCount = Math.min(4, derivedWorkerCount)
@@ -32,7 +34,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'line' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: E2E_BASE_URL,
 
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -78,8 +80,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npm run electron:start -- --host 127.0.0.1 --port 4173',
-    url: 'http://127.0.0.1:4173',
+    command: `npm run electron:start -- --host ${DEV_HOST} --port ${E2E_SERVER_PORT}`,
+    url: E2E_BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000
   }

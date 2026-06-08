@@ -137,7 +137,7 @@ npm run build
 - `npm run test:coverage` runs tests and generates a coverage report.
 - `npm run test:e2e` runs end-to-end tests with Playwright.
 - `npm run test:e2e:ui` opens Playwright in UI mode.
-- `npm run storybook` starts Storybook (uses the next free port if `6006` is already occupied).
+- `npm run storybook` starts Storybook on the port from [`config/dev.json`](config/dev.json) (default `6006`).
 - `npm run build-storybook` creates a static Storybook build.
 - `npm run supabase:start` starts local Supabase services.
 - `npm run supabase:stop` stops local Supabase services.

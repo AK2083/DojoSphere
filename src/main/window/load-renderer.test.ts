@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import type { BrowserWindow } from 'electron'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { DEV_SERVER_URL } from '../../../config/dev'
 import { app } from '../test/electron-mock'
 import { loadRenderer } from './load-renderer'
 
@@ -35,7 +36,7 @@ describe('loadRenderer', () => {
     app.isPackaged = true
     const { win, loadFile, loadURL } = createWindowMock()
 
-    await loadRenderer(win, 'http://localhost:5173')
+    await loadRenderer(win, DEV_SERVER_URL)
 
     expect(loadFile).toHaveBeenCalledWith(expect.stringMatching(/dist[\\/]index\.html$/))
     expect(loadURL).not.toHaveBeenCalled()
@@ -44,9 +45,9 @@ describe('loadRenderer', () => {
   it('loads the dev server and opens devtools in development', async () => {
     const { win, loadURL, openDevTools } = createWindowMock()
 
-    await loadRenderer(win, 'http://localhost:5173')
+    await loadRenderer(win, DEV_SERVER_URL)
 
-    expect(loadURL).toHaveBeenCalledWith('http://localhost:5173')
+    expect(loadURL).toHaveBeenCalledWith(DEV_SERVER_URL)
     expect(openDevTools).toHaveBeenCalled()
   })
 
@@ -55,7 +56,7 @@ describe('loadRenderer', () => {
     loadURL.mockRejectedValueOnce(new Error('connection refused'))
     vi.spyOn(fs, 'existsSync').mockReturnValue(false)
 
-    await loadRenderer(win, 'http://localhost:5173')
+    await loadRenderer(win, DEV_SERVER_URL)
 
     const fallbackUrl = loadURL.mock.calls[1]?.[0] as string
 
@@ -69,7 +70,7 @@ describe('loadRenderer', () => {
     loadURL.mockRejectedValueOnce(new Error('connection refused'))
     vi.spyOn(fs, 'existsSync').mockReturnValue(true)
 
-    await loadRenderer(win, 'http://localhost:5173')
+    await loadRenderer(win, DEV_SERVER_URL)
 
     expect(loadFile).toHaveBeenCalledWith(expect.stringMatching(/dist[\\/]index\.html$/))
     expect(loadURL).toHaveBeenCalledTimes(1)

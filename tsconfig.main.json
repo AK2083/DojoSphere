@@ -7,6 +7,7 @@
     "types": ["node", "electron"],
     "skipLibCheck": true,
     "moduleResolution": "bundler",
+    "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
@@ -21,5 +22,10 @@
       "@shared/*": ["./src/renderer/shared/*"]
     }
   },
-  "include": ["src/main/**/*.ts", "src/main/**/*.d.ts", "src/renderer/shared/types/electron-api.ts"]
+  "include": [
+    "config/dev.ts",
+    "src/main/**/*.ts",
+    "src/main/**/*.d.ts",
+    "src/renderer/shared/types/electron-api.ts"
+  ]
 }

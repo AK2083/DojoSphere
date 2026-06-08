@@ -4,6 +4,8 @@ import path from 'path'
 import { fileURLToPath } from 'node:url'
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
+
+import { DEV_HOST, VITEST_STORYBOOK_BROWSER_PORT } from './config/dev'
 const dirname =
   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 const includeStorybookProject = process.env.VITEST_STORYBOOK === 'true'
@@ -47,7 +49,7 @@ export default defineConfig({
   },
   test: {
     api: {
-      host: '127.0.0.1'
+      host: DEV_HOST
     },
     coverage: {
       provider: 'v8',
@@ -125,8 +127,8 @@ export default defineConfig({
                 browser: {
                   enabled: true,
                   api: {
-                    host: '127.0.0.1',
-                    port: 42123
+                    host: DEV_HOST,
+                    port: VITEST_STORYBOOK_BROWSER_PORT
                   },
                   headless: true,
                   provider: playwright({}),

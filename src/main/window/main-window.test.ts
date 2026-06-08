@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { DEV_SERVER_URL } from '../../../config/dev'
 import { app, BrowserWindowConstructor, createBrowserWindowMock, Menu } from '../test/electron-mock'
 
 function getBrowserWindowMock() {
@@ -26,7 +27,7 @@ describe('createWindow', () => {
 
     const { createWindow } = await import('./main-window')
 
-    createWindow('http://localhost:5173')
+    createWindow(DEV_SERVER_URL)
 
     expect(Menu.setApplicationMenu).toHaveBeenCalledWith(null)
     expect(BrowserWindowConstructor).toHaveBeenCalledWith(
@@ -38,7 +39,7 @@ describe('createWindow', () => {
         })
       })
     )
-    expect(loadRendererMock).toHaveBeenCalledWith(getBrowserWindowMock(), 'http://localhost:5173')
+    expect(loadRendererMock).toHaveBeenCalledWith(getBrowserWindowMock(), DEV_SERVER_URL)
   })
 
   it('blocks devtools shortcut when packaged', async () => {
@@ -48,7 +49,7 @@ describe('createWindow', () => {
     }))
 
     const { createWindow } = await import('./main-window')
-    createWindow('http://localhost:5173')
+    createWindow(DEV_SERVER_URL)
 
     const win = getBrowserWindowMock()
     const beforeInputHandler = win.webContents.on.mock.calls.find(
@@ -78,7 +79,7 @@ describe('createWindow', () => {
     }))
 
     const { createWindow } = await import('./main-window')
-    createWindow('http://localhost:5173')
+    createWindow(DEV_SERVER_URL)
 
     const win = getBrowserWindowMock()
     const beforeInputHandler = win.webContents.on.mock.calls.find(
@@ -106,7 +107,7 @@ describe('createWindow', () => {
     }))
 
     const { createWindow } = await import('./main-window')
-    createWindow('http://localhost:5173')
+    createWindow(DEV_SERVER_URL)
 
     const win = getBrowserWindowMock()
     const beforeInputHandler = win.webContents.on.mock.calls.find(
@@ -134,7 +135,7 @@ describe('createWindow', () => {
     }))
 
     const { createWindow } = await import('./main-window')
-    createWindow('http://localhost:5173')
+    createWindow(DEV_SERVER_URL)
 
     const win = getBrowserWindowMock()
     const beforeInputHandler = win.webContents.on.mock.calls.find(

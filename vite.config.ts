@@ -4,7 +4,18 @@ import path from 'path'
 import electron from 'vite-plugin-electron/simple'
 import vuetify from 'vite-plugin-vuetify'
 
+import {
+  DEV_HOST,
+  DEV_SERVER_PORT,
+  ELECTRON_INSPECT_PORT,
+  ELECTRON_REMOTE_DEBUG_PORT
+} from './config/dev'
+
 export default defineConfig({
+  server: {
+    host: DEV_HOST,
+    port: DEV_SERVER_PORT
+  },
   plugins: [
     vue(),
     vuetify(),
@@ -12,7 +23,12 @@ export default defineConfig({
       main: {
         entry: 'src/main/main.ts',
         onstart({ startup }) {
-          startup(['.', '--no-sandbox', '--remote-debugging-port=9223', '--inspect=9229'])
+          startup([
+            '.',
+            '--no-sandbox',
+            `--remote-debugging-port=${ELECTRON_REMOTE_DEBUG_PORT}`,
+            `--inspect=${ELECTRON_INSPECT_PORT}`
+          ])
         },
         vite: {
           resolve: {
