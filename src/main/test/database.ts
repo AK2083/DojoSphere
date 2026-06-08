@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { DatabaseSync } from 'node:sqlite'
 
 import { vi } from 'vitest'
 
@@ -10,13 +11,7 @@ import { app } from './electron-mock'
 let testUserDataDir: string | undefined
 
 export function createMemoryDatabase(): SqliteDatabase {
-  try {
-    const BetterSqlite3 = require('better-sqlite3') as typeof import('better-sqlite3')
-    return new BetterSqlite3(':memory:')
-  } catch {
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite')
-    return new DatabaseSync(':memory:')
-  }
+  return new DatabaseSync(':memory:')
 }
 
 export function createTestUserDataDir() {

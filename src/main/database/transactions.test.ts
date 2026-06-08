@@ -1,25 +1,11 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { createMemoryDatabase } from '../test/database'
 import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
-import type { SqliteDatabase } from './types/database'
 
 describe('applyPragmas', () => {
-  it('uses the pragma API when the driver supports it', () => {
-    const pragma = vi.fn()
-    const exec = vi.fn()
-    const db = { pragma, exec } as unknown as SqliteDatabase
-
-    applyPragmas(db)
-
-    expect(pragma).toHaveBeenCalledWith('journal_mode = WAL')
-    expect(pragma).toHaveBeenCalledWith('foreign_keys = ON')
-    expect(pragma).toHaveBeenCalledWith('busy_timeout = 5000')
-    expect(exec).not.toHaveBeenCalled()
-  })
-
-  it('enables foreign keys via exec when pragma is unavailable', () => {
+  it('enables foreign keys', () => {
     const db = createMemoryDatabase()
 
     applyPragmas(db)
@@ -31,19 +17,6 @@ describe('applyPragmas', () => {
 })
 
 describe('runInTransaction', () => {
-  it('uses native transaction when the driver supports it', () => {
-    const callback = vi.fn()
-    const transaction = vi.fn((fn: () => void) => () => fn())
-    const exec = vi.fn()
-    const db = { transaction, exec } as unknown as SqliteDatabase
-
-    runInTransaction(db, callback)
-
-    expect(transaction).toHaveBeenCalledWith(callback)
-    expect(callback).toHaveBeenCalled()
-    expect(exec).not.toHaveBeenCalled()
-  })
-
   it('commits changes on success', () => {
     const db = createMemoryDatabase()
 

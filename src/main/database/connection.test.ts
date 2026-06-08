@@ -8,22 +8,13 @@ const mockDb = {
   exec: vi.fn()
 }
 
-const mockDbNoClose = {
-  prepare: vi.fn(),
-  exec: vi.fn()
-}
-
 vi.mock('./drivers', async (importOriginal) => {
   const actual = await importOriginal<typeof import('./drivers')>()
 
   return {
     ...actual,
-    loadBetterSqlite3Database: vi.fn(
-      (...args: Parameters<typeof actual.loadBetterSqlite3Database>) =>
-        actual.loadBetterSqlite3Database(...args)
-    ),
-    loadNodeSqliteDatabase: vi.fn((...args: Parameters<typeof actual.loadNodeSqliteDatabase>) =>
-      actual.loadNodeSqliteDatabase(...args)
+    createDatabaseSync: vi.fn((...args: Parameters<typeof actual.createDatabaseSync>) =>
+      actual.createDatabaseSync(...args)
     )
   }
 })
@@ -53,50 +44,31 @@ describe('connection', () => {
     expect(second).toBe(first)
   })
 
-  it('uses better-sqlite3 when the native module is available', async () => {
+  it('opens the database via node:sqlite', async () => {
     vi.resetModules()
     createTestUserDataDir()
 
     const drivers = await import('./drivers')
-    vi.mocked(drivers.loadBetterSqlite3Database).mockReturnValue(mockDb as never)
+    vi.mocked(drivers.createDatabaseSync).mockReturnValue(mockDb as never)
 
     const { initDatabase } = await import('./connection')
     const db = initDatabase()
 
     expect(db).toBe(mockDb)
-    expect(drivers.loadNodeSqliteDatabase).not.toHaveBeenCalled()
+    expect(drivers.createDatabaseSync).toHaveBeenCalledWith(expect.stringMatching(/database\.db$/))
   })
 
-  it('falls back to node:sqlite when better-sqlite3 throws a non-error value', async () => {
+  it('closes the database connection', async () => {
     vi.resetModules()
     createTestUserDataDir()
 
     const drivers = await import('./drivers')
-    vi.mocked(drivers.loadBetterSqlite3Database).mockImplementation(() => {
-      throw 'native module missing'
-    })
-
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
-    const { initDatabase } = await import('./connection')
-    const db = initDatabase()
-
-    expect(db).toBeDefined()
-    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('native module missing'))
-    expect(drivers.loadNodeSqliteDatabase).toHaveBeenCalled()
-
-    warnSpy.mockRestore()
-  })
-
-  it('skips close when the database driver has no close method', async () => {
-    vi.resetModules()
-    createTestUserDataDir()
-
-    const drivers = await import('./drivers')
-    vi.mocked(drivers.loadBetterSqlite3Database).mockReturnValue(mockDbNoClose as never)
+    vi.mocked(drivers.createDatabaseSync).mockReturnValue(mockDb as never)
 
     const { initDatabase, closeDatabase } = await import('./connection')
     initDatabase()
+    closeDatabase()
 
-    expect(() => closeDatabase()).not.toThrow()
+    expect(mockDb.close).toHaveBeenCalled()
   })
 })

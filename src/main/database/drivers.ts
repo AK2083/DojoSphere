@@ -1,11 +1,9 @@
+import { DatabaseSync } from 'node:sqlite'
+
 import type { SqliteDatabase } from './types/database'
 
-export function loadBetterSqlite3Database(dbPath: string): SqliteDatabase {
-  const BetterSqlite3 = require('better-sqlite3') as typeof import('better-sqlite3')
-  return new BetterSqlite3(dbPath)
-}
+const BUSY_TIMEOUT_MS = 5000
 
-export function loadNodeSqliteDatabase(dbPath: string): SqliteDatabase {
-  const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite')
-  return new DatabaseSync(dbPath)
+export function createDatabaseSync(dbPath: string): SqliteDatabase {
+  return new DatabaseSync(dbPath, { timeout: BUSY_TIMEOUT_MS })
 }
