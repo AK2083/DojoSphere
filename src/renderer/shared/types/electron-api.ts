@@ -3,8 +3,23 @@ export interface DbHealthcheckResult {
   version: string
 }
 
+export interface User {
+  id: string
+  displayName: string
+  email: string | null
+  userType: 'local' | 'device' | 'system'
+  createdAt: string
+  updatedAt: string | null
+}
+
+export interface CreateUserInput {
+  displayName: string
+  email?: string | null
+  userType?: 'local' | 'device' | 'system'
+}
+
 export interface ElectronAPI {
-  getUsers: () => Promise<Array<{ id: number; name: string; data: unknown }>>
-  addUser: (user: { name: string; data: unknown }) => Promise<unknown>
+  getUsers: () => Promise<User[]>
+  addUser: (user: CreateUserInput) => Promise<unknown>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
 }

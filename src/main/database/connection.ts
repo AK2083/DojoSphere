@@ -1,21 +1,20 @@
 import path from 'node:path'
 import { app } from 'electron'
 
+import { loadBetterSqlite3Database, loadNodeSqliteDatabase } from './drivers'
 import type { SqliteDatabase } from './types'
 
 let db: SqliteDatabase | undefined
 
 function createDatabase(dbPath: string): SqliteDatabase {
   try {
-    const BetterSqlite3 = require('better-sqlite3') as typeof import('better-sqlite3')
-    return new BetterSqlite3(dbPath)
+    return loadBetterSqlite3Database(dbPath)
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error)
 
     console.warn(`better-sqlite3 nicht verfuegbar (${errorMessage}). Nutze node:sqlite Fallback.`)
 
-    const { DatabaseSync } = require('node:sqlite') as typeof import('node:sqlite')
-    return new DatabaseSync(dbPath)
+    return loadNodeSqliteDatabase(dbPath)
   }
 }
 
@@ -34,4 +33,12 @@ export function getDatabase(): SqliteDatabase {
   }
 
   return db
+}
+
+export function closeDatabase(): void {
+  if (db && 'close' in db && typeof db.close === 'function') {
+    db.close()
+  }
+
+  db = undefined
 }

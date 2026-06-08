@@ -1,23 +1,49 @@
+import { randomUUID } from 'node:crypto'
+
 import { getDatabase } from '../database/connection'
 
 export type CreateUserInput = {
-  name: string
-  data: unknown
+  displayName: string
+  email?: string | null
+  userType?: 'local' | 'device' | 'system'
 }
 
-export function getUsers() {
+export type UserRecord = {
+  id: string
+  displayName: string
+  email: string | null
+  userType: 'local' | 'device' | 'system'
+  createdAt: string
+  updatedAt: string | null
+}
+
+export function getUsers(): UserRecord[] {
   const db = getDatabase()
 
-  return db.prepare('SELECT * FROM users').all()
+  return db
+    .prepare(
+      `
+      SELECT
+        id,
+        display_name AS displayName,
+        email,
+        user_type AS userType,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+      FROM users
+    `
+    )
+    .all() as UserRecord[]
 }
 
 export function addUser(user: CreateUserInput) {
   const db = getDatabase()
+  const id = randomUUID()
 
   const insert = db.prepare(`
-    INSERT INTO users (name, data)
-    VALUES (?, ?)
+    INSERT INTO users (id, display_name, email, user_type)
+    VALUES (?, ?, ?, ?)
   `)
 
-  return insert.run(user.name, JSON.stringify(user.data))
+  return insert.run(id, user.displayName, user.email ?? null, user.userType ?? 'local')
 }

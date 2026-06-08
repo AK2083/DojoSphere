@@ -6,7 +6,13 @@ export function registerUsersIpc() {
     return getUsers()
   })
 
-  ipcMain.handle('users:add', (_event, user: { name: string; data: unknown }) => {
-    return addUser(user)
-  })
+  ipcMain.handle(
+    'users:add',
+    (
+      _event,
+      user: { displayName: string; email?: string | null; userType?: 'local' | 'device' | 'system' }
+    ) => {
+      return addUser(user)
+    }
+  )
 }

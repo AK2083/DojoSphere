@@ -55,15 +55,16 @@ export default defineConfig({
       reportsDirectory: './coverage',
       reporter: ['text', 'html', 'lcov'],
       clean: true,
-      include: ['src/renderer/**/*.{ts,tsx}'],
+      include: ['src/renderer/**/*.{ts,tsx}', 'src/main/**/*.ts'],
       exclude: [
         'env.d.ts',
         'index.ts',
         '**/*.spec.ts',
+        '**/*.test.ts',
         '**/*.stories.ts',
         '**/shared/lib/**',
         '**/node_modules/**',
-        '**/app/**',
+        'src/renderer/app/**',
         '**/dist/**',
         '**/types/**',
         '**/exceptions/**',
@@ -76,7 +77,9 @@ export default defineConfig({
         '**/monitoring/**',
         '**/form/**',
         '**/providers/**',
-        '**/i18n/**'
+        '**/i18n/**',
+        'src/main/test/**',
+        'src/main/main.ts'
       ],
       thresholds: {
         statements: 80,
@@ -89,9 +92,24 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'renderer',
           globals: true,
           environment: 'jsdom',
           include: ['src/renderer/**/*.test.ts', 'src/renderer/**/*.test.tsx']
+        }
+      },
+      {
+        extends: true,
+        resolve: {
+          alias: {
+            '@shared': path.resolve(dirname, 'src/renderer/shared')
+          }
+        },
+        test: {
+          name: 'main',
+          environment: 'node',
+          include: ['src/main/**/*.test.ts'],
+          setupFiles: ['src/main/test/setup.ts']
         }
       },
       ...(includeStorybookProject
