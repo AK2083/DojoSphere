@@ -80,7 +80,10 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: `npm run electron:start -- --host ${DEV_HOST} --port ${E2E_SERVER_PORT}`,
+    command: `npm run e2e:server -- --host ${DEV_HOST} --port ${E2E_SERVER_PORT}`,
+    env: {
+      VITE_E2E: '1'
+    },
     url: E2E_BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000

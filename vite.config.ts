@@ -11,6 +11,8 @@ import {
   ELECTRON_REMOTE_DEBUG_PORT
 } from './config/dev'
 
+const isE2eServer = process.env.VITE_E2E === '1'
+
 export default defineConfig({
   server: {
     host: DEV_HOST,
@@ -19,41 +21,45 @@ export default defineConfig({
   plugins: [
     vue(),
     vuetify(),
-    electron({
-      main: {
-        entry: 'src/main/main.ts',
-        onstart({ startup }) {
-          startup([
-            '.',
-            '--no-sandbox',
-            `--remote-debugging-port=${ELECTRON_REMOTE_DEBUG_PORT}`,
-            `--inspect=${ELECTRON_INSPECT_PORT}`
-          ])
-        },
-        vite: {
-          resolve: {
-            alias: {
-              '@shared': path.resolve(__dirname, 'src/renderer/shared')
+    ...(isE2eServer
+      ? []
+      : [
+          electron({
+            main: {
+              entry: 'src/main/main.ts',
+              onstart({ startup }) {
+                startup([
+                  '.',
+                  '--no-sandbox',
+                  `--remote-debugging-port=${ELECTRON_REMOTE_DEBUG_PORT}`,
+                  `--inspect=${ELECTRON_INSPECT_PORT}`
+                ])
+              },
+              vite: {
+                resolve: {
+                  alias: {
+                    '@shared': path.resolve(__dirname, 'src/renderer/shared')
+                  }
+                },
+                build: {
+                  rollupOptions: {
+                    external: ['electron', 'node:sqlite']
+                  }
+                }
+              }
+            },
+            preload: {
+              input: path.join(__dirname, 'src/main/preload/preload.ts'),
+              vite: {
+                resolve: {
+                  alias: {
+                    '@shared': path.resolve(__dirname, 'src/renderer/shared')
+                  }
+                }
+              }
             }
-          },
-          build: {
-            rollupOptions: {
-              external: ['electron', 'node:sqlite']
-            }
-          }
-        }
-      },
-      preload: {
-        input: path.join(__dirname, 'src/main/preload/preload.ts'),
-        vite: {
-          resolve: {
-            alias: {
-              '@shared': path.resolve(__dirname, 'src/renderer/shared')
-            }
-          }
-        }
-      }
-    })
+          })
+        ])
   ],
   resolve: {
     alias: {
