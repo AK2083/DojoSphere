@@ -6,9 +6,9 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
-import { i18n } from '../src/app/providers/i18n'
-import { pinia } from '../src/app/providers/pinia'
-import { useCloudStatusStore, useNetworkStatusStore } from '../src/shared/store/network'
+import { i18n } from '../src/renderer/app/providers/i18n'
+import { pinia } from '../src/renderer/app/providers/pinia'
+import { useCloudStatusStore, useNetworkStatusStore } from '../src/renderer/shared/store/network'
 
 import '@fontsource/roboto/100.css'
 import '@fontsource/roboto/300.css'

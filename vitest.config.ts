@@ -4,11 +4,12 @@ import path from 'path'
 import { fileURLToPath } from 'node:url'
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
+
+import { DEV_HOST, VITEST_STORYBOOK_BROWSER_PORT } from './config/dev'
 const dirname =
   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 const includeStorybookProject = process.env.VITEST_STORYBOOK === 'true'
 
-// More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
@@ -39,31 +40,32 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@shared': path.resolve(__dirname, 'src/shared'),
-      '@app': path.resolve(__dirname, 'src/app'),
-      '@features': path.resolve(__dirname, 'src/features'),
-      '@widgets': path.resolve(__dirname, 'src/widgets'),
-      '@pages': path.resolve(__dirname, 'src/pages')
+      '@shared': path.resolve(__dirname, 'src/renderer/shared'),
+      '@app': path.resolve(__dirname, 'src/renderer/app'),
+      '@features': path.resolve(__dirname, 'src/renderer/features'),
+      '@widgets': path.resolve(__dirname, 'src/renderer/widgets'),
+      '@pages': path.resolve(__dirname, 'src/renderer/pages')
     }
   },
   test: {
     api: {
-      host: '127.0.0.1'
+      host: DEV_HOST
     },
     coverage: {
       provider: 'v8',
       reportsDirectory: './coverage',
       reporter: ['text', 'html', 'lcov'],
       clean: true,
-      include: ['src/**/*.{ts,tsx}'],
+      include: ['src/renderer/**/*.{ts,tsx}', 'src/main/**/*.ts'],
       exclude: [
         'env.d.ts',
         'index.ts',
         '**/*.spec.ts',
+        '**/*.test.ts',
         '**/*.stories.ts',
         '**/shared/lib/**',
         '**/node_modules/**',
-        '**/app/**',
+        'src/renderer/app/**',
         '**/dist/**',
         '**/types/**',
         '**/exceptions/**',
@@ -76,7 +78,9 @@ export default defineConfig({
         '**/monitoring/**',
         '**/form/**',
         '**/providers/**',
-        '**/i18n/**'
+        '**/i18n/**',
+        'src/main/test/**',
+        'src/main/main.ts'
       ],
       thresholds: {
         statements: 80,
@@ -89,18 +93,31 @@ export default defineConfig({
       {
         extends: true,
         test: {
+          name: 'renderer',
           globals: true,
           environment: 'jsdom',
-          include: ['src/**/*.test.ts', 'src/**/*.test.tsx']
+          include: ['src/renderer/**/*.test.ts', 'src/renderer/**/*.test.tsx']
+        }
+      },
+      {
+        extends: true,
+        resolve: {
+          alias: {
+            '@shared': path.resolve(dirname, 'src/renderer/shared')
+          }
+        },
+        test: {
+          name: 'main',
+          environment: 'node',
+          include: ['src/main/**/*.test.ts'],
+          setupFiles: ['src/main/test/setup.ts']
         }
       },
       ...(includeStorybookProject
         ? [
             {
-              extends: true,
+              extends: true as const,
               plugins: [
-                // The plugin will run tests for the stories defined in your Storybook config
-                // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
                 storybookTest({
                   configDir: path.join(dirname, '.storybook')
                 })
@@ -110,14 +127,14 @@ export default defineConfig({
                 browser: {
                   enabled: true,
                   api: {
-                    host: '127.0.0.1',
-                    port: 42123
+                    host: DEV_HOST,
+                    port: VITEST_STORYBOOK_BROWSER_PORT
                   },
                   headless: true,
                   provider: playwright({}),
                   instances: [
                     {
-                      browser: 'chromium'
+                      browser: 'chromium' as const
                     }
                   ]
                 }

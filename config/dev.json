@@ -1,0 +1,9 @@
+{
+  "host": "127.0.0.1",
+  "devServerPort": 5173,
+  "e2eServerPort": 4173,
+  "storybookPort": 6006,
+  "vitestStorybookBrowserPort": 42123,
+  "electronRemoteDebugPort": 9223,
+  "electronInspectPort": 9229
+}
