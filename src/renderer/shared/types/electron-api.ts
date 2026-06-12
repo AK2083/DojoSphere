@@ -22,4 +22,5 @@ export interface ElectronAPI {
   getUsers: () => Promise<User[]>
   addUser: (user: CreateUserInput) => Promise<unknown>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
+  getOsUsername: () => Promise<string>
 }

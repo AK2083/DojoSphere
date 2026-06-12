@@ -8,6 +8,7 @@ describe('registerIpcHandlers', () => {
     registerIpcHandlers()
 
     expect(ipcMain.handle).toHaveBeenCalledWith('db:healthcheck', expect.any(Function))
+    expect(ipcMain.handle).toHaveBeenCalledWith('system:osUsername', expect.any(Function))
     expect(ipcMain.handle).toHaveBeenCalledWith('users:list', expect.any(Function))
     expect(ipcMain.handle).toHaveBeenCalledWith('users:add', expect.any(Function))
   })

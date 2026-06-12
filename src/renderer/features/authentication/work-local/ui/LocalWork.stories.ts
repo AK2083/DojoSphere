@@ -1,6 +1,9 @@
+import { installPlaywrightBrowserElectronApi } from '@shared/lib/electron/e2e-api'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 import LocalWork from './LocalWork.vue'
+
+installPlaywrightBrowserElectronApi()
 
 const meta = {
   title: 'Features/Authentication/WorkLocal/LocalWork',
