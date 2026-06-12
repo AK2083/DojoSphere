@@ -15,17 +15,16 @@ export function isPlaywrightBrowserOnly(
 /**
  * Installs a stub `window.api` when Playwright runs the renderer in a browser
  * without Electron (see `VITE_PLAYWRIGHT_BROWSER_ONLY` in `.env.e2e`).
+ *
+ * @param overrides - Optional API method overrides (e.g. custom `getOsUsername` in Storybook).
  */
-export function installPlaywrightBrowserElectronApi() {
-  if (globalThis.window.api) {
-    return
-  }
-
+export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
   const api: ElectronAPI = {
     getUsers: async () => [],
     addUser: async () => undefined,
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
-    getOsUsername: async () => 'TestUser'
+    getOsUsername: async () => 'TestUser',
+    ...overrides
   }
 
   globalThis.window.api = api
