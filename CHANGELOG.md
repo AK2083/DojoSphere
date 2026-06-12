@@ -1,3 +1,9 @@
+# [1.7.0](https://github.com/AK2083/DojoSphere/compare/v1.6.0...v1.7.0) (2026-06-05)
+
+### Features
+
+- add scalar tables ([#130](https://github.com/AK2083/DojoSphere/issues/130)) ([6ddbe86](https://github.com/AK2083/DojoSphere/commit/6ddbe863ff302252a1d264aa4602f68fe9a3de74))
+
 # [1.6.0](https://github.com/AK2083/DojoSphere/compare/v1.5.0...v1.6.0) (2026-05-31)
 
 ### Features
