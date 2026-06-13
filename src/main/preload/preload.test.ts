@@ -28,5 +28,9 @@ describe('preload', () => {
     ipcRenderer.invoke.mockResolvedValueOnce({ ok: true, version: '3.45.0' })
     await api.dbHealthcheck()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('db:healthcheck')
+
+    ipcRenderer.invoke.mockResolvedValueOnce('adrian')
+    await api.getOsUsername()
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('system:osUsername')
   })
 })

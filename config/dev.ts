@@ -1,5 +1,26 @@
 import defaults from './dev.json'
 
+/**
+ * Port and host defaults live in `config/dev.json`.
+ * Override them via `.env.development`, `.env.e2e`, or shell environment variables.
+ *
+ * | Variable | Purpose | Default |
+ * | --- | --- | --- |
+ * | `VITE_DEV_SERVER_HOST` / `DEV_HOST` | Host for Vite and tooling | `127.0.0.1` |
+ * | `VITE_DEV_SERVER_PORT` | Vite dev server (Electron development) | `5173` |
+ * | `E2E_SERVER_PORT` | Vite server for Playwright browser tests | `4173` |
+ * | `STORYBOOK_PORT` | Storybook UI catalog | `6006` |
+ * | `VITEST_STORYBOOK_BROWSER_PORT` | Vitest browser runner for Storybook | `42123` |
+ * | `ELECTRON_REMOTE_DEBUG_PORT` | Chromium remote debugging in Electron | `9223` |
+ * | `ELECTRON_INSPECT_PORT` | Node.js inspector for Electron main process | `9229` |
+ */
+
+export function isPlaywrightBrowserOnly(
+  value: string | undefined = process.env.VITE_PLAYWRIGHT_BROWSER_ONLY
+): boolean {
+  return value === 'true' || value === '1'
+}
+
 function readPort(envKey: string, fallback: number) {
   const raw = process.env[envKey]
 

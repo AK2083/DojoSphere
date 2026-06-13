@@ -80,10 +80,8 @@ export default defineConfig({
   ],
 
   webServer: {
+    // Uses Vite mode `e2e` (.env.e2e): renderer in browser only, Electron disabled, window.api mocked.
     command: `npm run e2e:server -- --host ${DEV_HOST} --port ${E2E_SERVER_PORT}`,
-    env: {
-      VITE_E2E: '1'
-    },
     url: E2E_BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000
