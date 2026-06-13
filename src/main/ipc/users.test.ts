@@ -45,4 +45,19 @@ describe('registerUsersIpc', () => {
       expiresAt: expect.any(String)
     })
   })
+
+  it('does not return a session token for non-local users', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('./users')
+
+    registerUsersIpc()
+
+    const addHandler = getIpcHandler('users:add')
+    const result = await addHandler({}, { displayName: 'System Bot', userType: 'system' })
+
+    expect(result).toEqual({
+      id: expect.any(String)
+    })
+    expect(result).not.toHaveProperty('sessionToken')
+  })
 })

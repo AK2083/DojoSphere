@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
+import {
+  setCloudModeDisabled,
+  setupLoginAvailable
+} from '@shared/tests/e2e/setup-login-available'
 
 test.describe('LoginForm', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +32,22 @@ test.describe('LoginForm', () => {
     await expect(page.locator('a[href$="#/datasource"]').first()).toBeVisible()
   })
 
-  test('handles forgot-password action based on login availability', async ({ page }) => {
+  test('navigates to password reset when login is available', async ({ page }) => {
+    await setupLoginAvailable(page)
+    await page.goto('/#/login')
+
+    const forgotPasswordButton = page.getByRole('button', {
+      name: 'Forgot your password?',
+      exact: true
+    })
+
+    await expect(forgotPasswordButton).toBeEnabled()
+    await forgotPasswordButton.click()
+    await expect(page).toHaveURL(/#\/passwordreset$/)
+  })
+
+  test('disables forgot-password when cloud mode is off', async ({ page }) => {
+    await setCloudModeDisabled(page)
     await page.goto('/#/login')
 
     const forgotPasswordButton = page.getByRole('button', {
@@ -39,33 +58,9 @@ test.describe('LoginForm', () => {
       hasText: /Login is currently unavailable/
     })
 
-    await expect(forgotPasswordButton).toBeVisible()
-
-    // Network bootstrap (heartbeat) may disable login shortly after the page loads.
-    await expect
-      .poll(async () => {
-        if (await unavailableAlert.isVisible()) {
-          return 'unavailable'
-        }
-
-        if (await forgotPasswordButton.isEnabled()) {
-          return 'available'
-        }
-
-        return 'pending'
-      })
-      .not.toBe('pending')
-
-    if (await unavailableAlert.isVisible()) {
-      await expect(unavailableAlert).toContainText(
-        /Login is currently unavailable|because cloud mode is disabled|while you are offline/
-      )
-      await expect(forgotPasswordButton).toBeDisabled()
-      await expect(page).toHaveURL(/#\/login$/)
-      return
-    }
-
-    await forgotPasswordButton.click()
-    await expect(page).toHaveURL(/#\/passwordreset$/)
+    await expect(unavailableAlert).toBeVisible()
+    await expect(unavailableAlert).toContainText(/because cloud mode is disabled/)
+    await expect(forgotPasswordButton).toBeDisabled()
+    await expect(page).toHaveURL(/#\/login$/)
   })
 })
