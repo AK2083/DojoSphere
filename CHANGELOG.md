@@ -1,3 +1,9 @@
+# [1.8.0](https://github.com/AK2083/DojoSphere/compare/v1.7.0...v1.8.0) (2026-06-12)
+
+### Features
+
+- add authorization tables ([#132](https://github.com/AK2083/DojoSphere/issues/132)) ([1acea63](https://github.com/AK2083/DojoSphere/commit/1acea636413337082eb7d992235d5a7e8b45cb96))
+
 # [1.7.0](https://github.com/AK2083/DojoSphere/compare/v1.6.0...v1.7.0) (2026-06-05)
 
 ### Features
