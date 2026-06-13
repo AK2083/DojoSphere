@@ -6,10 +6,13 @@ import { getIpcHandler } from '../test/electron-mock'
 
 async function createLocalUserWithSession() {
   const addHandler = getIpcHandler('users:add')
-  const result = (await addHandler({}, {
-    displayName: 'Local User',
-    userType: 'local'
-  })) as AddUserResult
+  const result = (await addHandler(
+    {},
+    {
+      displayName: 'Local User',
+      userType: 'local'
+    }
+  )) as AddUserResult
 
   if (!result.sessionToken) {
     throw new Error('Expected local user creation to return a session token.')
