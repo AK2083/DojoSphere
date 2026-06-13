@@ -128,7 +128,7 @@ describe('useSendOneTimePassword', () => {
     expect(loading.value).toBe(false)
     expect(clearIsOtpActiveFromStorage).toHaveBeenCalledTimes(1)
     expect(clearRegisterEmailFromStorage).toHaveBeenCalledTimes(1)
-    expect(router.push).toHaveBeenCalledWith({ name: 'settings' })
+    expect(router.push).toHaveBeenCalledWith({ name: 'dashboard' })
   })
 
   it('stores error code and does not navigate on failure', async () => {

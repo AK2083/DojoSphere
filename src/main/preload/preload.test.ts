@@ -21,9 +21,17 @@ describe('preload', () => {
     await api.getUsers()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('users:list')
 
-    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    ipcRenderer.invoke.mockResolvedValueOnce({ id: 'user-1', sessionToken: 'token-1' })
     await api.addUser({ displayName: 'Test User' })
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('users:add', { displayName: 'Test User' })
+
+    ipcRenderer.invoke.mockResolvedValueOnce(null)
+    await api.getLocalSession('token-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('sessions:get', 'token-1')
+
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.revokeLocalSession('token-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('sessions:revoke', 'token-1')
 
     ipcRenderer.invoke.mockResolvedValueOnce({ ok: true, version: '3.45.0' })
     await api.dbHealthcheck()

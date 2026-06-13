@@ -1,6 +1,7 @@
 import { onMounted, ref } from 'vue'
 import router from '@app/providers/router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { navigateToDashboard } from '@features/authentication/service/navigate-to-dashboard'
 import { clearIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 
 import { checkOneTimePassword } from '../api/check-one-time-password'
@@ -81,7 +82,7 @@ export function useSendOneTimePassword() {
     clearIsOtpActiveFromStorage()
     clearRegisterEmailFromStorage()
 
-    await router.push({ name: 'settings' })
+    await navigateToDashboard(router)
 
     return true
   }

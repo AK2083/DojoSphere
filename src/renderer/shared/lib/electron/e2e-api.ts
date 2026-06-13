@@ -21,7 +21,9 @@ export function isPlaywrightBrowserOnly(
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
   const api: ElectronAPI = {
     getUsers: async () => [],
-    addUser: async () => undefined,
+    addUser: async () => ({ id: 'local-user-id', sessionToken: 'local-session-token' }),
+    getLocalSession: async () => null,
+    revokeLocalSession: async () => undefined,
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
     getOsUsername: async () => 'TestUser',
     ...overrides

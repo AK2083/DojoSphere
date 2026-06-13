@@ -1,4 +1,5 @@
 import migrations from './migrations'
+import { ensureUsersTable } from './ensure-users-table'
 import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
 import type { SqliteDatabase } from './types/database'
@@ -38,4 +39,6 @@ export function runMigrations(db: SqliteDatabase) {
       insertMigration.run(id, name)
     })
   }
+
+  ensureUsersTable(db)
 }

@@ -1,5 +1,7 @@
 import { useRoute, useRouter } from 'vue-router'
 
+import { navigateToDashboard } from '../../service/navigate-to-dashboard'
+
 /**
  * Composable that encapsulates login related navigation flows.
  *
@@ -10,13 +12,7 @@ export function useLoginRouting() {
   const router = useRouter()
 
   async function navigateAfterLoginSuccess() {
-    const redirect = route.query.redirect
-    if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
-      await router.push(redirect)
-      return
-    }
-
-    await router.push({ name: 'account' })
+    await navigateToDashboard(router, route)
   }
 
   async function goToPasswordReset(email?: string) {

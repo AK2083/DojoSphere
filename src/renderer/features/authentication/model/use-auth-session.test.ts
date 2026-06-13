@@ -2,6 +2,7 @@ import type { AuthSession, AuthState, AuthUser } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { getCurrentSession } from '../service/get-current-session'
+import { onLocalAuthStateChanged } from '../service/local-auth-state'
 import { watchAuthState } from '../service/on-auth-state-change'
 import { useAuthSession } from './use-auth-session'
 
@@ -27,6 +28,10 @@ vi.mock('vue', async () => {
 
 vi.mock('../service/get-current-session', () => ({
   getCurrentSession: vi.fn()
+}))
+
+vi.mock('../service/local-auth-state', () => ({
+  onLocalAuthStateChanged: vi.fn(() => () => undefined)
 }))
 
 vi.mock('../service/on-auth-state-change', () => ({
@@ -58,7 +63,7 @@ describe('useAuthSession', () => {
       }
     })
 
-    const { session, isLoggedIn, user } = useAuthSession()
+    const { session, isLoggedIn, isCloudLoggedIn, user } = useAuthSession()
 
     expect(session.value).toBeNull()
     expect(isLoggedIn.value).toBe(false)
@@ -71,6 +76,7 @@ describe('useAuthSession', () => {
     expect(watchAuthState).toHaveBeenCalledTimes(1)
     expect(session.value).toStrictEqual(initialSession)
     expect(isLoggedIn.value).toBe(true)
+    expect(isCloudLoggedIn.value).toBe(true)
     expect(user.value).toStrictEqual(initialUser)
 
     expect(capturedCallback).toBeDefined()
@@ -89,6 +95,35 @@ describe('useAuthSession', () => {
     onUnmountedHandler?.()
 
     expect(unsubscribe).toHaveBeenCalledTimes(1)
+  })
+
+  it('reacts to local auth state updates', async () => {
+    const localSession = {
+      user: { id: 'local-user', app_metadata: { provider: 'local' } }
+    } as AuthSession
+    let localAuthCallback: ((session: AuthSession | null) => void) | undefined
+
+    vi.mocked(getCurrentSession).mockResolvedValue(null)
+    vi.mocked(onLocalAuthStateChanged).mockImplementation((callback) => {
+      localAuthCallback = callback
+      return () => undefined
+    })
+    vi.mocked(watchAuthState).mockReturnValue({
+      id: 'subscription-3',
+      callback: vi.fn(),
+      unsubscribe: vi.fn()
+    })
+
+    const { session, isLoggedIn, isCloudLoggedIn, user } = useAuthSession()
+
+    await onMountedHandler?.()
+
+    localAuthCallback?.(localSession)
+
+    expect(session.value).toStrictEqual(localSession)
+    expect(isLoggedIn.value).toBe(true)
+    expect(isCloudLoggedIn.value).toBe(false)
+    expect(user.value).toStrictEqual(localSession.user)
   })
 
   it('does not fail on unmount when no subscription exists yet', () => {

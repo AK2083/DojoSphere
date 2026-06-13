@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import DataSourcePage from '@pages/data-source'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
@@ -99,14 +100,14 @@ router.beforeEach(async (to) => {
   if (requiresAuth) {
     const session = await getCurrentSessionWithTimeout()
 
-    if (!session) {
-      return {
-        name: 'login',
-        query: { redirect: to.fullPath }
-      }
+    if (session) {
+      return
     }
 
-    return
+    return {
+      name: 'login',
+      query: { redirect: to.fullPath }
+    }
   }
 
   // Never block guest-route navigation in offline mode.
@@ -116,8 +117,10 @@ router.beforeEach(async (to) => {
 
   if (guestOnly) {
     const session = await getCurrentSessionWithTimeout()
+    const isPendingEmailVerification =
+      to.name === 'emailverification' && getIsOtpActiveFromStorage()
 
-    if (session) {
+    if (session && !isPendingEmailVerification) {
       return { name: 'dashboard' }
     }
   }
