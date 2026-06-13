@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
-import { hasLocalAccess } from '@features/authentication/service/has-local-access'
+import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import DataSourcePage from '@pages/data-source'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
@@ -100,7 +100,7 @@ router.beforeEach(async (to) => {
   if (requiresAuth) {
     const session = await getCurrentSessionWithTimeout()
 
-    if (session || (await hasLocalAccess())) {
+    if (session) {
       return
     }
 
@@ -117,8 +117,10 @@ router.beforeEach(async (to) => {
 
   if (guestOnly) {
     const session = await getCurrentSessionWithTimeout()
+    const isPendingEmailVerification =
+      to.name === 'emailverification' && getIsOtpActiveFromStorage()
 
-    if (session || (await hasLocalAccess())) {
+    if (session && !isPendingEmailVerification) {
       return { name: 'dashboard' }
     }
   }

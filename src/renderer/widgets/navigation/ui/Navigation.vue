@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useAuthNavigation, useAuthSession, useSignOut } from '@features/authentication'
-import { mdiAccount, mdiCardAccountDetails, mdiCog, mdiLogout } from '@mdi/js'
+import { mdiAccount, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -10,7 +10,7 @@ import translationKeys from '../i18n/keys'
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { getAccountRoute } = useAuthNavigation()
-const { isLoggedIn } = useAuthSession()
+const { isLoggedIn, isCloudLoggedIn } = useAuthSession()
 const {
   logout,
   loading: isSigningOut,
@@ -44,15 +44,11 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
-      <v-tooltip v-if="isLoggedIn" :text="t(translationKeys.label)" location="bottom">
-        <template #activator="{ props }">
-          <v-btn icon v-bind="props" :aria-label="t(translationKeys.label)" :to="getAccountRoute()">
-            <v-icon :icon="mdiAccount"></v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-
-      <v-tooltip v-if="isLoggedIn" :text="t(translationKeys.navigation.logout)" location="bottom">
+      <v-tooltip
+        v-if="isCloudLoggedIn"
+        :text="t(translationKeys.navigation.logout)"
+        location="bottom"
+      >
         <template #activator="{ props }">
           <v-btn
             icon
@@ -68,7 +64,11 @@ watch(
         </template>
       </v-tooltip>
 
-      <v-tooltip v-else :text="t(translationKeys.navigation.signUp)" location="bottom">
+      <v-tooltip
+        v-else-if="!isLoggedIn"
+        :text="t(translationKeys.navigation.signUp)"
+        location="bottom"
+      >
         <template #activator="{ props }">
           <v-btn
             icon
@@ -107,14 +107,7 @@ watch(
           :aria-label="t(translationKeys.navigation.ariaSignUp)"
         />
         <v-list-item
-          v-if="isLoggedIn"
-          :prepend-icon="mdiCardAccountDetails"
-          :to="getAccountRoute()"
-          :title="t(translationKeys.ariaLabel)"
-          :aria-label="t(translationKeys.ariaLabel)"
-        />
-        <v-list-item
-          v-if="isLoggedIn"
+          v-if="isCloudLoggedIn"
           :prepend-icon="mdiLogout"
           :title="t(translationKeys.navigation.logout)"
           :disabled="isSigningOut"

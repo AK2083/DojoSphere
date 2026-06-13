@@ -1,8 +1,10 @@
-import { mapSupabaseError, signOut } from '@shared/api'
+import { getCurrentSession as getSupabaseSession, mapSupabaseError, signOut } from '@shared/api'
 import { captureException, clearUserContext } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 import { clearRegisterStorage } from '../../register-user/service/register-storage'
+import { notifyLocalAuthStateChanged } from '../../service/local-auth-state'
+import { revokeLocalAuthSession } from '../../service/resolve-local-auth-session'
 
 /**
  * Executes the sign-out use-case for the authentication feature.
@@ -13,18 +15,25 @@ import { clearRegisterStorage } from '../../register-user/service/register-stora
  * @returns Authentication action result indicating success or mapped failure.
  */
 export async function signOutUser(): Promise<AuthActionResult> {
-  const { error } = await signOut()
+  const supabaseSession = await getSupabaseSession()
 
-  if (error) {
-    const mapped = mapSupabaseError(error)
+  await revokeLocalAuthSession()
+  notifyLocalAuthStateChanged(null)
 
-    if (mapped.code !== 'shared.error.retry') {
-      captureException(mapped, 'auth', 'signOutUser')
-    }
+  if (supabaseSession) {
+    const { error } = await signOut()
 
-    return {
-      success: false,
-      error: mapped
+    if (error) {
+      const mapped = mapSupabaseError(error)
+
+      if (mapped.code !== 'shared.error.retry') {
+        captureException(mapped, 'auth', 'signOutUser')
+      }
+
+      return {
+        success: false,
+        error: mapped
+      }
     }
   }
 

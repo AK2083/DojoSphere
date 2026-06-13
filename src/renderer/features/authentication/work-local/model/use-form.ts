@@ -5,6 +5,7 @@ import { navigateToDashboard } from '@features/authentication/service/navigate-t
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
+import { signInLocally } from '../service/sign-in-locally'
 import { displayNameRules, type WorkLocalErrorCode } from './validators'
 
 const workLocalErrorTranslationMap: Record<WorkLocalErrorCode, string> = {
@@ -81,10 +82,11 @@ export function useLocalWorkForm() {
     loading.value = true
 
     try {
-      await globalThis.window.api.addUser({
-        displayName: displayName.value.trim(),
-        userType: 'local'
-      })
+      const success = await signInLocally(displayName.value.trim())
+
+      if (!success) {
+        return
+      }
 
       await navigateToDashboard(router)
     } finally {

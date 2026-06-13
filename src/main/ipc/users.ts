@@ -1,4 +1,6 @@
 import { ipcMain } from 'electron'
+
+import { createSession } from '../modules/sessions.repository'
 import { addUser, getUsers } from '../modules/users.repository'
 
 export function registerUsersIpc() {
@@ -12,7 +14,20 @@ export function registerUsersIpc() {
       _event,
       user: { displayName: string; email?: string | null; userType?: 'local' | 'device' | 'system' }
     ) => {
-      return addUser(user)
+      const result = addUser(user)
+      const userType = user.userType ?? 'local'
+
+      if (userType !== 'local') {
+        return result
+      }
+
+      const session = createSession(result.id)
+
+      return {
+        ...result,
+        sessionToken: session.token,
+        expiresAt: session.expiresAt
+      }
     }
   )
 }
