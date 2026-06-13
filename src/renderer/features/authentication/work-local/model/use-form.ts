@@ -1,5 +1,7 @@
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
+import { navigateToDashboard } from '@features/authentication/service/navigate-to-dashboard'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -37,6 +39,7 @@ function mapWorkLocalRule(
  */
 export function useLocalWorkForm() {
   const { t } = useTranslation()
+  const router = useRouter()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -82,6 +85,8 @@ export function useLocalWorkForm() {
         displayName: displayName.value.trim(),
         userType: 'local'
       })
+
+      await navigateToDashboard(router)
     } finally {
       loading.value = false
     }
