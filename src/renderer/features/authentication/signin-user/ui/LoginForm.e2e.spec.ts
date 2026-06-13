@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
-import {
-  setCloudModeDisabled,
-  setupLoginAvailable
-} from '@shared/tests/e2e/setup-login-available'
+import { setCloudModeDisabled, setupLoginAvailable } from '@shared/tests/e2e/setup-login-available'
 
 test.describe('LoginForm', () => {
   test.beforeEach(async ({ page }) => {

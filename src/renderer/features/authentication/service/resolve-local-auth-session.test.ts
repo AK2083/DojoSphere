@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  getLocalSessionToken,
-  setLocalSessionToken
-} from './local-session-storage'
+import { getLocalSessionToken, setLocalSessionToken } from './local-session-storage'
 import { resolveLocalAuthSession, revokeLocalAuthSession } from './resolve-local-auth-session'
 
 describe('resolveLocalAuthSession', () => {

@@ -1,7 +1,22 @@
+import type { AddUserResult } from '@shared/types/electron-api'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { closeTestDatabase, initTestDatabase } from '../test/database'
 import { getIpcHandler } from '../test/electron-mock'
+
+async function createLocalUserWithSession() {
+  const addHandler = getIpcHandler('users:add')
+  const result = (await addHandler({}, {
+    displayName: 'Local User',
+    userType: 'local'
+  })) as AddUserResult
+
+  if (!result.sessionToken) {
+    throw new Error('Expected local user creation to return a session token.')
+  }
+
+  return result
+}
 
 describe('registerSessionsIpc', () => {
   afterEach(async () => {
@@ -16,11 +31,10 @@ describe('registerSessionsIpc', () => {
     registerUsersIpc()
     registerSessionsIpc()
 
-    const addHandler = getIpcHandler('users:add')
     const getHandler = getIpcHandler('sessions:get')
-    const result = await addHandler({}, { displayName: 'Local User', userType: 'local' })
+    const { sessionToken } = await createLocalUserWithSession()
 
-    const session = await getHandler({}, result.sessionToken)
+    const session = await getHandler({}, sessionToken)
 
     expect(session).toMatchObject({
       user: {
@@ -38,13 +52,12 @@ describe('registerSessionsIpc', () => {
     registerUsersIpc()
     registerSessionsIpc()
 
-    const addHandler = getIpcHandler('users:add')
     const getHandler = getIpcHandler('sessions:get')
     const revokeHandler = getIpcHandler('sessions:revoke')
-    const result = await addHandler({}, { displayName: 'Local User', userType: 'local' })
+    const { sessionToken } = await createLocalUserWithSession()
 
-    await revokeHandler({}, result.sessionToken)
+    await revokeHandler({}, sessionToken)
 
-    expect(await getHandler({}, result.sessionToken)).toBeNull()
+    expect(await getHandler({}, sessionToken)).toBeNull()
   })
 })
