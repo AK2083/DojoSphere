@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/AK2083/DojoSphere/compare/v1.9.0...v1.10.0) (2026-06-13)
+
+### Features
+
+- add local auth ([#138](https://github.com/AK2083/DojoSphere/issues/138)) ([fc3e6fb](https://github.com/AK2083/DojoSphere/commit/fc3e6fba72b3bba98c1a8fe8bcbec78c478620ba))
+
+# [1.9.0](https://github.com/AK2083/DojoSphere/compare/v1.8.0...v1.9.0) (2026-06-13)
+
+### Features
+
+- add naming ([#134](https://github.com/AK2083/DojoSphere/issues/134)) ([7e8ad4e](https://github.com/AK2083/DojoSphere/commit/7e8ad4e39357b9b3ed31dd2656b72244d1933641))
+
 # [1.8.0](https://github.com/AK2083/DojoSphere/compare/v1.7.0...v1.8.0) (2026-06-12)
 
 ### Features
