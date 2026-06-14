@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { ensureLocalSessionFromOsUsername } from '@features/authentication/service/ensure-local-session'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
 import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
-import DataSourcePage from '@pages/data-source'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
@@ -13,12 +13,13 @@ import { monitorInformation, MONITORING_EVENTS } from './monitoring'
 const routes = [
   {
     path: '/',
-    redirect: { name: 'datasource' }
+    name: 'dashboard',
+    meta: { requiresAuth: true },
+    component: () => import('@pages/dashboard')
   },
   {
-    path: '/datasource',
-    name: 'datasource',
-    component: DataSourcePage
+    path: '/dashboard',
+    redirect: { name: 'dashboard' }
   },
   {
     path: '/emailverification',
@@ -33,16 +34,16 @@ const routes = [
     component: LoginPage
   },
   {
+    path: '/register',
+    name: 'register',
+    meta: { guestOnly: true },
+    component: () => import('@pages/register')
+  },
+  {
     path: '/passwordreset',
     name: 'passwordreset',
     meta: { guestOnly: true },
     component: PasswordResetPage
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    meta: { requiresAuth: true },
-    component: () => import('@pages/dashboard')
   },
   {
     path: '/account',
@@ -98,7 +99,12 @@ router.beforeEach(async (to) => {
   const isOffline = isOfflineModeEnabled()
 
   if (requiresAuth) {
-    const session = await getCurrentSessionWithTimeout()
+    let session = await getCurrentSessionWithTimeout()
+
+    if (!session) {
+      await ensureLocalSessionFromOsUsername()
+      session = await getCurrentSessionWithTimeout()
+    }
 
     if (session) {
       return

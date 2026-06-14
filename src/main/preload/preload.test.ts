@@ -40,5 +40,13 @@ describe('preload', () => {
     ipcRenderer.invoke.mockResolvedValueOnce('adrian')
     await api.getOsUsername()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('system:osUsername')
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'user-1',
+      sessionToken: 'token-1',
+      expiresAt: '2099-01-01T00:00:00.000Z'
+    })
+    await api.ensureLocalSession('Test User')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('users:ensureLocalSession', 'Test User')
   })
 })

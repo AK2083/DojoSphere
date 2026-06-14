@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import { useAuthNavigation, useAuthSession, useSignOut } from '@features/authentication'
-import { mdiAccount, mdiCog, mdiLogout } from '@mdi/js'
+import { useAuthSession, useSignOut } from '@features/authentication'
+import { mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
-const { getAccountRoute } = useAuthNavigation()
-const { isLoggedIn, isCloudLoggedIn } = useAuthSession()
+const { isCloudLoggedIn } = useAuthSession()
 const {
   logout,
   loading: isSigningOut,
@@ -64,23 +63,6 @@ watch(
         </template>
       </v-tooltip>
 
-      <v-tooltip
-        v-else-if="!isLoggedIn"
-        :text="t(translationKeys.navigation.signUp)"
-        location="bottom"
-      >
-        <template #activator="{ props }">
-          <v-btn
-            icon
-            v-bind="props"
-            :aria-label="t(translationKeys.navigation.ariaSignUp)"
-            :to="getAccountRoute()"
-          >
-            <v-icon :icon="mdiAccount"></v-icon>
-          </v-btn>
-        </template>
-      </v-tooltip>
-
       <v-tooltip :text="t(translationKeys.navigation.settings)" location="bottom">
         <template #activator="{ props }">
           <v-btn
@@ -99,13 +81,6 @@ watch(
   <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
       <v-list density="compact" role="navigation" :aria-label="t(translationKeys.label)" nav>
-        <v-list-item
-          v-if="!isLoggedIn"
-          :prepend-icon="mdiAccount"
-          :to="getAccountRoute()"
-          :title="t(translationKeys.navigation.signUp)"
-          :aria-label="t(translationKeys.navigation.ariaSignUp)"
-        />
         <v-list-item
           v-if="isCloudLoggedIn"
           :prepend-icon="mdiLogout"

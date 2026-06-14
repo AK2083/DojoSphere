@@ -11,7 +11,7 @@ test.describe('RegisterForm', () => {
   })
 
   test('renders register form fields and login link', async ({ page }) => {
-    await page.goto('/#/datasource')
+    await page.goto('/#/register')
 
     const registerForm = getRegisterForm(page)
 

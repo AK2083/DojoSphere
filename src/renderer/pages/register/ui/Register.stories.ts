@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import SaveLocation from './SaveLocation.vue'
+import Register from './Register.vue'
 
 const meta = {
-  title: 'Pages/Data Source/SaveLocation',
-  component: SaveLocation,
+  title: 'Pages/Register/Register',
+  component: Register,
   parameters: {
     layout: 'fullscreen',
     a11y: {
@@ -18,7 +18,7 @@ const meta = {
       }
     }
   }
-} satisfies Meta<typeof SaveLocation>
+} satisfies Meta<typeof Register>
 
 export default meta
 

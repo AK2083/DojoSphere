@@ -23,14 +23,14 @@ describe('useAuthNavigation', () => {
     expect(getIsOtpActiveFromStorage).toHaveBeenCalledTimes(1)
   })
 
-  it('should return datasource route when OTP is NOT active', () => {
+  it('should return register route when OTP is NOT active', () => {
     vi.mocked(getIsOtpActiveFromStorage).mockReturnValue(false)
 
     const { getAccountRoute } = useAuthNavigation()
 
     const result = getAccountRoute()
 
-    expect(result).toEqual({ name: 'datasource' })
+    expect(result).toEqual({ name: 'register' })
     expect(getIsOtpActiveFromStorage).toHaveBeenCalledTimes(1)
   })
 })

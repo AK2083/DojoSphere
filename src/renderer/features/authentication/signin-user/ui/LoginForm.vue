@@ -118,7 +118,7 @@ const {
             <v-btn
               type="button"
               variant="plain"
-              :to="{ name: 'datasource' }"
+              :to="{ name: 'register' }"
               :aria-label="t(translationKeys.register)"
               class="text-none"
             >

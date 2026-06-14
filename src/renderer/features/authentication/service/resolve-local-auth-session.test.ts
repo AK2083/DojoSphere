@@ -9,6 +9,7 @@ describe('resolveLocalAuthSession', () => {
     globalThis.window.api = {
       getUsers: vi.fn(),
       addUser: vi.fn(),
+      ensureLocalSession: vi.fn(),
       getLocalSession: vi.fn(),
       revokeLocalSession: vi.fn(),
       dbHealthcheck: vi.fn(),
@@ -76,6 +77,7 @@ describe('revokeLocalAuthSession', () => {
     globalThis.window.api = {
       getUsers: vi.fn(),
       addUser: vi.fn(),
+      ensureLocalSession: vi.fn(),
       getLocalSession: vi.fn(),
       revokeLocalSession: vi.fn(),
       dbHealthcheck: vi.fn(),

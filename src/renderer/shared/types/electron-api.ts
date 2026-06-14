@@ -32,9 +32,16 @@ export interface LocalSession {
   user: User
 }
 
+export interface EnsureLocalSessionResult {
+  id: string
+  sessionToken: string
+  expiresAt: string
+}
+
 export interface ElectronAPI {
   getUsers: () => Promise<User[]>
   addUser: (user: CreateUserInput) => Promise<AddUserResult>
+  ensureLocalSession: (displayName: string) => Promise<EnsureLocalSessionResult>
   getLocalSession: (token: string) => Promise<LocalSession | null>
   revokeLocalSession: (token: string) => Promise<void>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
