@@ -1,0 +1,26 @@
+---
+description: Rechtlicher und datenschutzbezogener Basis-Kontext für jede Umsetzung
+alwaysApply: true
+---
+
+Dieses Projekt kann als Open-Source-Software unter MIT-Lizenz veröffentlicht werden und kann personenbezogene Daten im Vereins-, Judo- und Turnierkontext verarbeiten.
+
+Diese Regeln ersetzen keine Rechtsberatung. Sie dienen als technische Leitplanken, damit Implementierungen rechtliche Risiken nicht ignorieren.
+
+Bei jeder Umsetzung prüfen:
+
+- Werden personenbezogene Daten verarbeitet, gespeichert, synchronisiert, exportiert oder angezeigt?
+- Sind Kinder, Jugendliche, Eltern, Teilnehmer, Kampfrichter, Listenführer, Vereinsmitglieder oder Veranstalter betroffen?
+- Werden Daten öffentlich oder für nicht berechtigte Rollen sichtbar?
+- Ist die Funktion datensparsam umgesetzt?
+- Gibt es eine Rollen- oder Berechtigungsprüfung an einer vertrauenswürdigen Stelle?
+- Werden Daten an externe Dienste übertragen, z. B. Supabase, E-Mail, GitHub oder Hosting-Anbieter?
+- Werden Logs, Fehlerausgaben oder Debug-Daten erzeugt, die personenbezogene Daten enthalten könnten?
+- Muss eine Dokumentation wie README.md, SECURITY.md, Datenschutz-Hinweis oder Betreiberhinweis angepasst werden?
+
+Open-Source- und MIT-Kontext:
+
+- Keine Funktion oder Dokumentation darf behaupten, dass die Software automatisch DSGVO-konform, rechtssicher oder zertifiziert ist.
+- Formulierungen sollen klarstellen, dass Betreiber für den konkreten Einsatz, die Rechtsgrundlage, Berechtigungen, Aufbewahrung und Informationspflichten verantwortlich sind.
+- Keine echten personenbezogenen Daten in Beispielen, Tests, Seeds, Screenshots oder Demos verwenden.
+- Lizenz- und Copyright-Hinweise müssen erhalten bleiben.

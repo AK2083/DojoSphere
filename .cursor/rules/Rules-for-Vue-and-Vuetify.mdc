@@ -1,9 +1,0 @@
----
-alwaysApply: false
----
-
-- Nutze ausschließlich die Script Setup Syntax für neue Vue Komponenten (<script setup lang="ts">).
-- Verwende Vuetify 3 Komponenten (v-btn, v-card, etc.).
-- Halte dich an Feature-First-Design: Komponenten gehören in ihren jeweiligen Feature-Ordner.
-- Nutze die Composition API und Composables für Logik.
-- Nach Beendigung einer Arbeit lint:fix, type:check, format:fix und test:coverage ausführen und Fehler entsprechend beheben
