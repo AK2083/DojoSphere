@@ -45,26 +45,23 @@ jobs:
       - name: Get latest tag after release
         id: tags_after
         run: |
-          git fetch --tags origin
           TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Generate changelog
         if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
         run: |
-          PREVIOUS_TAG="${{ steps.tags_before.outputs.tag }}"
-          LATEST_TAG="${{ steps.tags_after.outputs.tag }}"
+          LATEST_TAG="$(git describe --tags --abbrev=0)"
           RELEASE_VERSION="${LATEST_TAG#v}"
 
           node -e "require('node:fs').writeFileSync('.changelog.package.json', JSON.stringify({name:'dojosphere',version:process.argv[1]}))" "$RELEASE_VERSION"
-          echo "{\"gitRawCommitsOpts\":{\"from\":\"$PREVIOUS_TAG\"}}" > .changelogrc.json
 
           npx \
             -p conventional-changelog \
             -p conventional-changelog-angular \
-            conventional-changelog -p angular -k .changelog.package.json -t v -i CHANGELOG.md -s -r 1 --config .changelogrc.json
+            conventional-changelog -p angular -k .changelog.package.json -t v -i CHANGELOG.md -s -r 0
 
-          rm -f .changelog.package.json .changelogrc.json
+          rm -f .changelog.package.json
 
       - name: Format changelog with Prettier
         if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
