@@ -2,6 +2,8 @@ name: Release
 on:
   push:
     branches: [main]
+  # TEMP: manual changelog trigger — remove block when no longer needed
+  workflow_dispatch:
 
 jobs:
   release:
@@ -38,6 +40,7 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Release
+        if: github.event_name != 'workflow_dispatch'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx -p semantic-release semantic-release
@@ -49,7 +52,9 @@ jobs:
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Generate changelog
-        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        if: |
+          (steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '') ||
+          github.event_name == 'workflow_dispatch'
         run: |
           LATEST_TAG="$(git describe --tags --abbrev=0)"
           RELEASE_VERSION="${LATEST_TAG#v}"
@@ -64,12 +69,16 @@ jobs:
           rm -f .changelog.package.json
 
       - name: Format changelog with Prettier
-        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        if: |
+          (steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '') ||
+          github.event_name == 'workflow_dispatch'
         run: npx prettier --write CHANGELOG.md
 
       - name: Detect changelog changes
         id: changelog_changes
-        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        if: |
+          (steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '') ||
+          github.event_name == 'workflow_dispatch'
         run: |
           if git diff --quiet -- CHANGELOG.md; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -80,7 +89,9 @@ jobs:
           fi
 
       - name: Debug changelog git state
-        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != ''
+        if: |
+          (steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '') ||
+          github.event_name == 'workflow_dispatch'
         run: |
           echo "---- git status --porcelain ----"
           git status --porcelain
@@ -90,7 +101,10 @@ jobs:
           git diff -- CHANGELOG.md | sed -n '1,200p'
 
       - name: Create Pull Request for changelog
-        if: steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '' && steps.changelog_changes.outputs.changed == 'true'
+        if: |
+          ((steps.tags_before.outputs.tag != steps.tags_after.outputs.tag && steps.tags_after.outputs.tag != '') ||
+          github.event_name == 'workflow_dispatch') &&
+          steps.changelog_changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           sign-commits: true
