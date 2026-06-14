@@ -1,0 +1,16 @@
+---
+description: Sicherheits- und Datenschutzregeln für Implementierungen
+alwaysApply: true
+---
+
+Technische Sicherheitsregeln:
+
+- Keine Secrets, API Keys, Service Role Keys, Tokens oder Passwörter im Renderer, Frontend, Repository, SQLite oder Logs speichern.
+- Supabase Service Role Keys dürfen nie im Electron Renderer oder normalen Client-Code verwendet werden.
+- SQLite-Zugriff erfolgt nur im Electron Main Process oder in vertrauenswürdigen lokalen Services.
+- Renderer-Code darf keine sicherheitskritischen Entscheidungen allein treffen.
+- Jede privilegierte IPC-Operation muss Session, Benutzer und Berechtigung prüfen.
+- Session Tokens niemals im Klartext speichern; nur sichere Hashes speichern.
+- Logs dürfen keine vollständigen personenbezogenen Datensätze, Session IDs, Tokens oder sensiblen Inhalte enthalten.
+- Migrationen dürfen keine Benutzerdaten ohne explizite, dokumentierte Entscheidung löschen.
+- Sync darf lokale Daten nicht ohne Konflikterkennung überschreiben.

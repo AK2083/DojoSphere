@@ -1,0 +1,82 @@
+---
+description: Vue-Frontend — Komponenten, Composables, Vuetify, Tests, Barrierefreiheit und i18n
+globs: src/renderer/**/*.vue
+alwaysApply: false
+---
+
+# Vue Frontend
+
+## Komponenten und Logik
+
+- Neue Komponenten ausschließlich mit `<script setup lang="ts">`.
+- **Keine Business-Logik in Templates** — weder Berechnungen, API-Aufrufe noch komplexe Bedingungen. Templates binden State und Events aus Script/Composable.
+- Logik gehört in **Composables** (`model/use-*.ts`) oder `service/` — UI-Komponenten in `ui/` bleiben präsentationsnah.
+- Vuetify-3-Komponenten für UI (`v-btn`, `v-card`, `v-text-field`, …); Icons über `@mdi/js`.
+- Schicht-Zuordnung nach [`architecture-fsd.mdc`](architecture-fsd.mdc).
+
+```vue
+<!-- ❌ Business-Logik im Template -->
+<v-btn :disabled="email.length < 5 || !isOnline" @click="signUp(email, password)">
+
+<!-- ✅ Composable liefert fertigen State -->
+<v-btn :disabled="!canSubmit" :loading="loading" @click="submit">
+```
+
+## Internationalisierung
+
+- Unterstützte Sprachen: **Deutsch** und **Englisch**.
+- Keine hardcodierten UI-Strings — Texte über `useTranslation()` und Slice-`i18n/keys.ts`.
+- ARIA-Labels und sichtbare Texte ebenfalls über i18n-Keys.
+
+## Responsive Design
+
+- Layouts mit Vuetify-Grid (`v-container`, `v-row`, `v-col`) und Breakpoints (`cols`, `md`, `lg`, …).
+- `useDisplay()` aus Vuetify für gerätespezifische Logik (z. B. Mobile vs. Desktop).
+- Komponenten auf Mobile, Tablet und Desktop prüfen — keine festen Pixelbreiten für zentrale Layouts.
+
+## Barrierefreiheit (a11y)
+
+- Lighthouse **Accessibility**-Score anstreben (keine Regressionen).
+- Sinnvolle **ARIA-Attribute** setzen: `aria-label`, `aria-labelledby`, `role`, `aria-live` für dynamische Inhalte.
+- Interaktive Elemente müssen per Tastatur erreichbar sein; Fokus sichtbar lassen.
+- Formulare: `<label>` oder `aria-label`/`aria-labelledby` für jedes Eingabefeld.
+- Dekorative Icons: `aria-hidden="true"`; Icon-only-Buttons: beschreibendes `aria-label`.
+- Fehler-/Statusmeldungen: für Screenreader zugänglich (`role="alert"` oder `aria-live="polite"`).
+
+## Tests pro UI-Komponente
+
+Jede UI-Komponente in `ui/` benötigt **beides**, colocated neben der `.vue`-Datei:
+
+| Datei | Zweck |
+|-------|--------|
+| `<Name>.stories.ts` | Storybook — isolierte Darstellung, Varianten |
+| `<Name>.e2e.spec.ts` | Playwright — kritische Interaktionen und sichtbares Verhalten |
+
+**Storybook-Konvention:**
+- `title` nach Schicht: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`
+- `@storybook/vue3-vite`, `satisfies Meta<typeof Component>`
+
+**Playwright-Konvention:**
+- `@playwright/test`, beschreibende `test.describe('<ComponentName>')`
+- Sinnvolle Selektoren bevorzugen: `getByRole`, `getByLabel`, `getByText` — keine fragilen CSS-Ketten
+- i18n-Setup über `@shared/tests/e2e/setup-language` wo nötig
+
+## Lighthouse
+
+Neue und geänderte UI soll Lighthouse-Anforderungen erfüllen, insbesondere:
+- **Accessibility** — ARIA, Kontrast, semantisches HTML
+- **Best Practices** — gültige HTML-Struktur, keine veralteten APIs
+- **Performance** — keine unnötigen Re-Renders, lazy loading wo sinnvoll
+
+Bei Storybook- oder Page-Änderungen visuell und per Lighthouse prüfen, bevor abgeschlossen wird.
+
+## Abschluss-Checkliste
+
+Nach UI-Arbeiten ausführen und Fehler beheben:
+
+1. `npm run lint:fix`
+2. `npm run type:check`
+3. `npm run format:fix`
+4. `npm run test:coverage` (betroffene Unit-Tests)
+5. Playwright für neue/geänderte `.e2e.spec.ts`
+6. Storybook für neue/geänderte `.stories.ts`

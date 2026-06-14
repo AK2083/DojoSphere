@@ -1,0 +1,116 @@
+---
+description: Feature-Sliced Design — Schichten, Importregeln und Slice-Struktur für src/renderer
+globs: src/renderer/**/*
+alwaysApply: false
+---
+
+# Feature-Sliced Design (FSD)
+
+Renderer-Code liegt unter `src/renderer/` in fünf Schichten. Importe dürfen nur **nach unten** zeigen — nie von `shared` in Richtung `features`, `pages`, `widgets` oder `app`.
+
+```
+app → pages, widgets, features, shared
+pages → features, widgets, shared
+widgets → features, shared
+features → shared (+ Slices desselben Features untereinander)
+shared → nur intern
+```
+
+## app vs. shared — Entscheidungshilfe
+
+Neue Abhängigkeit einordnen nach **Rolle**, nicht nach Technologie:
+
+| Frage | → `app` | → `shared` |
+|-------|---------|------------|
+| Teil des **Composition Root** (App starten, Plugins registrieren)? | Ja | Nein |
+| **Austauschbar/mockbar**, ohne Features umzuschreiben? | Nein | Ja |
+| Features sollen **kein SDK direkt** importieren? | — | Ja |
+| Wechsel erfordert primär **Wiring-Umbau** in `main.ts`/`providers/`? | Ja | Nein |
+
+**Faustregeln:**
+- Render-Framework und globale Provider (App-Shell) → `app/providers/` — direkt konfigurieren, nicht abstrahieren.
+- Vendor-/Infrastruktur-Clients (Backend, Monitoring, Storage-Bridge, …) → `shared/` — hinter Public API kapseln.
+- Dünne Helfer **auf Basis** des Frameworks, die Features überall nutzen → `shared/lib/` (Setup bleibt in `app`).
+
+**Split-Pattern:** Eine Dependency kann beides sein — Instanz/Wiring in `app/providers/`, Nutzungs-API in `shared/lib/` (z. B. Plugin in `app`, Composable in `shared`).
+
+## app
+
+Composition Root — App-Initialisierung, globale Provider und Framework-Wiring unter `providers/` und `main.ts`.
+
+- Enthält alles, was die Renderer-Anwendung **zusammensetzt**; wird nicht weiter abstrahiert.
+- Beispiele (projektspezifisch): Vue-Router, Pinia-Instanz, UI-Framework, i18n-Plugin.
+- Router importiert **ausschließlich** Page-Komponenten aus `@pages/*`.
+- Router-Guards dürfen Features/`shared` für App-weite Orchestrierung nutzen (z. B. Auth-Check).
+- Keine Feature- oder Widget-UI direkt im Router registrieren.
+
+## pages
+
+Routen-Komponenten — eine Page pro Route. Der Router kennt nur `@pages/*`.
+
+- Pages komponieren Features und ggf. Widgets; sie enthalten keine fachliche Geschäftslogik.
+- Struktur pro Page: `ui/`, `index.ts` (Public API).
+- Beispiel: `Login.vue` bindet `@features/authentication/signin-user` ein.
+
+## widgets
+
+Eigenständige UI-Bausteine ohne Feature-Zugehörigkeit (z. B. `Navigation`). Kein Use-Case-Slice.
+
+- Dürfen Features und `shared` nutzen, aber nicht von Pages importiert werden, wenn sie global eingebunden sind.
+- Struktur: `ui/`, optional `i18n/`, `index.ts`.
+
+## features
+
+Fachliche Funktionalität, unterteilt in **Slices** (Use Cases). Ein Slice = ein abgeschlossener Anwendungsfall.
+
+Ideale Slice-Struktur pro Use Case:
+
+```
+features/<feature>/<slice>/
+  ui/          # Vue-Komponenten des Use Cases
+  model/       # Composables, State, Formularlogik
+  i18n/        # keys.ts, de.ts, en.ts, index.ts
+  api/         # Use-Case-API: kapselt shared/api für diesen Slice
+  service/     # (optional) Orchestrierung innerhalb des Slices
+  index.ts     # Public API — nur hier exportieren
+```
+
+**API-Schichtung:** Generische Client-Zugriffe liegen in `shared/api/` (z. B. Supabase-Client, generische Auth-Funktionen). Jeder Slice, der solche Zugriffe braucht, bekommt einen eigenen `api/`-Ordner mit **Use-Case-spezifischen** Funktionen, die `shared/api` aufrufen und Fehler/Monitoring auf Slice-Ebene behandeln.
+
+- `model/` und `service/` importieren **nur** aus dem Slice-`api/`, nie direkt aus `@shared/api`.
+- Beispiel: `register-user/api/sign-up-with-mail-and-password.ts` ruft `signUpByEmailPassword` aus `@shared/api` auf; `model/use-register.ts` nutzt die Slice-Funktion.
+
+- Feature-übergreifende Logik gehört in `features/<feature>/service/` oder `model/`.
+- Slices importieren `shared`; sie dürfen andere Slices **desselben** Features nutzen, aber **keine** anderen Features, Pages oder Widgets.
+- Neue Funktionalität als neuer Slice anlegen, nicht in bestehende Slices mischen.
+
+## shared
+
+Abstraktion **austauschbarer** Abhängigkeiten. Keine Feature- oder Page-Logik. Features/Widgets importieren nur die Public API — nie das SDK direkt.
+
+| Segment | Ebene | Inhalt |
+|---------|-------|--------|
+| `api/` | Low-level | Client-Implementierungen (z. B. Supabase) |
+| `lib/browser/`, `lib/validation/`, `lib/pinia/`, `lib/i18n/` | Low-level | Technische Helfer, Validierung, Store-Utilities |
+| `lib/glitchtip/` | High-level | Logging, Monitoring, Breadcrumbs |
+| `ui/` | — | Wiederverwendbare Vue-Komponenten ohne Feature-Bezug |
+| `model/`, `store/`, `types/`, `errors/` | — | Geteilte Domänentypen, Stores, Fehlerklassen |
+
+- **Low-level**: direkte Technik-Abstraktionen (Storage, HTTP-Client, Validatoren).
+- **High-level**: domänennahe Abstraktionen (Logging/Monitoring). Features nutzen diese statt SDK-Aufrufen.
+- Vue-Komponenten ohne Feature-Bezug → `shared/ui/`, nicht in Features.
+- `shared` importiert **keine** Features, Pages, Widgets oder `app`.
+
+## Import-Aliase
+
+`@app/*`, `@pages/*`, `@features/*`, `@widgets/*`, `@shared/*` — immer über Aliase importieren, nie relative Pfade über Schichtgrenzen hinweg.
+
+## Checkliste bei neuen Dateien
+
+1. Richtige Schicht und Slice gewählt?
+2. **app vs. shared:** Wiring oder austauschbare Abstraktion?
+3. Importrichtung eingehalten (nur nach unten)?
+4. Public API über `index.ts` exportiert?
+5. i18n-Keys im Slice unter `i18n/`, nicht in `shared`?
+6. Wiederverwendbare UI ohne Feature-Bezug → `shared/ui/`?
+7. API-Zugriff auf `shared/api` → Slice-`api/` als Zwischenschicht, nicht direkt in `model/`?
