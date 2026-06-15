@@ -1,3 +1,9 @@
+# [1.11.0](https://github.com/AK2083/DojoSphere/compare/v1.10.0...v1.11.0) (2026-06-15)
+
+### Features
+
+- duplicate local user saving ([#142](https://github.com/AK2083/DojoSphere/issues/142)) ([f737dea](https://github.com/AK2083/DojoSphere/commit/f737deacfbfe8159f67c67e4b082f396a188ea3c))
+
 # [1.10.0](https://github.com/AK2083/DojoSphere/compare/v1.9.0...v1.10.0) (2026-06-13)
 
 ### Features
