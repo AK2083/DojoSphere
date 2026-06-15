@@ -1,3 +1,4 @@
+import { installPlaywrightBrowserElectronApi } from '@shared/lib/electron/e2e-api'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 import Settings from './Settings.vue'
@@ -21,7 +22,13 @@ const meta = {
         ]
       }
     }
-  }
+  },
+  loaders: [
+    async () => {
+      installPlaywrightBrowserElectronApi()
+      return {}
+    }
+  ]
 } satisfies Meta<typeof Settings>
 
 export default meta

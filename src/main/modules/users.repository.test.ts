@@ -1,9 +1,10 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { closeTestDatabase, initTestDatabase } from '../test/database'
 
 describe('users.repository', () => {
   afterEach(async () => {
+    vi.restoreAllMocks()
     await closeTestDatabase()
   })
 
@@ -139,5 +140,78 @@ describe('users.repository', () => {
         userType: 'local'
       })
     ])
+  })
+
+  it('updates a user display name and sets updated_at', async () => {
+    await initTestDatabase()
+    const { addUser, getUsers, updateUserDisplayName } = await import('./users.repository')
+
+    const { id } = addUser({ displayName: 'Ada Lovelace' })
+
+    const updated = updateUserDisplayName(id, '  Grace Hopper  ')
+
+    expect(updated).toMatchObject({
+      id,
+      displayName: 'Grace Hopper',
+      userType: 'local'
+    })
+    expect(updated.updatedAt).toEqual(expect.any(String))
+    expect(getUsers()[0]).toMatchObject({
+      displayName: 'Grace Hopper'
+    })
+  })
+
+  it('throws when updating with an empty display name', async () => {
+    await initTestDatabase()
+    const { addUser, updateUserDisplayName } = await import('./users.repository')
+
+    const { id } = addUser({ displayName: 'Ada Lovelace' })
+
+    expect(() => updateUserDisplayName(id, '   ')).toThrow('Display name must not be empty')
+  })
+
+  it('throws when updating an unknown user id', async () => {
+    await initTestDatabase()
+    const { updateUserDisplayName } = await import('./users.repository')
+
+    expect(() => updateUserDisplayName('missing-user-id', 'Ada Lovelace')).toThrow('User not found')
+  })
+
+  it('throws when the user row disappears after update', async () => {
+    await initTestDatabase()
+    const { addUser, updateUserDisplayName } = await import('./users.repository')
+    const { getDatabase } = await import('../database/connection')
+
+    const { id } = addUser({ displayName: 'Ada Lovelace' })
+    const db = getDatabase()
+    const originalPrepare = db.prepare.bind(db)
+
+    vi.spyOn(db, 'prepare').mockImplementation((sql: string) => {
+      const statement = originalPrepare(sql)
+
+      if (!sql.includes('UPDATE users')) {
+        return statement
+      }
+
+      return {
+        run: (...args: unknown[]) => {
+          const result = statement.run(args[0] as string, args[1] as string)
+
+          vi.spyOn(db, 'prepare').mockImplementation((innerSql: string) => {
+            if (innerSql.includes('SELECT') && innerSql.includes('WHERE id = ?')) {
+              return {
+                get: () => undefined
+              } as never
+            }
+
+            return originalPrepare(innerSql)
+          })
+
+          return result
+        }
+      } as never
+    })
+
+    expect(() => updateUserDisplayName(id, 'Grace Hopper')).toThrow('User not found')
   })
 })

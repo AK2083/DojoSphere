@@ -27,6 +27,7 @@ describe('ensureLocalSessionFromOsUsername', () => {
       ensureLocalSession: vi.fn(),
       getLocalSession: vi.fn(),
       revokeLocalSession: vi.fn(),
+      updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       getOsUsername: vi.fn()
     }

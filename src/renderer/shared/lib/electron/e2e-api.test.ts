@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
-import { isPlaywrightBrowserOnly } from './e2e-api'
+import { installPlaywrightBrowserElectronApi, isPlaywrightBrowserOnly } from './e2e-api'
 
 describe('isPlaywrightBrowserOnly', () => {
   it('returns true for enabled values', () => {
@@ -12,5 +12,54 @@ describe('isPlaywrightBrowserOnly', () => {
     expect(isPlaywrightBrowserOnly(undefined)).toBe(false)
     expect(isPlaywrightBrowserOnly('false')).toBe(false)
     expect(isPlaywrightBrowserOnly('')).toBe(false)
+  })
+})
+
+describe('installPlaywrightBrowserElectronApi', () => {
+  beforeEach(() => {
+    installPlaywrightBrowserElectronApi()
+  })
+
+  it('bootstraps and resolves a local session', async () => {
+    const result = await globalThis.window.api.ensureLocalSession('TestUser')
+
+    expect(result.sessionToken).toBe('local-session-token')
+
+    const session = await globalThis.window.api.getLocalSession(result.sessionToken)
+
+    expect(session?.user.displayName).toBe('TestUser')
+  })
+
+  it('updates the display name for the active local session', async () => {
+    const { sessionToken } = await globalThis.window.api.ensureLocalSession('TestUser')
+
+    const updatedUser = await globalThis.window.api.updateUserDisplayName(
+      sessionToken,
+      'Updated User'
+    )
+
+    expect(updatedUser.displayName).toBe('Updated User')
+
+    const session = await globalThis.window.api.getLocalSession(sessionToken)
+
+    expect(session?.user.displayName).toBe('Updated User')
+  })
+
+  it('rejects display name updates without a valid session token', async () => {
+    await expect(
+      globalThis.window.api.updateUserDisplayName('missing-token', 'Updated User')
+    ).rejects.toThrow('Unauthorized')
+  })
+
+  it('rejects empty display name updates', async () => {
+    const { sessionToken } = await globalThis.window.api.ensureLocalSession('TestUser')
+
+    await expect(globalThis.window.api.updateUserDisplayName(sessionToken, '   ')).rejects.toThrow(
+      'Display name must not be empty'
+    )
+  })
+
+  it('returns null for unknown local sessions', async () => {
+    await expect(globalThis.window.api.getLocalSession('missing-token')).resolves.toBeNull()
   })
 })

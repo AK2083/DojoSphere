@@ -1,7 +1,12 @@
 import { ipcMain } from 'electron'
 
-import { createSession } from '../modules/sessions.repository'
-import { addUser, ensureLocalUserSession, getUsers } from '../modules/users.repository'
+import { getActiveSessionByToken, createSession } from '../modules/sessions.repository'
+import {
+  addUser,
+  ensureLocalUserSession,
+  getUsers,
+  updateUserDisplayName
+} from '../modules/users.repository'
 
 export function registerUsersIpc() {
   ipcMain.handle('users:list', () => {
@@ -34,4 +39,17 @@ export function registerUsersIpc() {
   ipcMain.handle('users:ensureLocalSession', (_event, displayName: string) => {
     return ensureLocalUserSession(displayName)
   })
+
+  ipcMain.handle(
+    'users:updateDisplayName',
+    (_event, { token, displayName }: { token: string; displayName: string }) => {
+      const session = getActiveSessionByToken(token)
+
+      if (!session) {
+        throw new Error('Unauthorized')
+      }
+
+      return updateUserDisplayName(session.userId, displayName)
+    }
+  )
 }

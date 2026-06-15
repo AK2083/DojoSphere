@@ -100,3 +100,57 @@ export function ensureLocalUserSession(displayName: string) {
     expiresAt: session.expiresAt
   }
 }
+
+function getUserById(userId: string): UserRecord | null {
+  const db = getDatabase()
+
+  const row = db
+    .prepare(
+      `
+      SELECT
+        id,
+        display_name AS displayName,
+        email,
+        user_type AS userType,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+      FROM users
+      WHERE id = ?
+    `
+    )
+    .get(userId) as UserRecord | undefined
+
+  return row ?? null
+}
+
+export function updateUserDisplayName(userId: string, displayName: string): UserRecord {
+  const trimmedDisplayName = displayName.trim()
+
+  if (!trimmedDisplayName) {
+    throw new Error('Display name must not be empty')
+  }
+
+  const db = getDatabase()
+
+  const result = db
+    .prepare(
+      `
+      UPDATE users
+      SET display_name = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `
+    )
+    .run(trimmedDisplayName, userId)
+
+  if (result.changes === 0) {
+    throw new Error('User not found')
+  }
+
+  const user = getUserById(userId)
+
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  return user
+}

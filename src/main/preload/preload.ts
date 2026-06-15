@@ -8,6 +8,8 @@ const api: ElectronAPI = {
   ensureLocalSession: (displayName) => ipcRenderer.invoke('users:ensureLocalSession', displayName),
   getLocalSession: (token) => ipcRenderer.invoke('sessions:get', token),
   revokeLocalSession: (token) => ipcRenderer.invoke('sessions:revoke', token),
+  updateUserDisplayName: (token, displayName) =>
+    ipcRenderer.invoke('users:updateDisplayName', { token, displayName }),
   dbHealthcheck: () => ipcRenderer.invoke('db:healthcheck'),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')
 }

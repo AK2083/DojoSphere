@@ -44,6 +44,7 @@ export interface ElectronAPI {
   ensureLocalSession: (displayName: string) => Promise<EnsureLocalSessionResult>
   getLocalSession: (token: string) => Promise<LocalSession | null>
   revokeLocalSession: (token: string) => Promise<void>
+  updateUserDisplayName: (token: string, displayName: string) => Promise<User>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
   getOsUsername: () => Promise<string>
 }
