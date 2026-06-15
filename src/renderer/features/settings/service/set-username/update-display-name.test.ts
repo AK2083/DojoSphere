@@ -56,4 +56,11 @@ describe('updateDisplayName', () => {
 
     await expect(updateDisplayName('Grace Hopper')).rejects.toThrow('No local session')
   })
+
+  it('throws when the electron api does not expose updateUserDisplayName', async () => {
+    vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+    globalThis.window.api = {} as never
+
+    await expect(updateDisplayName('Grace Hopper')).rejects.toThrow('No local session')
+  })
 })

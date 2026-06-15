@@ -42,4 +42,31 @@ describe('ensureLocalSessionForUsername', () => {
     expect(globalThis.window.api.ensureLocalSession).toHaveBeenCalledWith('TestUser')
     expect(setLocalSessionToken).toHaveBeenCalledWith('token-1')
   })
+
+  it('returns false when the os username is empty', async () => {
+    const { getLocalSessionToken } =
+      await import('@features/authentication/service/local-session-storage')
+    vi.mocked(getLocalSessionToken).mockReturnValue(null)
+    vi.mocked(globalThis.window.api.getOsUsername).mockResolvedValue('   ')
+
+    await expect(ensureLocalSessionForUsername()).resolves.toBe(false)
+
+    expect(globalThis.window.api.ensureLocalSession).not.toHaveBeenCalled()
+  })
+
+  it('returns false when bootstrap does not return a session token', async () => {
+    const { getLocalSessionToken } =
+      await import('@features/authentication/service/local-session-storage')
+    vi.mocked(getLocalSessionToken).mockReturnValue(null)
+    vi.mocked(globalThis.window.api.getOsUsername).mockResolvedValue('TestUser')
+    vi.mocked(globalThis.window.api.ensureLocalSession).mockResolvedValue({
+      id: 'user-1',
+      sessionToken: '',
+      expiresAt: '2099-01-01T00:00:00.000Z'
+    })
+
+    await expect(ensureLocalSessionForUsername()).resolves.toBe(false)
+
+    expect(setLocalSessionToken).not.toHaveBeenCalled()
+  })
 })
