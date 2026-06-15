@@ -26,7 +26,7 @@ test.describe('LoginForm', () => {
     ).toHaveCount(1)
     await expect(page.locator('[role="tooltip"]')).toHaveCount(0)
     await expect(page.locator('button[type="submit"]')).toBeDisabled()
-    await expect(page.locator('a[href$="#/datasource"]').first()).toBeVisible()
+    await expect(page.locator('a[href$="#/register"]').first()).toBeVisible()
   })
 
   test('navigates to password reset when login is available', async ({ page }) => {

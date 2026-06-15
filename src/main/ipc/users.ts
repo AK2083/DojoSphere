@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 
 import { createSession } from '../modules/sessions.repository'
-import { addUser, getUsers } from '../modules/users.repository'
+import { addUser, ensureLocalUserSession, getUsers } from '../modules/users.repository'
 
 export function registerUsersIpc() {
   ipcMain.handle('users:list', () => {
@@ -30,4 +30,8 @@ export function registerUsersIpc() {
       }
     }
   )
+
+  ipcMain.handle('users:ensureLocalSession', (_event, displayName: string) => {
+    return ensureLocalUserSession(displayName)
+  })
 }

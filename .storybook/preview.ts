@@ -25,7 +25,7 @@ const router = createRouter({
     { path: '/account', name: 'account', component: { template: '<div />' } },
     { path: '/settings', name: 'settings', component: { template: '<div />' } },
     { path: '/login', name: 'login', component: { template: '<div />' } },
-    { path: '/datasource', name: 'datasource', component: { template: '<div />' } },
+    { path: '/register', name: 'register', component: { template: '<div />' } },
     {
       path: '/emailverification',
       name: 'emailverification',

@@ -60,4 +60,61 @@ describe('registerUsersIpc', () => {
     })
     expect(result).not.toHaveProperty('sessionToken')
   })
+
+  it('ensures a local session for an existing display name without creating a duplicate user', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('./users')
+
+    registerUsersIpc()
+
+    const addHandler = getIpcHandler('users:add')
+    const ensureHandler = getIpcHandler('users:ensureLocalSession')
+    const listHandler = getIpcHandler('users:list')
+
+    await addHandler({}, { displayName: 'Local User', userType: 'local' })
+
+    const result = await ensureHandler({}, 'Local User')
+
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      sessionToken: expect.any(String),
+      expiresAt: expect.any(String)
+    })
+
+    const users = await listHandler()
+
+    expect(users).toEqual([
+      expect.objectContaining({
+        displayName: 'Local User',
+        userType: 'local'
+      })
+    ])
+  })
+
+  it('creates a local user and session when ensuring a new display name', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('./users')
+
+    registerUsersIpc()
+
+    const ensureHandler = getIpcHandler('users:ensureLocalSession')
+    const listHandler = getIpcHandler('users:list')
+
+    const result = await ensureHandler({}, 'Bootstrap User')
+
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      sessionToken: expect.any(String),
+      expiresAt: expect.any(String)
+    })
+
+    const users = await listHandler()
+
+    expect(users).toEqual([
+      expect.objectContaining({
+        displayName: 'Bootstrap User',
+        userType: 'local'
+      })
+    ])
+  })
 })

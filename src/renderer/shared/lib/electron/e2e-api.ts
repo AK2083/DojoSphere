@@ -19,10 +19,45 @@ export function isPlaywrightBrowserOnly(
  * @param overrides - Optional API method overrides (e.g. custom `getOsUsername` in Storybook).
  */
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
+  const localSessions = new Map<string, { userId: string; displayName: string }>()
+
   const api: ElectronAPI = {
     getUsers: async () => [],
     addUser: async () => ({ id: 'local-user-id', sessionToken: 'local-session-token' }),
-    getLocalSession: async () => null,
+    ensureLocalSession: async (displayName) => {
+      const id = 'local-user-id'
+      const sessionToken = 'local-session-token'
+
+      localSessions.set(sessionToken, { userId: id, displayName })
+
+      return {
+        id,
+        sessionToken,
+        expiresAt: new Date(Date.now() + 86_400_000).toISOString()
+      }
+    },
+    getLocalSession: async (token) => {
+      const session = localSessions.get(token)
+
+      if (!session) {
+        return null
+      }
+
+      return {
+        id: 'session-1',
+        userId: session.userId,
+        expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+        createdAt: new Date().toISOString(),
+        user: {
+          id: session.userId,
+          displayName: session.displayName,
+          email: null,
+          userType: 'local',
+          createdAt: new Date().toISOString(),
+          updatedAt: null
+        }
+      }
+    },
     revokeLocalSession: async () => undefined,
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
     getOsUsername: async () => 'TestUser',

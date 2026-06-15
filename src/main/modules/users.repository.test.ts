@@ -83,4 +83,61 @@ describe('users.repository', () => {
 
     expect(assignmentCount.count).toBe(0)
   })
+
+  it('finds a local user by display name', async () => {
+    await initTestDatabase()
+    const { addUser, findLocalUserByDisplayName } = await import('./users.repository')
+
+    addUser({ displayName: 'Ada Lovelace' })
+
+    expect(findLocalUserByDisplayName('Ada Lovelace')).toMatchObject({
+      displayName: 'Ada Lovelace',
+      userType: 'local'
+    })
+    expect(findLocalUserByDisplayName('Missing User')).toBeNull()
+  })
+
+  it('does not match non-local users by display name', async () => {
+    await initTestDatabase()
+    const { addUser, findLocalUserByDisplayName } = await import('./users.repository')
+
+    addUser({ displayName: 'System Bot', userType: 'system' })
+
+    expect(findLocalUserByDisplayName('System Bot')).toBeNull()
+  })
+
+  it('reuses an existing local user when ensuring a session', async () => {
+    await initTestDatabase()
+    const { addUser, ensureLocalUserSession, getUsers } = await import('./users.repository')
+
+    addUser({ displayName: 'Local User', userType: 'local' })
+
+    const result = ensureLocalUserSession('Local User')
+
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      sessionToken: expect.any(String),
+      expiresAt: expect.any(String)
+    })
+    expect(getUsers()).toHaveLength(1)
+  })
+
+  it('creates a local user when ensuring a session for a new display name', async () => {
+    await initTestDatabase()
+    const { ensureLocalUserSession, getUsers } = await import('./users.repository')
+
+    const result = ensureLocalUserSession('New Local User')
+
+    expect(result).toMatchObject({
+      id: expect.any(String),
+      sessionToken: expect.any(String),
+      expiresAt: expect.any(String)
+    })
+    expect(getUsers()).toEqual([
+      expect.objectContaining({
+        displayName: 'New Local User',
+        userType: 'local'
+      })
+    ])
+  })
 })

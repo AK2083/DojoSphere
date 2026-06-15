@@ -32,10 +32,10 @@ test.describe('Navigation widget', () => {
     await expect(settingsActions.first()).toBeVisible()
   })
 
-  test('includes account-related navigation action', async ({ page }) => {
+  test('does not show account navigation action on app start', async ({ page }) => {
     await page.goto('/')
 
-    const accountActions = page.locator('a[href$="#/datasource"], a[href$="#/emailverification"]')
-    await expect(accountActions.first()).toBeVisible()
+    const accountActions = page.locator('a[href$="#/register"], a[href$="#/emailverification"]')
+    await expect(accountActions).toHaveCount(0)
   })
 })

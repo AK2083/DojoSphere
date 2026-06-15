@@ -35,14 +35,6 @@ export const Default: Story = {
       throw new Error('Settings control not found.')
     }
 
-    const registerControl = canvasElement.querySelector(
-      '[aria-label="Register"], [aria-label="Registrieren"]'
-    )
-
-    if (!registerControl) {
-      throw new Error('Register control not found.')
-    }
-
     if (!hasClick(settingsControl)) {
       throw new Error('Settings control is not an HTML element.')
     }
