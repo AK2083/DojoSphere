@@ -1,8 +1,7 @@
 import { createI18n } from 'vue-i18n'
 import { authDe, authEn } from '@features/authentication'
-import { cloudStatusDe, cloudStatusEn } from '@features/cloud-status'
-import { networkStatusDe, networkStatusEn } from '@features/network-status'
 import { getInitialLanguage, settingsDe, settingsEn } from '@features/settings'
+import { statusDe, statusEn } from '@features/status'
 import { FallbackLanguage, sharedDe, sharedEn } from '@shared/lib/i18n'
 import { navigationDe, navigationEn } from '@widgets/navigation'
 
@@ -17,8 +16,7 @@ export const i18n = createI18n({
     de: {
       app: appDe,
       navigation: navigationDe,
-      networkStatus: networkStatusDe,
-      cloudStatus: cloudStatusDe,
+      status: statusDe,
       auth: authDe,
       settings: settingsDe,
       shared: sharedDe
@@ -26,8 +24,7 @@ export const i18n = createI18n({
     en: {
       app: appEn,
       navigation: navigationEn,
-      networkStatus: networkStatusEn,
-      cloudStatus: cloudStatusEn,
+      status: statusEn,
       auth: authEn,
       settings: settingsEn,
       shared: sharedEn

@@ -1,24 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import NetworkStatus from './NetworkStatus.vue'
+import CloudStatus from './CloudStatus.vue'
 
 const meta = {
-  title: 'Features/NetworkStatus/NetworkStatus',
-  component: NetworkStatus,
+  title: 'Features/Status/CloudStatus/CloudStatus',
+  component: CloudStatus,
   parameters: {
     layout: 'fullscreen'
   },
   render: () => ({
-    components: { NetworkStatus },
+    components: { CloudStatus },
     template: `
       <v-container class="fill-height">
         <v-row class="fill-height align-center justify-center">
-          <NetworkStatus />
+          <CloudStatus />
         </v-row>
       </v-container>
     `
   })
-} satisfies Meta<typeof NetworkStatus>
+} satisfies Meta<typeof CloudStatus>
 
 export default meta
 

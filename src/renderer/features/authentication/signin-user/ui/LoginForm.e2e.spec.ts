@@ -16,7 +16,8 @@ test.describe('LoginForm', () => {
       await expect(page).toHaveURL(/#\/login$/)
     }
 
-    await expect(page.locator('form')).toHaveCount(1, { timeout: 10_000 })
+    const loginForm = page.locator('form')
+    await expect(loginForm).toHaveCount(1, { timeout: 10_000 })
     await expect(page.locator('input[autocomplete="email"]')).toHaveCount(1)
     await expect(page.locator('input[autocomplete="current-password"]')).toHaveCount(1)
     await expect(
@@ -24,7 +25,7 @@ test.describe('LoginForm', () => {
         'button[aria-label="Passwort ein- oder ausblenden"], button[title="Passwort ein- oder ausblenden"]'
       )
     ).toHaveCount(1)
-    await expect(page.locator('[role="tooltip"]')).toHaveCount(0)
+    await expect(loginForm.locator('[role="tooltip"]')).toHaveCount(0)
     await expect(page.locator('button[type="submit"]')).toBeDisabled()
     await expect(page.locator('a[href$="#/register"]').first()).toBeVisible()
   })

@@ -29,7 +29,7 @@ async function loadNetworkStatusModel() {
   const api = await import('@shared/api')
   const logging = await import('@shared/lib')
   const stores = await import('@shared/store/network')
-  const cloudStatus = await import('@features/cloud-status')
+  const cloudStatus = await import('@features/status')
 
   return { networkStatusModel, api, logging, stores, cloudStatus }
 }
