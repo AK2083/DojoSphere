@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import ThemeToggle from './ThemeToggle.vue'
 
 const meta = {
-  title: 'Features/Settings/ThemeToggle',
+  title: 'Features/Settings/SetTheme/ThemeToggle',
   component: ThemeToggle,
   parameters: {
     layout: 'fullscreen'

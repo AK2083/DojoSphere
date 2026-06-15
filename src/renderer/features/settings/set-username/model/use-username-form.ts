@@ -3,8 +3,8 @@ import { getLocalSessionToken } from '@features/authentication/service/local-ses
 import { resolveLocalAuthSession } from '@features/authentication/service/resolve-local-auth-session'
 
 import translationKeys from '../i18n/keys'
-import { ensureLocalSessionForUsername } from '../service/set-username/ensure-local-session-for-username'
-import { updateDisplayName } from '../service/set-username/update-display-name'
+import { ensureLocalSessionForUsername } from '../service/ensure-local-session-for-username'
+import { updateDisplayName } from '../service/update-display-name'
 
 function getDisplayNameFromSession(
   user: { user_metadata?: { full_name?: string; name?: string }; email?: string } | null | undefined
@@ -49,7 +49,7 @@ export function useUsernameForm() {
   async function save() {
     if (!canSave.value) {
       if (isEmpty.value) {
-        errorCode.value = translationKeys.username.error.empty
+        errorCode.value = translationKeys.error.empty
       }
 
       return
@@ -66,7 +66,7 @@ export function useUsernameForm() {
       savedUsername.value = updatedUser.displayName
       success.value = true
     } catch {
-      errorCode.value = translationKeys.username.error.save
+      errorCode.value = translationKeys.error.save
     } finally {
       loading.value = false
     }

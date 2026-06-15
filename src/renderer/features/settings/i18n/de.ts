@@ -1,26 +1,10 @@
+import { setLanguageDe } from '../set-language/i18n'
+import { setThemeDe } from '../set-theme/i18n'
+import { setUsernameDe } from '../set-username/i18n'
+
 export default {
   title: 'Einstellungen',
-  language: {
-    title: 'Sprache',
-    description: 'Wähle die Sprache aus, in der Dojosphere angezeigt werden soll.'
-  },
-  theme: {
-    title: 'Farbschema',
-    description: 'Bestimme, ob Dojosphere im hellen oder dunklen Modus angezeigt werden soll.',
-    tooltip: {
-      light: 'Heller Modus',
-      dark: 'Dunkler Modus',
-      system: 'Systemeinstellung'
-    }
-  },
-  username: {
-    title: 'Benutzername',
-    description: 'Dein Anzeigename auf diesem Gerät.',
-    save: 'Speichern',
-    success: 'Benutzername gespeichert.',
-    error: {
-      empty: 'Der Benutzername darf nicht leer sein.',
-      save: 'Der Benutzername konnte nicht gespeichert werden.'
-    }
-  }
+  language: setLanguageDe,
+  theme: setThemeDe,
+  username: setUsernameDe
 }

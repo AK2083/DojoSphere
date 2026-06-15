@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import UsernameEditor from './UsernameEditor.vue'
 
 const meta = {
-  title: 'Features/Settings/UsernameEditor',
+  title: 'Features/Settings/SetUsername/UsernameEditor',
   component: UsernameEditor,
   parameters: {
     layout: 'fullscreen'

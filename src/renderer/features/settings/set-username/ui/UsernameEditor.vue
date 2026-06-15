@@ -21,17 +21,17 @@ const isMobile = computed(() => smAndDown.value)
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">{{ t(translationKeys.username.title) }}</label>
+      <label class="font-weight-medium">{{ t(translationKeys.title) }}</label>
       <div class="text-medium-emphasis text-body-2">
-        {{ t(translationKeys.username.description) }}
+        {{ t(translationKeys.description) }}
       </div>
     </div>
 
     <v-text-field
       v-model="username"
       class="mt-2"
-      :label="t(translationKeys.username.title)"
-      :aria-label="t(translationKeys.username.title)"
+      :label="t(translationKeys.title)"
+      :aria-label="t(translationKeys.title)"
       density="comfortable"
       hide-details="auto"
       :error-messages="errorCode ? t(errorCode) : undefined"
@@ -40,17 +40,17 @@ const isMobile = computed(() => smAndDown.value)
 
     <div class="d-flex align-center justify-end mt-2 ga-3">
       <span v-if="success" class="text-body-2 text-success" role="status" aria-live="polite">
-        {{ t(translationKeys.username.success) }}
+        {{ t(translationKeys.success) }}
       </span>
 
       <v-btn
         color="primary"
         :disabled="!canSave"
         :loading="loading"
-        :aria-label="t(translationKeys.username.save)"
+        :aria-label="t(translationKeys.save)"
         @click="save"
       >
-        {{ t(translationKeys.username.save) }}
+        {{ t(translationKeys.save) }}
       </v-btn>
     </div>
   </v-col>

@@ -6,7 +6,7 @@ import { useTranslation } from '@shared/lib'
 import { Theme } from '@shared/types/theme-modes'
 
 import translationKeys from '../i18n/keys'
-import { setThemeToStorage } from '../service/set-theme/theme-storage'
+import { setThemeToStorage } from '../service/theme-storage'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
@@ -27,9 +27,9 @@ function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">{{ t(translationKeys.theme.title) }}</label>
+      <label class="font-weight-medium">{{ t(translationKeys.title) }}</label>
       <div class="text-medium-emphasis text-body-2">
-        {{ t(translationKeys.theme.description) }}
+        {{ t(translationKeys.description) }}
       </div>
     </div>
 
@@ -37,20 +37,20 @@ function handleChangeTheme(value: (typeof Theme)[keyof typeof Theme]) {
       <v-btn-toggle class="border" divided density="default">
         <v-btn
           :icon="mdiLaptop"
-          :aria-label="t(translationKeys.theme.tooltip.system)"
-          :title="t(translationKeys.theme.tooltip.system)"
+          :aria-label="t(translationKeys.tooltip.system)"
+          :title="t(translationKeys.tooltip.system)"
           @click="handleChangeTheme(Theme.SYSTEM)"
         />
         <v-btn
           :icon="mdiMoonWaningCrescent"
-          :aria-label="t(translationKeys.theme.tooltip.dark)"
-          :title="t(translationKeys.theme.tooltip.dark)"
+          :aria-label="t(translationKeys.tooltip.dark)"
+          :title="t(translationKeys.tooltip.dark)"
           @click="handleChangeTheme(Theme.DARK)"
         />
         <v-btn
           :icon="mdiWhiteBalanceSunny"
-          :aria-label="t(translationKeys.theme.tooltip.light)"
-          :title="t(translationKeys.theme.tooltip.light)"
+          :aria-label="t(translationKeys.tooltip.light)"
+          :title="t(translationKeys.tooltip.light)"
           @click="handleChangeTheme(Theme.LIGHT)"
         />
       </v-btn-toggle>

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import translationKeys from '../i18n/keys'
-import { ensureLocalSessionForUsername } from '../service/set-username/ensure-local-session-for-username'
-import { updateDisplayName } from '../service/set-username/update-display-name'
+import { ensureLocalSessionForUsername } from '../service/ensure-local-session-for-username'
+import { updateDisplayName } from '../service/update-display-name'
 import { useUsernameForm } from './use-username-form'
 
 let onMountedHandler: (() => void) | undefined
@@ -26,11 +26,11 @@ vi.mock('@features/authentication/service/resolve-local-auth-session', () => ({
   resolveLocalAuthSession: vi.fn()
 }))
 
-vi.mock('../service/set-username/ensure-local-session-for-username', () => ({
+vi.mock('../service/ensure-local-session-for-username', () => ({
   ensureLocalSessionForUsername: vi.fn()
 }))
 
-vi.mock('../service/set-username/update-display-name', () => ({
+vi.mock('../service/update-display-name', () => ({
   updateDisplayName: vi.fn()
 }))
 
@@ -178,7 +178,7 @@ describe('useUsernameForm', () => {
 
     await form.save()
 
-    expect(form.errorCode.value).toBe(translationKeys.username.error.save)
+    expect(form.errorCode.value).toBe(translationKeys.error.save)
     expect(form.success.value).toBe(false)
     expect(form.loading.value).toBe(false)
   })
@@ -200,7 +200,7 @@ describe('useUsernameForm', () => {
     await form.save()
 
     expect(updateDisplayName).not.toHaveBeenCalled()
-    expect(form.errorCode.value).toBe(translationKeys.username.error.empty)
+    expect(form.errorCode.value).toBe(translationKeys.error.empty)
   })
 
   it('does nothing when saving without changes', async () => {

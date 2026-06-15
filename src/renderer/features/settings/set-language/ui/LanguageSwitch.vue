@@ -5,7 +5,7 @@ import { mdiTranslateVariant } from '@mdi/js'
 import { AvailableLanguages, LanguageCode, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { setLanguageToStorage } from '../service/set-language/language-storage'
+import { setLanguageToStorage } from '../service/language-storage'
 
 const { t, locale } = useTranslation()
 
@@ -28,17 +28,17 @@ function handleLanguageChange(val: LanguageCode) {
 
   <v-col cols="12" md="10" class="d-flex flex-column">
     <div>
-      <label class="font-weight-medium">{{ t(translationKeys.language.title) }}</label>
+      <label class="font-weight-medium">{{ t(translationKeys.title) }}</label>
       <div class="text-medium-emphasis text-body-2">
-        {{ t(translationKeys.language.description) }}
+        {{ t(translationKeys.description) }}
       </div>
     </div>
 
     <v-select
       :model-value="selectedLanguage"
       class="mt-2"
-      :label="t(translationKeys.language.title)"
-      :aria-label="t(translationKeys.language.title)"
+      :label="t(translationKeys.title)"
+      :aria-label="t(translationKeys.title)"
       :items="AvailableLanguages"
       item-title="label"
       item-value="code"
