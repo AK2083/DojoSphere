@@ -1,15 +1,10 @@
-import { ref } from 'vue'
 import { heartbeat } from '@shared/api'
 import { AppError } from '@shared/errors'
-import {
-  captureException,
-  getActiveStore,
-  getNavigatorOnline,
-  isBrowserRuntime,
-  newStoreToRefs,
-  useCloudStatusStore
-} from '@shared/lib'
-import { useNetworkStatusStore } from '@shared/store/network'
+import { captureException, getNavigatorOnline, isBrowserRuntime } from '@shared/lib'
+import { bindConnectivityState } from '@shared/model'
+
+import { useStatusState } from '../model/use-status-state'
+import { useNetworkStatusStore } from '../network-status/store'
 
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
 
@@ -82,6 +77,7 @@ export async function bootstrapNetworkStatus(): Promise<void> {
 
   hasNetworkStatusBootstrap = true
 
+  bindConnectivityState(useStatusState())
   useNetworkStatusStore().setOnline(getNavigatorOnline())
 
   if (getNavigatorOnline()) {
@@ -104,24 +100,4 @@ export async function bootstrapNetworkStatus(): Promise<void> {
  */
 export async function recheckNetworkStatusAfterFailedUserAction(): Promise<boolean> {
   return await runHeartbeatCheck()
-}
-
-/**
- * Exposes reactive network status state for UI bindings.
- * @returns Reactive online and cloud-usage refs.
- */
-export function useNetworkStatusState() {
-  const activeStore = getActiveStore()
-
-  if (!activeStore) {
-    return {
-      isOnline: ref(getNavigatorOnline()),
-      isCloudUsed: ref(true)
-    }
-  }
-
-  const { isOnline } = newStoreToRefs(useNetworkStatusStore(activeStore))
-  const { isCloudUsed } = newStoreToRefs(useCloudStatusStore(activeStore))
-
-  return { isOnline, isCloudUsed }
 }

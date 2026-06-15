@@ -1,18 +1,30 @@
-import { getActiveStore, getNavigatorOnline, useCloudStatusStore } from '@shared/lib'
+import { getNavigatorOnline } from '@shared/lib'
+
+let cloudModeCheck: (() => boolean) | null = null
+
+/**
+ * Registers a cloud-mode check used by monitoring guard decisions.
+ * @param fn Returns true when cloud mode allows monitoring.
+ */
+export function setCloudModeMonitoringCheck(fn: () => boolean) {
+  cloudModeCheck = fn
+}
 
 /**
  * Indicates whether monitoring calls should currently be sent.
  * @returns True when monitoring calls are allowed.
  */
 export function isMonitoringEnabled(): boolean {
-  const hasInternet = getNavigatorOnline()
-  const activeStore = getActiveStore()
-
-  if (!activeStore) {
-    return hasInternet
+  if (!getNavigatorOnline()) {
+    return false
   }
 
-  const cloudStatusStore = useCloudStatusStore(activeStore)
+  return cloudModeCheck?.() ?? true
+}
 
-  return cloudStatusStore.isCloudUsed && hasInternet
+/**
+ * Resets cloud-mode monitoring check (for tests).
+ */
+export function resetCloudModeMonitoringCheck() {
+  cloudModeCheck = null
 }

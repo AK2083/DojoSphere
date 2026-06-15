@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { bootstrapNetworkStatus } from '@shared/model'
+import { bootstrapNetworkStatus, useCloudStatusStore } from '@features/status'
+import { setCloudModeMonitoringCheck } from '@shared/lib'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
 
+setCloudModeMonitoringCheck(() => useCloudStatusStore().isCloudUsed)
 void bootstrapNetworkStatus()
 </script>
 

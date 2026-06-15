@@ -2,11 +2,11 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { ensureLocalSessionFromOsUsername } from '@features/authentication/service/ensure-local-session'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
 import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
+import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
-import { useNetworkStatusStore } from '@shared/store/network'
 
 import { monitorInformation, MONITORING_EVENTS } from './monitoring'
 
