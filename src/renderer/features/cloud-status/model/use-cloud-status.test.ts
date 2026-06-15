@@ -21,13 +21,4 @@ describe('useCloudStatus', () => {
 
     expect(result.isCloudUsed.value).toBe(true)
   })
-
-  it('toggles cloud status through store action', () => {
-    vi.mocked(getCloudStatusFromStorage).mockReturnValue(true)
-    const result = useCloudStatus()
-
-    result.toggleCloudUsed()
-
-    expect(result.isCloudUsed.value).toBe(false)
-  })
 })

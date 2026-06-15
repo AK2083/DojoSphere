@@ -10,9 +10,5 @@ export function useCloudStatus() {
   const cloudStatusStore = useCloudStatusStore()
   const { isCloudUsed } = newStoreToRefs(cloudStatusStore)
 
-  function toggleCloudUsed() {
-    cloudStatusStore.toggleCloudUsed()
-  }
-
-  return { isCloudUsed, toggleCloudUsed }
+  return { isCloudUsed }
 }

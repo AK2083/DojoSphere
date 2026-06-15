@@ -11,12 +11,31 @@ const { t } = useTranslation()
 </script>
 
 <template>
-  <v-chip v-if="isOnline" class="ma-1" label data-testid="network-status-chip">
-    <v-icon :icon="mdiWeb" start></v-icon>
-    {{ t(translationKeys.online) }}
-  </v-chip>
-  <v-chip v-else class="ma-2" variant="outlined" label data-testid="network-status-chip">
-    <v-icon :icon="mdiWebOff" start></v-icon>
-    {{ t(translationKeys.offline) }}
-  </v-chip>
+  <v-tooltip v-if="isOnline" :text="t(translationKeys.online)" location="top">
+    <template #activator="{ props }">
+      <v-chip
+        v-bind="props"
+        class="ma-1"
+        label
+        data-testid="network-status-chip"
+        :aria-label="t(translationKeys.online)"
+      >
+        <v-icon :icon="mdiWeb"></v-icon>
+      </v-chip>
+    </template>
+  </v-tooltip>
+  <v-tooltip v-else :text="t(translationKeys.offline)" location="top">
+    <template #activator="{ props }">
+      <v-chip
+        v-bind="props"
+        class="ma-2"
+        variant="outlined"
+        label
+        data-testid="network-status-chip"
+        :aria-label="t(translationKeys.offline)"
+      >
+        <v-icon :icon="mdiWebOff"></v-icon>
+      </v-chip>
+    </template>
+  </v-tooltip>
 </template>

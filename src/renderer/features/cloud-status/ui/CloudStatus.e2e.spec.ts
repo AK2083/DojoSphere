@@ -4,7 +4,7 @@ import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 const CLOUD_STATUS_KEY = 'dojosphere.cloud.status.isCloudUsed'
 
 test.describe('CloudStatus', () => {
-  test('toggles cloud mode and persists state to local storage', async ({ page }) => {
+  test('displays cloud mode from local storage', async ({ page }) => {
     await setEnglishLanguage(page)
     await page.addInitScript(
       ([cloudStatusKey]) => {
@@ -15,29 +15,20 @@ test.describe('CloudStatus', () => {
 
     await page.goto('/#/dashboard')
 
-    const chip = page.getByTestId('cloud-status-chip')
+    await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Cloud')
+  })
 
-    await expect(chip).toContainText('Cloud')
-    await chip.click()
-    await expect(chip).toContainText('Local')
-
-    let storedCloudStatus = await page.evaluate(
+  test('displays local mode from local storage', async ({ page }) => {
+    await setEnglishLanguage(page)
+    await page.addInitScript(
       ([cloudStatusKey]) => {
-        return JSON.parse(globalThis.localStorage?.getItem(cloudStatusKey) ?? 'null')
+        globalThis.localStorage?.setItem(cloudStatusKey, JSON.stringify(false))
       },
       [CLOUD_STATUS_KEY]
     )
-    expect(storedCloudStatus).toBe(false)
 
-    await chip.click()
-    await expect(chip).toContainText('Cloud')
+    await page.goto('/#/dashboard')
 
-    storedCloudStatus = await page.evaluate(
-      ([cloudStatusKey]) => {
-        return JSON.parse(globalThis.localStorage?.getItem(cloudStatusKey) ?? 'null')
-      },
-      [CLOUD_STATUS_KEY]
-    )
-    expect(storedCloudStatus).toBe(true)
+    await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Local')
   })
 })

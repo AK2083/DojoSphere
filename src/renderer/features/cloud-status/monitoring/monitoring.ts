@@ -4,8 +4,7 @@ export const CATEGORY = 'cloudStatus'
 
 export const MONITORING_EVENTS = {
   STORAGE_READ: 'cloud.status.storage.read',
-  STORAGE_WRITE: 'cloud.status.storage.write',
-  TOGGLED: 'cloud.status.toggled'
+  STORAGE_WRITE: 'cloud.status.storage.write'
 }
 
 /**
