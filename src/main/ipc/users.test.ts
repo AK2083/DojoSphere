@@ -117,4 +117,48 @@ describe('registerUsersIpc', () => {
       })
     ])
   })
+
+  it('updates the display name for the authenticated local session user', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('./users')
+
+    registerUsersIpc()
+
+    const ensureHandler = getIpcHandler('users:ensureLocalSession')
+    const updateHandler = getIpcHandler('users:updateDisplayName')
+    const listHandler = getIpcHandler('users:list')
+
+    const result = await ensureHandler({}, 'Local User')
+    const sessionToken = (result as { sessionToken: string }).sessionToken
+
+    const updated = await updateHandler({}, { token: sessionToken, displayName: 'Updated User' })
+
+    expect(updated).toMatchObject({
+      displayName: 'Updated User',
+      userType: 'local'
+    })
+    expect((updated as { updatedAt: string }).updatedAt).toEqual(expect.any(String))
+
+    const users = await listHandler()
+
+    expect(users).toEqual([
+      expect.objectContaining({
+        displayName: 'Updated User',
+        userType: 'local'
+      })
+    ])
+  })
+
+  it('rejects display name updates without a valid session token', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('./users')
+
+    registerUsersIpc()
+
+    const updateHandler = getIpcHandler('users:updateDisplayName')
+
+    expect(() =>
+      updateHandler({}, { token: 'invalid-token', displayName: 'Updated User' })
+    ).toThrow('Unauthorized')
+  })
 })

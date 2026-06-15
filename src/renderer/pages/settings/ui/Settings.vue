@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LanguageSwitch, ThemeToggle, translationKeys } from '@features/settings'
+import { LanguageSwitch, ThemeToggle, translationKeys, UsernameEditor } from '@features/settings'
 import { useTranslation } from '@shared/lib'
 const { t } = useTranslation()
 </script>
@@ -7,6 +7,12 @@ const { t } = useTranslation()
 <template>
   <v-container class="pa-6" max-width="900">
     <h2 class="text-h5 mb-6">{{ t(translationKeys.title) }}</h2>
+
+    <v-sheet class="mb-4 border rounded pa-4">
+      <v-row class="align-center">
+        <UsernameEditor />
+      </v-row>
+    </v-sheet>
 
     <v-sheet class="mb-4 border rounded pa-4">
       <v-row class="align-center">

@@ -59,6 +59,30 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       }
     },
     revokeLocalSession: async () => undefined,
+    updateUserDisplayName: async (token, displayName) => {
+      const session = localSessions.get(token)
+
+      if (!session) {
+        throw new Error('Unauthorized')
+      }
+
+      const trimmedDisplayName = displayName.trim()
+
+      if (!trimmedDisplayName) {
+        throw new Error('Display name must not be empty')
+      }
+
+      session.displayName = trimmedDisplayName
+
+      return {
+        id: session.userId,
+        displayName: trimmedDisplayName,
+        email: null,
+        userType: 'local' as const,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    },
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
     getOsUsername: async () => 'TestUser',
     ...overrides

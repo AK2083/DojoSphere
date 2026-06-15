@@ -12,6 +12,7 @@ describe('resolveLocalAuthSession', () => {
       ensureLocalSession: vi.fn(),
       getLocalSession: vi.fn(),
       revokeLocalSession: vi.fn(),
+      updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       getOsUsername: vi.fn()
     }
@@ -80,6 +81,7 @@ describe('revokeLocalAuthSession', () => {
       ensureLocalSession: vi.fn(),
       getLocalSession: vi.fn(),
       revokeLocalSession: vi.fn(),
+      updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       getOsUsername: vi.fn()
     }

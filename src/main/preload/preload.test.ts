@@ -48,5 +48,19 @@ describe('preload', () => {
     })
     await api.ensureLocalSession('Test User')
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('users:ensureLocalSession', 'Test User')
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'user-1',
+      displayName: 'Updated User',
+      email: null,
+      userType: 'local',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-02T00:00:00.000Z'
+    })
+    await api.updateUserDisplayName('token-1', 'Updated User')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('users:updateDisplayName', {
+      token: 'token-1',
+      displayName: 'Updated User'
+    })
   })
 })

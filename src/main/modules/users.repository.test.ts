@@ -140,4 +140,39 @@ describe('users.repository', () => {
       })
     ])
   })
+
+  it('updates a user display name and sets updated_at', async () => {
+    await initTestDatabase()
+    const { addUser, getUsers, updateUserDisplayName } = await import('./users.repository')
+
+    const { id } = addUser({ displayName: 'Ada Lovelace' })
+
+    const updated = updateUserDisplayName(id, '  Grace Hopper  ')
+
+    expect(updated).toMatchObject({
+      id,
+      displayName: 'Grace Hopper',
+      userType: 'local'
+    })
+    expect(updated.updatedAt).toEqual(expect.any(String))
+    expect(getUsers()[0]).toMatchObject({
+      displayName: 'Grace Hopper'
+    })
+  })
+
+  it('throws when updating with an empty display name', async () => {
+    await initTestDatabase()
+    const { addUser, updateUserDisplayName } = await import('./users.repository')
+
+    const { id } = addUser({ displayName: 'Ada Lovelace' })
+
+    expect(() => updateUserDisplayName(id, '   ')).toThrow('Display name must not be empty')
+  })
+
+  it('throws when updating an unknown user id', async () => {
+    await initTestDatabase()
+    const { updateUserDisplayName } = await import('./users.repository')
+
+    expect(() => updateUserDisplayName('missing-user-id', 'Ada Lovelace')).toThrow('User not found')
+  })
 })
