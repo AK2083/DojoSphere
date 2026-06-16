@@ -39,8 +39,7 @@ describe('users.repository', () => {
   it('assigns the list_keeper role to local users', async () => {
     await initTestDatabase()
     const { addUser, getUsers } = await import('./users.repository')
-    const { LIST_KEEPER_ROLE_ID } = await import('../database/seeded-roles')
-    const { getDatabase } = await import('../database/connection')
+    const { getDatabase, LIST_KEEPER_ROLE_ID } = await import('@main/shared/database')
 
     addUser({ displayName: 'Local User' })
 
@@ -65,7 +64,7 @@ describe('users.repository', () => {
   it('stores optional fields with defaults', async () => {
     await initTestDatabase()
     const { addUser, getUsers } = await import('./users.repository')
-    const { getDatabase } = await import('../database/connection')
+    const { getDatabase } = await import('@main/shared/database')
 
     addUser({
       displayName: 'System Bot',
@@ -180,7 +179,7 @@ describe('users.repository', () => {
   it('throws when the user row disappears after update', async () => {
     await initTestDatabase()
     const { addUser, updateUserDisplayName } = await import('./users.repository')
-    const { getDatabase } = await import('../database/connection')
+    const { getDatabase } = await import('@main/shared/database')
 
     const { id } = addUser({ displayName: 'Ada Lovelace' })
     const db = getDatabase()

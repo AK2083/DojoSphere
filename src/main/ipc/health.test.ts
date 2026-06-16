@@ -25,8 +25,8 @@ describe('registerHealthIpc', () => {
 
   it('returns unknown when sqlite_version has no result', async () => {
     vi.resetModules()
-    vi.doMock('../database/connection', async (importOriginal) => {
-      const actual = await importOriginal<typeof import('../database/connection')>()
+    vi.doMock('@main/shared/database', async (importOriginal) => {
+      const actual = await importOriginal<typeof import('@main/shared/database')>()
 
       return {
         ...actual,
@@ -48,7 +48,7 @@ describe('registerHealthIpc', () => {
       version: 'unknown'
     })
 
-    vi.doUnmock('../database/connection')
+    vi.doUnmock('@main/shared/database')
     vi.resetModules()
   })
 })

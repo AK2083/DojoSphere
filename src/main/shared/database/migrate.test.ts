@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { createMemoryDatabase } from '../test/database'
+import { createMemoryDatabase } from '../../test/database'
 import { ensureUsersTable } from './ensure-users-table'
 import { runMigrations } from './migrate'
 

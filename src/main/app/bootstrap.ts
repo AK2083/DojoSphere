@@ -1,5 +1,4 @@
-import { initDatabase } from '../database/connection'
-import { runMigrations } from '../database/migrate'
+import { initDatabase, runMigrations } from '@main/shared/database'
 import { registerIpcHandlers } from '../ipc/register'
 
 export function bootstrap() {

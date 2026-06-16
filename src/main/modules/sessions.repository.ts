@@ -1,6 +1,6 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 
-import { getDatabase } from '../database/connection'
+import { getDatabase } from '@main/shared/database'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000
 

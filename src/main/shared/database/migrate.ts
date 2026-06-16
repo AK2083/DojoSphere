@@ -2,9 +2,9 @@ import migrations from './migrations'
 import { ensureUsersTable } from './ensure-users-table'
 import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
-import type { SqliteDatabase } from './types/database'
+import type { Database } from './types'
 
-function ensureMigrationsTable(db: SqliteDatabase) {
+function ensureMigrationsTable(db: Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS _migrations (
       id TEXT PRIMARY KEY,
@@ -14,7 +14,7 @@ function ensureMigrationsTable(db: SqliteDatabase) {
   `)
 }
 
-function getAppliedMigrationIds(db: SqliteDatabase) {
+function getAppliedMigrationIds(db: Database) {
   return new Set(
     db
       .prepare('SELECT id FROM _migrations')
@@ -23,7 +23,7 @@ function getAppliedMigrationIds(db: SqliteDatabase) {
   )
 }
 
-export function runMigrations(db: SqliteDatabase) {
+export function runMigrations(db: Database) {
   applyPragmas(db)
   ensureMigrationsTable(db)
 

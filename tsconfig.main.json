@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
+      "@main/shared/*": ["./src/main/shared/*"],
       "@shared/*": ["./src/renderer/shared/*"]
     }
   },

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { closeTestDatabase, createTestUserDataDir } from '../test/database'
+import { closeTestDatabase, createTestUserDataDir } from '../../test/database'
 
 const mockDb = {
   close: vi.fn(),
@@ -8,13 +8,13 @@ const mockDb = {
   exec: vi.fn()
 }
 
-vi.mock('./drivers', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./drivers')>()
+vi.mock('./sqlite/driver', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./sqlite/driver')>()
 
   return {
     ...actual,
-    createDatabaseSync: vi.fn((...args: Parameters<typeof actual.createDatabaseSync>) =>
-      actual.createDatabaseSync(...args)
+    createSqliteDatabase: vi.fn((...args: Parameters<typeof actual.createSqliteDatabase>) =>
+      actual.createSqliteDatabase(...args)
     )
   }
 })
@@ -48,22 +48,22 @@ describe('connection', () => {
     vi.resetModules()
     createTestUserDataDir()
 
-    const drivers = await import('./drivers')
-    vi.mocked(drivers.createDatabaseSync).mockReturnValue(mockDb as never)
+    const driver = await import('./sqlite/driver')
+    vi.mocked(driver.createSqliteDatabase).mockReturnValue(mockDb as never)
 
     const { initDatabase } = await import('./connection')
     const db = initDatabase()
 
     expect(db).toBe(mockDb)
-    expect(drivers.createDatabaseSync).toHaveBeenCalledWith(expect.stringMatching(/database\.db$/))
+    expect(driver.createSqliteDatabase).toHaveBeenCalledWith(expect.stringMatching(/database\.db$/))
   })
 
   it('closes the database connection', async () => {
     vi.resetModules()
     createTestUserDataDir()
 
-    const drivers = await import('./drivers')
-    vi.mocked(drivers.createDatabaseSync).mockReturnValue(mockDb as never)
+    const driver = await import('./sqlite/driver')
+    vi.mocked(driver.createSqliteDatabase).mockReturnValue(mockDb as never)
 
     const { initDatabase, closeDatabase } = await import('./connection')
     initDatabase()

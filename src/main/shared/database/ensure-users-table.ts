@@ -1,4 +1,4 @@
-import type { SqliteDatabase } from './types/database'
+import type { Database } from './types'
 
 const CREATE_USERS_TABLE_SQL = `
   CREATE TABLE users (
@@ -12,7 +12,7 @@ const CREATE_USERS_TABLE_SQL = `
   )
 `
 
-function usersTableHasCurrentSchema(db: SqliteDatabase) {
+function usersTableHasCurrentSchema(db: Database) {
   const columns = db.prepare("PRAGMA table_info('users')").all() as Array<{ name: string }>
 
   return (
@@ -21,7 +21,7 @@ function usersTableHasCurrentSchema(db: SqliteDatabase) {
   )
 }
 
-export function ensureUsersTable(db: SqliteDatabase) {
+export function ensureUsersTable(db: Database) {
   if (usersTableHasCurrentSchema(db)) {
     return
   }

@@ -79,6 +79,7 @@ export default defineConfig({
         '**/form/**',
         '**/providers/**',
         '**/i18n/**',
+        '**/types.ts',
         'src/main/test/**',
         'src/main/main.ts'
       ],
@@ -103,6 +104,7 @@ export default defineConfig({
         extends: true,
         resolve: {
           alias: {
+            '@main/shared': path.resolve(dirname, 'src/main/shared'),
             '@shared': path.resolve(dirname, 'src/renderer/shared')
           }
         },

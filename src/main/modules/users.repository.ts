@@ -1,8 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
-import { getDatabase } from '../database/connection'
-import { LIST_KEEPER_ROLE_ID } from '../database/seeded-roles'
-import { runInTransaction } from '../database/transactions'
+import { getDatabase, LIST_KEEPER_ROLE_ID, runInTransaction } from '@main/shared/database'
 import { createSession } from './sessions.repository'
 
 export type CreateUserInput = {
@@ -140,7 +138,7 @@ export function updateUserDisplayName(userId: string, displayName: string): User
       WHERE id = ?
     `
     )
-    .run(trimmedDisplayName, userId)
+    .run(trimmedDisplayName, userId) as { changes: number }
 
   if (result.changes === 0) {
     throw new Error('User not found')

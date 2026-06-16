@@ -1,7 +1,7 @@
 // src/main/ipc/health.ipc.ts
 import { ipcMain } from 'electron'
 
-import { getDatabase } from '../database/connection'
+import { getDatabase } from '@main/shared/database'
 
 export function registerHealthIpc() {
   ipcMain.handle('db:healthcheck', () => {

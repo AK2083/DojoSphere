@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => {
                 vite: {
                   resolve: {
                     alias: {
+                      '@main/shared': path.resolve(__dirname, 'src/main/shared'),
                       '@shared': path.resolve(__dirname, 'src/renderer/shared')
                     }
                   },
