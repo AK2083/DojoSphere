@@ -1,35 +1,25 @@
 import { describe, expect, it } from 'vitest'
 
-import { createMemoryDatabase } from '../../test/database'
-import { ensureUsersTable } from './ensure-users-table'
-import { runMigrations } from './migrate'
+import { createMemoryDatabase } from '../../../test/database'
 
-describe('ensureUsersTable', () => {
-  it('creates the users table when it is missing', () => {
+import { assertUsersTableSchema } from './validate-schema'
+import { runMigrations } from './runner'
+
+describe('assertUsersTableSchema', () => {
+  it('accepts the users table created by migrations', () => {
     const db = createMemoryDatabase()
 
-    ensureUsersTable(db)
+    runMigrations(db)
 
-    const columns = db
-      .prepare("PRAGMA table_info('users')")
-      .all()
-      .map((row) => (row as { name: string }).name)
-
-    expect(columns).toContain('display_name')
-    expect(columns).toContain('user_type')
+    expect(() => assertUsersTableSchema(db)).not.toThrow()
   })
 
-  it('does nothing when the users table already has the current schema', () => {
+  it('throws when the users table is missing', () => {
     const db = createMemoryDatabase()
 
-    ensureUsersTable(db)
-    db.exec("INSERT INTO users (id, display_name) VALUES ('user-1', 'Ada Lovelace')")
-
-    ensureUsersTable(db)
-
-    const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }
-
-    expect(userCount.count).toBe(1)
+    expect(() => assertUsersTableSchema(db)).toThrow(
+      'The users table is missing after migrations. Reset the local database.'
+    )
   })
 
   it('throws when a legacy users table exists', () => {
@@ -37,7 +27,7 @@ describe('ensureUsersTable', () => {
 
     db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
 
-    expect(() => ensureUsersTable(db)).toThrow(
+    expect(() => assertUsersTableSchema(db)).toThrow(
       'The users table exists but does not match the expected schema. A manual migration is required.'
     )
   })
@@ -48,7 +38,7 @@ describe('ensureUsersTable', () => {
     db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
     db.exec("INSERT INTO users (id, name) VALUES (1, 'Legacy User')")
 
-    expect(() => ensureUsersTable(db)).toThrow()
+    expect(() => assertUsersTableSchema(db)).toThrow()
 
     const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }
 
@@ -93,29 +83,13 @@ describe('runMigrations', () => {
     expect(count.count).toBe(2)
   })
 
-  it('repairs a database where migrations ran but users is missing', () => {
+  it('throws when a legacy users table blocks the expected schema', () => {
     const db = createMemoryDatabase()
 
-    db.exec(`
-      CREATE TABLE _migrations (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        applied_at TEXT NOT NULL DEFAULT (datetime('now'))
-      )
-    `)
-    db.exec(`
-      INSERT INTO _migrations (id, name) VALUES
-        ('8f3c2a1b-4d5e-6f70-8192-a3b4c5d6e701', 'V001__authorize_create_tables.sql'),
-        ('9a4d3b2c-5e6f-7081-92a3-b4c5d6e7f802', 'V002__authorize_seed_roles_permissions.sql')
-    `)
-    db.exec('CREATE TABLE user_role_assignments (id TEXT PRIMARY KEY, user_id TEXT NOT NULL)')
+    db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)')
 
-    runMigrations(db)
-
-    const usersTable = db
-      .prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'")
-      .get()
-
-    expect(usersTable).toBeDefined()
+    expect(() => runMigrations(db)).toThrow(
+      'The users table exists but does not match the expected schema. A manual migration is required.'
+    )
   })
 })

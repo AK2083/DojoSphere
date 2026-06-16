@@ -1,6 +1,6 @@
 import { DatabaseSync } from 'node:sqlite'
 
-import type { Database } from '../types'
+import type { Database } from '../port/types'
 
 const BUSY_TIMEOUT_MS = 5000
 

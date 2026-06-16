@@ -1,4 +1,4 @@
-import type { Database } from './types'
+import type { Database } from '../port/types'
 
 export function runInTransaction(db: Database, fn: () => void) {
   db.exec('BEGIN')

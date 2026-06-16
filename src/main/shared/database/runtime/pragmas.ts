@@ -1,4 +1,4 @@
-import type { Database } from './types'
+import type { Database } from '../port/types'
 
 export function applyPragmas(db: Database) {
   db.exec('PRAGMA journal_mode = WAL')

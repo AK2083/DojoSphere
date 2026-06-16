@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { app } from 'electron'
 
-import { createSqliteDatabase } from './sqlite/driver'
-import type { Database } from './types'
+import type { Database } from '../port/types'
+import { createSqliteDatabase } from '../sqlite/driver'
 
 let db: Database | undefined
 

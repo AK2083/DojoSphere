@@ -1,8 +1,9 @@
-import migrations from './migrations'
-import { ensureUsersTable } from './ensure-users-table'
-import { applyPragmas } from './pragmas'
-import { runInTransaction } from './transactions'
-import type { Database } from './types'
+import migrations from '../migrations'
+import type { Database } from '../port/types'
+import { applyPragmas } from '../runtime/pragmas'
+import { runInTransaction } from '../runtime/transactions'
+
+import { assertUsersTableSchema } from './validate-schema'
 
 function ensureMigrationsTable(db: Database) {
   db.exec(`
@@ -40,5 +41,5 @@ export function runMigrations(db: Database) {
     })
   }
 
-  ensureUsersTable(db)
+  assertUsersTableSchema(db)
 }

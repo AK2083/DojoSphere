@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { closeTestDatabase, createTestUserDataDir } from '../../test/database'
+import { closeTestDatabase, createTestUserDataDir } from '../../../test/database'
 
 const mockDb = {
   close: vi.fn(),
@@ -8,8 +8,8 @@ const mockDb = {
   exec: vi.fn()
 }
 
-vi.mock('./sqlite/driver', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./sqlite/driver')>()
+vi.mock('../sqlite/driver', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../sqlite/driver')>()
 
   return {
     ...actual,
@@ -48,7 +48,7 @@ describe('connection', () => {
     vi.resetModules()
     createTestUserDataDir()
 
-    const driver = await import('./sqlite/driver')
+    const driver = await import('../sqlite/driver')
     vi.mocked(driver.createSqliteDatabase).mockReturnValue(mockDb as never)
 
     const { initDatabase } = await import('./connection')
@@ -62,7 +62,7 @@ describe('connection', () => {
     vi.resetModules()
     createTestUserDataDir()
 
-    const driver = await import('./sqlite/driver')
+    const driver = await import('../sqlite/driver')
     vi.mocked(driver.createSqliteDatabase).mockReturnValue(mockDb as never)
 
     const { initDatabase, closeDatabase } = await import('./connection')

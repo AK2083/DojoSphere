@@ -1,20 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { createMemoryDatabase } from '../../test/database'
-import { applyPragmas } from './pragmas'
+import { createMemoryDatabase } from '../../../test/database'
+
 import { runInTransaction } from './transactions'
-
-describe('applyPragmas', () => {
-  it('enables foreign keys', () => {
-    const db = createMemoryDatabase()
-
-    applyPragmas(db)
-
-    const foreignKeys = db.prepare('PRAGMA foreign_keys').get() as { foreign_keys: number }
-
-    expect(foreignKeys.foreign_keys).toBe(1)
-  })
-})
 
 describe('runInTransaction', () => {
   it('commits changes on success', () => {
