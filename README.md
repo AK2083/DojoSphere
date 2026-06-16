@@ -188,7 +188,7 @@ src/main/features/<slice>/
 
 Import rules: `features → shared`; `features → features` only via `@main/features/<slice>`; `shared` must not import features.
 
-See `.cursor/rules/architecture-main-vsa.mdc` for details.
+See `.cursor/rules/architecture-vertical-slice.mdc` for details.
 
 ## Adding a Main Feature
 

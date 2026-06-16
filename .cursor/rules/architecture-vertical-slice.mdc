@@ -1,0 +1,147 @@
+---
+description: Vertical Slice Architecture — Schichten, Importregeln und Slice-Struktur für src/main und src/preload
+globs: src/main/**/*,src/preload/**/*
+alwaysApply: false
+---
+
+# Vertical Slice Architecture (Main & Preload)
+
+Der Electron-**Main-Process** und die **Preload-Brücke** nutzen Vertical Slices — nicht FSD. Der Renderer folgt [architecture-fsd.mdc](./architecture-fsd.mdc); Main und Preload sind getrennte Einstiegspunkte auf gleicher Ebene unter `src/`.
+
+```
+src/
+  renderer/   → FSD (UI, Features, Pages)
+  main/       → Vertical Slices (IPC, SQLite, Domänenlogik)
+  preload/    → IPC-Brücke (contextBridge → window.api)
+```
+
+## Schichten
+
+Importe zeigen nur **nach innen** — von `app` zu Features/Shared, von Features zu Shared. Features dürfen andere Features nur über deren **Public API** (`index.ts`) ansprechen.
+
+```
+app → features, shared
+features → shared (+ andere Features nur via index.ts)
+shared → nur intern
+window / preload → Electron-Shell (außerhalb der Slices)
+```
+
+| Schicht | Pfad | Verantwortung |
+|---------|------|----------------|
+| **app** | `src/main/app/` | Composition Root: Bootstrap, IPC-Aggregation (`register-ipc.ts`) |
+| **features** | `src/main/features/<slice>/` | Ein Use Case / bounded context pro Slice |
+| **shared** | `src/main/shared/` | Infrastruktur ohne Fachlogik (Database, Security-Helper) |
+| **window** | `src/main/window/` | BrowserWindow, Renderer-Laden |
+| **preload** | `src/preload/` | `contextBridge.exposeInMainWorld('api', …)` — kein SQL, keine Auth-Entscheidungen |
+
+## app
+
+Composition Root des Main-Process — startet die App und verdrahtet Slices.
+
+- `bootstrap.ts` — Datenbank initialisieren, Fenster öffnen, IPC registrieren
+- `register-ipc.ts` — ruft ausschließlich `registerXxxIpc()` aus Feature-`index.ts` auf
+- Keine SQL-Queries, keine Geschäftslogik — nur Orchestrierung
+- `main.ts` (Einstieg) bleibt dünn und delegiert an `app/`
+
+## features
+
+Fachliche Funktionalität in **Slices** — ein Slice = ein abgeschlossener Anwendungsfall im Main-Process (z. B. `users`, `sessions`, `health`).
+
+Ideale Slice-Struktur:
+
+```
+src/main/features/<slice>/
+  ipc/
+    register.ts       # ipcMain.handle — dünner Adapter, keine SQL
+  service/            # Use-Case-Orchestrierung (optional)
+  repository/         # SQL-Zugriff (optional)
+  index.ts            # Public API — einziger Export-Pfad für andere Slices
+  *.test.ts           # Tests neben dem Code
+```
+
+**Schichtung innerhalb eines Slices:**
+
+| Ordner | Rolle |
+|--------|--------|
+| `ipc/register.ts` | Channel-Namen, Input-Validierung, Session-Check, Delegation an Service/Repository |
+| `service/` | Mehrere Repositories/Slices koordinieren (z. B. User + Session anlegen) |
+| `repository/` | SQL über `@main/shared/database` — kein `electron`, kein `ipcMain` |
+
+**Bestehende Slices (Orientierung):** `health`, `system`, `authorization`, `sessions`, `users`.
+
+- Slice-übergreifende Abhängigkeiten nur über `@main/features/<slice>` (`index.ts`), nie über interne Pfade wie `repository/…` eines anderen Slices.
+- Neue Funktionalität als neuer Slice anlegen, nicht in bestehende Slices mischen.
+
+## shared
+
+Infrastruktur ohne Feature-Bezug. Features importieren nur die Public API.
+
+| Segment | Inhalt |
+|---------|--------|
+| `shared/database/` | SQLite-Port, Migrationen, `initDatabase`, `getDatabase`, `runMigrations` |
+| `shared/database/sqlite/` | Einziger Ort mit `node:sqlite` — nicht direkt aus Features importieren |
+| `shared/security/` | z. B. `requireActiveSession()` für privilegierte IPC-Handler |
+
+- `shared` importiert **keine** Features und kein `electron` außer wo technisch zwingend (Database-Pfad via `app`).
+- Tests nutzen `@main/shared/database`, nicht interne Driver-Pfade (`sqlite/driver`).
+
+## window
+
+Electron-Fenster-Setup — außerhalb der Feature-Slices.
+
+- `main-window.ts` — `BrowserWindow`, Preload-Pfad, DevTools-Regeln
+- `load-renderer.ts` — Dev-Server vs. `dist` für den Renderer
+- Keine Domänenlogik, kein IPC-Handling
+
+## preload
+
+Liegt auf **gleicher Ebene** wie `main/` und `renderer/` (`src/preload/`).
+
+- Exponiert typisierte Methoden auf `window.api` (siehe `src/renderer/shared/types/electron-api.ts`)
+- Ruft nur `ipcRenderer.invoke` auf — **keine** privilegierten Entscheidungen, kein SQLite
+- Neue IPC-Channels: `preload.ts` + `electron-api.ts` + Main-Slice `ipc/register.ts` gemeinsam erweitern
+
+## Importregeln
+
+1. **features → shared** — erlaubt (`@main/shared/database`, `@main/shared/security`)
+2. **features → features** — nur via `@main/features/<slice>` (`index.ts`)
+3. **shared → features** — verboten
+4. **app → features** — nur Public APIs (`registerXxxIpc`, exportierte Services)
+5. **Repositories** — kein `electron`, kein `ipcMain`
+6. **IPC-Handler** — kein SQL, keine komplexe Geschäftslogik (delegieren an Service/Repository)
+7. **Renderer** — greift auf Main nur über `window.api` (Preload) zu, nie direkt auf Main-Code
+
+## Sicherheit
+
+- Autorisierung und Session-Prüfung nur im Main-Process ([auth-security.mdc](./auth-security.mdc), [security-privacy.mdc](./security-privacy.mdc))
+- Privilegierte IPC-Handler: Session (später Berechtigungen) via `@main/shared/security` oder Session-Slice
+- Session-Tokens nur als Hash speichern — nie Klartext
+- SQLite nur im Main-Process über `@main/shared/database`
+
+## Import-Aliase
+
+- `@main/app/*` — Composition Root
+- `@main/features/<slice>` — Slice Public API
+- `@main/shared/*` — Shared-Infrastruktur
+
+Preload importiert Typen aus `@shared/types/electron-api` (Renderer-Shared-Types — bewusste Ausnahme für die API-Vertragsschicht).
+
+## Abgrenzung Renderer (FSD) vs. Main (VSA)
+
+| Aspekt | Renderer (`src/renderer/`) | Main (`src/main/`) |
+|--------|---------------------------|-------------------|
+| Architektur | Feature-Sliced Design | Vertical Slices |
+| UI | `ui/`, Vue-Komponenten | Kein UI (außer `window/`) |
+| Datenzugriff | IPC → `window.api` | SQLite via `shared/database` |
+| Auth-Entscheidungen | Nie allein im Renderer | Im Main-Process |
+| Öffentliche API | `index.ts` pro Slice | `index.ts` pro Slice + IPC-Channels |
+
+## Checkliste bei neuen Main-Slices
+
+1. Richtiger Slice gewählt — ein Use Case, kein Sammelordner?
+2. `src/main/features/<slice>/index.ts` als einzige Export-Oberfläche?
+3. IPC in `src/main/app/register-ipc.ts` registriert?
+4. Preload + `electron-api.ts` nur bei **neuen** IPC-Channels erweitert?
+5. Schema-Änderung → Migration unter `src/main/shared/database/migrations/`?
+6. Tests co-located; DB-Tests über `@main/shared/database`?
+7. Privilegierte Handler mit Session-Check abgesichert?
