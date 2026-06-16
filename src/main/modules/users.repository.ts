@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
-import { getDatabase, LIST_KEEPER_ROLE_ID, runInTransaction } from '@main/shared/database'
+import { getDatabase, runInTransaction } from '@main/shared/database'
+import { findRoleIdByName } from './roles.repository'
 import { createSession } from './sessions.repository'
 
 export type CreateUserInput = {
@@ -56,7 +57,7 @@ export function addUser(user: CreateUserInput) {
     insertUser.run(id, user.displayName, user.email ?? null, userType)
 
     if (userType === 'local') {
-      insertRoleAssignment.run(randomUUID(), id, LIST_KEEPER_ROLE_ID, id)
+      insertRoleAssignment.run(randomUUID(), id, findRoleIdByName('list_keeper'), id)
     }
   })
 

@@ -19,20 +19,40 @@ describe('ensureUsersTable', () => {
     expect(columns).toContain('user_type')
   })
 
-  it('replaces a legacy users table with the current schema', () => {
+  it('does nothing when the users table already has the current schema', () => {
+    const db = createMemoryDatabase()
+
+    ensureUsersTable(db)
+    db.exec("INSERT INTO users (id, display_name) VALUES ('user-1', 'Ada Lovelace')")
+
+    ensureUsersTable(db)
+
+    const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }
+
+    expect(userCount.count).toBe(1)
+  })
+
+  it('throws when a legacy users table exists', () => {
     const db = createMemoryDatabase()
 
     db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
 
-    ensureUsersTable(db)
+    expect(() => ensureUsersTable(db)).toThrow(
+      'The users table exists but does not match the expected schema. A manual migration is required.'
+    )
+  })
 
-    const columns = db
-      .prepare("PRAGMA table_info('users')")
-      .all()
-      .map((row) => (row as { name: string }).name)
+  it('does not drop existing user data when the schema is incompatible', () => {
+    const db = createMemoryDatabase()
 
-    expect(columns).toContain('display_name')
-    expect(columns).not.toContain('name')
+    db.exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, data JSON)')
+    db.exec("INSERT INTO users (id, name) VALUES (1, 'Legacy User')")
+
+    expect(() => ensureUsersTable(db)).toThrow()
+
+    const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }
+
+    expect(userCount.count).toBe(1)
   })
 })
 

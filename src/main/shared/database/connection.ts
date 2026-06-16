@@ -17,7 +17,7 @@ export function initDatabase(): Database {
 
 export function getDatabase(): Database {
   if (!db) {
-    throw new Error('Database wurde noch nicht initialisiert.')
+    throw new Error('Database has not been initialized yet.')
   }
 
   return db

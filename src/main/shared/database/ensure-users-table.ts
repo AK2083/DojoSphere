@@ -1,7 +1,7 @@
 import type { Database } from './types'
 
 const CREATE_USERS_TABLE_SQL = `
-  CREATE TABLE users (
+  CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     display_name TEXT NOT NULL,
     email TEXT,
@@ -11,6 +11,12 @@ const CREATE_USERS_TABLE_SQL = `
     updated_at TEXT
   )
 `
+
+function usersTableExists(db: Database) {
+  return Boolean(
+    db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'users'").get()
+  )
+}
 
 function usersTableHasCurrentSchema(db: Database) {
   const columns = db.prepare("PRAGMA table_info('users')").all() as Array<{ name: string }>
@@ -22,10 +28,16 @@ function usersTableHasCurrentSchema(db: Database) {
 }
 
 export function ensureUsersTable(db: Database) {
+  if (!usersTableExists(db)) {
+    db.exec(CREATE_USERS_TABLE_SQL)
+    return
+  }
+
   if (usersTableHasCurrentSchema(db)) {
     return
   }
 
-  db.exec('DROP TABLE IF EXISTS users')
-  db.exec(CREATE_USERS_TABLE_SQL)
+  throw new Error(
+    'The users table exists but does not match the expected schema. A manual migration is required.'
+  )
 }

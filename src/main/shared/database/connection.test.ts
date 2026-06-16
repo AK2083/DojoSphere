@@ -30,7 +30,7 @@ describe('connection', () => {
     vi.resetModules()
     const { getDatabase } = await import('./connection')
 
-    expect(() => getDatabase()).toThrow('Database wurde noch nicht initialisiert.')
+    expect(() => getDatabase()).toThrow('Database has not been initialized yet.')
   })
 
   it('returns the same database instance on repeated init', async () => {

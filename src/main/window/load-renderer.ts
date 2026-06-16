@@ -23,9 +23,9 @@ async function showLoadErrorPage(win: BrowserWindow, devServerUrl: string) {
           </style>
         </head>
         <body>
-          <h2>DojoSphere konnte nicht geladen werden</h2>
-          <p>Der Dev-Server unter <code>${devServerUrl}</code> ist nicht erreichbar.</p>
-          <p>Starte <code>npm run dev</code> oder erzeuge zuerst ein Build mit <code>npm run build</code>.</p>
+          <h2>DojoSphere could not be loaded</h2>
+          <p>The dev server at <code>${devServerUrl}</code> is not reachable.</p>
+          <p>Start <code>npm run dev</code> or build the app first with <code>npm run build</code>.</p>
         </body>
       </html>
     `)

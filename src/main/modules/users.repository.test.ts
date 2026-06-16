@@ -39,7 +39,8 @@ describe('users.repository', () => {
   it('assigns the list_keeper role to local users', async () => {
     await initTestDatabase()
     const { addUser, getUsers } = await import('./users.repository')
-    const { getDatabase, LIST_KEEPER_ROLE_ID } = await import('@main/shared/database')
+    const { findRoleIdByName } = await import('./roles.repository')
+    const { getDatabase } = await import('@main/shared/database')
 
     addUser({ displayName: 'Local User' })
 
@@ -55,7 +56,7 @@ describe('users.repository', () => {
       .get(userId) as { roleId: string; scopeType: string; revokedAt: string | null }
 
     expect(assignment).toMatchObject({
-      roleId: LIST_KEEPER_ROLE_ID,
+      roleId: findRoleIdByName('list_keeper'),
       scopeType: 'global',
       revokedAt: null
     })
