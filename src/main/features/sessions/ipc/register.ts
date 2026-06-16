@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 
-import { getActiveSessionByToken, revokeSessionByToken } from '../modules/sessions.repository'
+import { getActiveSessionByToken, revokeSessionByToken } from '../repository/sessions.repository'
 
 export function registerSessionsIpc() {
   ipcMain.handle('sessions:get', (_event, token: string) => {

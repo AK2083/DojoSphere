@@ -1,5 +1,5 @@
 import { expect, type Page, test } from '@playwright/test'
-
+import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { getOtpInputs, typeOtp } from '@shared/tests/e2e/otp-input'
 
 async function enteredOtp(page: Page): Promise<string> {
@@ -12,7 +12,7 @@ async function enteredOtp(page: Page): Promise<string> {
 
 test.describe('shared/ui OtpInput', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/#/emailverification')
+    await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
     await expect(getOtpInputs(page)).toHaveCount(6)
   })
 

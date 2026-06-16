@@ -1,5 +1,6 @@
-import { ipcMain } from 'electron'
 import os from 'node:os'
+
+import { ipcMain } from 'electron'
 
 export function registerSystemIpc() {
   ipcMain.handle('system:osUsername', () => {

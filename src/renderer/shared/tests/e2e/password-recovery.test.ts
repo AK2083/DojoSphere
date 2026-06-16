@@ -1,5 +1,21 @@
 import { describe, expect, it, vi } from 'vitest'
 
+const { playwrightExpect } = vi.hoisted(() => ({
+  playwrightExpect: vi.fn(() => ({
+    toBeVisible: vi.fn().mockResolvedValue(undefined),
+    toBeEnabled: vi.fn().mockResolvedValue(undefined),
+    toHaveCount: vi.fn().mockResolvedValue(undefined)
+  }))
+}))
+
+vi.mock('@playwright/test', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@playwright/test')>()
+  return {
+    ...actual,
+    expect: playwrightExpect
+  }
+})
+
 import {
   goToPasswordResetNewPasswordStep,
   goToPasswordResetOtpStep,
@@ -16,19 +32,37 @@ function createPageDouble(options: { emailInputCount?: number } = {}) {
   const reload = vi.fn().mockResolvedValue(undefined)
   const keyboardType = vi.fn().mockResolvedValue(undefined)
   const count = vi.fn().mockResolvedValue(options.emailInputCount ?? 1)
+  let waitForResponseCall = 0
+  const waitForResponse = vi
+    .fn()
+    .mockImplementation(
+      async (predicate: (response: { url: () => string; ok: () => boolean }) => boolean) => {
+        waitForResponseCall += 1
+        const url =
+          waitForResponseCall === 1
+            ? 'https://example.com/auth/v1/recover'
+            : 'https://example.com/auth/v1/verify'
+        const response = { url: () => url, ok: () => true }
+        predicate(response)
+        return response
+      }
+    )
+
+  const fieldLocator = {
+    fill,
+    click
+  }
 
   const emailLocator = {
     count,
-    first: vi.fn().mockReturnValue({
-      fill,
-      click
-    })
+    first: vi.fn().mockReturnValue(fieldLocator)
   }
 
   const page = {
     route,
     goto,
     reload,
+    waitForResponse,
     keyboard: {
       type: keyboardType
     },
@@ -37,11 +71,20 @@ function createPageDouble(options: { emailInputCount?: number } = {}) {
         return emailLocator
       }
 
+      if (selector === '#otpTitle') {
+        return {
+          filter: vi.fn().mockReturnValue(fieldLocator)
+        }
+      }
+
+      if (selector === '.v-otp-input input:visible') {
+        return {
+          first: vi.fn().mockReturnValue(fieldLocator)
+        }
+      }
+
       return {
-        first: vi.fn().mockReturnValue({
-          fill,
-          click
-        })
+        first: vi.fn().mockReturnValue(fieldLocator)
       }
     }),
     getByRole: vi.fn().mockReturnValue({
@@ -49,7 +92,7 @@ function createPageDouble(options: { emailInputCount?: number } = {}) {
     })
   }
 
-  return { page, route, goto, reload, fill, click, keyboardType, count }
+  return { page, route, goto, reload, fill, click, keyboardType, count, waitForResponse }
 }
 
 describe('password-recovery e2e helpers', () => {
@@ -101,13 +144,14 @@ describe('password-recovery e2e helpers', () => {
   })
 
   it('navigates to otp step with default email', async () => {
-    const { page, goto, fill, click } = createPageDouble()
+    const { page, goto, fill, click, waitForResponse } = createPageDouble()
 
     await goToPasswordResetOtpStep(page as never)
 
     expect(goto).toHaveBeenCalledWith('/#/passwordreset')
     expect(fill).toHaveBeenCalledWith('user@example.com')
     expect(click).toHaveBeenCalledTimes(1)
+    expect(waitForResponse).toHaveBeenCalledTimes(1)
   })
 
   it('navigates to otp step with custom email', async () => {
@@ -130,19 +174,20 @@ describe('password-recovery e2e helpers', () => {
   })
 
   it('navigates from otp to new-password step with defaults', async () => {
-    const { page, click, keyboardType } = createPageDouble()
+    const { page, fill, click, waitForResponse } = createPageDouble()
 
     await goToPasswordResetNewPasswordStep(page as never)
 
-    expect(keyboardType).toHaveBeenCalledWith('123456')
-    expect(click).toHaveBeenCalledTimes(3)
+    expect(fill).toHaveBeenCalledWith('123456')
+    expect(click).toHaveBeenCalledTimes(2)
+    expect(waitForResponse).toHaveBeenCalledTimes(2)
   })
 
   it('navigates from otp to new-password step with custom token', async () => {
-    const { page, keyboardType } = createPageDouble()
+    const { page, fill } = createPageDouble()
 
     await goToPasswordResetNewPasswordStep(page as never, 'custom@example.com', '654321')
 
-    expect(keyboardType).toHaveBeenCalledWith('654321')
+    expect(fill).toHaveBeenCalledWith('654321')
   })
 })

@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron'
 
-import { getActiveSessionByToken, createSession } from '../modules/sessions.repository'
-import {
-  addUser,
-  ensureLocalUserSession,
-  getUsers,
-  updateUserDisplayName
-} from '../modules/users.repository'
+import { getActiveSessionByToken } from '@main/features/sessions'
+import { requireActiveSession } from '@main/shared/security'
+
+import { getUsers } from '../repository/users.repository'
+import { addUserWithSession } from '../service/add-user-with-session'
+import { ensureLocalUserSession } from '../service/ensure-local-user-session'
+import { updateUserDisplayName } from '../repository/users.repository'
 
 export function registerUsersIpc() {
   ipcMain.handle('users:list', () => {
@@ -19,20 +19,7 @@ export function registerUsersIpc() {
       _event,
       user: { displayName: string; email?: string | null; userType?: 'local' | 'device' | 'system' }
     ) => {
-      const result = addUser(user)
-      const userType = user.userType ?? 'local'
-
-      if (userType !== 'local') {
-        return result
-      }
-
-      const session = createSession(result.id)
-
-      return {
-        ...result,
-        sessionToken: session.token,
-        expiresAt: session.expiresAt
-      }
+      return addUserWithSession(user)
     }
   )
 
@@ -43,11 +30,7 @@ export function registerUsersIpc() {
   ipcMain.handle(
     'users:updateDisplayName',
     (_event, { token, displayName }: { token: string; displayName: string }) => {
-      const session = getActiveSessionByToken(token)
-
-      if (!session) {
-        throw new Error('Unauthorized')
-      }
+      const session = requireActiveSession(token, getActiveSessionByToken)
 
       return updateUserDisplayName(session.userId, displayName)
     }

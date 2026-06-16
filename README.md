@@ -18,7 +18,8 @@ Open-source Electron application for managing Judo tournaments.
 - [Quick Start](#quick-start)
 - [Available Scripts](#available-scripts)
 - [Best Practices](#best-practices)
-- [Project Structure (Recommended)](#project-structure-recommended)
+- [Project Structure](#project-structure)
+- [Adding a Main Feature](#adding-a-main-feature)
 - [Dependencies](#dependencies)
 
 ## Tech Stack
@@ -40,8 +41,9 @@ DojoSphere stores tournament data locally in the Electron main process using SQL
 ### Driver
 
 - **Driver:** Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (`DatabaseSync`) — synchronous SQLite access without native module rebuilds. Requires Node.js 24+.
+- **Port:** Application code uses `@main/shared/database` (public API). Only `src/main/shared/database/sqlite/driver.ts` imports `node:sqlite` directly.
 
-Connection logic lives in `src/main/database/connection.ts`. The main process is built to `dist-electron/` via `vite-plugin-electron`.
+Connection logic lives in `src/main/shared/database/`. The main process is built to `dist-electron/` via `vite-plugin-electron`.
 
 ### Database file
 
@@ -55,19 +57,22 @@ On Windows this is typically `%APPDATA%/dojosphere/database.db`. The exact path 
 
 ### Migrations
 
-Schema changes are applied automatically on startup via versioned SQL files in `src/main/database/migrations/`. Applied migrations are tracked in a `_migrations` table. WAL mode, foreign keys, and a busy timeout are enabled before migrations run.
+Schema changes are applied automatically on startup via versioned SQL files in `src/main/shared/database/migrations/`. Applied migrations are tracked in a `_migrations` table. WAL mode, foreign keys, and a busy timeout are enabled before migrations run.
 
 To add a migration:
 
-1. Create a new `.sql` file in `src/main/database/migrations/` using the naming pattern `V<number>__<description>.sql` (for example `V003__add_tournaments.sql`).
-2. Register it in `src/main/database/migrations/index.ts` with a matching `id` (import the `.sql` file with `?raw`).
+1. Create a new `.sql` file in `src/main/shared/database/migrations/` using the naming pattern `V<number>__<description>.sql` (for example `V003__add_tournaments.sql`).
+2. Register it in `src/main/shared/database/migrations/index.ts` with a matching `id` (import the `.sql` file with `?raw`).
 
 ### IPC API
 
-The preload script (`src/main/preload/preload.ts`) exposes these methods on `window.api`:
+The preload script (`src/preload/preload.ts`) exposes these methods on `window.api`:
 
 - `dbHealthcheck()` — returns SQLite version and connection status
-- `getUsers()` / `addUser(user)` — example handlers (subject to change as the schema evolves)
+- `getUsers()` / `addUser(user)` — user management (subject to change as the schema evolves)
+- `ensureLocalSession(displayName)` / `getLocalSession(token)` / `revokeLocalSession(token)` — local session handling
+- `updateUserDisplayName(token, displayName)` — updates the display name for the authenticated session
+- `getOsUsername()` — returns the OS username
 
 ### Inspecting the database
 
@@ -123,6 +128,7 @@ npm run build
 - `npm run format:check` checks formatting with Prettier.
 - `npm run format:fix` formats files using Prettier.
 - `npm run test` runs unit tests with Vitest.
+- `npm run test:main` runs main-process unit tests only.
 - `npm run test:coverage` runs tests and generates a coverage report.
 - `npm run test:e2e` runs end-to-end tests with Playwright.
 - `npm run test:e2e:ui` opens Playwright in UI mode.
@@ -142,14 +148,55 @@ npm run build
 - Handle errors and edge cases explicitly (auth, API failures, offline behavior).
 - Keep formatting and import ordering consistent across the codebase.
 
-## Project Structure (Recommended)
+## Project Structure
 
-- The structure follows key ideas from [Feature-Sliced Design](https://feature-sliced.design/): business-focused slices, clear boundaries, and explicit module APIs.
-- `src/features/` contains domain-focused feature slices (for example authentication and settings).
-- `src/widgets/` contains reusable, composed UI blocks that combine multiple features/entities.
-- `src/shared/` (if present) contains cross-cutting utilities, types, and configuration with no business ownership.
-- `src/main/` contains TypeScript main and preload logic for the desktop runtime (built to `dist-electron/`).
-- `src/main/database/` contains SQLite connection setup, migration runner, and versioned schema files.
+The codebase uses two complementary architectures:
+
+| Area                | Architecture                                            | Location                                                          |
+| ------------------- | ------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Renderer**        | [Feature-Sliced Design](https://feature-sliced.design/) | `src/renderer/app/`, `pages/`, `widgets/`, `features/`, `shared/` |
+| **Preload**         | IPC bridge                                              | `src/preload/`                                                    |
+| **Main (Electron)** | Vertical Slices                                         | `src/main/features/<slice>/`, `shared/`, `app/`                   |
+
+### Renderer (FSD)
+
+- `src/renderer/app/` — composition root (router, plugins, providers)
+- `src/renderer/pages/` — route-level components
+- `src/renderer/widgets/` — reusable composed UI blocks
+- `src/renderer/features/` — business slices (authentication, settings, status, …)
+- `src/renderer/shared/` — cross-cutting utilities, API clients, UI primitives
+
+See `.cursor/rules/architecture-fsd.mdc` for import rules and slice conventions.
+
+### Main process (Vertical Slices)
+
+- `src/main/app/` — bootstrap, IPC registration (`register-ipc.ts`)
+- `src/main/features/<slice>/` — one use case per slice (users, sessions, health, …)
+- `src/main/shared/` — infrastructure (database, security helpers)
+- `src/main/window/` — main-process window setup
+- `src/preload/` — IPC bridge to `window.api`
+
+Each main feature slice follows this layout:
+
+```
+src/main/features/<slice>/
+  ipc/register.ts    # thin IPC adapters
+  service/           # use-case orchestration (optional)
+  repository/        # SQL access (optional)
+  index.ts           # public API
+```
+
+Import rules: `features → shared`; `features → features` only via `@main/features/<slice>`; `shared` must not import features.
+
+See `.cursor/rules/architecture-main-vsa.mdc` for details.
+
+## Adding a Main Feature
+
+1. Create `src/main/features/<slice>/` with `index.ts` exporting `registerXxxIpc` (and services if needed).
+2. Register the slice in `src/main/app/register-ipc.ts`.
+3. Extend `src/preload/preload.ts` and `src/renderer/shared/types/electron-api.ts` only when adding new IPC channels.
+4. Add SQL migrations under `src/main/shared/database/migrations/` when the schema changes.
+5. Co-locate tests; use `@main/shared/database` in tests, not internal driver paths.
 
 ## Dependencies
 

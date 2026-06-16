@@ -1,4 +1,3 @@
-// src/main/ipc/health.ipc.ts
 import { ipcMain } from 'electron'
 
 import { getDatabase } from '@main/shared/database'

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('EmailStep', () => {
@@ -7,14 +8,9 @@ test.describe('EmailStep', () => {
   })
 
   test('enables next action after entering a valid email', async ({ page }) => {
-    await page.goto('/#/passwordreset')
+    await gotoHashRoute(page, '/#/passwordreset', 'input[autocomplete="email"]')
 
     const emailInputs = page.locator('input[autocomplete="email"]')
-    if ((await emailInputs.count()) === 0) {
-      await page.reload()
-      await page.goto('/#/passwordreset')
-    }
-
     const nextButton = page.getByRole('button', { name: /^(Continue|Weiter)$/ })
     await expect(nextButton).toBeDisabled()
 

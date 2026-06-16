@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
-import { getIpcHandler } from '../test/electron-mock'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
+import { getIpcHandler } from '../../../test/electron-mock'
 
 describe('registerHealthIpc', () => {
   afterEach(async () => {
@@ -10,7 +10,7 @@ describe('registerHealthIpc', () => {
 
   it('returns sqlite version from the healthcheck handler', async () => {
     await initTestDatabase()
-    const { registerHealthIpc } = await import('./health')
+    const { registerHealthIpc } = await import('./register')
 
     registerHealthIpc()
 
@@ -38,7 +38,7 @@ describe('registerHealthIpc', () => {
       }
     })
 
-    const { registerHealthIpc } = await import('./health')
+    const { registerHealthIpc } = await import('./register')
     registerHealthIpc()
 
     const result = await getIpcHandler('db:healthcheck')()

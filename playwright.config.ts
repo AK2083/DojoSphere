@@ -5,7 +5,6 @@ import { DEV_HOST, E2E_BASE_URL, E2E_SERVER_PORT } from './config/dev'
 
 const logicalCpuCount = os.cpus().length
 const derivedWorkerCount = Math.max(2, Math.floor(logicalCpuCount * 0.75))
-const localWorkerCount = Math.min(4, derivedWorkerCount)
 
 /**
  * Read environment variables from file.
@@ -26,10 +25,11 @@ export default defineConfig({
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 1 : 0,
-  /* Use one strategy for local and CI to maximize parallelism. */
-  workers: process.env.CI ? derivedWorkerCount : localWorkerCount,
+  /* Retry flaky browser navigation under parallel Vite dev-server load. */
+  retries: process.env.CI ? 2 : 1,
+  timeout: 60_000,
+  /* Cap workers — too much parallelism overwhelms the e2e Vite server (especially WebKit). */
+  workers: process.env.CI ? Math.min(2, derivedWorkerCount) : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'line' : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

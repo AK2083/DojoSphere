@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { ipcMain } from '../test/electron-mock'
-import { registerIpcHandlers } from './register'
+import { registerIpcHandlers } from './register-ipc'
 
 describe('registerIpcHandlers', () => {
   it('registers all ipc channels', () => {

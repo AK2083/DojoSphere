@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
-import { getIpcHandler } from '../test/electron-mock'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
+import { getIpcHandler } from '../../../test/electron-mock'
 
 describe('registerUsersIpc', () => {
   afterEach(async () => {
@@ -10,7 +10,7 @@ describe('registerUsersIpc', () => {
 
   it('lists users through the users:list handler', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -32,7 +32,7 @@ describe('registerUsersIpc', () => {
 
   it('returns a session token when creating a local user', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -48,7 +48,7 @@ describe('registerUsersIpc', () => {
 
   it('does not return a session token for non-local users', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -63,7 +63,7 @@ describe('registerUsersIpc', () => {
 
   it('ensures a local session for an existing display name without creating a duplicate user', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -93,7 +93,7 @@ describe('registerUsersIpc', () => {
 
   it('creates a local user and session when ensuring a new display name', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -120,7 +120,7 @@ describe('registerUsersIpc', () => {
 
   it('updates the display name for the authenticated local session user', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 
@@ -151,7 +151,7 @@ describe('registerUsersIpc', () => {
 
   it('rejects display name updates without a valid session token', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
+    const { registerUsersIpc } = await import('./register')
 
     registerUsersIpc()
 

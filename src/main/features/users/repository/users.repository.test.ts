@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
 
 describe('users.repository', () => {
   afterEach(async () => {
@@ -39,7 +39,7 @@ describe('users.repository', () => {
   it('assigns the list_keeper role to local users', async () => {
     await initTestDatabase()
     const { addUser, getUsers } = await import('./users.repository')
-    const { findRoleIdByName } = await import('./roles.repository')
+    const { findRoleIdByName } = await import('@main/features/authorization')
     const { getDatabase } = await import('@main/shared/database')
 
     addUser({ displayName: 'Local User' })
@@ -105,41 +105,6 @@ describe('users.repository', () => {
     addUser({ displayName: 'System Bot', userType: 'system' })
 
     expect(findLocalUserByDisplayName('System Bot')).toBeNull()
-  })
-
-  it('reuses an existing local user when ensuring a session', async () => {
-    await initTestDatabase()
-    const { addUser, ensureLocalUserSession, getUsers } = await import('./users.repository')
-
-    addUser({ displayName: 'Local User', userType: 'local' })
-
-    const result = ensureLocalUserSession('Local User')
-
-    expect(result).toMatchObject({
-      id: expect.any(String),
-      sessionToken: expect.any(String),
-      expiresAt: expect.any(String)
-    })
-    expect(getUsers()).toHaveLength(1)
-  })
-
-  it('creates a local user when ensuring a session for a new display name', async () => {
-    await initTestDatabase()
-    const { ensureLocalUserSession, getUsers } = await import('./users.repository')
-
-    const result = ensureLocalUserSession('New Local User')
-
-    expect(result).toMatchObject({
-      id: expect.any(String),
-      sessionToken: expect.any(String),
-      expiresAt: expect.any(String)
-    })
-    expect(getUsers()).toEqual([
-      expect.objectContaining({
-        displayName: 'New Local User',
-        userType: 'local'
-      })
-    ])
   })
 
   it('updates a user display name and sets updated_at', async () => {

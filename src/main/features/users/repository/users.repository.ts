@@ -1,8 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
+import { findRoleIdByName } from '@main/features/authorization'
 import { getDatabase, runInTransaction } from '@main/shared/database'
-import { findRoleIdByName } from './roles.repository'
-import { createSession } from './sessions.repository'
 
 export type CreateUserInput = {
   displayName: string
@@ -86,18 +85,6 @@ export function findLocalUserByDisplayName(displayName: string): UserRecord | nu
     .get(displayName) as UserRecord | undefined
 
   return row ?? null
-}
-
-export function ensureLocalUserSession(displayName: string) {
-  const existingUser = findLocalUserByDisplayName(displayName)
-  const userId = existingUser?.id ?? addUser({ displayName, userType: 'local' }).id
-  const session = createSession(userId)
-
-  return {
-    id: userId,
-    sessionToken: session.token,
-    expiresAt: session.expiresAt
-  }
 }
 
 function getUserById(userId: string): UserRecord | null {

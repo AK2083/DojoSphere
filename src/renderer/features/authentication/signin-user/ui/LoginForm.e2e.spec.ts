@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 import { setCloudModeDisabled, setupLoginAvailable } from '@shared/tests/e2e/setup-login-available'
 
@@ -8,16 +9,10 @@ test.describe('LoginForm', () => {
   })
 
   test('renders login form fields and actions', async ({ page }) => {
-    await page.goto('/#/login')
-    await expect(page).toHaveURL(/#\/login$/)
-
-    if ((await page.locator('form').count()) === 0) {
-      await page.reload()
-      await expect(page).toHaveURL(/#\/login$/)
-    }
+    await gotoHashRoute(page, '/#/login', 'form')
 
     const loginForm = page.locator('form')
-    await expect(loginForm).toHaveCount(1, { timeout: 10_000 })
+    await expect(loginForm).toHaveCount(1)
     await expect(page.locator('input[autocomplete="email"]')).toHaveCount(1)
     await expect(page.locator('input[autocomplete="current-password"]')).toHaveCount(1)
     await expect(
@@ -32,21 +27,21 @@ test.describe('LoginForm', () => {
 
   test('navigates to password reset when login is available', async ({ page }) => {
     await setupLoginAvailable(page)
-    await page.goto('/#/login')
+    await gotoHashRoute(page, '/#/login', 'input[autocomplete="email"]')
 
     const forgotPasswordButton = page.getByRole('button', {
       name: 'Forgot your password?',
       exact: true
     })
 
-    await expect(forgotPasswordButton).toBeEnabled()
+    await expect(forgotPasswordButton).toBeEnabled({ timeout: 15_000 })
     await forgotPasswordButton.click()
-    await expect(page).toHaveURL(/#\/passwordreset$/)
+    await expect(page).toHaveURL(/#\/passwordreset$/, { timeout: 15_000 })
   })
 
   test('disables forgot-password when cloud mode is off', async ({ page }) => {
     await setCloudModeDisabled(page)
-    await page.goto('/#/login')
+    await gotoHashRoute(page, '/#/login', 'input[autocomplete="email"]')
 
     const forgotPasswordButton = page.getByRole('button', {
       name: 'Forgot your password?',

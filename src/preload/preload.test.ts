@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { ElectronAPI } from '@shared/types/electron-api'
 
-import { contextBridge, getExposedApi, ipcRenderer } from '../test/electron-mock'
+import { contextBridge, getExposedApi, ipcRenderer } from '../main/test/electron-mock'
 
 describe('preload', () => {
   beforeEach(async () => {
     vi.resetModules()
-    await import('../preload/preload')
+    await import('./preload')
   })
 
   it('exposes the electron api on window', () => {

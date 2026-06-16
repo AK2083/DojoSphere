@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
 
 describe('roles.repository', () => {
   afterEach(async () => {

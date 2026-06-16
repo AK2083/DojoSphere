@@ -1,0 +1,68 @@
+---
+description: Vertical Slice Architecture for the Electron main process (src/main) and preload bridge (src/preload)
+globs: src/main/**/*,src/preload/**/*
+alwaysApply: false
+---
+
+# Main Process — Vertical Slice Architecture
+
+Electron main code lives under `src/main/` in vertical slices. The renderer uses FSD ([architecture-fsd.mdc](./architecture-fsd.mdc)); the main process uses a slimmer variant without UI layers.
+
+## Layers
+
+```
+app → features, shared
+features → shared (+ other features only via Public API)
+shared → internal only
+window / preload → Electron shell (outside features)
+```
+
+| Layer | Path | Responsibility |
+|-------|------|----------------|
+| **app** | `src/main/app/` | Bootstrap, IPC aggregation, composition root |
+| **features** | `src/main/features/<slice>/` | One use case / bounded context per slice |
+| **shared** | `src/main/shared/` | Infrastructure without business logic (database, security helpers) |
+| **window** | `src/main/window/` | Main-process window setup |
+| **preload** | `src/preload/` | IPC bridge (`contextBridge` → `window.api`) |
+
+## Slice structure
+
+```
+src/main/features/<slice>/
+  ipc/
+    register.ts       # ipcMain.handle — thin adapter only
+  service/            # use cases / orchestration (optional)
+  repository/         # SQL access (optional)
+  index.ts            # Public API — only export path for other slices
+  *.test.ts           # tests next to code
+```
+
+## Import rules
+
+1. **features → shared** — allowed (`@main/shared/database`, `@main/shared/security`)
+2. **features → features** — only via `@main/features/<slice>` (`index.ts`), never internal paths
+3. **shared → features** — forbidden
+4. **app → features** — only public APIs (`registerXxxIpc`, exported services)
+5. **Repositories** must not import `electron` or `ipcMain`
+6. **IPC handlers** must not contain SQL or complex business logic
+
+## Security
+
+- Authorization runs in the main process only ([auth-security.mdc](./auth-security.mdc))
+- Privileged IPC handlers must verify session (and later permissions) via `@main/shared/security` or session feature exports
+- Session tokens are stored as hashes only
+- SQLite access in production only through `@main/shared/database`
+
+## Aliases
+
+- `@main/features/<slice>` — slice public API
+- `@main/shared/*` — shared infrastructure
+- `@main/app/*` — composition root
+
+## New slice checklist
+
+1. Create `src/main/features/<slice>/` with `index.ts`
+2. Register IPC in `src/main/app/register-ipc.ts` if needed
+3. Extend preload + `electron-api.ts` only when adding new IPC channels
+4. Add migrations under `src/main/shared/database/migrations/` when schema changes
+5. Co-locate tests; import `@main/shared/database` in tests, not internal driver paths

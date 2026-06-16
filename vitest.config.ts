@@ -104,6 +104,8 @@ export default defineConfig({
         extends: true,
         resolve: {
           alias: {
+            '@main/app': path.resolve(dirname, 'src/main/app'),
+            '@main/features': path.resolve(dirname, 'src/main/features'),
             '@main/shared': path.resolve(dirname, 'src/main/shared'),
             '@shared': path.resolve(dirname, 'src/renderer/shared')
           }
@@ -111,7 +113,7 @@ export default defineConfig({
         test: {
           name: 'main',
           environment: 'node',
-          include: ['src/main/**/*.test.ts'],
+          include: ['src/main/**/*.test.ts', 'src/preload/**/*.test.ts'],
           setupFiles: ['src/main/test/setup.ts']
         }
       },

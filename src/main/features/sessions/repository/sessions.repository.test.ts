@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
 
 describe('sessions.repository', () => {
   afterEach(async () => {
@@ -9,7 +9,7 @@ describe('sessions.repository', () => {
 
   it('creates and resolves an active session by token', async () => {
     await initTestDatabase()
-    const { addUser } = await import('./users.repository')
+    const { addUser } = await import('@main/features/users')
     const { createSession, getActiveSessionByToken } = await import('./sessions.repository')
 
     const { id: userId } = addUser({ displayName: 'Local User' })
@@ -28,7 +28,7 @@ describe('sessions.repository', () => {
 
   it('returns null after a session was revoked', async () => {
     await initTestDatabase()
-    const { addUser } = await import('./users.repository')
+    const { addUser } = await import('@main/features/users')
     const { createSession, getActiveSessionByToken, revokeSessionByToken } =
       await import('./sessions.repository')
 

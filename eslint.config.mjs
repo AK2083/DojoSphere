@@ -19,6 +19,8 @@ export default defineConfig([
       'dist',
       'dist-electron',
       'coverage',
+      'playwright-report',
+      'test-results',
       '.vscode',
       '*.min.js',
       'storybook-static'

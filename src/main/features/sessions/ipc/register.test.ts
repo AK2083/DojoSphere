@@ -1,8 +1,8 @@
 import type { AddUserResult } from '@shared/types/electron-api'
 import { afterEach, describe, expect, it } from 'vitest'
 
-import { closeTestDatabase, initTestDatabase } from '../test/database'
-import { getIpcHandler } from '../test/electron-mock'
+import { closeTestDatabase, initTestDatabase } from '../../../test/database'
+import { getIpcHandler } from '../../../test/electron-mock'
 
 async function createLocalUserWithSession() {
   const addHandler = getIpcHandler('users:add')
@@ -28,8 +28,8 @@ describe('registerSessionsIpc', () => {
 
   it('returns an active session through sessions:get', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
-    const { registerSessionsIpc } = await import('./sessions')
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerSessionsIpc } = await import('./register')
 
     registerUsersIpc()
     registerSessionsIpc()
@@ -49,8 +49,8 @@ describe('registerSessionsIpc', () => {
 
   it('revokes a session through sessions:revoke', async () => {
     await initTestDatabase()
-    const { registerUsersIpc } = await import('./users')
-    const { registerSessionsIpc } = await import('./sessions')
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerSessionsIpc } = await import('./register')
 
     registerUsersIpc()
     registerSessionsIpc()
