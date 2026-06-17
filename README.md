@@ -13,6 +13,7 @@ Open-source Electron application for managing Judo tournaments.
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
+- [Logging & Monitoring](#logging--monitoring)
 - [Local Database (SQLite)](#local-database-sqlite)
 - [Requirements](#requirements)
 - [Quick Start](#quick-start)
@@ -30,9 +31,19 @@ Open-source Electron application for managing Judo tournaments.
 - **Local Database:** [SQLite](https://www.sqlite.org/) via Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (Electron main process)
 - **Internationalization:** [vue-i18n](https://vue-i18n.intlify.dev/)
 - **Backend Services:** [Supabase](https://supabase.com/)
-- **Monitoring:** [Sentry for Vue](https://docs.sentry.io/platforms/javascript/guides/vue/), [GlitchTip](https://glitchtip.com/)
+- **Monitoring:** [Sentry / GlitchTip](https://glitchtip.com/) — target: [`@sentry/electron`](https://docs.sentry.io/platforms/javascript/guides/electron/) with offline queue; interim [`@sentry/vue`](https://docs.sentry.io/platforms/javascript/guides/vue/) in the renderer (see [Logging & Monitoring](#logging--monitoring))
 - **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E), [Storybook](https://storybook.js.org/) (UI components)
 - **Code Quality:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
+
+## Logging & Monitoring
+
+DojoSphere separates three lanes: **telemetry** (errors → GlitchTip), **audit** (business actions → SQLite), and **debug** (support → log file in main).
+
+**Cloud mode (`isCloudUsed`)** controls cloud services uniformly — for data and logging: telemetry is **always captured locally** (offline queue) and **uploaded** only when cloud mode is active and GlitchTip is reachable. Supabase access requires a heartbeat check; telemetry upload will use a dedicated reachability check (planned).
+
+Scorekeepers and spectators use the same Electron app on the LAN; telemetry there is reduced (primarily errors), with audit for relevant write actions.
+
+Full architecture decision, risks, and **follow-up issues**: [`docs/logging.md`](docs/logging.md).
 
 ## Local Database (SQLite)
 
@@ -202,7 +213,7 @@ See `.cursor/rules/architecture-vertical-slice.mdc` for details.
 
 - `@fontsource/roboto`: Provides local Roboto fonts for consistent typography across platforms.
 - `@mdi/js`: Provides Material Design icon SVG paths for flexible icon rendering.
-- `@sentry/vue`: Captures runtime errors and performance signals for monitoring and debugging.
+- `@sentry/vue`: Interim — runtime errors and breadcrumbs in the renderer; migration to `@sentry/electron` planned ([`docs/logging.md`](docs/logging.md)).
 - `@supabase/supabase-js`: Client SDK for Supabase auth, database access, and related services.
 - `vue`: Core framework for building reactive, component-driven user interfaces.
 - `vue-i18n`: Internationalization library for translations and locale-aware UI text.
