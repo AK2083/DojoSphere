@@ -19,6 +19,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
+      "@main/app/*": ["./src/main/app/*"],
+      "@main/features/*": ["./src/main/features/*"],
+      "@main/shared/*": ["./src/main/shared/*"],
       "@shared/*": ["./src/renderer/shared/*"]
     }
   },
@@ -26,6 +29,7 @@
     "config/dev.ts",
     "src/main/**/*.ts",
     "src/main/**/*.d.ts",
+    "src/preload/**/*.ts",
     "src/renderer/shared/types/electron-api.ts"
   ]
 }

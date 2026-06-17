@@ -41,6 +41,9 @@ export default defineConfig(({ mode }) => {
                 vite: {
                   resolve: {
                     alias: {
+                      '@main/app': path.resolve(__dirname, 'src/main/app'),
+                      '@main/features': path.resolve(__dirname, 'src/main/features'),
+                      '@main/shared': path.resolve(__dirname, 'src/main/shared'),
                       '@shared': path.resolve(__dirname, 'src/renderer/shared')
                     }
                   },
@@ -52,7 +55,7 @@ export default defineConfig(({ mode }) => {
                 }
               },
               preload: {
-                input: path.join(__dirname, 'src/main/preload/preload.ts'),
+                input: path.join(__dirname, 'src/preload/preload.ts'),
                 vite: {
                   resolve: {
                     alias: {

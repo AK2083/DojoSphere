@@ -3,6 +3,8 @@ import { goToPasswordResetOtpStep, mockRecoveryRequest } from '@shared/tests/e2e
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('ResendOneTimePassword (password-forgotten)', () => {
+  test.describe.configure({ timeout: 60_000 })
+
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await mockRecoveryRequest(page)

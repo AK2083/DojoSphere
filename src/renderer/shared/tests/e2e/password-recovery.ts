@@ -1,4 +1,6 @@
-import type { Page, Route } from '@playwright/test'
+import { expect, type Page, type Route } from '@playwright/test'
+
+import { typeOtp, waitForPasswordResetOtpStep } from './otp-input'
 
 async function fulfillWithSuccess(route: Route): Promise<void> {
   await route.fulfill({
@@ -7,6 +9,8 @@ async function fulfillWithSuccess(route: Route): Promise<void> {
     body: '{}'
   })
 }
+
+const CONTINUE_BUTTON = /^(Continue|Weiter)$/
 
 /**
  * Mocks Supabase password-recovery mail request endpoint.
@@ -36,6 +40,34 @@ export async function mockRecoveryFlowRequests(page: Page): Promise<void> {
   await mockRecoveryVerify(page)
 }
 
+async function ensurePasswordResetPage(page: Page): Promise<void> {
+  await page.goto('/#/passwordreset')
+
+  const emailInputs = page.locator('input[autocomplete="email"]')
+  if ((await emailInputs.count()) === 0) {
+    await page.reload()
+    await page.goto('/#/passwordreset')
+  }
+
+  await expect(emailInputs.first()).toBeVisible({ timeout: 10_000 })
+}
+
+async function submitEmailStep(page: Page, email: string): Promise<void> {
+  const continueButton = page.getByRole('button', { name: CONTINUE_BUTTON })
+  const emailInput = page.locator('input[autocomplete="email"]').first()
+
+  await emailInput.fill(email)
+  await expect(continueButton).toBeEnabled({ timeout: 10_000 })
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes('/auth/v1/recover') && response.ok(),
+      { timeout: 10_000 }
+    ),
+    continueButton.click({ noWaitAfter: true })
+  ])
+}
+
 /**
  * Navigates from password reset page to OTP step.
  *
@@ -46,15 +78,9 @@ export async function goToPasswordResetOtpStep(
   page: Page,
   email = 'user@example.com'
 ): Promise<void> {
-  await page.goto('/#/passwordreset')
-  const emailInputs = page.locator('input[autocomplete="email"]')
-  if (typeof emailInputs.count === 'function' && (await emailInputs.count()) === 0) {
-    await page.reload()
-    await page.goto('/#/passwordreset')
-  }
-
-  await page.locator('input[autocomplete="email"]').first().fill(email)
-  await page.getByRole('button', { name: /^(Continue|Weiter)$/ }).click()
+  await ensurePasswordResetPage(page)
+  await submitEmailStep(page, email)
+  await waitForPasswordResetOtpStep(page)
 }
 
 /**
@@ -70,7 +96,21 @@ export async function goToPasswordResetNewPasswordStep(
   token = '123456'
 ): Promise<void> {
   await goToPasswordResetOtpStep(page, email)
-  await page.getByRole('textbox', { name: /Please enter OTP character 1/i }).click()
-  await page.keyboard.type(token)
-  await page.getByRole('button', { name: /^(Continue|Weiter)$/ }).click()
+
+  await typeOtp(page, token)
+
+  const continueButton = page.getByRole('button', { name: CONTINUE_BUTTON })
+  await expect(continueButton).toBeEnabled({ timeout: 10_000 })
+
+  await Promise.all([
+    page.waitForResponse(
+      (response) => response.url().includes('/auth/v1/verify') && response.ok(),
+      { timeout: 10_000 }
+    ),
+    continueButton.click({ noWaitAfter: true })
+  ])
+
+  await expect(page.locator('input[aria-label="New password"]')).toBeVisible({ timeout: 10_000 })
 }
+
+export { waitForOtpInputs, waitForPasswordResetOtpStep } from './otp-input'

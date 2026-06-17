@@ -62,7 +62,7 @@ describe('loadRenderer', () => {
 
     expect(loadURL).toHaveBeenCalledTimes(2)
     expect(fallbackUrl).toContain('data:text/html')
-    expect(decodeURIComponent(fallbackUrl)).toContain('DojoSphere konnte nicht geladen werden')
+    expect(decodeURIComponent(fallbackUrl)).toContain('DojoSphere could not be loaded')
   })
 
   it('loads the production build when the dev server is unavailable', async () => {

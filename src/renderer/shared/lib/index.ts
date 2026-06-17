@@ -8,9 +8,9 @@ export {
   clearUserContext,
   setUserContext
 } from './glitchtip/logging'
+export { setCloudModeMonitoringCheck } from './glitchtip/monitoring-guard'
 export { AvailableLanguages, FallbackLanguage, LanguageCode } from './i18n/languages'
 export { useTranslation } from './i18n/use-translation'
 export { getActiveStore, newStore, newStoreToRefs } from './pinia/store-define'
 export { ErrorCode, errorTranslationMap, translateError } from './validation/error-manager'
 export { emailRules, mapRule, PASSWORD_MIN_LENGTH, passwordRules } from './validation/validators'
-export { useCloudStatusStore } from '@features/cloud-status'

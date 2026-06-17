@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { CloudStatus } from '@features/cloud-status'
-import { NetworkStatus } from '@features/network-status'
+import { CloudStatus, NetworkStatus } from '@features/status'
 </script>
 
 <template>

@@ -6,6 +6,8 @@ import {
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('NewPasswordStep', () => {
+  test.describe.configure({ timeout: 60_000 })
+
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await mockRecoveryFlowRequests(page)

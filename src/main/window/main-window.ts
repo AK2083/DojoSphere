@@ -6,6 +6,8 @@ import { loadRenderer } from './load-renderer'
 
 /**
  * Creates and configures the main application window.
+ *
+ * @param devServerUrl - Vite dev server URL used in unpackaged builds.
  */
 export function createWindow(devServerUrl: string) {
   Menu.setApplicationMenu(null)

@@ -16,7 +16,10 @@ test.describe('BottomNavigation', () => {
     await page.goto('/#/dashboard')
 
     await expect(page.locator('footer')).toBeVisible()
-    await expect(page.getByTestId('cloud-status-chip')).toContainText('Cloud')
-    await expect(page.getByTestId('network-status-chip')).toContainText(/Online|Offline/)
+    await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Cloud')
+    await expect(page.getByTestId('network-status-chip')).toHaveAttribute(
+      'aria-label',
+      /Online|Offline/
+    )
   })
 })

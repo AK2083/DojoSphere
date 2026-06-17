@@ -11,7 +11,7 @@ app.whenReady().then(() => {
     bootstrap()
     createWindow(DEV_SERVER_URL)
   } catch (error) {
-    console.error('Datenbank-Initialisierung fehlgeschlagen:', error)
+    console.error('Database initialization failed:', error)
     app.quit()
     process.exit(1)
   }

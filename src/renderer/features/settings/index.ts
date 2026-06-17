@@ -1,9 +1,11 @@
 export { default as settingsDe } from './i18n/de'
 export { default as settingsEn } from './i18n/en'
 export { default as translationKeys } from './i18n/keys'
-export { getInitialLanguage } from './service/set-language/language-service'
-export { getInitialTheme } from './service/set-theme/theme-service'
-export { getThemeFromStorage, setThemeToStorage } from './service/set-theme/theme-storage'
-export { default as LanguageSwitch } from './ui/LanguageSwitch.vue'
-export { default as ThemeToggle } from './ui/ThemeToggle.vue'
-export { default as UsernameEditor } from './ui/UsernameEditor.vue'
+export {
+  getInitialLanguage,
+  getLanguageFromStorage,
+  LanguageSwitch,
+  setLanguageToStorage
+} from './set-language'
+export { getInitialTheme, getThemeFromStorage, setThemeToStorage, ThemeToggle } from './set-theme'
+export { UsernameEditor } from './set-username'
