@@ -1,82 +1,82 @@
 ---
-description: Vue-Frontend — Komponenten, Composables, Vuetify, Tests, Barrierefreiheit und i18n
+description: Vue frontend — components, composables, Vuetify, tests, accessibility, and i18n
 globs: src/renderer/**/*.vue
 alwaysApply: false
 ---
 
 # Vue Frontend
 
-## Komponenten und Logik
+## Components and logic
 
-- Neue Komponenten ausschließlich mit `<script setup lang="ts">`.
-- **Keine Business-Logik in Templates** — weder Berechnungen, API-Aufrufe noch komplexe Bedingungen. Templates binden State und Events aus Script/Composable.
-- Logik gehört in **Composables** (`model/use-*.ts`) oder `service/` — UI-Komponenten in `ui/` bleiben präsentationsnah.
-- Vuetify-3-Komponenten für UI (`v-btn`, `v-card`, `v-text-field`, …); Icons über `@mdi/js`.
-- Schicht-Zuordnung nach [`architecture-fsd.mdc`](architecture-fsd.mdc).
+- New components exclusively with `<script setup lang="ts">`.
+- **No business logic in templates** — no calculations, API calls, or complex conditions. Templates bind state and events from script/composable.
+- Logic belongs in **composables** (`model/use-*.ts`) or `service/` — UI components in `ui/` stay presentation-focused.
+- Vuetify 3 components for UI (`v-btn`, `v-card`, `v-text-field`, …); icons via `@mdi/js`.
+- Layer assignment per [`architecture-fsd.mdc`](architecture-fsd.mdc).
 
 ```vue
-<!-- ❌ Business-Logik im Template -->
+<!-- ❌ Business logic in template -->
 <v-btn :disabled="email.length < 5 || !isOnline" @click="signUp(email, password)">
 
-<!-- ✅ Composable liefert fertigen State -->
+<!-- ✅ Composable provides ready state -->
 <v-btn :disabled="!canSubmit" :loading="loading" @click="submit">
 ```
 
-## Internationalisierung
+## Internationalization
 
-- Unterstützte Sprachen: **Deutsch** und **Englisch**.
-- Keine hardcodierten UI-Strings — Texte über `useTranslation()` und Slice-`i18n/keys.ts`.
-- ARIA-Labels und sichtbare Texte ebenfalls über i18n-Keys.
+- Supported languages: **German** and **English**.
+- No hardcoded UI strings — text via `useTranslation()` and slice `i18n/keys.ts`.
+- ARIA labels and visible text also via i18n keys.
 
-## Responsive Design
+## Responsive design
 
-- Layouts mit Vuetify-Grid (`v-container`, `v-row`, `v-col`) und Breakpoints (`cols`, `md`, `lg`, …).
-- `useDisplay()` aus Vuetify für gerätespezifische Logik (z. B. Mobile vs. Desktop).
-- Komponenten auf Mobile, Tablet und Desktop prüfen — keine festen Pixelbreiten für zentrale Layouts.
+- Layouts with Vuetify grid (`v-container`, `v-row`, `v-col`) and breakpoints (`cols`, `md`, `lg`, …).
+- `useDisplay()` from Vuetify for device-specific logic (e.g. mobile vs. desktop).
+- Test components on mobile, tablet, and desktop — no fixed pixel widths for core layouts.
 
-## Barrierefreiheit (a11y)
+## Accessibility (a11y)
 
-- Lighthouse **Accessibility**-Score anstreben (keine Regressionen).
-- Sinnvolle **ARIA-Attribute** setzen: `aria-label`, `aria-labelledby`, `role`, `aria-live` für dynamische Inhalte.
-- Interaktive Elemente müssen per Tastatur erreichbar sein; Fokus sichtbar lassen.
-- Formulare: `<label>` oder `aria-label`/`aria-labelledby` für jedes Eingabefeld.
-- Dekorative Icons: `aria-hidden="true"`; Icon-only-Buttons: beschreibendes `aria-label`.
-- Fehler-/Statusmeldungen: für Screenreader zugänglich (`role="alert"` oder `aria-live="polite"`).
+- Aim for Lighthouse **Accessibility** score (no regressions).
+- Set meaningful **ARIA attributes**: `aria-label`, `aria-labelledby`, `role`, `aria-live` for dynamic content.
+- Interactive elements must be keyboard reachable; keep focus visible.
+- Forms: `<label>` or `aria-label`/`aria-labelledby` for every input.
+- Decorative icons: `aria-hidden="true"`; icon-only buttons: descriptive `aria-label`.
+- Error/status messages: accessible to screen readers (`role="alert"` or `aria-live="polite"`).
 
-## Tests pro UI-Komponente
+## Tests per UI component
 
-Jede UI-Komponente in `ui/` benötigt **beides**, colocated neben der `.vue`-Datei:
+Every UI component in `ui/` needs **both**, colocated next to the `.vue` file:
 
-| Datei | Zweck |
-|-------|--------|
-| `<Name>.stories.ts` | Storybook — isolierte Darstellung, Varianten |
-| `<Name>.e2e.spec.ts` | Playwright — kritische Interaktionen und sichtbares Verhalten |
+| File | Purpose |
+|------|---------|
+| `<Name>.stories.ts` | Storybook — isolated display, variants |
+| `<Name>.e2e.spec.ts` | Playwright — critical interactions and visible behavior |
 
-**Storybook-Konvention:**
-- `title` nach Schicht: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`
+**Storybook convention:**
+- `title` by layer: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`
 - `@storybook/vue3-vite`, `satisfies Meta<typeof Component>`
 
-**Playwright-Konvention:**
-- `@playwright/test`, beschreibende `test.describe('<ComponentName>')`
-- Sinnvolle Selektoren bevorzugen: `getByRole`, `getByLabel`, `getByText` — keine fragilen CSS-Ketten
-- i18n-Setup über `@shared/tests/e2e/setup-language` wo nötig
+**Playwright convention:**
+- `@playwright/test`, descriptive `test.describe('<ComponentName>')`
+- Prefer meaningful selectors: `getByRole`, `getByLabel`, `getByText` — no fragile CSS chains
+- i18n setup via `@shared/tests/e2e/setup-language` where needed
 
 ## Lighthouse
 
-Neue und geänderte UI soll Lighthouse-Anforderungen erfüllen, insbesondere:
-- **Accessibility** — ARIA, Kontrast, semantisches HTML
-- **Best Practices** — gültige HTML-Struktur, keine veralteten APIs
-- **Performance** — keine unnötigen Re-Renders, lazy loading wo sinnvoll
+New and changed UI should meet Lighthouse requirements, especially:
+- **Accessibility** — ARIA, contrast, semantic HTML
+- **Best Practices** — valid HTML structure, no deprecated APIs
+- **Performance** — no unnecessary re-renders, lazy loading where appropriate
 
-Bei Storybook- oder Page-Änderungen visuell und per Lighthouse prüfen, bevor abgeschlossen wird.
+For Storybook or page changes, verify visually and with Lighthouse before marking complete.
 
-## Abschluss-Checkliste
+## Completion checklist
 
-Nach UI-Arbeiten ausführen und Fehler beheben:
+After UI work, run and fix errors:
 
 1. `npm run lint:fix`
 2. `npm run type:check`
 3. `npm run format:fix`
-4. `npm run test:coverage` (betroffene Unit-Tests)
-5. Playwright für neue/geänderte `.e2e.spec.ts`
-6. Storybook für neue/geänderte `.stories.ts`
+4. `npm run test:coverage` (affected unit tests)
+5. Playwright for new/changed `.e2e.spec.ts`
+6. Storybook for new/changed `.stories.ts`

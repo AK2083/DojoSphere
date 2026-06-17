@@ -1,58 +1,58 @@
 ---
-description: Projektziel, Rollen, Architektur-Richtlinien und Datenschutz für DojoSphere
+description: Project goals, roles, architecture guidelines, and privacy for DojoSphere
 alwaysApply: true
 ---
 
-# DojoSphere — Projektüberblick
+# DojoSphere — Project Overview
 
-Open-Source-Electron-Anwendung zur Organisation **kleiner Judo-Turniere** in Vereinen und lokalen Wettkampfsettings. Zielgruppe: ehrenamtliche Organisatoren ohne kommerzielle Turniersoftware.
+Open-source Electron application for organizing **small judo tournaments** in clubs and local competition settings. Target audience: volunteer organizers without commercial tournament software.
 
-## Vision und Nutzerrollen
+## Vision and user roles
 
-| Rolle | Gerät | Aufgabe |
-|-------|-------|---------|
-| **Listenführer** | Hauptrechner (Electron) | Startet die App, legt Teilnehmer und Mattenanzahl an, verwaltet das Turnier |
-| **Punkterichter** | Eigener Rechner/Browser | Meldet sich per URL am Hauptrechner an; Zugriff erst nach Freigabe |
-| **Zuschauer** | Browser im Intranet | Sieht Übersicht per URL oder QR-Code — **ohne** Freigabe durch den Listenführer |
+| Role | Device | Responsibility |
+|------|--------|----------------|
+| **Tournament director** | Host computer (Electron) | Starts the app, registers competitors and mat count, manages the tournament |
+| **Scorekeeper** | Separate computer/browser | Connects via URL to the host; access only after approval |
+| **Spectator** | Browser on intranet | Views overview via URL or QR code — **without** approval by the tournament director |
 
-### Geplanter Ablauf (perspektivisch)
+### Planned flow (prospective)
 
-1. Listenführer startet die Electron-Anwendung auf dem Hauptrechner.
-2. Teilnehmer und Mattenanzahl werden lokal erfasst.
-3. Punkterichter rufen eine URL im Intranet auf und senden eine Anfrage an den Hauptrechner.
-4. Listenführer **genehmigt** die Anfrage und **weist eine Matte** zu.
-5. Zuschauer öffnen die Übersicht per URL/QR-Code im Intranet — Read-only, kein Approvement.
+1. Tournament director starts the Electron application on the host computer.
+2. Competitors and mat count are recorded locally.
+3. Scorekeepers open a URL on the intranet and send a request to the host.
+4. Tournament director **approves** the request and **assigns a mat**.
+5. Spectators open the overview via URL/QR code on the intranet — read-only, no approval.
 
-Bei neuen Features diese Rollen und den Freigabe-Flow berücksichtigen: Punkterichter = geschützter Zugang, Zuschauer = öffentliche Übersicht im LAN.
+When building new features, consider these roles and the approval flow: scorekeeper = protected access, spectator = public overview on the LAN.
 
-## Technische Leitplanken
+## Technical guidelines
 
-- **Frontend:** Vue 3 (Open Source, für Vereinsprojekte geeignet), Vuetify, Vue Router, vue-i18n
-- **Desktop:** Electron — Hauptanwendung für den Listenführer
-- **Daten lokal first:** SQLite im Electron-Main-Process; Renderer greift nur über IPC/preload zu
-- **Cloud optional:** Supabase für Authentifizierung und Cloud-Speicherung/Sync — Konfiguration und Sync in **Settings**
-- **Monitoring:** GlitchTip/Sentry (Fehler erfassen, keine sensiblen Personendaten mitschicken)
+- **Frontend:** Vue 3 (open source, suitable for club projects), Vuetify, Vue Router, vue-i18n
+- **Desktop:** Electron — primary application for the tournament director
+- **Local-first data:** SQLite in the Electron main process; renderer accesses only via IPC/preload
+- **Cloud optional:** Supabase for authentication and cloud storage/sync — configuration and sync in **Settings**
+- **Monitoring:** GlitchTip/Sentry (capture errors, do not send sensitive personal data)
 
-## Datenspeicherung und Sync
+## Data storage and sync
 
-- **Primär:** lokale SQLite-Datenbank auf dem Hauptrechner (`<userData>/database.db`)
-- **Optional:** Cloud-Sync über Supabase nach Anmeldung — manuell/automatisch über Settings steuerbar
-- Offline-/Local-first-Verhalten hat Vorrang: App muss ohne Cloud nutzbar sein
-- Sync-Logik und Konfliktbehandlung gehören in Settings bzw. dedizierte Feature-Slices — nicht verstreut in UI-Komponenten
+- **Primary:** local SQLite database on the host (`<userData>/database.db`)
+- **Optional:** cloud sync via Supabase after sign-in — manual/automatic control in Settings
+- Offline/local-first behavior takes precedence: the app must work without cloud
+- Sync logic and conflict handling belong in Settings or dedicated feature slices — not scattered in UI components
 
-## Sicherheit und DSGVO
+## Security and GDPR
 
-Turnierteilnehmer sind natürliche Personen — personenbezogene Daten schützen:
+Tournament competitors are natural persons — protect personal data:
 
-- **Keine sensiblen Daten im Klartext** speichern oder übertragen (Passwörter gehasht, Tokens sicher, keine PII in Logs/Monitoring)
-- Minimale Datenerhebung: nur was für Turnierbetrieb nötig ist
-- Cloud-Sync nur mit Authentifizierung; Zugriffsrechte serverseitig absichern (RLS bei Supabase)
-- Intranet-Zugriff (Punkterichter/Zuschauer) im LAN — trotzdem keine unnötige Exposition personenbezogener Daten in URLs oder Client-Speicher
-- Bei neuen Feldern/Endpoints prüfen: Speicherort (lokal vs. Cloud), Einwilligung, Löschbarkeit, Verschlüsselung wo sinnvoll
+- **No sensitive data in plaintext** when storing or transmitting (hashed passwords, secure tokens, no PII in logs/monitoring)
+- Minimal data collection: only what is needed for tournament operations
+- Cloud sync only with authentication; secure access rights server-side (RLS with Supabase)
+- Intranet access (scorekeepers/spectators) on the LAN — still avoid unnecessary exposure of personal data in URLs or client storage
+- For new fields/endpoints, check: storage location (local vs. cloud), consent, deletability, encryption where appropriate
 
-## Scope-Hinweise für Implementierung
+## Scope notes for implementation
 
-- Kleine Turniere: einfache Bedienung für Ehrenamtliche wichtiger als Enterprise-Features
-- Listenführer-Workflow (Electron) und Browser-Clients (Punkterichter/Zuschauer) sind getrennte Zugangswege — gemeinsame Domänenlogik, unterschiedliche UI/Permissions
-- i18n für alle UI-Texte; keine hardcodierten Strings
-- Open Source (MIT): Code und Abhängigkeiten Vereinsvereinbarkeit beachten
+- Small tournaments: simple operation for volunteers matters more than enterprise features
+- Tournament director workflow (Electron) and browser clients (scorekeepers/spectators) are separate access paths — shared domain logic, different UI/permissions
+- i18n for all UI text; no hardcoded strings
+- Open Source (MIT): consider club compatibility for code and dependencies

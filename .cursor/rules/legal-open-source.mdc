@@ -1,26 +1,26 @@
 ---
-description: Rechtlicher und datenschutzbezogener Basis-Kontext für jede Umsetzung
+description: Legal and privacy baseline context for every implementation
 alwaysApply: true
 ---
 
-Dieses Projekt kann als Open-Source-Software unter MIT-Lizenz veröffentlicht werden und kann personenbezogene Daten im Vereins-, Judo- und Turnierkontext verarbeiten.
+This project may be published as open-source software under the MIT license and may process personal data in club, judo, and tournament contexts.
 
-Diese Regeln ersetzen keine Rechtsberatung. Sie dienen als technische Leitplanken, damit Implementierungen rechtliche Risiken nicht ignorieren.
+These rules do not replace legal advice. They serve as technical guardrails so implementations do not ignore legal risks.
 
-Bei jeder Umsetzung prüfen:
+For every implementation, check:
 
-- Werden personenbezogene Daten verarbeitet, gespeichert, synchronisiert, exportiert oder angezeigt?
-- Sind Kinder, Jugendliche, Eltern, Teilnehmer, Kampfrichter, Listenführer, Vereinsmitglieder oder Veranstalter betroffen?
-- Werden Daten öffentlich oder für nicht berechtigte Rollen sichtbar?
-- Ist die Funktion datensparsam umgesetzt?
-- Gibt es eine Rollen- oder Berechtigungsprüfung an einer vertrauenswürdigen Stelle?
-- Werden Daten an externe Dienste übertragen, z. B. Supabase, E-Mail, GitHub oder Hosting-Anbieter?
-- Werden Logs, Fehlerausgaben oder Debug-Daten erzeugt, die personenbezogene Daten enthalten könnten?
-- Muss eine Dokumentation wie README.md, SECURITY.md, Datenschutz-Hinweis oder Betreiberhinweis angepasst werden?
+- Is personal data processed, stored, synchronized, exported, or displayed?
+- Are children, minors, parents, competitors, referees, tournament directors, club members, or organizers affected?
+- Is data visible publicly or to unauthorized roles?
+- Is the feature implemented with data minimization?
+- Is there a role or permission check at a trusted layer?
+- Is data transferred to external services, e.g. Supabase, email, GitHub, or hosting providers?
+- Are logs, error output, or debug data produced that could contain personal data?
+- Must documentation such as README.md, SECURITY.md, privacy notice, or operator guidance be updated?
 
-Open-Source- und MIT-Kontext:
+Open-source and MIT context:
 
-- Keine Funktion oder Dokumentation darf behaupten, dass die Software automatisch DSGVO-konform, rechtssicher oder zertifiziert ist.
-- Formulierungen sollen klarstellen, dass Betreiber für den konkreten Einsatz, die Rechtsgrundlage, Berechtigungen, Aufbewahrung und Informationspflichten verantwortlich sind.
-- Keine echten personenbezogenen Daten in Beispielen, Tests, Seeds, Screenshots oder Demos verwenden.
-- Lizenz- und Copyright-Hinweise müssen erhalten bleiben.
+- No feature or documentation may claim the software is automatically GDPR-compliant, legally sound, or certified.
+- Wording should clarify that operators are responsible for the specific deployment, legal basis, permissions, retention, and information obligations.
+- Do not use real personal data in examples, tests, seeds, screenshots, or demos.
+- License and copyright notices must be preserved.
