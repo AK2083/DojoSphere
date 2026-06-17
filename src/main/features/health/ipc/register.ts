@@ -2,6 +2,9 @@ import { ipcMain } from 'electron'
 
 import { getDatabase } from '@main/shared/database'
 
+/**
+ * Registers IPC handlers for database health checks.
+ */
 export function registerHealthIpc() {
   ipcMain.handle('db:healthcheck', () => {
     const db = getDatabase()

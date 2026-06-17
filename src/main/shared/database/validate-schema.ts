@@ -1,4 +1,4 @@
-import type { Database } from '../port/types'
+import type { Database } from './types/database'
 
 function usersTableExists(db: Database) {
   return Boolean(
@@ -18,6 +18,9 @@ function usersTableHasCurrentSchema(db: Database) {
 /**
  * Verifies that V001 created the expected users table schema.
  * Does not mutate schema — incompatible legacy tables require a manual migration.
+ *
+ * @param db - Database connection to validate.
+ * @throws {Error} When the users table is missing or incompatible.
  */
 export function assertUsersTableSchema(db: Database) {
   if (!usersTableExists(db)) {

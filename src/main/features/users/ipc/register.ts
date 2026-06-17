@@ -3,11 +3,13 @@ import { ipcMain } from 'electron'
 import { getActiveSessionByToken } from '@main/features/sessions'
 import { requireActiveSession } from '@main/shared/security'
 
-import { getUsers } from '../repository/users.repository'
+import { getUsers, updateUserDisplayName } from '../repository/users.repository'
 import { addUserWithSession } from '../service/add-user-with-session'
 import { ensureLocalUserSession } from '../service/ensure-local-user-session'
-import { updateUserDisplayName } from '../repository/users.repository'
 
+/**
+ * Registers IPC handlers for local user management.
+ */
 export function registerUsersIpc() {
   ipcMain.handle('users:list', () => {
     return getUsers()

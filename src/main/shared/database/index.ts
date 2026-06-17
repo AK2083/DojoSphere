@@ -1,9 +1,5 @@
-export type { Database, DatabaseStatement, Migration } from './port/types'
-export {
-  closeDatabase,
-  createMemoryDatabase,
-  getDatabase,
-  initDatabase
-} from './runtime/connection'
-export { runInTransaction } from './runtime/transactions'
-export { runMigrations } from './migration/runner'
+export type { Database, DatabaseStatement } from './types/database'
+export type { Migration } from './types/migration'
+export { closeDatabase, createMemoryDatabase, getDatabase, initDatabase } from './connection'
+export { runInTransaction } from './transactions'
+export { runMigrations } from './runner'

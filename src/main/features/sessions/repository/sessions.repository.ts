@@ -4,6 +4,7 @@ import { getDatabase } from '@main/shared/database'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000
 
+/** Active local session with embedded user profile. */
 export type LocalSessionRecord = {
   id: string
   userId: string
@@ -27,6 +28,12 @@ function createToken() {
   return randomBytes(32).toString('base64url')
 }
 
+/**
+ * Creates a new session for the given user.
+ *
+ * @param userId - User identifier to bind the session to.
+ * @returns Session metadata including the raw token (returned once).
+ */
 export function createSession(userId: string) {
   const db = getDatabase()
   const id = randomUUID()
@@ -44,6 +51,12 @@ export function createSession(userId: string) {
   return { id, token, expiresAt }
 }
 
+/**
+ * Resolves an active session by raw token and refreshes last-seen metadata.
+ *
+ * @param token - Raw session token from the client.
+ * @returns The session with user profile, or null when invalid or expired.
+ */
 export function getActiveSessionByToken(token: string): LocalSessionRecord | null {
   const db = getDatabase()
   const tokenHash = hashToken(token)
@@ -106,6 +119,11 @@ export function getActiveSessionByToken(token: string): LocalSessionRecord | nul
   }
 }
 
+/**
+ * Revokes an active session by raw token.
+ *
+ * @param token - Raw session token to revoke.
+ */
 export function revokeSessionByToken(token: string) {
   const db = getDatabase()
   const tokenHash = hashToken(token)

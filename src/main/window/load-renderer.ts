@@ -34,6 +34,9 @@ async function showLoadErrorPage(win: BrowserWindow, devServerUrl: string) {
 
 /**
  * Loads the renderer into the given window — production build, dev server, or fallback error page.
+ *
+ * @param win - Browser window to load content into.
+ * @param devServerUrl - Vite dev server URL used in unpackaged builds.
  */
 export async function loadRenderer(win: BrowserWindow, devServerUrl: string) {
   if (app.isPackaged) {

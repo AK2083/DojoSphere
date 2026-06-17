@@ -79,7 +79,7 @@ Infrastruktur ohne Feature-Bezug. Features importieren nur die Public API.
 | Segment | Inhalt |
 |---------|--------|
 | `shared/database/` | SQLite-Port, Laufzeit, Migrationen — siehe Unterteilung unten |
-| `shared/database/sqlite/` | Einziger Ort mit `node:sqlite` — nicht direkt aus Features importieren |
+| `shared/database/driver.ts` | Einziger Ort mit `node:sqlite` — nicht direkt aus Features importieren |
 | `shared/security/` | z. B. `requireActiveSession()` für privilegierte IPC-Handler |
 
 ### `shared/database/` — empfohlene Unterteilung
@@ -89,30 +89,28 @@ Infrastruktur ohne Feature-Bezug. Features importieren nur die Public API.
 ```
 shared/database/
   index.ts              # Public API — einziger Import-Pfad für Features
-  port/
-    types.ts            # Port: Database, DatabaseStatement, Migration
-  runtime/
-    connection.ts       # Lifecycle: initDatabase, getDatabase, closeDatabase, createMemoryDatabase
-    transactions.ts     # runInTransaction
-    pragmas.ts          # SQLite-PRAGMAs
-  migration/
-    runner.ts           # runMigrations, _migrations-Tabelle, Reihenfolge
-    validate-schema.ts  # Schema-Assertions nach Migrationen (kein DDL)
+  types/
+    database.ts         # Database, DatabaseStatement
+    migration.ts        # Migration
+  connection.ts         # initDatabase, getDatabase, closeDatabase, createMemoryDatabase
+  transactions.ts       # runInTransaction
+  pragmas.ts            # SQLite-PRAGMAs
+  runner.ts             # runMigrations
+  validate-schema.ts    # Schema-Assertions nach Migrationen (kein DDL)
+  driver.ts             # SQLite-Adapter — einziger Import von node:sqlite
   migrations/           # versionierte .sql-Dateien + Registry (index.ts)
-  sqlite/
-    driver.ts           # Adapter: einziger Import von node:sqlite
 ```
 
 | Segment | Verantwortung | Importiert von |
 |---------|---------------|----------------|
-| **Port** (`port/types.ts`) | Abstraktion, testbar ohne SQLite | Driver, Runtime, Features (nur Typen) |
-| **Adapter** (`sqlite/`) | Konkrete SQLite-Anbindung | nur `runtime/connection.ts` |
-| **Runtime** (`runtime/`) | Verbindung, Transaktionen, PRAGMAs | `app/bootstrap`, Features via Public API |
-| **Migration** (`migration/`, `migrations/`) | Runner, Schema-Assertions, versionierte SQL | `app/bootstrap` |
+| **Types** (`types/`) | Port-Interfaces | Driver, Runtime-Module, Features (nur Typen) |
+| **Driver** (`driver.ts`) | Konkrete SQLite-Anbindung | nur `connection.ts` |
+| **Runtime** (`connection`, `transactions`, `pragmas`) | Verbindung, Transaktionen, PRAGMAs | `app/bootstrap`, Features via Public API |
+| **Migration** (`runner.ts`, `validate-schema.ts`, `migrations/`) | Runner, Schema-Assertions, versionierte SQL | `app/bootstrap` |
 
 **Regeln:**
 
-- Features/Repositories importieren nur `@main/shared/database` (`getDatabase`, `runInTransaction`) — nie `sqlite/driver` oder interne `migration/`-Pfade.
+- Features/Repositories importieren nur `@main/shared/database` (`getDatabase`, `runInTransaction`) — nie `driver.ts` oder andere interne Module direkt.
 - **Kein domänenspezifisches DDL außerhalb von `migrations/*.sql`** — Tabellen stehen in versionierten Migrationen (z. B. `users` in `V001__authorize_create_tables.sql`). `validate-schema.ts` prüft nur, wirft bei inkompatiblem Legacy-Schema.
 - **Schema-Besitz:** SQL-Dateien benennen nach Slice/Kontext (`authorize_*`, `users_*`, …), Registry in `migrations/index.ts` aggregiert alle Dateien. Optional später: SQL pro Feature (`features/<slice>/migrations/`) exportieren und in der Registry sammeln — nur sinnvoll, wenn viele Slices eigenes Schema pflegen.
 
@@ -126,7 +124,7 @@ shared/database/
 | DB öffnen, migrieren, schließen | `app/bootstrap` + `shared/database` Public API |
 
 - `shared` importiert **keine** Features und kein `electron` außer wo technisch zwingend (Database-Pfad via `app`).
-- Tests nutzen `@main/shared/database`, nicht interne Driver-Pfade (`sqlite/driver`).
+- Tests nutzen `@main/shared/database`, nicht interne Driver-Pfade (`driver.ts`).
 
 ## window
 
@@ -169,6 +167,12 @@ Liegt auf **gleicher Ebene** wie `main/` und `renderer/` (`src/preload/`).
 
 Preload importiert Typen aus `@shared/types/electron-api` (Renderer-Shared-Types — bewusste Ausnahme für die API-Vertragsschicht).
 
+## Documentation
+
+- All **exported** functions, types, and interfaces under `src/main/` require English JSDoc.
+- Enforced via ESLint (`jsdoc/*` on `src/main/**/*.ts`, excluding tests).
+- Internal helpers without `export` are documented only when non-obvious.
+
 ## Abgrenzung Renderer (FSD) vs. Main (VSA)
 
 | Aspekt | Renderer (`src/renderer/`) | Main (`src/main/`) |
@@ -188,3 +192,4 @@ Preload importiert Typen aus `@shared/types/electron-api` (Renderer-Shared-Types
 5. Schema-Änderung → Migration unter `src/main/shared/database/migrations/`?
 6. Tests co-located; DB-Tests über `@main/shared/database`?
 7. Privilegierte Handler mit Session-Check abgesichert?
+8. Exportierte APIs mit englischem JSDoc dokumentiert?

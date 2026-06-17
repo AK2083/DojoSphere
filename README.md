@@ -41,7 +41,7 @@ DojoSphere stores tournament data locally in the Electron main process using SQL
 ### Driver
 
 - **Driver:** Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (`DatabaseSync`) — synchronous SQLite access without native module rebuilds. Requires Node.js 24+.
-- **Port:** Application code uses `@main/shared/database` (public API). Only `src/main/shared/database/sqlite/driver.ts` imports `node:sqlite` directly.
+- **Port:** Application code uses `@main/shared/database` (public API). Only `src/main/shared/database/driver.ts` imports `node:sqlite` directly.
 
 Connection logic lives in `src/main/shared/database/`. The main process is built to `dist-electron/` via `vite-plugin-electron`.
 

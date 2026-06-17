@@ -3,12 +3,14 @@ import { randomUUID } from 'node:crypto'
 import { findRoleIdByName } from '@main/features/authorization'
 import { getDatabase, runInTransaction } from '@main/shared/database'
 
+/** Input for creating a user record. */
 export type CreateUserInput = {
   displayName: string
   email?: string | null
   userType?: 'local' | 'device' | 'system'
 }
 
+/** Persisted user row returned by repository queries. */
 export type UserRecord = {
   id: string
   displayName: string
@@ -18,6 +20,11 @@ export type UserRecord = {
   updatedAt: string | null
 }
 
+/**
+ * Returns all users ordered by creation time.
+ *
+ * @returns All user records in the database.
+ */
 export function getUsers(): UserRecord[] {
   const db = getDatabase()
 
@@ -37,6 +44,12 @@ export function getUsers(): UserRecord[] {
     .all() as UserRecord[]
 }
 
+/**
+ * Creates a user and assigns the list-keeper role for local users.
+ *
+ * @param user - User fields to persist.
+ * @returns The created user identifier.
+ */
 export function addUser(user: CreateUserInput) {
   const db = getDatabase()
   const id = randomUUID()
@@ -63,6 +76,12 @@ export function addUser(user: CreateUserInput) {
   return { id }
 }
 
+/**
+ * Finds a local user by exact display name match.
+ *
+ * @param displayName - Display name to look up.
+ * @returns The matching user or null when not found.
+ */
 export function findLocalUserByDisplayName(displayName: string): UserRecord | null {
   const db = getDatabase()
 
@@ -109,6 +128,14 @@ function getUserById(userId: string): UserRecord | null {
   return row ?? null
 }
 
+/**
+ * Updates the display name of an existing user.
+ *
+ * @param userId - Identifier of the user to update.
+ * @param displayName - New display name (trimmed; must not be empty).
+ * @returns The updated user record.
+ * @throws {Error} When the display name is empty or the user does not exist.
+ */
 export function updateUserDisplayName(userId: string, displayName: string): UserRecord {
   const trimmedDisplayName = displayName.trim()
 

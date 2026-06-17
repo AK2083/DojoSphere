@@ -1,7 +1,7 @@
-import migrations from '../migrations'
-import type { Database } from '../port/types'
-import { applyPragmas } from '../runtime/pragmas'
-import { runInTransaction } from '../runtime/transactions'
+import migrations from './migrations'
+import { applyPragmas } from './pragmas'
+import { runInTransaction } from './transactions'
+import type { Database } from './types/database'
 
 import { assertUsersTableSchema } from './validate-schema'
 
@@ -24,6 +24,11 @@ function getAppliedMigrationIds(db: Database) {
   )
 }
 
+/**
+ * Applies pending SQL migrations and validates the resulting schema.
+ *
+ * @param db - Database connection to migrate.
+ */
 export function runMigrations(db: Database) {
   applyPragmas(db)
   ensureMigrationsTable(db)

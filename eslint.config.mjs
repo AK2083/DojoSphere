@@ -55,6 +55,32 @@ export default defineConfig([
       'security/detect-object-injection': 'off'
     }
   },
+  {
+    files: ['src/main/**/*.ts'],
+    ignores: ['src/main/**/*.test.ts', 'src/main/test/**'],
+    plugins: { jsdoc },
+    rules: {
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+            ClassDeclaration: true
+          },
+          contexts: [
+            'ExportNamedDeclaration > TSInterfaceDeclaration',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration'
+          ]
+        }
+      ],
+      'jsdoc/require-param': 'error',
+      'jsdoc/require-returns': 'error',
+      'jsdoc/require-returns-check': 'warn',
+      'jsdoc/check-types': 'error'
+    }
+  },
   ...pluginVue.configs['flat/strongly-recommended'].map((config) => ({
     ...config,
     files: ['src/renderer/**/*.vue']
