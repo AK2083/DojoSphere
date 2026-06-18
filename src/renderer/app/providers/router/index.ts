@@ -58,6 +58,7 @@ const routes = [
   }
 ]
 
+/** Application router with authentication and offline navigation guards. */
 const router = createRouter({
   history: createWebHashHistory(),
   routes

@@ -6,6 +6,7 @@ import { bindConnectivityState } from '@shared/model'
 import { useStatusState } from '../model/use-status-state'
 import { useNetworkStatusStore } from '../network-status/store'
 
+/** Result of checking backend connectivity via the heartbeat edge function. */
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
 
 function mapHeartbeatError(error: Error): AppError {

@@ -71,7 +71,10 @@ export default defineConfig([
           },
           contexts: [
             'ExportNamedDeclaration > TSInterfaceDeclaration',
-            'ExportNamedDeclaration > TSTypeAliasDeclaration'
+            'ExportNamedDeclaration > TSTypeAliasDeclaration',
+            'ExportNamedDeclaration > VariableDeclaration',
+            'ExportDefaultDeclaration > VariableDeclaration',
+            'ExportDefaultDeclaration > FunctionDeclaration'
           ]
         }
       ],
@@ -125,6 +128,12 @@ export default defineConfig([
   },
   {
     files: ['src/renderer/**/*.{ts,js}'],
+    ignores: [
+      'src/renderer/**/*.test.ts',
+      'src/renderer/**/*.spec.ts',
+      'src/renderer/**/*.stories.ts',
+      'src/renderer/shared/tests/**'
+    ],
     plugins: {
       jsdoc
     },
@@ -137,7 +146,14 @@ export default defineConfig([
             FunctionDeclaration: true,
             ClassDeclaration: true,
             MethodDefinition: true
-          }
+          },
+          contexts: [
+            'ExportNamedDeclaration > TSInterfaceDeclaration',
+            'ExportNamedDeclaration > TSTypeAliasDeclaration',
+            'ExportNamedDeclaration > VariableDeclaration',
+            'ExportDefaultDeclaration > VariableDeclaration',
+            'ExportDefaultDeclaration > FunctionDeclaration'
+          ]
         }
       ],
       'jsdoc/require-param': 'error',

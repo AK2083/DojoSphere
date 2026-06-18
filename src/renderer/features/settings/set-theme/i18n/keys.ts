@@ -1,3 +1,4 @@
+/** i18n keys for theme settings. */
 const translationKeys = {
   title: 'settings.theme.title',
   description: 'settings.theme.description',

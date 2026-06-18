@@ -1,8 +1,10 @@
+/** Result of a SQLite health check exposed over IPC. */
 export interface DbHealthcheckResult {
   ok: boolean
   version: string
 }
 
+/** Local user record stored in SQLite. */
 export interface User {
   id: string
   displayName: string
@@ -12,18 +14,21 @@ export interface User {
   updatedAt: string | null
 }
 
+/** Input for creating a local user via IPC. */
 export interface CreateUserInput {
   displayName: string
   email?: string | null
   userType?: 'local' | 'device' | 'system'
 }
 
+/** Result of adding a user, optionally including a new session. */
 export interface AddUserResult {
   id: string
   sessionToken?: string
   expiresAt?: string
 }
 
+/** Active local session with embedded user profile. */
 export interface LocalSession {
   id: string
   userId: string
@@ -32,12 +37,14 @@ export interface LocalSession {
   user: User
 }
 
+/** Result of ensuring a local session for a display name. */
 export interface EnsureLocalSessionResult {
   id: string
   sessionToken: string
   expiresAt: string
 }
 
+/** Typed IPC surface exposed on `window.api` by the preload script. */
 export interface ElectronAPI {
   getUsers: () => Promise<User[]>
   addUser: (user: CreateUserInput) => Promise<AddUserResult>

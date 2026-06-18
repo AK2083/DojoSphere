@@ -8,6 +8,7 @@ import { navigationDe, navigationEn } from '@widgets/navigation'
 import appDe from './de'
 import appEn from './en'
 
+/** Root vue-i18n instance with feature message bundles. */
 export const i18n = createI18n({
   legacy: false,
   locale: getInitialLanguage(),

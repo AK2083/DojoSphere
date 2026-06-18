@@ -6,13 +6,14 @@ Open-source Electron application for managing Judo tournaments.
 
 - Tournament administration
 - Competitor and club management
-- Local intranet spectator view
+- Local intranet audience view
 - Match and schedule overview
 - Offline/local-first capable setup
 
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
+- [Logging & Monitoring](#logging--monitoring)
 - [Local Database (SQLite)](#local-database-sqlite)
 - [Requirements](#requirements)
 - [Quick Start](#quick-start)
@@ -30,9 +31,21 @@ Open-source Electron application for managing Judo tournaments.
 - **Local Database:** [SQLite](https://www.sqlite.org/) via Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (Electron main process)
 - **Internationalization:** [vue-i18n](https://vue-i18n.intlify.dev/)
 - **Backend Services:** [Supabase](https://supabase.com/)
-- **Monitoring:** [Sentry for Vue](https://docs.sentry.io/platforms/javascript/guides/vue/), [GlitchTip](https://glitchtip.com/)
+- **Monitoring:** local capture via Sentry offline queue (target: [`@sentry/electron`](https://docs.sentry.io/platforms/javascript/guides/electron/)); GlitchTip upload later; interim [`@sentry/vue`](https://docs.sentry.io/platforms/javascript/guides/vue/) in the renderer (see [Logging & Monitoring](#logging--monitoring))
 - **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E), [Storybook](https://storybook.js.org/) (UI components)
 - **Code Quality:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
+
+## Logging & Monitoring
+
+DojoSphere separates three lanes: **telemetry** (errors, queued locally), **audit** (business actions → SQLite `authorization_audit_logs`), and **debug** (support → log file in main).
+
+**Current focus: capture first, send later.** Telemetry and audit are recorded locally even when offline or cloud mode is off. Upload to GlitchTip is planned for a later phase — see [`docs/logging.md`](docs/logging.md).
+
+**Cloud mode (`isCloudUsed`)** gates cloud services and will gate telemetry **upload**, not **capture**.
+
+**Scorekeepers** use the same audit logging as the **tournament director** for every write (`authorization_audit_logs`, via `entity_type`). **The audience** is anonymous and read-only — no name, no sign-in, and no dedicated activity logging.
+
+Full architecture, phased issues, and risks: [`docs/logging.md`](docs/logging.md).
 
 ## Local Database (SQLite)
 
@@ -202,7 +215,7 @@ See `.cursor/rules/architecture-vertical-slice.mdc` for details.
 
 - `@fontsource/roboto`: Provides local Roboto fonts for consistent typography across platforms.
 - `@mdi/js`: Provides Material Design icon SVG paths for flexible icon rendering.
-- `@sentry/vue`: Captures runtime errors and performance signals for monitoring and debugging.
+- `@sentry/vue`: Interim — runtime errors and breadcrumbs in the renderer; migration to `@sentry/electron` planned ([`docs/logging.md`](docs/logging.md)).
 - `@supabase/supabase-js`: Client SDK for Supabase auth, database access, and related services.
 - `vue`: Core framework for building reactive, component-driven user interfaces.
 - `vue-i18n`: Internationalization library for translations and locale-aware UI text.
