@@ -4,13 +4,21 @@ import type { ElectronAPI } from '@shared/types/electron-api'
 
 import { contextBridge, getExposedApi, ipcRenderer } from '../main/test/electron-mock'
 
+const sentryInit = vi.fn()
+
+vi.mock('@sentry/electron/renderer', () => ({
+  init: sentryInit
+}))
+
 describe('preload', () => {
   beforeEach(async () => {
     vi.resetModules()
+    sentryInit.mockClear()
     await import('./preload')
   })
 
-  it('exposes the electron api on window', () => {
+  it('initializes Sentry before exposing the electron api', () => {
+    expect(sentryInit).toHaveBeenCalledOnce()
     expect(contextBridge.exposeInMainWorld).toHaveBeenCalledWith('api', expect.any(Object))
   })
 

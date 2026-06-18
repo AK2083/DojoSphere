@@ -1,7 +1,11 @@
-import * as Sentry from '@sentry/vue'
+import * as ElectronSentry from '@sentry/electron/renderer'
+import * as VueSentry from '@sentry/vue'
+import { isPlaywrightBrowserOnly } from '@shared/lib/electron/e2e-api'
 
 import type { LogLevel } from './log-level'
-import { isMonitoringEnabled } from './monitoring-guard'
+import { shouldCaptureTelemetry } from './monitoring-guard'
+
+const Sentry = isPlaywrightBrowserOnly() ? VueSentry : ElectronSentry
 
 /**
  * Sets the current user context for the logging provider.
@@ -13,7 +17,7 @@ import { isMonitoringEnabled } from './monitoring-guard'
  * @param user.id
  */
 export function setUserContext(user: { id: string }) {
-  if (!isMonitoringEnabled()) {
+  if (!shouldCaptureTelemetry()) {
     return
   }
 
@@ -27,7 +31,7 @@ export function setUserContext(user: { id: string }) {
  * subsequent events from being associated with the previous user.
  */
 export function clearUserContext() {
-  if (!isMonitoringEnabled()) {
+  if (!shouldCaptureTelemetry()) {
     return
   }
 
@@ -45,7 +49,7 @@ export function clearUserContext() {
  * @param {string} action - The specific action that triggered the error (e.g. `signUp`, `getStorageItem`).
  */
 export function captureException(error: Error, service: string, action: string) {
-  if (!isMonitoringEnabled()) {
+  if (!shouldCaptureTelemetry()) {
     return
   }
 
@@ -72,7 +76,7 @@ export function addBreadcrumb(
   level: LogLevel,
   data?: object
 ) {
-  if (!isMonitoringEnabled()) {
+  if (!shouldCaptureTelemetry()) {
     return
   }
 

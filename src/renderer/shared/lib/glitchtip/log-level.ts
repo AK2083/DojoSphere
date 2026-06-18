@@ -1,4 +1,4 @@
-import type * as Sentry from '@sentry/browser'
+import type * as Sentry from '@sentry/core'
 
 /**
  * Represents the log severity level used by the logging provider.

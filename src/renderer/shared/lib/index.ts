@@ -8,7 +8,7 @@ export {
   clearUserContext,
   setUserContext
 } from './glitchtip/logging'
-export { setCloudModeMonitoringCheck } from './glitchtip/monitoring-guard'
+export { setCloudModeMonitoringCheck, shouldCaptureTelemetry } from './glitchtip/monitoring-guard'
 export { AvailableLanguages, FallbackLanguage, LanguageCode } from './i18n/languages'
 export { useTranslation } from './i18n/use-translation'
 export { getActiveStore, newStore, newStoreToRefs } from './pinia/store-define'
