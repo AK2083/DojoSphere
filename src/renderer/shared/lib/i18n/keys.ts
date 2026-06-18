@@ -1,3 +1,4 @@
+/** Shared i18n keys for validation and generic error messages. */
 const translationKeys = {
   error: {
     retry: 'shared.error.retry',

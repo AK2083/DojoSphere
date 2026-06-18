@@ -13,7 +13,7 @@ Open-source Electron application for organizing **small judo tournaments** in cl
 |------|--------|----------------|
 | **Tournament director** | Host computer (Electron) | Starts the app, registers competitors and mat count, manages the tournament |
 | **Scorekeeper** | Separate computer/browser | Connects via URL to the host; access only after approval |
-| **Spectator** | Browser on intranet | Views overview via URL or QR code — **without** approval by the tournament director |
+| **Audience** | Browser on intranet | Views overview via URL or QR code — **without** approval by the tournament director |
 
 ### Planned flow (prospective)
 
@@ -21,9 +21,9 @@ Open-source Electron application for organizing **small judo tournaments** in cl
 2. Competitors and mat count are recorded locally.
 3. Scorekeepers open a URL on the intranet and send a request to the host.
 4. Tournament director **approves** the request and **assigns a mat**.
-5. Spectators open the overview via URL/QR code on the intranet — read-only, no approval.
+5. The audience opens the overview via URL/QR code on the intranet — read-only, no approval.
 
-When building new features, consider these roles and the approval flow: scorekeeper = protected access, spectator = public overview on the LAN.
+When building new features, consider these roles and the approval flow: scorekeeper = protected access, audience = public overview on the LAN.
 
 ## Technical guidelines
 
@@ -47,12 +47,12 @@ Tournament competitors are natural persons — protect personal data:
 - **No sensitive data in plaintext** when storing or transmitting (hashed passwords, secure tokens, no PII in logs/monitoring)
 - Minimal data collection: only what is needed for tournament operations
 - Cloud sync only with authentication; secure access rights server-side (RLS with Supabase)
-- Intranet access (scorekeepers/spectators) on the LAN — still avoid unnecessary exposure of personal data in URLs or client storage
+- Intranet access (scorekeepers/audience) on the LAN — still avoid unnecessary exposure of personal data in URLs or client storage
 - For new fields/endpoints, check: storage location (local vs. cloud), consent, deletability, encryption where appropriate
 
 ## Scope notes for implementation
 
 - Small tournaments: simple operation for volunteers matters more than enterprise features
-- Tournament director workflow (Electron) and browser clients (scorekeepers/spectators) are separate access paths — shared domain logic, different UI/permissions
+- Tournament director workflow (Electron) and browser clients (scorekeepers/audience) are separate access paths — shared domain logic, different UI/permissions
 - i18n for all UI text; no hardcoded strings
 - Open Source (MIT): consider club compatibility for code and dependencies

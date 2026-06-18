@@ -7,6 +7,7 @@ function migration(name: string, id: string, sql: string): Migration {
   return { id, name, sql }
 }
 
+/** Ordered list of database migrations applied at startup. */
 const migrations: Migration[] = [
   migration('V001__authorize_create_tables.sql', '8f3c2a1b-4d5e-6f70-8192-a3b4c5d6e701', sqlV001),
   migration(

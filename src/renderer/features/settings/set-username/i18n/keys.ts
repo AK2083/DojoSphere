@@ -1,3 +1,4 @@
+/** i18n keys for username settings. */
 const translationKeys = {
   title: 'settings.username.title',
   description: 'settings.username.description',

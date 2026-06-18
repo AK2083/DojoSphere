@@ -1,3 +1,4 @@
+/** i18n keys for the sign-in user slice. */
 const translationKeys = {
   title: 'auth.signIn.title',
   description: 'auth.signIn.description',

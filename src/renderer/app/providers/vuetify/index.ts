@@ -11,6 +11,7 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 import 'vuetify/styles/main.css'
 
+/** Root Vuetify instance with theme and MDI icon configuration. */
 export const vuetify = createVuetify({
   directives,
   theme: {

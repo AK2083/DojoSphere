@@ -1,3 +1,4 @@
+/** i18n keys for navigation widget labels. */
 const translationKeys = {
   label: 'navigation.label',
   ariaLabel: 'navigation.ariaLabel',

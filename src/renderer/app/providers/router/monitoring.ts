@@ -1,5 +1,6 @@
 import { addBreadcrumb } from '@shared/lib'
 
+/** Monitoring breadcrumb category for router events. */
 export const CATEGORY = 'router'
 
 /**

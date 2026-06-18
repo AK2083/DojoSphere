@@ -1,3 +1,4 @@
+/** i18n keys for the confirm user slice. */
 const translationKeys = {
   title: 'auth.confirmUser.title',
   description: 'auth.confirmUser.description',

@@ -1,3 +1,4 @@
+/** i18n keys for the register user slice. */
 const translationKeys = {
   title: 'auth.registerUser.title',
   description: 'auth.registerUser.description',

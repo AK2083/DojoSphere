@@ -4,6 +4,7 @@ import { getCloudStatusFromStorage, setCloudStatusToStorage } from '../service/c
 
 const DEFAULT_CLOUD_STATUS = true
 
+/** Pinia store tracking whether cloud services are enabled. */
 export const useCloudStatusStore = newStore('cloud-status', {
   state: () => ({
     isCloudUsed: getCloudStatusFromStorage() ?? DEFAULT_CLOUD_STATUS

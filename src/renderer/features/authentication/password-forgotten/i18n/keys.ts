@@ -1,3 +1,4 @@
+/** i18n keys for the password forgotten slice. */
 const translationKeys = {
   steps: {
     title: 'auth.passwordForgotten.steps.title',

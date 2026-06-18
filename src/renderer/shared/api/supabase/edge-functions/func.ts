@@ -1,5 +1,6 @@
 import { supabase } from '../client'
 
+/** JSON payload returned by the Supabase heartbeat edge function. */
 export type HeartbeatFunctionResponse = {
   status: string
   timestamp: string
