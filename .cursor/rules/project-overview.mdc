@@ -31,11 +31,12 @@ When building new features, consider these roles and the approval flow: scorekee
 - **Desktop:** Electron — primary application for the tournament director
 - **Local-first data:** SQLite in the Electron main process; renderer accesses only via IPC/preload
 - **Cloud optional:** Supabase for authentication and cloud storage/sync — configuration and sync in **Settings**
-- **Monitoring:** GlitchTip/Sentry (capture errors, do not send sensitive personal data)
+- **Monitoring:** OpenTelemetry — local trace capture in main + renderer (OTLP → `<userData>/telemetry/traces.jsonl`); optional Grafana Cloud upload later; no sensitive personal data in spans
 
 ## Data storage and sync
 
 - **Primary:** local SQLite database on the host (`<userData>/database.db`)
+- **Telemetry (local):** OpenTelemetry trace batches on the host (`<userData>/telemetry/traces.jsonl`)
 - **Optional:** cloud sync via Supabase after sign-in — manual/automatic control in Settings
 - Offline/local-first behavior takes precedence: the app must work without cloud
 - Sync logic and conflict handling belong in Settings or dedicated feature slices — not scattered in UI components

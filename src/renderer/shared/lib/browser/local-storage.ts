@@ -1,4 +1,4 @@
-import { captureException } from '../glitchtip/logging'
+import { captureException } from '../telemetry/logging'
 
 /**
  * Retrieves a value from browser localStorage and parses it as JSON.

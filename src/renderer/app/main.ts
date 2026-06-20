@@ -16,6 +16,6 @@ if (isPlaywrightBrowserOnly()) {
 }
 
 const app = createApp(App)
-initLoggingProvider(app, router, import.meta.env.VITE_GLITCHTIP_DSN, import.meta.env.MODE)
+initLoggingProvider(router, import.meta.env.MODE)
 
 app.use(i18n).use(router).use(vuetify).use(pinia).mount('#app')

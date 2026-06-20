@@ -1,9 +1,6 @@
-import * as Sentry from '@sentry/electron/renderer'
 import { contextBridge, ipcRenderer } from 'electron'
 
 import type { ElectronAPI } from '@shared/types/electron-api'
-
-Sentry.init()
 
 const api: ElectronAPI = {
   getUsers: () => ipcRenderer.invoke('users:list'),

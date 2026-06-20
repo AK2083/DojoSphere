@@ -40,9 +40,6 @@ export default defineConfig(({ mode }) => {
                 },
                 vite: {
                   define: {
-                    'import.meta.env.VITE_GLITCHTIP_DSN': JSON.stringify(
-                      env.VITE_GLITCHTIP_DSN ?? ''
-                    ),
                     'import.meta.env.MODE': JSON.stringify(mode)
                   },
                   resolve: {

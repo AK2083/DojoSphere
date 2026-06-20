@@ -10,31 +10,33 @@ This document is the outcome of **SPIKE #0: Offline-First Logging Architecture**
 
 | Phase | Goal | Issues |
 |-------|------|--------|
-| **Capture** | Record telemetry locally (offline queue), audit in SQLite | 1, 3 (local queue), 4–6 |
-| **Send** | Upload queued telemetry to GlitchTip; reachability gates | 2; upload wiring in Issue 3 — **deferred** |
+| **Capture** | Record telemetry locally (OTLP → JSONL), audit in SQLite | 1 ✓, 3 ✓ (local collector), 4–6 |
+| **Send** | Upload queued telemetry to Grafana Cloud (OTLP); reachability gates | 2; upload wiring in Issue 3 — **deferred** |
 
-Capture must work offline and with cloud mode off. Sending to GlitchTip is architecturally prepared (`shouldUploadTelemetry`, `shouldSend`) but not required for the first implementation milestones.
+Capture must work offline and with cloud mode off. Sending to Grafana Cloud is architecturally prepared (`shouldUploadTelemetry`, reachability checks) but not required for the first implementation milestones.
 
 ## Current state
 
 | Topic | Today |
 |-------|-------|
-| SDK | `@sentry/vue` in the renderer only |
-| Main / Preload | no monitoring, no audit IPC |
-| Offline | `isMonitoringEnabled()` drops events entirely (no queue) |
-| Cloud mode | `isCloudUsed` blocks both capture and upload |
+| SDK | OpenTelemetry — `@opentelemetry/sdk-trace-web` (renderer), `@opentelemetry/sdk-trace-node` (main) |
+| Local collector | Main-process OTLP/HTTP server on `127.0.0.1:4318`; trace batches appended to `<userData>/telemetry/traces.jsonl` |
+| Public API | `@shared/lib` (`captureException`, `addBreadcrumb`, `setUserContext`, …) — features do not import OTel SDKs |
+| Main / Preload | telemetry init in main (`initTelemetryApp`); no audit IPC yet |
+| Offline | `shouldCaptureTelemetry()` allows local capture; spans export to localhost collector |
+| Cloud mode | `isCloudUsed` will gate **upload** only; capture remains local |
 | Audit | `authorization_audit_logs` table in migration V001, no application logic yet |
-| Connectivity | `navigator.onLine` and Supabase heartbeat are separate; not used for upload gates |
+| Connectivity | `navigator.onLine` and Supabase heartbeat are separate; not yet used for upload gates |
 
 ## Target: three lanes
 
 | Lane | Purpose | Storage / destination | Process |
 |------|---------|----------------------|---------|
-| **Telemetry** | Errors, performance, technical breadcrumbs | **Capture:** Sentry offline queue (local). **Send (later):** GlitchTip | Main + renderer via `@sentry/electron` |
+| **Telemetry** | Errors, performance, technical breadcrumbs | **Capture:** local OTLP collector → `<userData>/telemetry/traces.jsonl`. **Send (later):** Grafana Cloud (OTLP) | Main + renderer via OpenTelemetry SDKs |
 | **Audit** | Traceable business actions (who changed what?) | SQLite (`authorization_audit_logs`) | main only |
 | **Debug** | Developer / support logs | rotating log file | main only |
 
-**Separation rule:** Audit events **never** go to Sentry/GlitchTip. Telemetry does not replace audit.
+**Separation rule:** Audit events **never** go to Grafana Cloud / telemetry backends. Telemetry does not replace audit.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -42,15 +44,16 @@ Capture must work offline and with cloud mode off. Sending to GlitchTip is archi
 │ use telemetry + audit; the audience (anonymous, read-only) uses    │
 │ neither for activity tracking                                     │
 │                                                                 │
-│  @shared/lib/telemetry  ──► @sentry/electron/renderer           │
+│  @shared/lib/telemetry  ──► OTLP/HTTP → 127.0.0.1:4318          │
 │  @shared/lib/audit      ──► preload IPC ──► Main → SQLite       │
 └─────────────────────────────────────────────────────────────────┘
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ Main Process                                                    │
-│  @sentry/electron/main  → offline disk queue (capture)          │
-│                         → GlitchTip upload (send — later)       │
+│  local OTLP collector   → traces.jsonl (capture)                │
+│  sdk-trace-node         → same collector (main spans)             │
+│                         → Grafana Cloud upload (send — later)   │
 │  audit repository       → authorization_audit_logs (SQLite)     │
 │  debug logger           → log file (userData/logs/)             │
 └─────────────────────────────────────────────────────────────────┘
@@ -62,43 +65,43 @@ Capture must work offline and with cloud mode off. Sending to GlitchTip is archi
 
 | Action | Cloud on (`isCloudUsed = true`) | Cloud off (`isCloudUsed = false`) |
 |--------|----------------------------------|-----------------------------------|
-| Telemetry **capture** (local queue) | yes | yes |
-| Telemetry **upload** (GlitchTip) | yes, when reachable + optional consent | no |
+| Telemetry **capture** (local OTLP / JSONL) | yes | yes |
+| Telemetry **upload** (Grafana Cloud) | yes, when reachable + optional consent | no |
 | Supabase access | yes, after heartbeat | no |
 | Audit (SQLite) | yes | yes |
 | Debug file | yes (configurable) | yes (configurable) |
 
-**Core rule:** Cloud mode controls **upload**, not **capture**. Events created offline stay in the Sentry offline queue until a later send phase allows upload.
+**Core rule:** Cloud mode controls **upload**, not **capture**. Events captured offline are stored locally in `traces.jsonl` until a later send phase allows upload.
 
 ### Send phase — upload (deferred)
 
-Applies only when **sending** queued telemetry to GlitchTip — not when **capturing** events locally.
+Applies only when **sending** queued telemetry to Grafana Cloud — not when **capturing** events locally.
 
-- **Capture:** always on (local queue / SQLite); no dialog, no upload required.
+- **Capture:** always on (local OTLP collector / SQLite audit); no dialog, no upload required.
 - **Send (later):** upload when cloud mode, reachability, and product rules allow (details TBD).
 
 Send UX (e.g. consent dialog, settings) is out of scope for the current issue list.
 
 ## Connectivity checks
 
-**Send phase only** — not required for local capture. Before GlitchTip upload (Issue 2), the service is checked explicitly:
+**Send phase only** — not required for local capture. Before Grafana Cloud upload (Issue 2), the service is checked explicitly:
 
 | Before access to | Check | Already exists | Phase |
 |------------------|-------|----------------|-------|
 | Supabase (auth, API, sync) | heartbeat edge function | yes (`checkHeartbeatConnectivity`) | sync |
-| GlitchTip / Sentry upload | dedicated reachability check (ping/HEAD to ingest endpoint or health URL) | no — Issue 2 | **send** |
-| Local SQLite / IPC | no network check | — | capture |
+| Grafana Cloud OTLP upload | dedicated reachability check (ping/HEAD to ingest endpoint or health URL) | no — Issue 2 | **send** |
+| Local SQLite / IPC / OTLP collector | no network check | — | capture |
 
 **Telemetry upload gate (send phase, target):**
 
 ```
 uploadAllowed =
   isCloudUsed
-  ∧ glitchtipReachable
+  ∧ grafanaCloudReachable
   ∧ (autoUploadEnabled ∨ userConsentedToUpload)
 ```
 
-Heartbeat result and GlitchTip reachability are tracked separately (dedicated status signal or extension of the network status store).
+Heartbeat result and Grafana Cloud reachability are tracked separately (dedicated status signal or extension of the network status store).
 
 ## Roles and logging scope
 
@@ -158,43 +161,44 @@ The renderer calls `window.api.auditRecord(...)` thinly; writes happen in main o
 
 ## PII and privacy
 
-- No tokens, session IDs, passwords, or full personal records in telemetry `extra` / breadcrumb `data`
+- No tokens, session IDs, passwords, or full personal records in span attributes / breadcrumb `data`
 - `setUserContext` with internal user ID only (no email)
-- `beforeSend` hook: scrubbing, drop on suspicion
+- Span attribute scrubbing before export (send phase)
 - Review existing breadcrumb payloads (e.g. cloud status as boolean flag only, no key names with context)
-- Queue path under `userData` — document in settings
-- Retention: Sentry `maxAgeDays` / `maxQueueSize`; audit retention operator-side; debug logs with rotation
+- Trace file under `<userData>/telemetry/` — document in settings
+- Retention: JSONL rotation / max file size (TBD); audit retention operator-side; debug logs with rotation
 
-## SDK decision: `@sentry/electron`
+## SDK decision: OpenTelemetry
 
-| | `@sentry/vue` (today) | `@sentry/electron` (target) |
-|-|----------------------|-----------------------------|
-| Main crashes / DB init | no | yes |
-| Offline queue | no (events dropped) | yes (disk, default) |
-| Renderer → main context | no | yes |
+| | `@sentry/vue` (former) | OpenTelemetry (today) |
+|-|------------------------|------------------------|
+| Main crashes / DB init | no | yes (main `sdk-trace-node`) |
+| Offline / local-first | events dropped | yes — OTLP to localhost collector, JSONL on disk |
+| Renderer → main context | no | both export to same local collector |
+| Vendor lock-in | Sentry/GlitchTip-specific | OTLP standard; Grafana Cloud as optional backend |
 | LAN clients (scorekeeper/audience) | same app | same app |
 
-Do **not** use `makeBrowserOfflineTransport` in the Electron renderer — it bypasses main routing in `@sentry/electron`.
+Renderer code imports only `@shared/lib` (FSD), not `@opentelemetry/*` directly. Main-process credentials for Grafana Cloud (send phase) stay in main only — never in renderer or `.env` exposed to Vite.
 
-Renderer code continues to import only `@shared/lib` (FSD), not `@sentry/*` directly.
+## API design
 
-## API design (target)
+Existing calls (`captureException`, `addBreadcrumb`, `setUserContext`) remain unchanged at the feature level:
 
-Existing calls (`captureException`, `addBreadcrumb`, `setUserContext`) remain; the internal guard is replaced:
+| Former | Today / target |
+|--------|----------------|
+| `isMonitoringEnabled()` (blocked capture + upload) | `shouldCaptureTelemetry()` — `true` for local capture |
+| — | `shouldUploadTelemetry()` — cloud + Grafana reachability + optional consent (**send phase**) |
+| — | `auditRecord(event)` — IPC → main (**not yet implemented**) |
 
-| Today | Target |
-|-------|--------|
-| `isMonitoringEnabled()` (blocks capture + upload) | `shouldCaptureTelemetry()` — almost always `true` |
-| — | `shouldUploadTelemetry()` — cloud + GlitchTip reachability + optional consent |
-| — | `auditRecord(event)` — IPC → main |
+Internal implementation maps exceptions and breadcrumbs to OpenTelemetry spans/events exported via OTLP/HTTP.
 
 ## Risks
 
 | Risk | Mitigation |
 |------|------------|
-| PII in events | `beforeSend`, audit schema, code review checklist |
-| Queue growth offline | `maxQueueSize`, `maxAgeDays`, breadcrumb sampling |
-| False “online” | separate heartbeat + GlitchTip ping |
+| PII in events | span attribute scrubbing, audit schema, code review checklist |
+| JSONL growth offline | rotation / max size, breadcrumb sampling |
+| False “online” | separate heartbeat + Grafana Cloud ping |
 | GDPR / retention | no auto-compliance claims; operator notice; delete/export issues |
 | Scorekeeper write attribution | same audit IPC and schema as tournament director; session required |
 | Audience privacy | no auth, no name, no activity telemetry or audit |
@@ -205,53 +209,50 @@ Existing calls (`captureException`, `addBreadcrumb`, `setUserContext`) remain; t
 
 Recommended order. Numbers are suggestions for GitHub issues.
 
-**Capture phase (near-term):** Issues 1, 3 (local queue), 4–6.
+**Capture phase (near-term):** Issues 1 ✓, 3 ✓ (local collector), 4–6.
 
 **Send phase (deferred):** Issue 2; upload enablement in Issue 3.
 
-### Issue 1 — Decouple telemetry guard (capture ≠ upload) · capture
+### Issue 1 — Decouple telemetry guard (capture ≠ upload) · capture ✓
 
-**Goal:** Short-term improvement without an SDK switch; events are no longer dropped offline; upload remains gated.
+**Goal:** Events are no longer dropped offline; upload remains gated.
 
-- `isMonitoringEnabled` → `shouldCaptureTelemetry` / `shouldUploadTelemetry`
+- `isMonitoringEnabled` → `shouldCaptureTelemetry` / `shouldUploadTelemetry` (upload helper deferred)
 - Capture: `navigator.onLine` no longer blocks `captureException` / `addBreadcrumb`
-- Upload: cloud mode + (interim) heartbeat or `onLine` until Issue 2
-- Tests for offline+cloud on, online+cloud off, combinations
-- Update existing feature tests
+- Tests for offline capture paths
 
-**DoD:** Unit tests green; offline exceptions retained in Sentry client (browser queue until Electron migration).
+**DoD:** Unit tests green; offline exceptions retained locally via OTLP → JSONL.
 
 ---
 
-### Issue 2 — Connectivity: GlitchTip reachability + unified gate · send
+### Issue 2 — Connectivity: Grafana Cloud reachability + unified gate · send
 
-**Goal:** Explicit checks before GlitchTip upload and before Supabase access. **Send phase** — not required for local capture.
+**Goal:** Explicit checks before Grafana Cloud upload and before Supabase access. **Send phase** — not required for local capture.
 
-- `checkGlitchtipReachability()` (HEAD/ping to ingest or configured health URL)
-- Extend network status store: `isSupabaseReachable`, `isGlitchtipReachable`
+- `checkGrafanaCloudReachability()` (HEAD/ping to OTLP ingest or configured health URL)
+- Extend network status store: `isSupabaseReachable`, `isGrafanaCloudReachable`
 - Supabase clients check heartbeat status before requests (or central API wrapper)
-- `shouldUploadTelemetry` uses `isGlitchtipReachable`
-- Document env vars (`VITE_GLITCHTIP_DSN`, optional health URL)
+- `shouldUploadTelemetry` uses `isGrafanaCloudReachable`
+- Document env vars for OTLP endpoint and credentials (main process only)
 
-**DoD:** Tests with mocked fetch; upload blocked when heartbeat OK but GlitchTip down.
+**DoD:** Tests with mocked fetch; upload blocked when heartbeat OK but Grafana Cloud down.
 
 ---
 
-### Issue 3 — Introduce `@sentry/electron` · capture (+ send later)
+### Issue 3 — OpenTelemetry local capture (+ Grafana upload later) · capture ✓ / send deferred
 
-**Goal (capture):** Main + renderer init, offline disk queue on disk.
+**Goal (capture, done):** Main + renderer init, local OTLP collector, JSONL persistence.
 
-**Goal (send, later):** `transportOptions.shouldSend` → `shouldUploadTelemetry`.
+**Goal (send, later):** Manual or automatic upload from Settings to Grafana Cloud (OTLP).
 
-- Install `@sentry/electron`; `initLoggingProvider` → main + renderer init
-- `transportOptions`: `maxAgeDays`, `maxQueueSize`; `shouldSend` wired when send phase starts
-- Capture main-process errors (DB init)
-- `beforeSend` scrubbing
-- Remove / replace `@sentry/vue` where obsolete
+- OpenTelemetry Web + Node SDKs; `initLoggingProvider` / `initTelemetryApp`
+- Local collector on `127.0.0.1:4318` with CORS for Vite dev origin
+- Trace batches in `<userData>/telemetry/traces.jsonl`
+- `@sentry/vue` and `@sentry/electron` removed
 
-**DoD (capture):** Airplane mode → error → event remains in local queue; cloud off → queue grows, no upload required.
+**DoD (capture):** Airplane mode → error → span batch in `traces.jsonl`; cloud off → local capture continues, no upload.
 
-**DoD (send, later):** When upload enabled → event appears in GlitchTip.
+**DoD (send, later):** When upload enabled → spans appear in Grafana Cloud.
 
 ---
 
@@ -297,8 +298,9 @@ Recommended order. Numbers are suggestions for GitHub issues.
 
 ## References
 
-- [Sentry Electron — Offline Support](https://docs.sentry.io/platforms/javascript/guides/electron/features/offline-support/)
-- Current code: `src/renderer/shared/lib/glitchtip/`
+- [OpenTelemetry — OTLP](https://opentelemetry.io/docs/specs/otlp/)
+- [OpenTelemetry JavaScript](https://opentelemetry.io/docs/languages/js/)
+- Current code: `src/renderer/shared/lib/telemetry/`, `src/main/features/telemetry/`
 - Network: `src/renderer/features/status/service/bootstrap-network-status.ts`
 - Audit schema: `src/main/shared/database/migrations/V001__authorize_create_tables.sql`
 - Project rules: `.cursor/rules/security-privacy.mdc`, `.cursor/rules/legal-open-source.mdc`

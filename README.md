@@ -31,15 +31,23 @@ Open-source Electron application for managing Judo tournaments.
 - **Local Database:** [SQLite](https://www.sqlite.org/) via Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (Electron main process)
 - **Internationalization:** [vue-i18n](https://vue-i18n.intlify.dev/)
 - **Backend Services:** [Supabase](https://supabase.com/)
-- **Monitoring:** local capture via Sentry offline queue (target: [`@sentry/electron`](https://docs.sentry.io/platforms/javascript/guides/electron/)); GlitchTip upload later; interim [`@sentry/vue`](https://docs.sentry.io/platforms/javascript/guides/vue/) in the renderer (see [Logging & Monitoring](#logging--monitoring))
+- **Monitoring:** [OpenTelemetry](https://opentelemetry.io/) — local trace capture via OTLP/HTTP collector in the Electron main process; renderer and main export spans to `http://127.0.0.1:4318`; JSONL storage under `<userData>/telemetry/`; Grafana Cloud upload planned for a later phase (see [Logging & Monitoring](#logging--monitoring))
 - **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E), [Storybook](https://storybook.js.org/) (UI components)
 - **Code Quality:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
 
 ## Logging & Monitoring
 
-DojoSphere separates three lanes: **telemetry** (errors, queued locally), **audit** (business actions → SQLite `authorization_audit_logs`), and **debug** (support → log file in main).
+DojoSphere separates three lanes: **telemetry** (errors and technical breadcrumbs as OpenTelemetry traces), **audit** (business actions → SQLite `authorization_audit_logs`), and **debug** (support → log file in main).
 
-**Current focus: capture first, send later.** Telemetry and audit are recorded locally even when offline or cloud mode is off. Upload to GlitchTip is planned for a later phase — see [`docs/logging.md`](docs/logging.md).
+**Current focus: local capture first, cloud upload later.** Telemetry is recorded locally even when offline or cloud mode is off:
+
+- **Renderer:** `@opentelemetry/sdk-trace-web` exports spans via OTLP/HTTP to the local collector.
+- **Main process:** a lightweight OTLP/HTTP collector listens on `127.0.0.1:4318`; the Node SDK also exports spans there.
+- **Storage:** trace batches are appended to `<userData>/telemetry/traces.jsonl` for inspection and a future manual upload flow.
+
+Features use the stable public API in `@shared/lib` (`captureException`, `addBreadcrumb`, `setUserContext`, …) — not OpenTelemetry SDK calls directly.
+
+**Planned next phase:** optional upload to Grafana Cloud (OTLP) from Settings, gated by cloud mode and reachability — see [`docs/logging.md`](docs/logging.md).
 
 **Cloud mode (`isCloudUsed`)** gates cloud services and will gate telemetry **upload**, not **capture**.
 
@@ -184,7 +192,7 @@ See `.cursor/rules/architecture-fsd.mdc` for import rules and slice conventions.
 ### Main process (Vertical Slices)
 
 - `src/main/app/` — bootstrap, IPC registration (`register-ipc.ts`)
-- `src/main/features/<slice>/` — one use case per slice (users, sessions, health, …)
+- `src/main/features/<slice>/` — one use case per slice (users, sessions, health, telemetry, …)
 - `src/main/shared/` — infrastructure (database, security helpers)
 - `src/main/window/` — main-process window setup
 - `src/preload/` — IPC bridge to `window.api`
@@ -215,7 +223,7 @@ See `.cursor/rules/architecture-vertical-slice.mdc` for details.
 
 - `@fontsource/roboto`: Provides local Roboto fonts for consistent typography across platforms.
 - `@mdi/js`: Provides Material Design icon SVG paths for flexible icon rendering.
-- `@sentry/vue`: Interim — runtime errors and breadcrumbs in the renderer; migration to `@sentry/electron` planned ([`docs/logging.md`](docs/logging.md)).
+- `@opentelemetry/*`: OpenTelemetry SDK for local trace capture in renderer (`sdk-trace-web`) and main process (`sdk-trace-node`); OTLP/HTTP export to the local collector.
 - `@supabase/supabase-js`: Client SDK for Supabase auth, database access, and related services.
 - `vue`: Core framework for building reactive, component-driven user interfaces.
 - `vue-i18n`: Internationalization library for translations and locale-aware UI text.
