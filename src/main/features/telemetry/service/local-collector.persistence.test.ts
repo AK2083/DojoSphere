@@ -43,4 +43,30 @@ describe('local-collector persistence failures', () => {
 
     expect(response.status).toBe(500)
   })
+
+  it('returns 500 when persistence throws a non-error value', async () => {
+    vi.resetModules()
+    vi.doMock('node:fs/promises', async (importOriginal) => {
+      const original = await importOriginal<typeof import('node:fs/promises')>()
+
+      return {
+        ...original,
+        appendFile: vi.fn(async () => {
+          throw 'disk full'
+        })
+      }
+    })
+
+    const tempDir = await mkdtemp(join(tmpdir(), 'dojosphere-telemetry-'))
+    const { startLocalCollector: startCollector } = await import('./local-collector')
+    handle = await startCollector({ userDataPath: tempDir, port: 14330 })
+
+    const response = await fetch(`http://127.0.0.1:${handle.port}/v1/traces`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{"resourceSpans":[]}'
+    })
+
+    expect(response.status).toBe(500)
+  })
 })

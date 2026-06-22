@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 import { signUpWithMailAndPassword } from '../api/sign-up-with-mail-and-password'
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../service/register-storage'
 
 /**
@@ -25,10 +25,7 @@ export function useRegister() {
   }
 
   async function execute(email: string, password: string) {
-    monitorInformation(MONITORING_EVENTS.REGISTER_EXECUTE_STARTED)
-
     if (loading.value) {
-      monitorInformation(MONITORING_EVENTS.REGISTER_ALREADY_LOADING)
       return false
     }
 
@@ -39,7 +36,7 @@ export function useRegister() {
       const response = await signUpWithMailAndPassword(email, password)
 
       if (!response.success) {
-        monitorInformation(MONITORING_EVENTS.REGISTER_SIGN_UP_FAILED, {
+        monitorWarning(MONITORING_EVENTS.REGISTER_SIGN_UP_FAILED, {
           errorCode: response.error.code
         })
 
@@ -47,12 +44,8 @@ export function useRegister() {
         return false
       }
 
-      monitorInformation(MONITORING_EVENTS.REGISTER_SIGN_UP_SUCCEEDED)
-
       setIsOtpActiveToStorage(true)
       setRegisterEmailToStorage(email)
-
-      monitorInformation(MONITORING_EVENTS.REGISTER_STORAGE_UPDATED)
 
       return true
     } finally {

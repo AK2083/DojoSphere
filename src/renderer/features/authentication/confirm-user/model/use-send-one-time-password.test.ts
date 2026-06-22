@@ -55,7 +55,7 @@ vi.mock('../monitoring/monitoring', () => ({
     CHECK_OTP_FAILED: 'auth.otp.verify.failed',
     CHECK_OTP_SUCCEEDED: 'auth.otp.verify.succeeded'
   },
-  monitorInformation: vi.fn()
+  monitorWarning: vi.fn()
 }))
 
 describe('useSendOneTimePassword', () => {

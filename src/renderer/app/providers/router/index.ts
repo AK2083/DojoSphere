@@ -8,8 +8,6 @@ import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
 
-import { monitorInformation, MONITORING_EVENTS } from './monitoring'
-
 const routes = [
   {
     path: '/',
@@ -86,13 +84,6 @@ async function getCurrentSessionWithTimeout() {
     })
   ])
 }
-
-router.afterEach((to, from) => {
-  monitorInformation(MONITORING_EVENTS.ROUTE_CHANGED, {
-    from: from.name,
-    to: to.name
-  })
-})
 
 router.beforeEach(async (to) => {
   const requiresAuth = Boolean(to.meta.requiresAuth)

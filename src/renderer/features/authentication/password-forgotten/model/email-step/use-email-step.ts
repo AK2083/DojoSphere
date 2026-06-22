@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 
 /**
  * Handles OTP mail request for the email step.
@@ -18,17 +18,12 @@ export function useEmailStep() {
   }
 
   async function execute() {
-    monitorInformation(MONITORING_EVENTS.EMAIL_STEP_EXECUTE_STARTED)
-
-    if (loading.value) {
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_ALREADY_LOADING)
-      return false
-    }
-
-    if (!email.value.trim()) {
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_VALIDATION_FAILED, {
-        reason: 'missing_email'
-      })
+    if (loading.value || !email.value.trim()) {
+      if (!email.value.trim()) {
+        monitorWarning(MONITORING_EVENTS.EMAIL_STEP_VALIDATION_FAILED, {
+          reason: 'missing_email'
+        })
+      }
 
       return false
     }
@@ -40,7 +35,7 @@ export function useEmailStep() {
       const result = await signInWithOneTimePassword(email.value)
 
       if (!result.success) {
-        monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SIGN_IN_FAILED, {
+        monitorWarning(MONITORING_EVENTS.EMAIL_STEP_SIGN_IN_FAILED, {
           errorCode: result.error.code
         })
 
@@ -48,7 +43,6 @@ export function useEmailStep() {
         return false
       }
 
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SIGN_IN_SUCCEEDED)
       return true
     } finally {
       loading.value = false

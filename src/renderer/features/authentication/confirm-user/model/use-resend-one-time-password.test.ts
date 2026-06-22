@@ -21,7 +21,7 @@ vi.mock('../monitoring/monitoring', () => ({
     RESEND_OTP_FAILED: 'auth.otp.resend.failed',
     RESEND_OTP_SUCCEEDED: 'auth.otp.resend.succeeded'
   },
-  monitorInformation: vi.fn()
+  monitorWarning: vi.fn()
 }))
 
 describe('useResendOneTimePassword', () => {

@@ -1,7 +1,31 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+const { monitorDebug, monitorInformation, monitorWarning } = vi.hoisted(() => ({
+  monitorDebug: vi.fn(),
+  monitorInformation: vi.fn(),
+  monitorWarning: vi.fn()
+}))
+
 vi.mock('@shared/api', () => ({
   heartbeat: vi.fn()
+}))
+
+vi.mock('../monitoring/monitoring', () => ({
+  monitorDebug,
+  monitorInformation,
+  monitorWarning,
+  monitorError: vi.fn(),
+  MONITORING_EVENTS: {
+    BOOTSTRAP_STARTED: 'network.status.bootstrap.started',
+    BOOTSTRAP_SKIPPED: 'network.status.bootstrap.skipped',
+    BOOTSTRAP_COMPLETED: 'network.status.bootstrap.completed',
+    CONNECTIVITY_OFFLINE: 'network.status.connectivity.offline',
+    CONNECTIVITY_ONLINE: 'network.status.connectivity.online',
+    HEARTBEAT_CHECK_STARTED: 'network.status.heartbeat.started',
+    HEARTBEAT_CHECK_FAILED: 'network.status.heartbeat.failed',
+    HEARTBEAT_CHECK_SUCCEEDED: 'network.status.heartbeat.succeeded',
+    RECHECK_AFTER_FAILED_ACTION: 'network.status.recheck.after_failed_action'
+  }
 }))
 
 vi.mock('@shared/lib', async (importOriginal) => {
@@ -194,6 +218,32 @@ describe('bootstrapNetworkStatus', () => {
     expect(reachable).toBe(true)
     expect(networkStore.useNetworkStatusStore().isOnline).toBe(true)
     expect(cloudStore.useCloudStatusStore().isCloudUsed).toBe(true)
+  })
+
+  it('marks connectivity online after a successful heartbeat during bootstrap', async () => {
+    const { bootstrap, api } = await loadBootstrapModule()
+    vi.mocked(api.heartbeat).mockResolvedValue({
+      data: { status: 'ok', timestamp: '2026-05-20T10:00:00.000Z' },
+      error: null
+    } as Awaited<ReturnType<typeof api.heartbeat>>)
+
+    await bootstrap.bootstrapNetworkStatus()
+
+    expect(api.heartbeat).toHaveBeenCalled()
+  })
+
+  it('keeps connectivity offline when heartbeat fails while the browser is online', async () => {
+    const { bootstrap, api, networkStore } = await loadBootstrapModule()
+    setNavigatorOnline(true)
+    vi.mocked(api.heartbeat).mockResolvedValue({
+      data: null,
+      error: new Error('backend down')
+    } as Awaited<ReturnType<typeof api.heartbeat>>)
+
+    const reachable = await bootstrap.recheckNetworkStatusAfterFailedUserAction()
+
+    expect(reachable).toBe(false)
+    expect(networkStore.useNetworkStatusStore().isOnline).toBe(false)
   })
 
   it('exposes reactive refs from both stores', async () => {

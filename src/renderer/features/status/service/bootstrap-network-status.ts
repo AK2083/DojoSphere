@@ -4,6 +4,7 @@ import { captureException, getNavigatorOnline, isBrowserRuntime } from '@shared/
 import { bindConnectivityState } from '@shared/model'
 
 import { useStatusState } from '../model/use-status-state'
+import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useNetworkStatusStore } from '../network-status/store'
 
 /** Result of checking backend connectivity via the heartbeat edge function. */
@@ -31,6 +32,10 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
       captureException(mappedError, 'network', 'checkHeartbeatConnectivity')
     }
 
+    monitorWarning(MONITORING_EVENTS.HEARTBEAT_CHECK_FAILED, {
+      errorCode: mappedError.code
+    })
+
     return {
       success: false,
       error: mappedError
@@ -40,6 +45,11 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
   if (data?.status !== 'ok') {
     const payloadError = new AppError('shared.error.unknown', 'Invalid heartbeat response payload')
     captureException(payloadError, 'network', 'checkHeartbeatConnectivity')
+
+    monitorWarning(MONITORING_EVENTS.HEARTBEAT_CHECK_FAILED, {
+      errorCode: payloadError.code,
+      reason: 'invalid_payload'
+    })
 
     return {
       success: false,
@@ -51,6 +61,7 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
 }
 
 function setOfflineState() {
+  monitorWarning(MONITORING_EVENTS.CONNECTIVITY_OFFLINE)
   useNetworkStatusStore().setOnline(false)
 }
 
@@ -83,6 +94,8 @@ export async function bootstrapNetworkStatus(): Promise<void> {
 
   if (getNavigatorOnline()) {
     await runHeartbeatCheck()
+  } else {
+    setOfflineState()
   }
 
   if (!isBrowserRuntime()) {

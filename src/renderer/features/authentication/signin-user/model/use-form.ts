@@ -3,7 +3,7 @@ import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 import { useNetworkStatusState } from '@shared/model'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useLogin } from './use-login'
 import { useLoginRouting } from './use-routing'
 
@@ -65,37 +65,27 @@ export function useLoginForm() {
   })
 
   async function submit() {
-    monitorInformation(MONITORING_EVENTS.LOGIN_FORM_SUBMITTED)
-
     if (isLoginDisabled.value) {
       return
     }
 
-    if (loading.value) {
-      monitorInformation(MONITORING_EVENTS.LOGIN_FORM_ALREADY_LOADING)
-      return
-    }
-
-    if (!form.value) {
-      monitorInformation(MONITORING_EVENTS.LOGIN_FORM_MISSING)
+    if (loading.value || !form.value) {
       return
     }
 
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorInformation(MONITORING_EVENTS.LOGIN_FORM_INVALID)
+      monitorWarning(MONITORING_EVENTS.LOGIN_FORM_INVALID)
       return
     }
 
     const success = await execute(email.value, password.value)
 
     if (!success) {
-      monitorInformation(MONITORING_EVENTS.LOGIN_FORM_EXECUTE_FAILED)
+      monitorWarning(MONITORING_EVENTS.LOGIN_FORM_EXECUTE_FAILED)
       return
     }
-
-    monitorInformation(MONITORING_EVENTS.LOGIN_FORM_SUCCEEDED)
 
     await navigateAfterLoginSuccess()
   }

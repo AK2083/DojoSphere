@@ -2,6 +2,7 @@ import {
   getLocalSessionToken,
   setLocalSessionToken
 } from '@features/authentication/service/local-session-storage'
+import { MONITORING_EVENTS, monitorWarning } from '@features/settings/monitoring/monitoring'
 
 /**
  * Ensures a local SQLite session exists when no local token is persisted yet.
@@ -19,15 +20,22 @@ export async function ensureLocalSessionForUsername(): Promise<boolean> {
   const displayName = (await globalThis.window.api.getOsUsername()).trim()
 
   if (!displayName) {
+    monitorWarning(MONITORING_EVENTS.USERNAME_SESSION_ENSURE_FAILED, {
+      reason: 'missing_os_username'
+    })
     return false
   }
 
   const result = await globalThis.window.api.ensureLocalSession(displayName)
 
   if (!result.sessionToken) {
+    monitorWarning(MONITORING_EVENTS.USERNAME_SESSION_ENSURE_FAILED, {
+      reason: 'missing_session_token'
+    })
     return false
   }
 
   setLocalSessionToken(result.sessionToken)
+
   return true
 }

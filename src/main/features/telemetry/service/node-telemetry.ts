@@ -6,6 +6,8 @@ import {
 } from '@opentelemetry/semantic-conventions'
 import { BatchSpanProcessor, NodeTracerProvider } from '@opentelemetry/sdk-trace-node'
 
+import { logInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+
 /** Options for initializing main-process OpenTelemetry tracing. */
 export type NodeTelemetryOptions = {
   environment: string
@@ -39,6 +41,11 @@ export function initNodeTelemetry(options: NodeTelemetryOptions): NodeTelemetryH
   })
 
   provider.register()
+
+  logInformation(MONITORING_EVENTS.NODE_TRACER_INITIALIZED, {
+    environment: options.environment,
+    otlpEndpoint: options.otlpEndpoint
+  })
 
   return { provider }
 }

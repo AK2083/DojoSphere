@@ -3,6 +3,8 @@ import { mkdirSync } from 'node:fs'
 import { appendFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import { logError, logInformation, logWarning, MONITORING_EVENTS } from '../monitoring/monitoring'
+
 const DEFAULT_HOST = '127.0.0.1'
 const DEFAULT_PORT = 4318
 const TELEMETRY_DIR_NAME = 'telemetry'
@@ -138,7 +140,6 @@ export function startLocalCollector(options: LocalCollectorOptions): Promise<Loc
           const body = Buffer.concat(chunks)
 
           if (body.length > 0) {
-            console.info('[telemetry:collector] received OTLP trace batch')
             await appendTraceLine(traceFilePath, body)
           }
 
@@ -146,7 +147,9 @@ export function startLocalCollector(options: LocalCollectorOptions): Promise<Loc
           res.writeHead(200)
           res.end()
         })().catch((error: unknown) => {
-          console.error('[telemetry:collector] failed to persist trace batch:', error)
+          logError(MONITORING_EVENTS.COLLECTOR_PERSIST_FAILED, {
+            reason: error instanceof Error ? error.message : 'unknown'
+          })
           writeCorsHeaders(req, res)
           res.writeHead(500)
           res.end()
@@ -154,7 +157,9 @@ export function startLocalCollector(options: LocalCollectorOptions): Promise<Loc
       })
 
       req.on('error', (error) => {
-        console.error('[telemetry:collector] request error:', error)
+        logWarning(MONITORING_EVENTS.COLLECTOR_REQUEST_ERROR, {
+          reason: error.message
+        })
         writeCorsHeaders(req, res)
         res.writeHead(500)
         res.end()
@@ -167,7 +172,10 @@ export function startLocalCollector(options: LocalCollectorOptions): Promise<Loc
       const address = server.address()
       const boundPort = typeof address === 'object' && address !== null ? address.port : port
 
-      console.info(`[telemetry:collector] listening on http://${host}:${boundPort}`)
+      logInformation(MONITORING_EVENTS.COLLECTOR_STARTED, {
+        host,
+        port: boundPort
+      })
       resolve({ server, traceFilePath, host, port: boundPort })
     })
   })

@@ -5,8 +5,15 @@ import type { LogLevel } from './log-level'
 import { shouldCaptureTelemetry } from './monitoring-guard'
 
 const TRACER_NAME = 'dojosphere-renderer'
+const MAX_BUFFERED_BREADCRUMBS = 30
+
+type BufferedBreadcrumb = {
+  name: string
+  attributes: Record<string, string>
+}
 
 let userId: string | null = null
+let breadcrumbBuffer: BufferedBreadcrumb[] = []
 
 function getTracer() {
   return trace.getTracer(TRACER_NAME)
@@ -14,6 +21,66 @@ function getTracer() {
 
 function isTelemetryActive(): boolean {
   return shouldCaptureTelemetry() && !isPlaywrightBrowserOnly()
+}
+
+function isBufferedLevel(level: LogLevel): boolean {
+  return level === 'debug' || level === 'info'
+}
+
+function buildBreadcrumbAttributes(
+  category: string,
+  level: LogLevel,
+  data?: object
+): Record<string, string> {
+  const eventAttributes: Record<string, string> = {
+    category,
+    level
+  }
+  applyUserContext(eventAttributes)
+
+  if (data) {
+    for (const [key, value] of Object.entries(data)) {
+      eventAttributes[key] = String(value)
+    }
+  }
+
+  return eventAttributes
+}
+
+function bufferBreadcrumb(monitoringEvent: string, attributes: Record<string, string>) {
+  breadcrumbBuffer.push({ name: monitoringEvent, attributes })
+
+  if (breadcrumbBuffer.length > MAX_BUFFERED_BREADCRUMBS) {
+    breadcrumbBuffer = breadcrumbBuffer.slice(-MAX_BUFFERED_BREADCRUMBS)
+  }
+}
+
+function exportBreadcrumb(
+  monitoringEvent: string,
+  category: string,
+  level: LogLevel,
+  attributes: Record<string, string>
+) {
+  const activeSpan = trace.getActiveSpan()
+
+  if (activeSpan) {
+    activeSpan.addEvent(monitoringEvent, attributes)
+    return
+  }
+
+  const span = getTracer().startSpan('breadcrumb', {
+    attributes: { category, level }
+  })
+  span.addEvent(monitoringEvent, attributes)
+  span.end()
+}
+
+function attachBufferedBreadcrumbs(span: ReturnType<ReturnType<typeof getTracer>['startSpan']>) {
+  for (const breadcrumb of breadcrumbBuffer) {
+    span.addEvent(breadcrumb.name, breadcrumb.attributes)
+  }
+
+  breadcrumbBuffer = []
 }
 
 /**
@@ -41,6 +108,13 @@ export function clearUserContext() {
   userId = null
 }
 
+/**
+ * Clears buffered breadcrumbs (for tests).
+ */
+export function resetBreadcrumbBuffer() {
+  breadcrumbBuffer = []
+}
+
 function applyUserContext(attributes: Record<string, string>) {
   if (userId) {
     attributes['user.id'] = userId
@@ -49,6 +123,7 @@ function applyUserContext(attributes: Record<string, string>) {
 
 /**
  * Captures an exception and sends it to the local telemetry collector.
+ * Buffered debug/info breadcrumbs are attached to the exception span.
  *
  * @param error - The error that should be reported.
  * @param service - The logical service or module where the error occurred.
@@ -66,13 +141,17 @@ export function captureException(error: Error, service: string, action: string) 
   applyUserContext(attributes)
 
   const span = getTracer().startSpan('exception', { attributes })
+  attachBufferedBreadcrumbs(span)
   span.recordException(error)
   span.setStatus({ code: SpanStatusCode.ERROR, message: error.message })
   span.end()
 }
 
 /**
- * Adds a breadcrumb-style event to the active trace or a short-lived span.
+ * Adds a breadcrumb-style event for telemetry.
+ *
+ * Debug and info breadcrumbs are buffered locally and exported with the next
+ * {@link captureException}. Warning and error breadcrumbs are exported immediately.
  *
  * @param monitoringEvent - A descriptive event identifier.
  * @param category - The category of the event.
@@ -89,28 +168,12 @@ export function addBreadcrumb(
     return
   }
 
-  const eventAttributes: Record<string, string> = {
-    category,
-    level
-  }
-  applyUserContext(eventAttributes)
+  const attributes = buildBreadcrumbAttributes(category, level, data)
 
-  if (data) {
-    for (const [key, value] of Object.entries(data)) {
-      eventAttributes[key] = String(value)
-    }
-  }
-
-  const activeSpan = trace.getActiveSpan()
-
-  if (activeSpan) {
-    activeSpan.addEvent(monitoringEvent, eventAttributes)
+  if (isBufferedLevel(level)) {
+    bufferBreadcrumb(monitoringEvent, attributes)
     return
   }
 
-  const span = getTracer().startSpan('breadcrumb', {
-    attributes: { category, level }
-  })
-  span.addEvent(monitoringEvent, eventAttributes)
-  span.end()
+  exportBreadcrumb(monitoringEvent, category, level, attributes)
 }
