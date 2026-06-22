@@ -2,6 +2,7 @@ import { app } from 'electron'
 
 import { initTelemetry, shutdownTelemetry } from '@main/features/telemetry'
 import { createLogger, initLogger } from '@main/shared/logging'
+import { registerProcessErrorHandlers } from '@main/shared/telemetry'
 
 let shutdownRegistered = false
 const telemetryAppLogger = createLogger('telemetry:app')
@@ -20,6 +21,8 @@ export async function initTelemetryApp(environment: string): Promise<void> {
     environment,
     userDataPath: app.getPath('userData')
   })
+
+  registerProcessErrorHandlers()
 
   telemetryAppLogger.info('Local telemetry capture ready')
 

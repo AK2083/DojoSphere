@@ -2,12 +2,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const initTelemetry = vi.fn(async () => undefined)
 const shutdownTelemetry = vi.fn(async () => undefined)
+const registerProcessErrorHandlers = vi.fn()
 const appGetPath = vi.fn(() => '/tmp/dojosphere-user-data')
 const onBeforeQuit = vi.fn()
 
 vi.mock('@main/features/telemetry', () => ({
   initTelemetry,
   shutdownTelemetry
+}))
+
+vi.mock('@main/shared/telemetry', () => ({
+  registerProcessErrorHandlers
 }))
 
 vi.mock('electron', () => ({
@@ -33,6 +38,7 @@ describe('initTelemetryApp', () => {
       environment: 'test',
       userDataPath: '/tmp/dojosphere-user-data'
     })
+    expect(registerProcessErrorHandlers).toHaveBeenCalledOnce()
     expect(onBeforeQuit).toHaveBeenCalledWith('before-quit', expect.any(Function))
   })
 

@@ -13,5 +13,6 @@ export {
 } from './telemetry/logging'
 export { setCloudModeMonitoringCheck, shouldCaptureTelemetry } from './telemetry/monitoring-guard'
 export { createMonitoringHelpers, type MonitoringHelpers } from './telemetry/monitoring-helpers'
+export { registerGlobalErrorHandlers } from './telemetry/register-global-error-handlers'
 export { ErrorCode, errorTranslationMap, translateError } from './validation/error-manager'
 export { emailRules, mapRule, PASSWORD_MIN_LENGTH, passwordRules } from './validation/validators'
