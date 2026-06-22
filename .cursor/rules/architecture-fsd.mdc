@@ -29,7 +29,7 @@ Classify new dependencies by **role**, not technology:
 
 **Rules of thumb:**
 - Render framework and global providers (app shell) → `app/providers/` — configure directly, do not abstract.
-- Vendor/infrastructure clients (backend, monitoring, storage bridge, …) → `shared/` — wrap behind a public API.
+- Vendor/infrastructure clients (backend, monitoring, storage bridge, …) → `shared/` — wrap behind a public API (e.g. OpenTelemetry wiring in `app/main.ts`, usage via `shared/lib/telemetry/`).
 - Thin helpers **built on** the framework that features use everywhere → `shared/lib/` (setup stays in `app`).
 
 **Split pattern:** A dependency can be both — instance/wiring in `app/providers/`, usage API in `shared/lib/` (e.g. plugin in `app`, composable in `shared`).
@@ -92,12 +92,12 @@ Abstraction of **swappable** dependencies. No feature or page logic. Features/wi
 |---------|-------|---------|
 | `api/` | Low-level | Client implementations (e.g. Supabase) |
 | `lib/browser/`, `lib/validation/`, `lib/pinia/`, `lib/i18n/` | Low-level | Technical helpers, validation, store utilities |
-| `lib/glitchtip/` | High-level | Logging, monitoring, breadcrumbs |
+| `lib/telemetry/` | High-level | Logging, monitoring, breadcrumbs (OpenTelemetry-backed; `@shared/lib` public API) |
 | `ui/` | — | Reusable Vue components without feature affiliation |
 | `model/`, `store/`, `types/`, `errors/` | — | Shared domain types, stores, error classes |
 
 - **Low-level**: direct technology abstractions (storage, HTTP client, validators).
-- **High-level**: domain-near abstractions (logging/monitoring). Features use these instead of SDK calls.
+- **High-level**: domain-near abstractions (logging/monitoring). Features use `@shared/lib` telemetry helpers (`captureException`, `addBreadcrumb`, …) instead of OpenTelemetry or vendor SDK calls.
 - Vue components without feature affiliation → `shared/ui/`, not in features.
 - `shared` imports **no** features, pages, widgets, or `app`.
 

@@ -1,22 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { LoginForm } from '@features/authentication/signin-user'
-import type { User } from '@shared/types/electron-api'
-
-const users = ref<User[]>([])
-
-onMounted(async () => {
-  try {
-    const health = await globalThis.window.api.dbHealthcheck()
-    globalThis.console.log('SQLite verbunden:', health.ok, '- Version:', health.version)
-
-    users.value = await globalThis.window.api.getUsers()
-
-    globalThis.console.log('Geladene User:', users.value)
-  } catch (error) {
-    globalThis.console.error('SQLite-Test fehlgeschlagen:', error)
-  }
-})
 </script>
 
 <template>

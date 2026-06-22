@@ -5,6 +5,7 @@ import type { AuthActionResult } from '@shared/types'
 import { clearRegisterStorage } from '../../register-user/service/register-storage'
 import { notifyLocalAuthStateChanged } from '../../service/local-auth-state'
 import { revokeLocalAuthSession } from '../../service/resolve-local-auth-session'
+import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 
 /**
  * Executes the sign-out use-case for the authentication feature.
@@ -29,6 +30,10 @@ export async function signOutUser(): Promise<AuthActionResult> {
       if (mapped.code !== 'shared.error.retry') {
         captureException(mapped, 'auth', 'signOutUser')
       }
+
+      monitorWarning(MONITORING_EVENTS.SIGN_OUT_FAILED, {
+        errorCode: mapped.code
+      })
 
       return {
         success: false,

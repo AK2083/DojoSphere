@@ -9,10 +9,6 @@ const THEMEKEY = 'dojosphere.settings.theme'
 /**
  * Stores the user's preferred theme in browser storage.
  *
- * A monitoring event (`SETTINGS_THEME_WRITE`) is recorded before
- * the value is written. The theme preference is then persisted
- * using the configured storage utility.
- *
  * @param {ThemePreference} theme - The theme preference to store.
  */
 export function setThemeToStorage(theme: ThemePreference) {
@@ -21,10 +17,6 @@ export function setThemeToStorage(theme: ThemePreference) {
 
 /**
  * Retrieves the user's preferred theme from browser storage.
- *
- * A monitoring event (`SETTINGS_THEME_READ`) is recorded when the
- * stored value is accessed. If no theme has been stored yet,
- * the storage utility may return `undefined`.
  *
  * @returns {ThemePreference | undefined} The stored theme preference if available.
  */

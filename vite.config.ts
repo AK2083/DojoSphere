@@ -39,6 +39,9 @@ export default defineConfig(({ mode }) => {
                   ])
                 },
                 vite: {
+                  define: {
+                    'import.meta.env.MODE': JSON.stringify(mode)
+                  },
                   resolve: {
                     alias: {
                       '@main/app': path.resolve(__dirname, 'src/main/app'),

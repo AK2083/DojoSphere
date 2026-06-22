@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
-import { resendOtp, useResendOneTimePassword } from './use-resend-one-time-password'
+import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
+import { useResendOneTimePassword } from './use-resend-one-time-password'
 
 vi.mock('../../api/sign-in-with-otp', () => ({
   signInWithOneTimePassword: vi.fn()
@@ -12,7 +12,7 @@ vi.mock('../../monitoring/monitoring', () => ({
   MONITORING_EVENTS: {
     RESEND_OTP: 'RESEND_OTP'
   },
-  monitorInformation: vi.fn()
+  monitorWarning: vi.fn()
 }))
 
 describe('useResendOneTimePassword', () => {
@@ -66,6 +66,7 @@ describe('useResendOneTimePassword', () => {
     expect(success.value).toBe(true)
     expect(errorCode.value).toBeNull()
     expect(loading.value).toBe(false)
+    expect(monitorWarning).not.toHaveBeenCalled()
   })
 
   it('stores error code and returns false when resend fails', async () => {
@@ -85,6 +86,9 @@ describe('useResendOneTimePassword', () => {
 
     expect(result).toBe(false)
     expect(signInWithOneTimePassword).toHaveBeenCalledWith('user@mail.com')
+    expect(monitorWarning).toHaveBeenCalledWith(MONITORING_EVENTS.RESEND_OTP, {
+      errorCode: 'auth.rate_limited'
+    })
     expect(success.value).toBe(false)
     expect(errorCode.value).toBe('auth.rate_limited')
     expect(loading.value).toBe(false)
@@ -100,21 +104,5 @@ describe('useResendOneTimePassword', () => {
     await expect(resend()).rejects.toThrow('network')
     expect(loading.value).toBe(false)
     expect(success.value).toBe(false)
-  })
-})
-
-describe('resendOtp', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('tracks monitoring and delegates to signInWithOneTimePassword', async () => {
-    vi.mocked(signInWithOneTimePassword).mockResolvedValue({ success: true })
-
-    const result = await resendOtp('track@mail.com')
-
-    expect(monitorInformation).toHaveBeenCalledWith(MONITORING_EVENTS.RESEND_OTP)
-    expect(signInWithOneTimePassword).toHaveBeenCalledWith('track@mail.com')
-    expect(result).toEqual({ success: true })
   })
 })

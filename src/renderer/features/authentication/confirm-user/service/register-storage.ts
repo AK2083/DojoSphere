@@ -1,7 +1,5 @@
 import { getStorageItem, removeStorageItem } from '@shared/lib'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
-
 const EMAILKEY = 'dojosphere.auth.register.email'
 
 /**
@@ -12,7 +10,6 @@ const EMAILKEY = 'dojosphere.auth.register.email'
  * @returns The registration email address from storage.
  */
 export function getRegisterEmailFromStorage() {
-  monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ, { EMAILKEY })
   return getStorageItem<string>(EMAILKEY)
 }
 

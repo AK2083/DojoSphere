@@ -2,7 +2,7 @@ import { type Ref, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, useTranslation } from '@shared/lib'
 
-import { monitorInformation, MONITORING_EVENTS } from '../../monitoring/monitoring'
+import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 import { useEmailStep } from './use-email-step'
 
 type UseEmailStepFormOptions = {
@@ -35,17 +35,14 @@ export function useEmailStepForm(options: UseEmailStepFormOptions) {
   )
 
   async function submit(): Promise<boolean> {
-    monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SUBMITTED)
-
     if (!form.value) {
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_FORM_MISSING)
       return false
     }
 
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_FORM_INVALID)
+      monitorWarning(MONITORING_EVENTS.EMAIL_STEP_FORM_INVALID)
       return false
     }
 
@@ -53,11 +50,9 @@ export function useEmailStepForm(options: UseEmailStepFormOptions) {
     const success = await execute()
 
     if (!success) {
-      monitorInformation(MONITORING_EVENTS.EMAIL_STEP_EXECUTE_FAILED)
+      monitorWarning(MONITORING_EVENTS.EMAIL_STEP_EXECUTE_FAILED)
       return false
     }
-
-    monitorInformation(MONITORING_EVENTS.EMAIL_STEP_SUCCEEDED)
 
     options.onSuccess(submittedEmail)
     return true

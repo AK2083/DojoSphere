@@ -1,7 +1,7 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
 
 import { resendSignUpConfirmationEmail } from '../api/resend-sign-up-confirmation'
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
+import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
 
 type UseResendReturn = {
@@ -44,16 +44,14 @@ export function useResendOneTimePassword(): UseResendReturn {
    * @returns Resolves to `true` if successful, otherwise `false`
    */
   async function resend(): Promise<boolean> {
-    monitorInformation(MONITORING_EVENTS.RESEND_OTP_SUBMITTED)
     errorCode.value = null
     loading.value = true
     success.value = false
 
-    monitorInformation(MONITORING_EVENTS.STORAGE_REGISTER_EMAIL_READ)
     const storedEmail = getRegisterEmailFromStorage()
 
     if (!email.value) {
-      monitorInformation(MONITORING_EVENTS.RESEND_OTP_VALIDATION_FAILED, {
+      monitorWarning(MONITORING_EVENTS.RESEND_OTP_VALIDATION_FAILED, {
         reason: 'missing_email'
       })
 
@@ -62,13 +60,12 @@ export function useResendOneTimePassword(): UseResendReturn {
       return false
     }
 
-    monitorInformation(MONITORING_EVENTS.RESEND_OTP_REQUEST_STARTED)
     const response = await resendSignUpConfirmationEmail(email.value)
 
     loading.value = false
 
     if (!response.success) {
-      monitorInformation(MONITORING_EVENTS.RESEND_OTP_FAILED, {
+      monitorWarning(MONITORING_EVENTS.RESEND_OTP_FAILED, {
         errorCode: response.error.code
       })
 
@@ -76,7 +73,6 @@ export function useResendOneTimePassword(): UseResendReturn {
       return false
     }
 
-    monitorInformation(MONITORING_EVENTS.RESEND_OTP_SUCCEEDED)
     errorCode.value = null
     success.value = true
 
