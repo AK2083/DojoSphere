@@ -49,6 +49,19 @@ export interface EnsureLocalSessionResult {
   expiresAt: string
 }
 
+/** Input for recording an audit event via IPC. */
+export interface AuditRecordInput {
+  token: string
+  action: string
+  entityType: string
+  entityId?: string | null
+  oldValueJson?: string | null
+  newValueJson?: string | null
+}
+
+/** Audit event fields without the session token (added by the caller or shared lib). */
+export type AuditEventPayload = Omit<AuditRecordInput, 'token'>
+
 /** Typed IPC surface exposed on `window.api` by the preload script. */
 export interface ElectronAPI {
   getUsers: () => Promise<User[]>
@@ -59,5 +72,6 @@ export interface ElectronAPI {
   updateUserDisplayName: (token: string, displayName: string) => Promise<User>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
   checkGrafanaCloudReachability: () => Promise<GrafanaReachabilityResult>
+  auditRecord: (input: AuditRecordInput) => Promise<void>
   getOsUsername: () => Promise<string>
 }

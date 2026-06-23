@@ -41,6 +41,20 @@ describe('preload', () => {
     await api.checkGrafanaCloudReachability()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('telemetry:checkGrafanaReachability')
 
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.auditRecord({
+      token: 'token-1',
+      action: 'approved',
+      entityType: 'access_request',
+      entityId: 'request-1'
+    })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('audit:record', {
+      token: 'token-1',
+      action: 'approved',
+      entityType: 'access_request',
+      entityId: 'request-1'
+    })
+
     ipcRenderer.invoke.mockResolvedValueOnce('adrian')
     await api.getOsUsername()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('system:osUsername')

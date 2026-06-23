@@ -1,3 +1,4 @@
+import { registerAuditIpc } from '@main/features/audit'
 import { registerHealthIpc } from '@main/features/health'
 import { registerSessionsIpc } from '@main/features/sessions'
 import { registerSystemIpc } from '@main/features/system'
@@ -13,4 +14,5 @@ export function registerIpcHandlers() {
   registerUsersIpc()
   registerSessionsIpc()
   registerTelemetryIpc()
+  registerAuditIpc()
 }

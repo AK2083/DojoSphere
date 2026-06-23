@@ -14,5 +14,6 @@ describe('registerIpcHandlers', () => {
     expect(ipcMain.handle).toHaveBeenCalledWith('users:ensureLocalSession', expect.any(Function))
     expect(ipcMain.handle).toHaveBeenCalledWith('sessions:get', expect.any(Function))
     expect(ipcMain.handle).toHaveBeenCalledWith('sessions:revoke', expect.any(Function))
+    expect(ipcMain.handle).toHaveBeenCalledWith('audit:record', expect.any(Function))
   })
 })

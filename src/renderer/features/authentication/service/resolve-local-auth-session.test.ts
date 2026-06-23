@@ -15,6 +15,7 @@ describe('resolveLocalAuthSession', () => {
       updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       checkGrafanaCloudReachability: vi.fn(),
+      auditRecord: vi.fn(),
       getOsUsername: vi.fn()
     }
   })
@@ -85,6 +86,7 @@ describe('revokeLocalAuthSession', () => {
       updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       checkGrafanaCloudReachability: vi.fn(),
+      auditRecord: vi.fn(),
       getOsUsername: vi.fn()
     }
   })

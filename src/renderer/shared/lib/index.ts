@@ -1,3 +1,4 @@
+export { auditRecord } from './audit/audit'
 export { getStorageItem, removeStorageItem, setStorageItem } from './browser/local-storage'
 export { getNavigatorOnline, isBrowserRuntime } from './browser/navigator'
 export { AvailableLanguages, FallbackLanguage, LanguageCode } from './i18n/languages'
