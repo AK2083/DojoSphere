@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 import { setCloudModeDisabled, setupLoginAvailable } from '@shared/tests/e2e/setup-login-available'

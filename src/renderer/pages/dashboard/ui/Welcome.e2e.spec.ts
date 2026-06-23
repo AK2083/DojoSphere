@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 
 test.describe('dashboard page', () => {
   test('bootstraps local auth on app start and shows dashboard', async ({ page }) => {

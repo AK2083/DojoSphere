@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 import { goToPasswordResetOtpStep, mockRecoveryRequest } from '@shared/tests/e2e/password-recovery'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 

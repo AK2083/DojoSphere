@@ -1,6 +1,7 @@
 import { expect, type Page, type Route } from '@playwright/test'
 
 import { typeOtp, waitForPasswordResetOtpStep } from './otp-input'
+import { mockHeartbeatSuccess } from './setup-login-available'
 
 async function fulfillWithSuccess(route: Route): Promise<void> {
   await route.fulfill({
@@ -36,6 +37,7 @@ export async function mockRecoveryVerify(page: Page): Promise<void> {
  * @param page - Playwright page instance.
  */
 export async function mockRecoveryFlowRequests(page: Page): Promise<void> {
+  await mockHeartbeatSuccess(page)
   await mockRecoveryRequest(page)
   await mockRecoveryVerify(page)
 }

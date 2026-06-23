@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 
 test.describe('account page', () => {
   test('redirects unauthenticated users to login with redirect query', async ({ page }) => {

@@ -1,4 +1,5 @@
-import { expect, type Page, test } from '@playwright/test'
+import type { Page } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { getOtpInputs, typeOtp } from '@shared/tests/e2e/otp-input'
 
