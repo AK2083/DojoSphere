@@ -85,6 +85,7 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     },
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
     checkGrafanaCloudReachability: async () => ({ reachable: false, reason: 'not_configured' }),
+    auditRecord: async () => undefined,
     getOsUsername: async () => 'TestUser',
     ...overrides
   }

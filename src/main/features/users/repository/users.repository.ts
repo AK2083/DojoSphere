@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 
+import { recordRoleAssigned } from '@main/features/audit'
 import { findRoleIdByName } from '@main/features/authorization'
 import { getDatabase, runInTransaction } from '@main/shared/database'
 
@@ -69,7 +70,18 @@ export function addUser(user: CreateUserInput) {
     insertUser.run(id, user.displayName, user.email ?? null, userType)
 
     if (userType === 'local') {
-      insertRoleAssignment.run(randomUUID(), id, findRoleIdByName('list_keeper'), id)
+      const roleId = findRoleIdByName('list_keeper')
+      const assignmentId = randomUUID()
+
+      insertRoleAssignment.run(assignmentId, id, roleId, id)
+
+      recordRoleAssigned({
+        actorUserId: id,
+        roleId,
+        userId: id,
+        assignmentId,
+        scopeType: 'global'
+      })
     }
   })
 

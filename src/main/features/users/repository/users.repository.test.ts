@@ -60,6 +60,41 @@ describe('users.repository', () => {
       scopeType: 'global',
       revokedAt: null
     })
+
+    const auditRow = getDatabase()
+      .prepare(
+        `
+        SELECT action, entity_type AS entityType, entity_id AS entityId, actor_user_id AS actorUserId, new_value_json AS newValueJson
+        FROM authorization_audit_logs
+        WHERE entity_type = 'role'
+      `
+      )
+      .get() as {
+      action: string
+      entityType: string
+      entityId: string
+      actorUserId: string
+      newValueJson: string
+    }
+
+    expect(auditRow).toMatchObject({
+      action: 'assigned',
+      entityType: 'role',
+      entityId: findRoleIdByName('list_keeper'),
+      actorUserId: userId
+    })
+
+    const newValue = JSON.parse(auditRow.newValueJson) as {
+      user_id: string
+      assignment_id: string
+      scope_type: string
+    }
+
+    expect(newValue).toMatchObject({
+      user_id: userId,
+      scope_type: 'global'
+    })
+    expect(newValue.assignment_id).toEqual(expect.any(String))
   })
 
   it('stores optional fields with defaults', async () => {

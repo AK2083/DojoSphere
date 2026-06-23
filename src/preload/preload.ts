@@ -12,6 +12,7 @@ const api: ElectronAPI = {
     ipcRenderer.invoke('users:updateDisplayName', { token, displayName }),
   dbHealthcheck: () => ipcRenderer.invoke('db:healthcheck'),
   checkGrafanaCloudReachability: () => ipcRenderer.invoke('telemetry:checkGrafanaReachability'),
+  auditRecord: (input) => ipcRenderer.invoke('audit:record', input),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')
 }
 
