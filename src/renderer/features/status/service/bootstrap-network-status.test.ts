@@ -10,6 +10,13 @@ vi.mock('@shared/api', () => ({
   heartbeat: vi.fn()
 }))
 
+vi.mock('./check-grafana-cloud-reachability', () => ({
+  checkGrafanaCloudReachability: vi.fn().mockResolvedValue({
+    reachable: false,
+    reason: 'not_configured'
+  })
+}))
+
 vi.mock('../monitoring/monitoring', () => ({
   monitorDebug,
   monitorInformation,
@@ -51,12 +58,13 @@ async function loadBootstrapModule() {
 
   const bootstrap = await import('./bootstrap-network-status')
   const api = await import('@shared/api')
+  const grafana = await import('./check-grafana-cloud-reachability')
   const logging = await import('@shared/lib')
   const statusState = await import('../model/use-status-state')
   const networkStore = await import('../network-status/store/use-network-status-store')
   const cloudStore = await import('../cloud-status/store/use-cloud-status-store')
 
-  return { bootstrap, api, logging, statusState, networkStore, cloudStore }
+  return { bootstrap, api, grafana, logging, statusState, networkStore, cloudStore }
 }
 
 async function loadStatusStateWithoutActiveStore() {
@@ -143,6 +151,25 @@ describe('bootstrapNetworkStatus', () => {
     expect(logging.captureException).toHaveBeenCalledTimes(1)
   })
 
+  it('tracks Supabase and Grafana reachability separately during bootstrap', async () => {
+    const { bootstrap, api, grafana, networkStore } = await loadBootstrapModule()
+    vi.mocked(api.heartbeat).mockResolvedValue({
+      data: { status: 'ok', timestamp: '2026-05-20T10:00:00.000Z' },
+      error: null
+    } as Awaited<ReturnType<typeof api.heartbeat>>)
+    vi.mocked(grafana.checkGrafanaCloudReachability).mockResolvedValue({
+      reachable: false,
+      reason: 'request_failed'
+    })
+
+    await bootstrap.bootstrapNetworkStatus()
+
+    const store = networkStore.useNetworkStatusStore()
+    expect(store.isSupabaseReachable).toBe(true)
+    expect(store.isGrafanaCloudReachable).toBe(false)
+    expect(store.isOnline).toBe(true)
+  })
+
   it('initializes stores and browser listeners on bootstrap', async () => {
     const { bootstrap, api, networkStore, cloudStore } = await loadBootstrapModule()
     const addListenerSpy = vi.spyOn(globalThis.window, 'addEventListener')
@@ -166,6 +193,8 @@ describe('bootstrapNetworkStatus', () => {
     setNavigatorOnline(false)
     ;(offlineHandler as (event: unknown) => void)(new globalThis.Event('offline'))
     expect(networkStatusStore.isOnline).toBe(false)
+    expect(networkStatusStore.isSupabaseReachable).toBe(false)
+    expect(networkStatusStore.isGrafanaCloudReachable).toBe(false)
     expect(cloudStatusStore.isCloudUsed).toBe(true)
 
     setNavigatorOnline(true)

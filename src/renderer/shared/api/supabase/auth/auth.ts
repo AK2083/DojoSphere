@@ -1,7 +1,15 @@
 import { captureException } from '@shared/lib'
 
 import { supabase } from '../client'
+import { createSupabaseUnreachableAuthError, isSupabaseRequestAllowed } from '../connectivity-guard'
 import type { AuthChangeEvent, AuthResponse, Session, UserResponse } from '../types/auth-user'
+
+function blockedAuthResponse(): AuthResponse {
+  return {
+    data: { user: null, session: null },
+    error: createSupabaseUnreachableAuthError()
+  }
+}
 
 /**
  * Initiates the sign-in process using a one-time password (OTP) sent to the user's email.
@@ -12,6 +20,10 @@ import type { AuthChangeEvent, AuthResponse, Session, UserResponse } from '../ty
  * @returns A promise that resolves to an AuthResponse.
  */
 export async function signInWithOtp(email: string): Promise<AuthResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return blockedAuthResponse()
+  }
+
   return await supabase.auth.signInWithOtp({
     email,
     options: {
@@ -32,6 +44,10 @@ export async function signInWithOtp(email: string): Promise<AuthResponse> {
 export async function requestPasswordRecovery(
   email: string
 ): Promise<Awaited<ReturnType<typeof supabase.auth.resetPasswordForEmail>>> {
+  if (!isSupabaseRequestAllowed()) {
+    return { data: null, error: createSupabaseUnreachableAuthError() }
+  }
+
   return await supabase.auth.resetPasswordForEmail(email)
 }
 
@@ -44,6 +60,10 @@ export async function requestPasswordRecovery(
  * @returns The current authenticated user or null if no user is logged in or an error occurs.
  */
 export async function getCurrentUser(): Promise<UserResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return { data: { user: null }, error: createSupabaseUnreachableAuthError() }
+  }
+
   return await supabase.auth.getUser()
 }
 
@@ -53,6 +73,10 @@ export async function getCurrentUser(): Promise<UserResponse> {
  * @returns The current session or null if no session exists or an error occurred.
  */
 export async function getCurrentSession(): Promise<Session | null> {
+  if (!isSupabaseRequestAllowed()) {
+    return null
+  }
+
   try {
     const { data, error } = await supabase.auth.getSession()
 
@@ -114,6 +138,10 @@ export async function signUpByEmailPassword(
   email: string,
   password: string
 ): Promise<AuthResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return blockedAuthResponse()
+  }
+
   return supabase.auth.signUp({ email, password })
 }
 
@@ -130,6 +158,10 @@ export async function signInByEmailPassword(
   email: string,
   password: string
 ): Promise<AuthResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return blockedAuthResponse()
+  }
+
   return supabase.auth.signInWithPassword({ email, password })
 }
 
@@ -142,6 +174,10 @@ export async function signInByEmailPassword(
  * @returns Raw Supabase sign-out response.
  */
 export async function signOut(): Promise<Awaited<ReturnType<typeof supabase.auth.signOut>>> {
+  if (!isSupabaseRequestAllowed()) {
+    return { error: createSupabaseUnreachableAuthError() }
+  }
+
   return await supabase.auth.signOut()
 }
 
@@ -172,6 +208,10 @@ export async function verifyOneTimePasswordBySignUp(
   email: string,
   token: string
 ): Promise<AuthResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return blockedAuthResponse()
+  }
+
   return await supabase.auth.verifyOtp({
     email,
     token,
@@ -192,6 +232,10 @@ export async function verifyOneTimePasswordByRecovery(
   email: string,
   token: string
 ): Promise<AuthResponse> {
+  if (!isSupabaseRequestAllowed()) {
+    return blockedAuthResponse()
+  }
+
   return await supabase.auth.verifyOtp({
     email,
     token,
@@ -211,6 +255,13 @@ export async function verifyOneTimePasswordByRecovery(
 export async function resendSignUpConfirmation(
   email: string
 ): Promise<Awaited<ReturnType<typeof supabase.auth.resend>>> {
+  if (!isSupabaseRequestAllowed()) {
+    return {
+      data: { user: null, session: null },
+      error: createSupabaseUnreachableAuthError()
+    }
+  }
+
   return await supabase.auth.resend({
     type: 'signup',
     email
@@ -229,5 +280,9 @@ export async function resendSignUpConfirmation(
 export async function updateUserPassword(
   newPassword: string
 ): Promise<Awaited<ReturnType<typeof supabase.auth.updateUser>>> {
+  if (!isSupabaseRequestAllowed()) {
+    return { data: { user: null }, error: createSupabaseUnreachableAuthError() }
+  }
+
   return await supabase.auth.updateUser({ password: newPassword })
 }

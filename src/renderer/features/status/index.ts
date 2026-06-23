@@ -10,3 +10,4 @@ export {
   checkHeartbeatConnectivity,
   recheckNetworkStatusAfterFailedUserAction
 } from './service/bootstrap-network-status'
+export { checkGrafanaCloudReachability } from './service/check-grafana-cloud-reachability'

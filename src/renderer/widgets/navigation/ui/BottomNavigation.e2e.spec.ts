@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 const CLOUD_STATUS_KEY = 'dojosphere.cloud.status.isCloudUsed'

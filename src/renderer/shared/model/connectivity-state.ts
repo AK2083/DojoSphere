@@ -1,14 +1,18 @@
 import { type Ref, ref } from 'vue'
-import { getNavigatorOnline } from '@shared/lib'
+import { getNavigatorOnline } from '@shared/lib/browser/navigator'
 
 type ConnectivityRefs = {
   isOnline: Ref<boolean>
   isCloudUsed: Ref<boolean>
+  isSupabaseReachable: Ref<boolean>
+  isGrafanaCloudReachable: Ref<boolean>
 }
 
 let connectivityState: ConnectivityRefs = {
   isOnline: ref(getNavigatorOnline()),
-  isCloudUsed: ref(true)
+  isCloudUsed: ref(true),
+  isSupabaseReachable: ref(true),
+  isGrafanaCloudReachable: ref(false)
 }
 
 /**

@@ -1,3 +1,8 @@
+/** Result of probing Grafana Cloud OTLP reachability via main-process IPC. */
+export type GrafanaReachabilityResult =
+  | { reachable: true }
+  | { reachable: false; reason: 'not_configured' | 'request_failed' }
+
 /** Result of a SQLite health check exposed over IPC. */
 export interface DbHealthcheckResult {
   ok: boolean
@@ -53,5 +58,6 @@ export interface ElectronAPI {
   revokeLocalSession: (token: string) => Promise<void>
   updateUserDisplayName: (token: string, displayName: string) => Promise<User>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
+  checkGrafanaCloudReachability: () => Promise<GrafanaReachabilityResult>
   getOsUsername: () => Promise<string>
 }

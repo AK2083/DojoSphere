@@ -29,6 +29,7 @@ describe('ensureLocalSessionFromOsUsername', () => {
       revokeLocalSession: vi.fn(),
       updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
+      checkGrafanaCloudReachability: vi.fn(),
       getOsUsername: vi.fn()
     }
   })

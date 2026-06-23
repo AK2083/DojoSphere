@@ -1,3 +1,5 @@
+import { useNetworkStatusState } from '@shared/model/connectivity-state'
+
 let cloudModeCheck: (() => boolean) | null = null
 
 /**
@@ -26,6 +28,19 @@ export function shouldCaptureTelemetry(): boolean {
  */
 export function isCloudModeMonitoringAllowed(): boolean {
   return cloudModeCheck?.() ?? true
+}
+
+/**
+ * Indicates whether telemetry upload to Grafana Cloud should proceed.
+ *
+ * @returns True when cloud mode is on and Grafana Cloud is reachable.
+ */
+export function shouldUploadTelemetry(): boolean {
+  if (!isCloudModeMonitoringAllowed()) {
+    return false
+  }
+
+  return useNetworkStatusState().isGrafanaCloudReachable.value
 }
 
 /**

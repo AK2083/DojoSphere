@@ -37,6 +37,10 @@ describe('preload', () => {
     await api.dbHealthcheck()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('db:healthcheck')
 
+    ipcRenderer.invoke.mockResolvedValueOnce({ reachable: true })
+    await api.checkGrafanaCloudReachability()
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('telemetry:checkGrafanaReachability')
+
     ipcRenderer.invoke.mockResolvedValueOnce('adrian')
     await api.getOsUsername()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('system:osUsername')

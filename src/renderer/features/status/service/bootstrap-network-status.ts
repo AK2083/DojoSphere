@@ -6,6 +6,7 @@ import { bindConnectivityState } from '@shared/model'
 import { useStatusState } from '../model/use-status-state'
 import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useNetworkStatusStore } from '../network-status/store'
+import { checkGrafanaCloudReachability } from './check-grafana-cloud-reachability'
 
 /** Result of checking backend connectivity via the heartbeat edge function. */
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
@@ -62,19 +63,27 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
 
 function setOfflineState() {
   monitorWarning(MONITORING_EVENTS.CONNECTIVITY_OFFLINE)
-  useNetworkStatusStore().setOnline(false)
+  const store = useNetworkStatusStore()
+  store.setOnline(false)
+  store.setSupabaseReachable(false)
+  store.setGrafanaCloudReachable(false)
 }
 
-async function runHeartbeatCheck(): Promise<boolean> {
+async function runConnectivityChecks(): Promise<boolean> {
   if (!getNavigatorOnline()) {
     setOfflineState()
     return false
   }
 
-  const isReachable = (await checkHeartbeatConnectivity()).success
-  useNetworkStatusStore().setOnline(isReachable)
+  const isSupabaseReachable = (await checkHeartbeatConnectivity()).success
+  const store = useNetworkStatusStore()
+  store.setSupabaseReachable(isSupabaseReachable)
+  store.setOnline(isSupabaseReachable)
 
-  return isReachable
+  const grafanaResult = await checkGrafanaCloudReachability()
+  store.setGrafanaCloudReachable(grafanaResult.reachable)
+
+  return isSupabaseReachable
 }
 
 let hasNetworkStatusBootstrap = false
@@ -93,7 +102,7 @@ export async function bootstrapNetworkStatus(): Promise<void> {
   useNetworkStatusStore().setOnline(getNavigatorOnline())
 
   if (getNavigatorOnline()) {
-    await runHeartbeatCheck()
+    await runConnectivityChecks()
   } else {
     setOfflineState()
   }
@@ -103,7 +112,7 @@ export async function bootstrapNetworkStatus(): Promise<void> {
   }
 
   globalThis.window.addEventListener('online', () => {
-    void runHeartbeatCheck()
+    void runConnectivityChecks()
   })
   globalThis.window.addEventListener('offline', setOfflineState)
 }
@@ -113,5 +122,5 @@ export async function bootstrapNetworkStatus(): Promise<void> {
  * @returns True when backend heartbeat succeeds, otherwise false.
  */
 export async function recheckNetworkStatusAfterFailedUserAction(): Promise<boolean> {
-  return await runHeartbeatCheck()
+  return await runConnectivityChecks()
 }

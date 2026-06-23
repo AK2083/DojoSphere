@@ -134,13 +134,14 @@ describe('password-recovery e2e helpers', () => {
     })
   })
 
-  it('registers both request and verify endpoint mocks', async () => {
+  it('registers heartbeat, request and verify endpoint mocks', async () => {
     const { page, route } = createPageDouble()
 
     await mockRecoveryFlowRequests(page as never)
 
-    expect(route).toHaveBeenNthCalledWith(1, '**/auth/v1/recover**', expect.any(Function))
-    expect(route).toHaveBeenNthCalledWith(2, '**/auth/v1/verify**', expect.any(Function))
+    expect(route).toHaveBeenNthCalledWith(1, '**/functions/v1/heartbeat', expect.any(Function))
+    expect(route).toHaveBeenNthCalledWith(2, '**/auth/v1/recover**', expect.any(Function))
+    expect(route).toHaveBeenNthCalledWith(3, '**/auth/v1/verify**', expect.any(Function))
   })
 
   it('navigates to otp step with default email', async () => {
