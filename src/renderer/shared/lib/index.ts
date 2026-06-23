@@ -11,7 +11,11 @@ export {
   clearUserContext,
   setUserContext
 } from './telemetry/logging'
-export { setCloudModeMonitoringCheck, shouldCaptureTelemetry } from './telemetry/monitoring-guard'
+export {
+  setCloudModeMonitoringCheck,
+  shouldCaptureTelemetry,
+  shouldUploadTelemetry
+} from './telemetry/monitoring-guard'
 export { createMonitoringHelpers, type MonitoringHelpers } from './telemetry/monitoring-helpers'
 export { registerGlobalErrorHandlers } from './telemetry/register-global-error-handlers'
 export { ErrorCode, errorTranslationMap, translateError } from './validation/error-manager'

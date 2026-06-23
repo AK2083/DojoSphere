@@ -1,6 +1,10 @@
 import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+const { isSupabaseRequestAllowed } = vi.hoisted(() => ({
+  isSupabaseRequestAllowed: vi.fn(() => true)
+}))
+
 import { supabase } from '../client'
 import {
   type AuthError,
@@ -47,12 +51,22 @@ vi.mock('@shared/lib', () => ({
   setUserContext: vi.fn()
 }))
 
+vi.mock('../connectivity-guard', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../connectivity-guard')>()
+
+  return {
+    ...actual,
+    isSupabaseRequestAllowed
+  }
+})
+
 describe('signUpByEmailPassword', () => {
   const email = 'test@example.com'
   const password = 'password123'
 
   beforeEach(() => {
     vi.clearAllMocks()
+    isSupabaseRequestAllowed.mockReturnValue(true)
   })
 
   it('calls supabase.auth.signUp with correct parameters', async () => {
@@ -379,5 +393,62 @@ describe('updateUserPassword', () => {
       password: 'new-password-123'
     })
     expect(result).toEqual(mockResponse)
+  })
+})
+
+describe('supabase connectivity guard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    isSupabaseRequestAllowed.mockReturnValue(false)
+  })
+
+  it('blocks auth API calls when Supabase is unreachable', async () => {
+    await expect(signInWithOtp('test@example.com')).resolves.toMatchObject({
+      data: { user: null, session: null },
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(requestPasswordRecovery('test@example.com')).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(getCurrentUser()).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(getCurrentSession()).resolves.toBeNull()
+    await expect(signUpByEmailPassword('test@example.com', 'password')).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(signInByEmailPassword('test@example.com', 'password')).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(signOut()).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(
+      verifyOneTimePasswordBySignUp('test@example.com', '123456')
+    ).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(
+      verifyOneTimePasswordByRecovery('test@example.com', '123456')
+    ).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(resendSignUpConfirmation('test@example.com')).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+    await expect(updateUserPassword('new-password')).resolves.toMatchObject({
+      error: expect.objectContaining({ code: 'network_error' })
+    })
+
+    expect(supabase.auth.signInWithOtp).not.toHaveBeenCalled()
+    expect(supabase.auth.resetPasswordForEmail).not.toHaveBeenCalled()
+    expect(supabase.auth.getUser).not.toHaveBeenCalled()
+    expect(supabase.auth.getSession).not.toHaveBeenCalled()
+    expect(supabase.auth.signUp).not.toHaveBeenCalled()
+    expect(supabase.auth.signInWithPassword).not.toHaveBeenCalled()
+    expect(supabase.auth.signOut).not.toHaveBeenCalled()
+    expect(supabase.auth.verifyOtp).not.toHaveBeenCalled()
+    expect(supabase.auth.resend).not.toHaveBeenCalled()
+    expect(supabase.auth.updateUser).not.toHaveBeenCalled()
   })
 })

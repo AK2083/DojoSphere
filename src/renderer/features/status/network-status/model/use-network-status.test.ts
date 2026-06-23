@@ -20,8 +20,15 @@ describe('useNetworkStatus', () => {
     const { useStatusState } = await import('../../model/use-status-state')
     const isOnline = ref(true)
     const isCloudUsed = ref(false)
+    const isSupabaseReachable = ref(true)
+    const isGrafanaCloudReachable = ref(false)
 
-    vi.mocked(useStatusState).mockReturnValue({ isOnline, isCloudUsed })
+    vi.mocked(useStatusState).mockReturnValue({
+      isOnline,
+      isCloudUsed,
+      isSupabaseReachable,
+      isGrafanaCloudReachable
+    })
 
     const result = useNetworkStatus()
 
@@ -35,8 +42,15 @@ describe('useNetworkStatus', () => {
       await import('../../service/bootstrap-network-status')
     const isOnline = ref(false)
     const isCloudUsed = ref(false)
+    const isSupabaseReachable = ref(false)
+    const isGrafanaCloudReachable = ref(false)
 
-    vi.mocked(useStatusState).mockReturnValue({ isOnline, isCloudUsed })
+    vi.mocked(useStatusState).mockReturnValue({
+      isOnline,
+      isCloudUsed,
+      isSupabaseReachable,
+      isGrafanaCloudReachable
+    })
     vi.mocked(recheckNetworkStatusAfterFailedUserAction).mockResolvedValue(true)
 
     const result = useNetworkStatus()

@@ -1,3 +1,6 @@
+export { registerTelemetryIpc } from './ipc/register'
+export { checkGrafanaCloudReachability } from './service/grafana-reachability'
+export type { GrafanaReachabilityResult } from './service/grafana-reachability'
 import {
   startLocalCollector,
   stopLocalCollector,
