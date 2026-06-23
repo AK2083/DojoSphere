@@ -1,3 +1,21 @@
+# [1.14.0](https://github.com/AK2083/DojoSphere/compare/v1.13.0...v1.14.0) (2026-06-23)
+
+### Features
+
+- integrate Grafana Cloud telemetry reachability checks ([#161](https://github.com/AK2083/DojoSphere/issues/161)) ([44bee88](https://github.com/AK2083/DojoSphere/commit/44bee884154d7a768a58df71d5da09df3992bc9b))
+
+# [1.13.0](https://github.com/AK2083/DojoSphere/compare/v1.12.0...v1.13.0) (2026-06-22)
+
+### Features
+
+- introdruce OpenTelemetry ([#159](https://github.com/AK2083/DojoSphere/issues/159)) ([9e730ef](https://github.com/AK2083/DojoSphere/commit/9e730ef4c5087661e86f4b15006d8a36d018a07b))
+
+# [1.12.0](https://github.com/AK2083/DojoSphere/compare/v1.11.0...v1.12.0) (2026-06-15)
+
+### Features
+
+- UI add username ([#146](https://github.com/AK2083/DojoSphere/issues/146)) ([daa6878](https://github.com/AK2083/DojoSphere/commit/daa6878b044caf7612997ad7fef5cfeb68985ce9))
+
 # [1.11.0](https://github.com/AK2083/DojoSphere/compare/v1.10.0...v1.11.0) (2026-06-15)
 
 ### Features
