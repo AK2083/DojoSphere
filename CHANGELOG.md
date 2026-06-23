@@ -1,3 +1,9 @@
+# [1.15.0](https://github.com/AK2083/DojoSphere/compare/v1.14.0...v1.15.0) (2026-06-23)
+
+### Features
+
+- audit slice ([#162](https://github.com/AK2083/DojoSphere/issues/162)) ([eec04ca](https://github.com/AK2083/DojoSphere/commit/eec04caa48696ff5b57c2b362df492183831a03f))
+
 # [1.14.0](https://github.com/AK2083/DojoSphere/compare/v1.13.0...v1.14.0) (2026-06-23)
 
 ### Features
