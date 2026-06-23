@@ -49,6 +49,33 @@ export interface EnsureLocalSessionResult {
   expiresAt: string
 }
 
+/** Tournament competitor record stored in SQLite. */
+export interface Competitor {
+  id: string
+  givenName: string
+  familyName: string
+  club: string | null
+  weightClass: string | null
+  createdAt: string
+  updatedAt: string | null
+}
+
+/** Input for creating a competitor via IPC. */
+export interface CreateCompetitorInput {
+  givenName: string
+  familyName: string
+  club?: string | null
+  weightClass?: string | null
+}
+
+/** Input for updating a competitor via IPC. */
+export interface UpdateCompetitorInput {
+  givenName?: string
+  familyName?: string
+  club?: string | null
+  weightClass?: string | null
+}
+
 /** Input for recording an audit event via IPC. */
 export interface AuditRecordInput {
   token: string
@@ -73,5 +100,9 @@ export interface ElectronAPI {
   dbHealthcheck: () => Promise<DbHealthcheckResult>
   checkGrafanaCloudReachability: () => Promise<GrafanaReachabilityResult>
   auditRecord: (input: AuditRecordInput) => Promise<void>
+  getCompetitors: (token: string) => Promise<Competitor[]>
+  addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>
+  updateCompetitor: (token: string, id: string, input: UpdateCompetitorInput) => Promise<Competitor>
+  deleteCompetitor: (token: string, id: string) => Promise<void>
   getOsUsername: () => Promise<string>
 }
