@@ -16,6 +16,10 @@ vi.mock('@opentelemetry/api', () => ({
   }
 }))
 
+vi.mock('@main/features/telemetry', () => ({
+  uploadTracesOnError: vi.fn()
+}))
+
 describe('main captureException', () => {
   beforeEach(async () => {
     vi.resetModules()
@@ -35,8 +39,27 @@ describe('main captureException', () => {
     expect(exceptionSpan.recordException).toHaveBeenCalledWith(error)
     expect(exceptionSpan.setStatus).toHaveBeenCalledWith({
       code: 2,
-      message: 'disk full'
+      message: 'error'
     })
     expect(exceptionSpan.end).toHaveBeenCalledOnce()
+  })
+
+  it('records error.code on AppError spans', async () => {
+    const { captureException } = await import('./capture-exception')
+    const error = Object.assign(new Error('hidden'), { code: 'shared.error.unknown' })
+
+    captureException(error, 'telemetry', 'persist')
+
+    expect(startSpan).toHaveBeenCalledWith('exception', {
+      attributes: {
+        'service.name': 'telemetry',
+        action: 'persist',
+        'error.code': 'shared.error.unknown'
+      }
+    })
+    expect(exceptionSpan.setStatus).toHaveBeenCalledWith({
+      code: 2,
+      message: 'shared.error.unknown'
+    })
   })
 })

@@ -89,6 +89,11 @@ export interface AuditRecordInput {
 /** Audit event fields without the session token (added by the caller or shared lib). */
 export type AuditEventPayload = Omit<AuditRecordInput, 'token'>
 
+/** Telemetry upload preferences synced to the main process. */
+export type TelemetryUploadPreferences = {
+  autoUploadDiagnostics: boolean
+}
+
 /** Typed IPC surface exposed on `window.api` by the preload script. */
 export interface ElectronAPI {
   getUsers: () => Promise<User[]>
@@ -99,6 +104,8 @@ export interface ElectronAPI {
   updateUserDisplayName: (token: string, displayName: string) => Promise<User>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
   checkGrafanaCloudReachability: () => Promise<GrafanaReachabilityResult>
+  setTelemetryUploadPreferences: (preferences: TelemetryUploadPreferences) => Promise<void>
+  uploadTelemetryOnError: () => Promise<void>
   auditRecord: (input: AuditRecordInput) => Promise<void>
   getCompetitors: (token: string) => Promise<Competitor[]>
   addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>

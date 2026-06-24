@@ -1,6 +1,6 @@
 # Logging & Monitoring — Architecture
 
-This document describes the **offline-first logging architecture** for DojoSphere (outcome of SPIKE #0). The **capture phase** is implemented; uploading telemetry to Grafana Cloud remains a later phase.
+This document describes the **offline-first logging architecture** for DojoSphere (outcome of SPIKE #0). The **capture phase** is fully implemented; **error-triggered upload** to Grafana Cloud is available when Settings allow.
 
 > **Note:** This document does not constitute legal advice. Operators are responsible for the legal basis, information obligations, retention, and deletion of personal data in their specific deployment.
 
@@ -9,9 +9,9 @@ This document describes the **offline-first logging architecture** for DojoSpher
 | Phase | Status | Scope |
 |-------|--------|--------|
 | **Capture** | **Implemented** | Local OTLP collector → `traces.jsonl`, audit in SQLite, debug log file, role-aware activity boundaries |
-| **Send** | **Deferred** | OTLP upload to Grafana Cloud when cloud mode, reachability, and product rules allow |
+| **Send** | **Partial** | Error-triggered OTLP upload to Grafana Cloud when Settings allow; export scrubber + HMAC |
 
-Capture works offline and with cloud mode off. `shouldUploadTelemetry()` and Grafana reachability checks are in place; wiring upload from Settings is not part of the current product surface.
+Capture works offline and with cloud mode off. Settings expose cloud mode and automatic diagnostic upload toggles (privacy-first defaults: both off).
 
 ## Current implementation
 
@@ -22,10 +22,12 @@ Capture works offline and with cloud mode off. `shouldUploadTelemetry()` and Gra
 | Public API | `@shared/lib` — `captureException`, `addBreadcrumb`, `setUserContext`, `auditRecord`, `shouldCaptureTelemetry`, `shouldUploadTelemetry`; features do not import OTel SDKs |
 | Main / Preload | `initTelemetryApp` (main), `initLoggingProvider` + router activity scope (renderer); `audit:record` IPC via preload |
 | Offline capture | `shouldCaptureTelemetry()` is always `true`; `navigator.onLine` does not block local capture |
-| Cloud mode | `isCloudUsed` gates **upload** only; local capture and SQLite audit always run |
+| Cloud mode | `isCloudUsed` gates **Supabase** access; independent of diagnostic upload |
 | Audit | `authorization_audit_logs` via `src/main/features/audit/`; IPC + repository; competitor create/update/delete audited in main; authorization events (session revoke, role assigned) supported |
 | Activity scope | Route meta `activityLogging: false` on audience paths; guards in `@shared/lib` skip activity breadcrumbs, `setUserContext`, and renderer `auditRecord` |
 | Connectivity | `isSupabaseReachable` and `isGrafanaCloudReachable` in network status store; `checkGrafanaCloudReachability()` in main (IPC); heartbeat for Supabase |
+| Settings | Cloud mode + auto diagnostic upload toggles; in-app legal notice; prefs synced to main via IPC |
+| Grafana upload | Error-triggered upload from `traces.jsonl` with export scrubber (HMAC `user.id`, error codes only, denylist) |
 | Audience | `/audience` — anonymous read-only overview; see `src/renderer/features/audience/README.md` |
 
 ### Local data paths (Electron `userData`)
@@ -40,7 +42,7 @@ Capture works offline and with cloud mode off. `shouldUploadTelemetry()` and Gra
 
 | Lane | Purpose | Storage / destination | Process |
 |------|---------|----------------------|---------|
-| **Telemetry** | Errors, performance, technical breadcrumbs | **Capture:** local OTLP collector → `traces.jsonl`. **Send (later):** Grafana Cloud (OTLP) | Main + renderer via OpenTelemetry SDKs |
+| **Telemetry** | Errors, performance, technical breadcrumbs | **Capture:** local OTLP collector → `traces.jsonl`. **Send:** Grafana Cloud (OTLP, scrubbed) on error | Main + renderer via OpenTelemetry SDKs |
 | **Audit** | Traceable business actions (who changed what?) | SQLite (`authorization_audit_logs`) | Main only |
 | **Debug** | Developer / support logs | Rotating log file | Main only |
 
@@ -62,7 +64,7 @@ Capture works offline and with cloud mode off. `shouldUploadTelemetry()` and Gra
 │ Main Process                                                    │
 │  local OTLP collector   → traces.jsonl (capture)                │
 │  sdk-trace-node         → same collector (main spans)             │
-│                         → Grafana Cloud upload (send — later)   │
+│                         → Grafana Cloud upload (on error, scrubbed)   │
 │  audit repository       → authorization_audit_logs (SQLite)     │
 │  debug logger           → log file (userData/logs/)             │
 └─────────────────────────────────────────────────────────────────┘
@@ -70,26 +72,48 @@ Capture works offline and with cloud mode off. `shouldUploadTelemetry()` and Gra
 
 ## Cloud mode (`isCloudUsed`)
 
-`isCloudUsed` controls **cloud services as a whole** — aligned with the planned data sync logic: the same switch philosophy for data and logging.
+`isCloudUsed` controls **cloud services** (sign-in, sync) — independent of diagnostic upload to Grafana Cloud.
 
 | Action | Cloud on (`isCloudUsed = true`) | Cloud off (`isCloudUsed = false`) |
 |--------|----------------------------------|-----------------------------------|
 | Telemetry **capture** (local OTLP / JSONL) | yes | yes |
-| Telemetry **upload** (Grafana Cloud) | yes, when reachable + optional consent | no |
+| Telemetry **upload** (Grafana Cloud) | when auto-upload on + reachable | when auto-upload on + reachable |
 | Supabase access | yes, after heartbeat | no |
 | Audit (SQLite) | yes | yes |
 | Debug file | yes (configurable) | yes (configurable) |
 
-**Core rule:** Cloud mode controls **upload**, not **capture**. Events captured offline are stored locally in `traces.jsonl` until a later send phase allows upload.
+**Core rule:** Cloud mode does **not** gate local capture or Grafana upload. Upload is controlled by the separate auto-upload toggle.
 
-### Send phase — upload (deferred)
+### Send phase — upload (error-triggered)
 
-Applies only when **sending** queued telemetry to Grafana Cloud — not when **capturing** events locally.
+Applies only when **sending** exception telemetry to Grafana Cloud — not when **capturing** events locally.
 
 - **Capture:** always on (local OTLP collector / SQLite audit); no dialog, no upload required.
-- **Send (later):** upload when cloud mode, reachability, and product rules allow (details TBD).
+- **Send:** on `captureException`, when `uploadAllowed` (see below), main reads new `traces.jsonl` lines, scrubs them, and POSTs to Grafana OTLP.
 
-Send UX (e.g. consent dialog, settings toggle) is not implemented yet.
+**Settings UX:** `/settings` — two independent toggles in separate sections: cloud mode and “send diagnostic data on errors”. Data-processing notice (accordion) is always visible on the diagnostic section. No PDF required.
+
+**Telemetry upload gate:**
+
+```
+uploadAllowed =
+  autoUploadDiagnostics
+  ∧ grafanaCloudReachable
+```
+
+`shouldUploadTelemetry()` evaluates all three conditions. Preferences are persisted in `localStorage` and synced to main via `telemetry:setUploadPreferences`.
+
+### Grafana export rules (GDPR-oriented)
+
+| Local capture (`traces.jsonl`) | Grafana export |
+|--------------------------------|----------------|
+| Full exception spans, stacks, breadcrumbs | **Exception spans only** |
+| Raw `user.id` | `user.id_hmac` (HMAC-SHA256, install secret in `<userData>/telemetry/export-hmac.key`) |
+| `error.message`, stacks | **`error.code` only** (e.g. `auth.invalid_credentials`) |
+| debug/info breadcrumbs | **Dropped** on export |
+| Denied keys/values (email, token, bearer, …) | **Removed**; span dropped if unsafe |
+
+Scrubber: `src/main/features/telemetry/service/export-scrubber.ts`. Audit lane and `app.log` are never uploaded.
 
 ## Connectivity checks
 
@@ -98,19 +122,18 @@ Send UX (e.g. consent dialog, settings toggle) is not implemented yet.
 | Before access to | Check | Status |
 |------------------|-------|--------|
 | Supabase (auth, API, sync) | heartbeat edge function | implemented (`checkHeartbeatConnectivity`) |
-| Grafana Cloud OTLP upload | dedicated reachability check (HEAD to ingest URL) | implemented (`checkGrafanaCloudReachability`); upload not wired |
+| Grafana Cloud OTLP upload | dedicated reachability check (HEAD to ingest URL) | implemented (`checkGrafanaCloudReachability`); upload on error when Settings allow |
 | Local SQLite / IPC / OTLP collector | no network check | — |
 
 **Telemetry upload gate (send phase):**
 
 ```
 uploadAllowed =
-  isCloudUsed
+  autoUploadDiagnostics
   ∧ grafanaCloudReachable
-  ∧ (autoUploadEnabled ∨ userConsentedToUpload)
 ```
 
-`shouldUploadTelemetry()` evaluates cloud mode and `isGrafanaCloudReachable`. Heartbeat and Grafana reachability are tracked separately in the network status store.
+`shouldUploadTelemetry()` evaluates auto-upload preference and `isGrafanaCloudReachable`.
 
 ## Roles and logging scope
 
@@ -175,7 +198,7 @@ The renderer calls `auditRecord(token, event)` via `@shared/lib`; writes happen 
 
 - No tokens, session IDs, passwords, or full personal records in span attributes / breadcrumb `data`
 - `setUserContext` with internal user ID only (no email); not set on audience routes
-- Span attribute scrubbing before export (send phase)
+- Span attribute scrubbing before Grafana export (implemented in export scrubber)
 - Review breadcrumb payloads (e.g. cloud status as boolean flag only, no key names with context)
 - Trace file under `<userData>/telemetry/` — operator-visible path; settings UX TBD
 - Retention: JSONL rotation / max file size (TBD); audit retention operator-side; debug logs with rotation
@@ -197,7 +220,7 @@ Renderer code imports only `@shared/lib` (FSD), not `@opentelemetry/*` directly.
 | API | Role |
 |-----|------|
 | `shouldCaptureTelemetry()` | Local capture always allowed |
-| `shouldUploadTelemetry()` | Cloud + Grafana reachability (upload not wired) |
+| `shouldUploadTelemetry()` | Cloud + auto-upload + Grafana reachability |
 | `captureException`, `addBreadcrumb` | Telemetry via OTLP → local collector |
 | `setUserContext` / `clearUserContext` | User ID on spans; skipped when activity logging disabled |
 | `auditRecord(token, event)` | IPC → `authorization_audit_logs`; skipped when activity logging disabled |

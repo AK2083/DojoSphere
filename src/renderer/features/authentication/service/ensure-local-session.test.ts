@@ -30,6 +30,8 @@ describe('ensureLocalSessionFromOsUsername', () => {
       updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
       checkGrafanaCloudReachability: vi.fn(),
+      setTelemetryUploadPreferences: vi.fn(),
+      uploadTelemetryOnError: vi.fn(),
       auditRecord: vi.fn(),
       getCompetitors: vi.fn(),
       addCompetitor: vi.fn(),

@@ -11,6 +11,21 @@ import { isPlaywrightBrowserOnly } from '@shared/lib/electron/e2e-api'
 
 import { LOCAL_OTLP_TRACES_URL } from './constants'
 
+let rendererTracerProvider: WebTracerProvider | null = null
+
+/**
+ * Flushes pending renderer spans to the local OTLP collector.
+ *
+ * @returns Resolves when span processors have finished flushing.
+ */
+export async function forceFlushRendererTelemetry(): Promise<void> {
+  if (!rendererTracerProvider) {
+    return
+  }
+
+  await rendererTracerProvider.forceFlush()
+}
+
 /**
  * Initializes OpenTelemetry tracing for the renderer process.
  *
@@ -33,11 +48,14 @@ export function initLoggingProvider(_router: Router, environmentMode: string): v
     spanProcessors: [
       new BatchSpanProcessor(
         new OTLPTraceExporter({
-          url: LOCAL_OTLP_TRACES_URL
+          url: LOCAL_OTLP_TRACES_URL,
+          headers: { 'Content-Type': 'application/json' }
         })
       )
     ]
   })
+
+  rendererTracerProvider = provider
 
   provider.register({
     contextManager: new ZoneContextManager()

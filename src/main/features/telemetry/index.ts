@@ -11,6 +11,7 @@ import {
   shutdownNodeTelemetry,
   type NodeTelemetryHandle
 } from './service/node-telemetry'
+import { registerMainSpanFlush, setTraceUploadUserDataPath } from './service/trace-upload'
 
 /** Options for initializing local telemetry capture in the main process. */
 export type InitTelemetryOptions = {
@@ -28,6 +29,7 @@ let nodeTelemetryHandle: NodeTelemetryHandle | null = null
  * @returns Resolves when the collector and main-process tracer are running.
  */
 export async function initTelemetry(options: InitTelemetryOptions): Promise<void> {
+  setTraceUploadUserDataPath(options.userDataPath)
   collectorHandle = await startLocalCollector({ userDataPath: options.userDataPath })
 
   const otlpEndpoint = `http://${collectorHandle.host}:${collectorHandle.port}`
@@ -35,6 +37,7 @@ export async function initTelemetry(options: InitTelemetryOptions): Promise<void
     environment: options.environment,
     otlpEndpoint
   })
+  registerMainSpanFlush(() => nodeTelemetryHandle!.forceFlush())
 }
 
 /**
@@ -62,3 +65,7 @@ export async function shutdownTelemetry(): Promise<void> {
 export function getLocalTraceFilePath(): string | null {
   return collectorHandle?.traceFilePath ?? null
 }
+
+export { uploadTracesOnError } from './service/trace-upload'
+export { setTelemetryUploadPreferences } from './service/upload-preferences'
+export type { TelemetryUploadPreferences } from './service/upload-preferences'

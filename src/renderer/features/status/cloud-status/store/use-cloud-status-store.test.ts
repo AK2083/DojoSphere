@@ -23,12 +23,12 @@ describe('useCloudStatusStore', () => {
     expect(store.isCloudUsed).toBe(false)
   })
 
-  it('falls back to enabled cloud mode when storage is empty', () => {
+  it('falls back to disabled cloud mode when storage is empty', () => {
     vi.mocked(getCloudStatusFromStorage).mockReturnValue(null)
 
     const store = useCloudStatusStore()
 
-    expect(store.isCloudUsed).toBe(true)
+    expect(store.isCloudUsed).toBe(false)
   })
 
   it('persists cloud mode when setCloudUsed is called', () => {

@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import {
   isCloudModeMonitoringAllowed,
   resetCloudModeMonitoringCheck,
+  setAutoUploadDiagnosticsCheck,
   setCloudModeMonitoringCheck,
   shouldCaptureTelemetry,
   shouldUploadTelemetry
@@ -15,7 +16,7 @@ describe('monitoring-guard', () => {
     resetCloudModeMonitoringCheck()
     bindConnectivityState({
       isOnline: ref(true),
-      isCloudUsed: ref(true),
+      isCloudUsed: ref(false),
       isSupabaseReachable: ref(true),
       isGrafanaCloudReachable: ref(false)
     })
@@ -41,8 +42,8 @@ describe('monitoring-guard', () => {
     expect(isCloudModeMonitoringAllowed()).toBe(true)
   })
 
-  it('blocks upload when cloud mode is off', () => {
-    setCloudModeMonitoringCheck(() => false)
+  it('blocks upload when auto diagnostics is off', () => {
+    setAutoUploadDiagnosticsCheck(() => false)
     bindConnectivityState({
       isOnline: ref(true),
       isCloudUsed: ref(false),
@@ -53,11 +54,11 @@ describe('monitoring-guard', () => {
     expect(shouldUploadTelemetry()).toBe(false)
   })
 
-  it('blocks upload when heartbeat is ok but Grafana Cloud is down', () => {
-    setCloudModeMonitoringCheck(() => true)
+  it('blocks upload when Grafana Cloud is unreachable', () => {
+    setAutoUploadDiagnosticsCheck(() => true)
     bindConnectivityState({
       isOnline: ref(true),
-      isCloudUsed: ref(true),
+      isCloudUsed: ref(false),
       isSupabaseReachable: ref(true),
       isGrafanaCloudReachable: ref(false)
     })
@@ -65,8 +66,20 @@ describe('monitoring-guard', () => {
     expect(shouldUploadTelemetry()).toBe(false)
   })
 
-  it('allows upload when cloud mode and Grafana Cloud reachability pass', () => {
-    setCloudModeMonitoringCheck(() => true)
+  it('allows upload when auto diagnostics is on and Grafana is reachable, regardless of cloud mode', () => {
+    setAutoUploadDiagnosticsCheck(() => true)
+    bindConnectivityState({
+      isOnline: ref(true),
+      isCloudUsed: ref(false),
+      isSupabaseReachable: ref(true),
+      isGrafanaCloudReachable: ref(true)
+    })
+
+    expect(shouldUploadTelemetry()).toBe(true)
+  })
+
+  it('allows upload when auto diagnostics and Grafana reachability pass', () => {
+    setAutoUploadDiagnosticsCheck(() => true)
     bindConnectivityState({
       isOnline: ref(true),
       isCloudUsed: ref(true),

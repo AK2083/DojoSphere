@@ -14,7 +14,7 @@ export function useStatusState() {
   if (!activeStore) {
     return {
       isOnline: ref(getNavigatorOnline()),
-      isCloudUsed: ref(true),
+      isCloudUsed: ref(false),
       isSupabaseReachable: ref(true),
       isGrafanaCloudReachable: ref(false)
     }

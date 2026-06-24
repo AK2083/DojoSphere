@@ -1,4 +1,10 @@
-export { CloudStatus, cloudStatusDe, cloudStatusEn, useCloudStatusStore } from './cloud-status'
+export {
+  CloudStatus,
+  cloudStatusDe,
+  cloudStatusEn,
+  setCloudMode,
+  useCloudStatusStore
+} from './cloud-status'
 export { default as statusDe } from './i18n/de'
 export { default as statusEn } from './i18n/en'
 export { useStatusState } from './model/use-status-state'

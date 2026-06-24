@@ -48,7 +48,8 @@ describe('node-telemetry', () => {
 
     expect(NodeTracerProvider).toHaveBeenCalledOnce()
     expect(OTLPTraceExporter).toHaveBeenCalledWith({
-      url: 'http://127.0.0.1:4318/v1/traces'
+      url: 'http://127.0.0.1:4318/v1/traces',
+      headers: { 'Content-Type': 'application/json' }
     })
     expect(BatchSpanProcessor).toHaveBeenCalledOnce()
     expect(register).toHaveBeenCalledOnce()
@@ -56,6 +57,17 @@ describe('node-telemetry', () => {
   })
 
   it('shuts down the main-process tracer provider', async () => {
+    const forceFlush = vi.fn(async () => undefined)
+    NodeTracerProvider.mockImplementation(function NodeTracerProvider(this: {
+      register: typeof register
+      shutdown: typeof shutdown
+      forceFlush: typeof forceFlush
+    }) {
+      this.register = register
+      this.shutdown = shutdown
+      this.forceFlush = forceFlush
+    })
+
     const { initNodeTelemetry, shutdownNodeTelemetry } = await import('./node-telemetry')
 
     const handle = initNodeTelemetry({
@@ -63,6 +75,9 @@ describe('node-telemetry', () => {
       otlpEndpoint: 'http://127.0.0.1:4318'
     })
 
+    await handle.forceFlush()
+
+    expect(forceFlush).toHaveBeenCalledOnce()
     await shutdownNodeTelemetry(handle)
 
     expect(shutdown).toHaveBeenCalledOnce()

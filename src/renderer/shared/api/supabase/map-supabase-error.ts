@@ -69,6 +69,6 @@ export function mapSupabaseError(error: AuthError): AppError {
       return new AppError(translationKeys.error.retry)
 
     default:
-      return new AppError(translationKeys.error.unknown, error.message)
+      return new AppError(translationKeys.error.unknown)
   }
 }

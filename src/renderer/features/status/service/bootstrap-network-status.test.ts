@@ -183,7 +183,7 @@ describe('bootstrapNetworkStatus', () => {
     const networkStatusStore = networkStore.useNetworkStatusStore()
     const cloudStatusStore = cloudStore.useCloudStatusStore()
     expect(networkStatusStore.isOnline).toBe(true)
-    expect(cloudStatusStore.isCloudUsed).toBe(true)
+    expect(cloudStatusStore.isCloudUsed).toBe(false)
 
     const onlineHandler = addListenerSpy.mock.calls.find((args) => args[0] === 'online')?.[1]
     const offlineHandler = addListenerSpy.mock.calls.find((args) => args[0] === 'offline')?.[1]
@@ -195,13 +195,13 @@ describe('bootstrapNetworkStatus', () => {
     expect(networkStatusStore.isOnline).toBe(false)
     expect(networkStatusStore.isSupabaseReachable).toBe(false)
     expect(networkStatusStore.isGrafanaCloudReachable).toBe(false)
-    expect(cloudStatusStore.isCloudUsed).toBe(true)
+    expect(cloudStatusStore.isCloudUsed).toBe(false)
 
     setNavigatorOnline(true)
     ;(onlineHandler as (event: unknown) => void)(new globalThis.Event('online'))
     await new Promise((resolve) => globalThis.setTimeout(resolve, 0))
     expect(networkStatusStore.isOnline).toBe(true)
-    expect(cloudStatusStore.isCloudUsed).toBe(true)
+    expect(cloudStatusStore.isCloudUsed).toBe(false)
   })
 
   it('does not bootstrap twice', async () => {
@@ -231,7 +231,7 @@ describe('bootstrapNetworkStatus', () => {
     expect(reachable).toBe(false)
     expect(api.heartbeat).not.toHaveBeenCalled()
     expect(networkStore.useNetworkStatusStore().isOnline).toBe(false)
-    expect(cloudStore.useCloudStatusStore().isCloudUsed).toBe(true)
+    expect(cloudStore.useCloudStatusStore().isCloudUsed).toBe(false)
   })
 
   it('updates network store from heartbeat result when internet is available', async () => {
@@ -246,7 +246,7 @@ describe('bootstrapNetworkStatus', () => {
 
     expect(reachable).toBe(true)
     expect(networkStore.useNetworkStatusStore().isOnline).toBe(true)
-    expect(cloudStore.useCloudStatusStore().isCloudUsed).toBe(true)
+    expect(cloudStore.useCloudStatusStore().isCloudUsed).toBe(false)
   })
 
   it('marks connectivity online after a successful heartbeat during bootstrap', async () => {
@@ -295,7 +295,7 @@ describe('bootstrapNetworkStatus', () => {
     const state = statusState.useStatusState()
 
     expect(state.isOnline.value).toBe(false)
-    expect(state.isCloudUsed.value).toBe(true)
+    expect(state.isCloudUsed.value).toBe(false)
   })
 
   it('handles non-browser runtime in bootstrap without listeners', async () => {

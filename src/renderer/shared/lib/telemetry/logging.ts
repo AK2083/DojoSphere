@@ -2,8 +2,9 @@ import { SpanStatusCode, trace } from '@opentelemetry/api'
 import { isPlaywrightBrowserOnly } from '@shared/lib/electron/e2e-api'
 
 import { isActivityLoggingEnabled } from './activity-logging-scope'
+import { forceFlushRendererTelemetry } from './init-provider'
 import type { LogLevel } from './log-level'
-import { shouldCaptureTelemetry } from './monitoring-guard'
+import { shouldCaptureTelemetry, shouldUploadTelemetry } from './monitoring-guard'
 
 const TRACER_NAME = 'dojosphere-renderer'
 const MAX_BUFFERED_BREADCRUMBS = 30
@@ -116,6 +117,26 @@ export function resetBreadcrumbBuffer() {
   breadcrumbBuffer = []
 }
 
+function resolveErrorCode(error: Error): string | undefined {
+  if ('code' in error && typeof error.code === 'string') {
+    return error.code
+  }
+
+  return undefined
+}
+
+async function triggerUploadOnError(): Promise<void> {
+  if (!shouldUploadTelemetry()) {
+    return
+  }
+
+  await forceFlushRendererTelemetry()
+
+  if (globalThis.window.api?.uploadTelemetryOnError) {
+    await globalThis.window.api.uploadTelemetryOnError()
+  }
+}
+
 function applyUserContext(attributes: Record<string, string>) {
   if (userId) {
     attributes['user.id'] = userId
@@ -139,13 +160,23 @@ export function captureException(error: Error, service: string, action: string) 
     'service.name': service,
     action
   }
+  const errorCode = resolveErrorCode(error)
+
+  if (errorCode) {
+    attributes['error.code'] = errorCode
+  }
   applyUserContext(attributes)
 
   const span = getTracer().startSpan('exception', { attributes })
   attachBufferedBreadcrumbs(span)
   span.recordException(error)
-  span.setStatus({ code: SpanStatusCode.ERROR, message: error.message })
+  span.setStatus({
+    code: SpanStatusCode.ERROR,
+    message: errorCode ?? 'error'
+  })
   span.end()
+
+  void triggerUploadOnError()
 }
 
 /**

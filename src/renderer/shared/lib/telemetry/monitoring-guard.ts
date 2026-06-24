@@ -1,14 +1,24 @@
 import { useNetworkStatusState } from '@shared/model/connectivity-state'
 
 let cloudModeCheck: (() => boolean) | null = null
+let autoUploadDiagnosticsCheck: (() => boolean) | null = null
 
 /**
- * Registers a cloud-mode check reserved for future upload gating.
+ * Registers a cloud-mode check reserved for upload gating.
  *
  * @param fn Returns true when cloud mode allows telemetry upload.
  */
 export function setCloudModeMonitoringCheck(fn: () => boolean) {
   cloudModeCheck = fn
+}
+
+/**
+ * Registers a check for automatic diagnostic upload preference.
+ *
+ * @param fn Returns true when auto-upload is enabled in settings.
+ */
+export function setAutoUploadDiagnosticsCheck(fn: () => boolean) {
+  autoUploadDiagnosticsCheck = fn
 }
 
 /**
@@ -22,7 +32,6 @@ export function shouldCaptureTelemetry(): boolean {
 
 /**
  * Indicates whether cloud mode currently allows monitoring upload.
- * Upload gating is wired in a later issue; kept for App.vue registration.
  *
  * @returns True when cloud mode check passes or is not registered.
  */
@@ -31,12 +40,21 @@ export function isCloudModeMonitoringAllowed(): boolean {
 }
 
 /**
+ * Indicates whether automatic diagnostic upload is enabled.
+ *
+ * @returns True when the auto-upload check passes or is not registered.
+ */
+export function isAutoUploadDiagnosticsEnabled(): boolean {
+  return autoUploadDiagnosticsCheck?.() ?? false
+}
+
+/**
  * Indicates whether telemetry upload to Grafana Cloud should proceed.
  *
- * @returns True when cloud mode is on and Grafana Cloud is reachable.
+ * @returns True when auto-upload is enabled and Grafana Cloud is reachable.
  */
 export function shouldUploadTelemetry(): boolean {
-  if (!isCloudModeMonitoringAllowed()) {
+  if (!isAutoUploadDiagnosticsEnabled()) {
     return false
   }
 
@@ -44,8 +62,9 @@ export function shouldUploadTelemetry(): boolean {
 }
 
 /**
- * Resets the cloud-mode monitoring check (for tests).
+ * Resets monitoring checks (for tests).
  */
 export function resetCloudModeMonitoringCheck() {
   cloudModeCheck = null
+  autoUploadDiagnosticsCheck = null
 }

@@ -52,7 +52,12 @@ vi.mock('@opentelemetry/api', () => ({
 }))
 
 vi.mock('./monitoring-guard', () => ({
-  shouldCaptureTelemetry
+  shouldCaptureTelemetry,
+  shouldUploadTelemetry: vi.fn(() => false)
+}))
+
+vi.mock('./init-provider', () => ({
+  forceFlushRendererTelemetry: vi.fn(async () => {})
 }))
 
 vi.mock('./activity-logging-scope', () => ({
@@ -172,7 +177,7 @@ describe('logging breadcrumbs', () => {
     expect(exceptionSpan.recordException).toHaveBeenCalledWith(error)
     expect(exceptionSpan.setStatus).toHaveBeenCalledWith({
       code: SpanStatusCode.ERROR,
-      message: 'boom'
+      message: 'error'
     })
     expect(exceptionSpan.end).toHaveBeenCalledOnce()
 

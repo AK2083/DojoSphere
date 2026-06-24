@@ -31,4 +31,22 @@ test.describe('CloudStatus', () => {
 
     await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Local')
   })
+
+  test('reflects cloud mode toggle from settings', async ({ page }) => {
+    await setEnglishLanguage(page)
+    await page.addInitScript(
+      ([cloudStatusKey]) => {
+        globalThis.localStorage?.setItem(cloudStatusKey, JSON.stringify(false))
+      },
+      [CLOUD_STATUS_KEY]
+    )
+
+    await page.goto('/#/settings')
+
+    await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Local')
+
+    await page.getByRole('checkbox', { name: 'Cloud mode disabled' }).click()
+
+    await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Cloud')
+  })
 })

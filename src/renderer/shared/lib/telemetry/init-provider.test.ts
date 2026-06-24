@@ -46,7 +46,8 @@ describe('initLoggingProvider', () => {
 
     expect(WebTracerProvider).toHaveBeenCalledOnce()
     expect(OTLPTraceExporter).toHaveBeenCalledWith({
-      url: 'http://127.0.0.1:4318/v1/traces'
+      url: 'http://127.0.0.1:4318/v1/traces',
+      headers: { 'Content-Type': 'application/json' }
     })
     expect(register).toHaveBeenCalledOnce()
   })

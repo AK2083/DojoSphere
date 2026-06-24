@@ -69,7 +69,7 @@ Ideal slice structure per use case:
 features/<feature>/<slice>/
   ui/          # Vue components for the use case
   model/       # composables, state, form logic
-  i18n/        # keys.ts, de.ts, en.ts, index.ts
+  i18n/        # keys.ts, de.ts, en.ts, index.ts (one de/en file each — no language subfolders)
   api/         # use-case API: wraps shared/api for this slice
   service/     # (optional) orchestration within the slice
   index.ts     # public API — export only here

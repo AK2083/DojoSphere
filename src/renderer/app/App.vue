@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { bootstrapNetworkStatus, useCloudStatusStore } from '@features/status'
-import { setCloudModeMonitoringCheck } from '@shared/lib'
+import { onMounted } from 'vue'
+import { syncTelemetryUploadPreferencesToMain, useTelemetryUploadStore } from '@features/settings'
+import { bootstrapNetworkStatus } from '@features/status'
+import { setAutoUploadDiagnosticsCheck } from '@shared/lib'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
 
-setCloudModeMonitoringCheck(() => useCloudStatusStore().isCloudUsed)
+setAutoUploadDiagnosticsCheck(() => useTelemetryUploadStore().autoUploadDiagnostics)
+
 void bootstrapNetworkStatus()
+
+onMounted(() => {
+  void syncTelemetryUploadPreferencesToMain({
+    autoUploadDiagnostics: useTelemetryUploadStore().autoUploadDiagnostics
+  })
+})
 </script>
 
 <template>

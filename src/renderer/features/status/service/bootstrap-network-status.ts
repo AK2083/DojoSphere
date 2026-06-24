@@ -11,12 +11,12 @@ import { checkGrafanaCloudReachability } from './check-grafana-cloud-reachabilit
 /** Result of checking backend connectivity via the heartbeat edge function. */
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
 
-function mapHeartbeatError(error: Error): AppError {
+function mapHeartbeatError(_error: Error): AppError {
   if (!getNavigatorOnline()) {
     return new AppError('shared.error.retry')
   }
 
-  return new AppError('shared.error.unknown', error.message)
+  return new AppError('shared.error.unknown')
 }
 
 /**

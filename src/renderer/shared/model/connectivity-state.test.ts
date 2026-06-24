@@ -25,7 +25,7 @@ describe('connectivity-state', () => {
     const state = useNetworkStatusState()
 
     expect(state.isOnline.value).toBe(false)
-    expect(state.isCloudUsed.value).toBe(true)
+    expect(state.isCloudUsed.value).toBe(false)
     expect(state.isSupabaseReachable.value).toBe(true)
     expect(state.isGrafanaCloudReachable.value).toBe(false)
   })

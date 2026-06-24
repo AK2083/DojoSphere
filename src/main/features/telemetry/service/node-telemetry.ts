@@ -17,6 +17,7 @@ export type NodeTelemetryOptions = {
 /** Handle for the main-process OpenTelemetry tracer provider. */
 export type NodeTelemetryHandle = {
   provider: NodeTracerProvider
+  forceFlush: () => Promise<void>
 }
 
 /**
@@ -34,7 +35,8 @@ export function initNodeTelemetry(options: NodeTelemetryOptions): NodeTelemetryH
     spanProcessors: [
       new BatchSpanProcessor(
         new OTLPTraceExporter({
-          url: `${options.otlpEndpoint}/v1/traces`
+          url: `${options.otlpEndpoint}/v1/traces`,
+          headers: { 'Content-Type': 'application/json' }
         })
       )
     ]
@@ -47,7 +49,12 @@ export function initNodeTelemetry(options: NodeTelemetryOptions): NodeTelemetryH
     otlpEndpoint: options.otlpEndpoint
   })
 
-  return { provider }
+  return {
+    provider,
+    forceFlush: async () => {
+      await provider.forceFlush()
+    }
+  }
 }
 
 /**

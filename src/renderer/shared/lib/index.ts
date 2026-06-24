@@ -17,6 +17,7 @@ export {
   setUserContext
 } from './telemetry/logging'
 export {
+  setAutoUploadDiagnosticsCheck,
   setCloudModeMonitoringCheck,
   shouldCaptureTelemetry,
   shouldUploadTelemetry

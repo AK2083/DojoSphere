@@ -28,6 +28,20 @@ alwaysApply: false
 - No hardcoded UI strings — text via `useTranslation()` and slice `i18n/keys.ts`.
 - ARIA labels and visible text also via i18n keys.
 
+**Slice layout** (per use case under `features/<feature>/<slice>/i18n/`):
+
+```
+i18n/
+  keys.ts    # translation key paths for components
+  de.ts      # German strings (single file)
+  en.ts      # English strings (single file)
+  index.ts   # re-exports de/en for parent feature aggregation
+```
+
+- One `de.ts` and one `en.ts` per slice — **no** language subfolders (`de/`, `en/`) and **no** extra topic files (e.g. `cloud.ts`, `legal.ts`). Nested objects inside `de.ts`/`en.ts` are fine when the UI has logical groups (same pattern as `set-theme` `tooltip`).
+- Parent feature bundles slice messages in `features/<feature>/i18n/de.ts` and `en.ts` (e.g. `cloud: manageCloudDe`, `telemetry: manageTelemetryUploadDe`).
+- `keys.ts` paths must match the nested structure registered in the parent feature i18n.
+
 ## Responsive design
 
 - Layouts with Vuetify grid (`v-container`, `v-row`, `v-col`) and breakpoints (`cols`, `md`, `lg`, …).
