@@ -17,7 +17,7 @@ import { LOCAL_OTLP_TRACES_URL } from './constants'
  * In Electron, spans export to the local OTLP collector on localhost.
  * In Playwright browser-only mode, telemetry is disabled.
  *
- * @param _router Vue Router instance (reserved for future navigation spans).
+ * @param _router Vue Router instance (activity-logging scope is bound in the app composition root).
  * @param environmentMode Application environment label.
  */
 export function initLoggingProvider(_router: Router, environmentMode: string): void {

@@ -8,6 +8,7 @@ const {
   getActiveSpan,
   shouldCaptureTelemetry,
   isPlaywrightBrowserOnly,
+  isActivityLoggingEnabled,
   SpanStatusCode
 } = vi.hoisted(() => {
   const breadcrumbSpan = {
@@ -27,6 +28,7 @@ const {
   const getActiveSpan = vi.fn()
   const shouldCaptureTelemetry = vi.fn(() => true)
   const isPlaywrightBrowserOnly = vi.fn(() => false)
+  const isActivityLoggingEnabled = vi.fn(() => true)
 
   return {
     breadcrumbSpan,
@@ -36,6 +38,7 @@ const {
     getActiveSpan,
     shouldCaptureTelemetry,
     isPlaywrightBrowserOnly,
+    isActivityLoggingEnabled,
     SpanStatusCode: { ERROR: 2 }
   }
 })
@@ -52,6 +55,10 @@ vi.mock('./monitoring-guard', () => ({
   shouldCaptureTelemetry
 }))
 
+vi.mock('./activity-logging-scope', () => ({
+  isActivityLoggingEnabled
+}))
+
 vi.mock('@shared/lib/electron/e2e-api', () => ({
   isPlaywrightBrowserOnly
 }))
@@ -62,6 +69,7 @@ describe('logging breadcrumbs', () => {
     vi.clearAllMocks()
     shouldCaptureTelemetry.mockReturnValue(true)
     isPlaywrightBrowserOnly.mockReturnValue(false)
+    isActivityLoggingEnabled.mockReturnValue(true)
     getActiveSpan.mockReturnValue(undefined)
 
     const { resetBreadcrumbBuffer } = await import('./logging')
@@ -185,5 +193,42 @@ describe('logging breadcrumbs', () => {
     captureException(new Error('ignored'), 'auth', 'login')
 
     expect(startSpan).not.toHaveBeenCalled()
+  })
+
+  it('skips info and debug breadcrumbs when activity logging is disabled', async () => {
+    isActivityLoggingEnabled.mockReturnValue(false)
+
+    const { addBreadcrumb } = await import('./logging')
+
+    addBreadcrumb('audience.info', 'audience', 'info')
+    addBreadcrumb('audience.debug', 'audience', 'debug')
+
+    expect(startSpan).not.toHaveBeenCalled()
+    expect(breadcrumbSpan.addEvent).not.toHaveBeenCalled()
+  })
+
+  it('still exports warning breadcrumbs when activity logging is disabled', async () => {
+    isActivityLoggingEnabled.mockReturnValue(false)
+
+    const { addBreadcrumb } = await import('./logging')
+
+    addBreadcrumb('audience.warning', 'audience', 'warning', { code: 'retry' })
+
+    expect(startSpan).toHaveBeenCalledWith('breadcrumb', {
+      attributes: { category: 'audience', level: 'warning' }
+    })
+  })
+
+  it('skips setUserContext when activity logging is disabled', async () => {
+    isActivityLoggingEnabled.mockReturnValue(false)
+
+    const { setUserContext, captureException } = await import('./logging')
+
+    setUserContext({ id: 'user-1' })
+    captureException(new Error('anonymous path'), 'audience', 'view')
+
+    expect(startSpan).toHaveBeenCalledWith('exception', {
+      attributes: { 'service.name': 'audience', action: 'view' }
+    })
   })
 })

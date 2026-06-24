@@ -1,6 +1,7 @@
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 import { isPlaywrightBrowserOnly } from '@shared/lib/electron/e2e-api'
 
+import { isActivityLoggingEnabled } from './activity-logging-scope'
 import type { LogLevel } from './log-level'
 import { shouldCaptureTelemetry } from './monitoring-guard'
 
@@ -90,7 +91,7 @@ function attachBufferedBreadcrumbs(span: ReturnType<ReturnType<typeof getTracer>
  * @param user.id Stable user identifier (not PII beyond what the app already stores).
  */
 export function setUserContext(user: { id: string }) {
-  if (!isTelemetryActive()) {
+  if (!isTelemetryActive() || !isActivityLoggingEnabled()) {
     return
   }
 
@@ -165,6 +166,10 @@ export function addBreadcrumb(
   data?: object
 ) {
   if (!isTelemetryActive()) {
+    return
+  }
+
+  if (!isActivityLoggingEnabled() && isBufferedLevel(level)) {
     return
   }
 

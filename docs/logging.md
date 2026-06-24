@@ -10,7 +10,7 @@ This document is the outcome of **SPIKE #0: Offline-First Logging Architecture**
 
 | Phase | Goal | Issues |
 |-------|------|--------|
-| **Capture** | Record telemetry locally (OTLP → JSONL), audit in SQLite | 1 ✓, 3 ✓ (local collector), 4–6 |
+| **Capture** | Record telemetry locally (OTLP → JSONL), audit in SQLite | 1 ✓, 3 ✓ (local collector), 4–5, 6 ✓ |
 | **Send** | Upload queued telemetry to Grafana Cloud (OTLP); reachability gates | 2; upload wiring in Issue 3 — **deferred** |
 
 Capture must work offline and with cloud mode off. Sending to Grafana Cloud is architecturally prepared (`shouldUploadTelemetry`, reachability checks) but not required for the first implementation milestones.
@@ -209,7 +209,7 @@ Internal implementation maps exceptions and breadcrumbs to OpenTelemetry spans/e
 
 Recommended order. Numbers are suggestions for GitHub issues.
 
-**Capture phase (near-term):** Issues 1 ✓, 3 ✓ (local collector), 4–6.
+**Capture phase (near-term):** Issues 1 ✓, 3 ✓ (local collector), 4–5, 6 ✓.
 
 **Send phase (deferred):** Issue 2; upload enablement in Issue 3.
 
@@ -283,7 +283,7 @@ Recommended order. Numbers are suggestions for GitHub issues.
 
 ---
 
-### Issue 6 — Role-aware logging boundaries · capture
+### Issue 6 — Role-aware logging boundaries · capture ✓
 
 **Goal:** The audience stays anonymous with no activity logging; scorekeepers share the director’s audit rules for writes.
 

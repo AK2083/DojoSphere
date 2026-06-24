@@ -1,3 +1,4 @@
+import { isActivityLoggingEnabled } from '@shared/lib/telemetry/activity-logging-scope'
 import type { AuditEventPayload } from '@shared/types/electron-api'
 
 /**
@@ -9,7 +10,7 @@ import type { AuditEventPayload } from '@shared/types/electron-api'
  * @param event - Audit fields mapped to `authorization_audit_logs` columns.
  */
 export async function auditRecord(token: string, event: AuditEventPayload): Promise<void> {
-  if (!globalThis.window.api?.auditRecord) {
+  if (!isActivityLoggingEnabled() || !globalThis.window.api?.auditRecord) {
     return
   }
 
