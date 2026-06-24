@@ -1,3 +1,9 @@
+# [1.16.0](https://github.com/AK2083/DojoSphere/compare/v1.15.0...v1.16.0) (2026-06-24)
+
+### Features
+
+- add competitors management functionality ([#164](https://github.com/AK2083/DojoSphere/issues/164)) ([01ce759](https://github.com/AK2083/DojoSphere/commit/01ce759eec957636ddadeb63311dc2f8d63d7b4c))
+
 # [1.15.0](https://github.com/AK2083/DojoSphere/compare/v1.14.0...v1.15.0) (2026-06-23)
 
 ### Features
