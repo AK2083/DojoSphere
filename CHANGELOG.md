@@ -1,3 +1,9 @@
+# [1.17.0](https://github.com/AK2083/DojoSphere/compare/v1.16.0...v1.17.0) (2026-06-24)
+
+### Features
+
+- add role aware logging ([#166](https://github.com/AK2083/DojoSphere/issues/166)) ([97bc3f7](https://github.com/AK2083/DojoSphere/commit/97bc3f76eb96bd90226b8a565e8371abe5436112))
+
 # [1.16.0](https://github.com/AK2083/DojoSphere/compare/v1.15.0...v1.16.0) (2026-06-24)
 
 ### Features
