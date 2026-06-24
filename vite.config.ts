@@ -12,8 +12,19 @@ import {
   isPlaywrightBrowserOnly
 } from './config/dev'
 
+const TELEMETRY_ENV_PREFIXES = ['OTEL_', 'GRAFANA_'] as const
+
+function applyMainProcessTelemetryEnv(env: Record<string, string>) {
+  for (const [key, value] of Object.entries(env)) {
+    if (TELEMETRY_ENV_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      process.env[key] = value
+    }
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  applyMainProcessTelemetryEnv(env)
   const playwrightBrowserOnly = isPlaywrightBrowserOnly(env.VITE_PLAYWRIGHT_BROWSER_ONLY)
 
   return {

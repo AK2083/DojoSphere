@@ -30,7 +30,11 @@ export function parseOtlpHeaders(raw: string | undefined): Record<string, string
     const value = pair.slice(separatorIndex + 1).trim()
 
     if (key) {
-      headers[key] = value
+      try {
+        headers[key] = decodeURIComponent(value)
+      } catch {
+        headers[key] = value
+      }
     }
 
     return headers
