@@ -13,6 +13,11 @@ const api: ElectronAPI = {
   dbHealthcheck: () => ipcRenderer.invoke('db:healthcheck'),
   checkGrafanaCloudReachability: () => ipcRenderer.invoke('telemetry:checkGrafanaReachability'),
   auditRecord: (input) => ipcRenderer.invoke('audit:record', input),
+  getCompetitors: (token) => ipcRenderer.invoke('competitors:list', token),
+  addCompetitor: (token, input) => ipcRenderer.invoke('competitors:add', { token, ...input }),
+  updateCompetitor: (token, id, input) =>
+    ipcRenderer.invoke('competitors:update', { token, id, ...input }),
+  deleteCompetitor: (token, id) => ipcRenderer.invoke('competitors:delete', { token, id }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')
 }
 

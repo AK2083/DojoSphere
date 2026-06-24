@@ -86,6 +86,26 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
     checkGrafanaCloudReachability: async () => ({ reachable: false, reason: 'not_configured' }),
     auditRecord: async () => undefined,
+    getCompetitors: async () => [],
+    addCompetitor: async () => ({
+      id: 'competitor-1',
+      givenName: 'Test',
+      familyName: 'Competitor',
+      club: null,
+      weightClass: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: null
+    }),
+    updateCompetitor: async (_token, id) => ({
+      id,
+      givenName: 'Test',
+      familyName: 'Competitor',
+      club: 'Updated Club',
+      weightClass: '-60',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }),
+    deleteCompetitor: async () => undefined,
     getOsUsername: async () => 'TestUser',
     ...overrides
   }

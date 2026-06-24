@@ -16,6 +16,10 @@ describe('resolveLocalAuthSession', () => {
       dbHealthcheck: vi.fn(),
       checkGrafanaCloudReachability: vi.fn(),
       auditRecord: vi.fn(),
+      getCompetitors: vi.fn(),
+      addCompetitor: vi.fn(),
+      updateCompetitor: vi.fn(),
+      deleteCompetitor: vi.fn(),
       getOsUsername: vi.fn()
     }
   })
@@ -87,6 +91,10 @@ describe('revokeLocalAuthSession', () => {
       dbHealthcheck: vi.fn(),
       checkGrafanaCloudReachability: vi.fn(),
       auditRecord: vi.fn(),
+      getCompetitors: vi.fn(),
+      addCompetitor: vi.fn(),
+      updateCompetitor: vi.fn(),
+      deleteCompetitor: vi.fn(),
       getOsUsername: vi.fn()
     }
   })

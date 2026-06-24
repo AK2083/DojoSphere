@@ -80,5 +80,48 @@ describe('preload', () => {
       token: 'token-1',
       displayName: 'Updated User'
     })
+
+    ipcRenderer.invoke.mockResolvedValueOnce([])
+    await api.getCompetitors('token-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('competitors:list', 'token-1')
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'competitor-1',
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      club: null,
+      weightClass: null,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: null
+    })
+    await api.addCompetitor('token-1', { givenName: 'Yuki', familyName: 'Tanaka' })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('competitors:add', {
+      token: 'token-1',
+      givenName: 'Yuki',
+      familyName: 'Tanaka'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'competitor-1',
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      club: 'Osaka Dojo',
+      weightClass: '-60',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-02T00:00:00.000Z'
+    })
+    await api.updateCompetitor('token-1', 'competitor-1', { club: 'Osaka Dojo' })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('competitors:update', {
+      token: 'token-1',
+      id: 'competitor-1',
+      club: 'Osaka Dojo'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.deleteCompetitor('token-1', 'competitor-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('competitors:delete', {
+      token: 'token-1',
+      id: 'competitor-1'
+    })
   })
 })
