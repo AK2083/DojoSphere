@@ -19,6 +19,10 @@ dist-ssr
 coverage
 *.local
 
+# Local secrets (copy from .env.example)
+.env.development
+.env.development.local
+
 # Editor directories and files
 .idea
 .DS_Store

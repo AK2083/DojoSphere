@@ -26,7 +26,7 @@ describe('registerCompetitorsIpc', () => {
     await closeTestDatabase()
   })
 
-  it('adds a competitor through competitors:add and records audit', async () => {
+  it('adds a competitor through competitors:add and records audit with actor_user_id (director or scorekeeper)', async () => {
     await initTestDatabase()
     const { registerUsersIpc } = await import('@main/features/users')
     const { registerCompetitorsIpc } = await import('./register')

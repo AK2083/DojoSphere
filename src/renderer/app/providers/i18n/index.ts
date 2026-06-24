@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import { audienceDe, audienceEn } from '@features/audience'
 import { authDe, authEn } from '@features/authentication'
 import { getInitialLanguage, settingsDe, settingsEn } from '@features/settings'
 import { statusDe, statusEn } from '@features/status'
@@ -16,6 +17,7 @@ export const i18n = createI18n({
   messages: {
     de: {
       app: appDe,
+      audience: audienceDe,
       navigation: navigationDe,
       status: statusDe,
       auth: authDe,
@@ -24,6 +26,7 @@ export const i18n = createI18n({
     },
     en: {
       app: appEn,
+      audience: audienceEn,
       navigation: navigationEn,
       status: statusEn,
       auth: authEn,

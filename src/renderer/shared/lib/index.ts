@@ -4,6 +4,10 @@ export { getNavigatorOnline, isBrowserRuntime } from './browser/navigator'
 export { AvailableLanguages, FallbackLanguage, LanguageCode } from './i18n/languages'
 export { useTranslation } from './i18n/use-translation'
 export { getActiveStore, newStore, newStoreToRefs } from './pinia/store-define'
+export {
+  resetActivityLoggingScope,
+  setActivityLoggingEnabled
+} from './telemetry/activity-logging-scope'
 export { initLoggingProvider } from './telemetry/init-provider'
 export type { LogLevel } from './telemetry/log-level'
 export {

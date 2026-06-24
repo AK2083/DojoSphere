@@ -35,6 +35,10 @@ describe('otlp-env', () => {
       Authorization: 'Basic token'
     })
 
+    expect(parseOtlpHeaders('Authorization=Basic%20encoded-token')).toEqual({
+      Authorization: 'Basic encoded-token'
+    })
+
     const config = readOtlpExportConfig({
       OTEL_EXPORTER_OTLP_ENDPOINT: 'https://otlp.example.com'
     })
@@ -54,6 +58,12 @@ describe('otlp-env', () => {
     expect(parseOtlpHeaders('=value')).toEqual({})
     expect(parseOtlpHeaders(' =token,Authorization=token')).toEqual({
       Authorization: 'token'
+    })
+  })
+
+  it('keeps raw header values when URL decoding fails', () => {
+    expect(parseOtlpHeaders('Authorization=%')).toEqual({
+      Authorization: '%'
     })
   })
 })
