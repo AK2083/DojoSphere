@@ -6,7 +6,7 @@ Open-source Electron application for managing Judo tournaments.
 
 - Tournament administration
 - Competitor and club management
-- Local intranet audience view
+- Local intranet **audience** overview (`/audience`, anonymous, no activity logging)
 - Match and schedule overview
 - Offline/local-first capable setup
 
@@ -42,11 +42,18 @@ Other common commands: `npm run storybook` (UI development), `npm run build` (pr
 
 ## Logging & monitoring
 
-DojoSphere separates three lanes: **telemetry** (OpenTelemetry traces), **audit** (business actions in SQLite), and **debug** (support logs in main). Capture is local-first and works offline; cloud upload is planned for a later phase.
+DojoSphere separates three lanes: **telemetry** (OpenTelemetry traces), **audit** (business actions in SQLite), and **debug** (support logs in main). Capture is **local-first** and works offline; uploading traces to Grafana Cloud is prepared but not enabled in the product yet.
 
-Features use the stable public API in `@shared/lib` (`captureException`, `addBreadcrumb`, `setUserContext`, …) — not OpenTelemetry SDK calls directly.
+| Role                                  | Logging                                                                                       |
+| ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **Tournament director / scorekeeper** | Full telemetry on authenticated paths; every privileged write is audited with `actor_user_id` |
+| **Audience** (`/audience`)            | Anonymous — no sign-in, no name, no activity breadcrumbs or audit for browsing                |
 
-Full architecture, phased plan, and risks: [docs/logging.md](docs/logging.md).
+Features use the stable public API in `@shared/lib` (`captureException`, `addBreadcrumb`, `setUserContext`, `auditRecord`, …) — not OpenTelemetry SDK calls directly.
+
+Local files (Electron `userData`): `telemetry/traces.jsonl`, `database.db` (`authorization_audit_logs`), `logs/app.log`.
+
+Full architecture, roles, and deferred upload phase: [docs/logging.md](docs/logging.md). Audience rules: [src/renderer/features/audience/README.md](src/renderer/features/audience/README.md).
 
 ## License
 

@@ -16,7 +16,7 @@ Anonymous spectators open the tournament overview on the local network without s
 
 - Path: `/audience`
 - Route meta: `activityLogging: false`
-- The app composition root binds activity-logging scope from route meta (see `docs/logging.md`, Issue 6).
+- The app composition root binds activity-logging scope from route meta (see [docs/logging.md](../../../docs/logging.md) — Activity logging scope).
 
 ## Implementation rules
 
