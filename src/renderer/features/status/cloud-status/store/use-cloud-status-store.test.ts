@@ -1,12 +1,11 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getCloudStatusFromStorage, setCloudStatusToStorage } from '../service/cloud-status-storage'
+import { hasSupabaseAuthSessionInStorage } from '../service/cloud-status-storage'
 import { useCloudStatusStore } from './use-cloud-status-store'
 
 vi.mock('../service/cloud-status-storage', () => ({
-  getCloudStatusFromStorage: vi.fn(),
-  setCloudStatusToStorage: vi.fn()
+  hasSupabaseAuthSessionInStorage: vi.fn()
 }))
 
 describe('useCloudStatusStore', () => {
@@ -15,29 +14,28 @@ describe('useCloudStatusStore', () => {
     setActivePinia(createPinia())
   })
 
-  it('initializes from storage value when present', () => {
-    vi.mocked(getCloudStatusFromStorage).mockReturnValue(false)
+  it('initializes from supabase auth storage when present', () => {
+    vi.mocked(hasSupabaseAuthSessionInStorage).mockReturnValue(false)
 
     const store = useCloudStatusStore()
 
     expect(store.isCloudUsed).toBe(false)
   })
 
-  it('falls back to disabled cloud mode when storage is empty', () => {
-    vi.mocked(getCloudStatusFromStorage).mockReturnValue(null)
+  it('initializes as cloud active when supabase auth storage has a session', () => {
+    vi.mocked(hasSupabaseAuthSessionInStorage).mockReturnValue(true)
 
     const store = useCloudStatusStore()
 
-    expect(store.isCloudUsed).toBe(false)
+    expect(store.isCloudUsed).toBe(true)
   })
 
-  it('persists cloud mode when setCloudUsed is called', () => {
-    vi.mocked(getCloudStatusFromStorage).mockReturnValue(true)
+  it('updates in-memory cloud usage when setCloudUsed is called', () => {
+    vi.mocked(hasSupabaseAuthSessionInStorage).mockReturnValue(true)
     const store = useCloudStatusStore()
 
     store.setCloudUsed(false)
 
     expect(store.isCloudUsed).toBe(false)
-    expect(setCloudStatusToStorage).toHaveBeenCalledWith(false)
   })
 })

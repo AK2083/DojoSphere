@@ -3,8 +3,7 @@ export default {
   description: 'Melde dich bei deinem Konto an',
   submit: 'Einloggen',
   unavailable: {
-    offline: 'Anmeldung ist derzeit nicht verfügbar, da du offline bist.',
-    cloud: 'Anmeldung ist derzeit nicht verfügbar, weil der Cloud-Modus deaktiviert ist.'
+    offline: 'Anmeldung ist derzeit nicht verfügbar, da du offline bist.'
   },
   forgotPassword: 'Passwort vergessen?',
   noAccount: 'Noch kein Konto?',

@@ -25,7 +25,7 @@ export function useLoginForm() {
   const { t } = useTranslation()
   const { execute, clearError, errorCode, loading } = useLogin()
   const { navigateAfterLoginSuccess, goToPasswordReset } = useLoginRouting()
-  const { isOnline, isCloudUsed } = useNetworkStatusState()
+  const { isOnline } = useNetworkStatusState()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -36,10 +36,6 @@ export function useLoginForm() {
   const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
   const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
   const loginUnavailableHintCode = computed<string | null>(() => {
-    if (!isCloudUsed.value) {
-      return 'auth.signIn.unavailable.cloud'
-    }
-
     if (!isOnline.value) {
       return 'auth.signIn.unavailable.offline'
     }

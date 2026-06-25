@@ -17,6 +17,5 @@ export const MONITORING_EVENTS = {
   USERNAME_SESSION_ENSURE_SKIPPED: 'settings.username.session.ensure.skipped',
   USERNAME_SESSION_ENSURE_FAILED: 'settings.username.session.ensure.failed',
   USERNAME_SESSION_ENSURE_SUCCEEDED: 'settings.username.session.ensure.succeeded',
-  CLOUD_CHANGED: 'settings.cloud.changed',
   TELEMETRY_AUTO_UPLOAD_CHANGED: 'settings.telemetry.autoUpload.changed'
 } as const

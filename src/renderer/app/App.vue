@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import { syncTelemetryUploadPreferencesToMain, useTelemetryUploadStore } from '@features/settings'
-import { bootstrapNetworkStatus } from '@features/status'
+import { bootstrapCloudStatusFromAuth, bootstrapNetworkStatus } from '@features/status'
 import { setAutoUploadDiagnosticsCheck } from '@shared/lib'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
 
@@ -9,10 +9,18 @@ setAutoUploadDiagnosticsCheck(() => useTelemetryUploadStore().autoUploadDiagnost
 
 void bootstrapNetworkStatus()
 
+let unsubscribeCloudStatus: (() => void) | undefined
+
 onMounted(() => {
+  unsubscribeCloudStatus = bootstrapCloudStatusFromAuth()
+
   void syncTelemetryUploadPreferencesToMain({
     autoUploadDiagnostics: useTelemetryUploadStore().autoUploadDiagnostics
   })
+})
+
+onUnmounted(() => {
+  unsubscribeCloudStatus?.()
 })
 </script>
 

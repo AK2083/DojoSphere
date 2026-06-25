@@ -10,7 +10,6 @@ const navigateAfterRegisterSuccessMock = vi.fn()
 const errorCode = ref<string | null>(null)
 const loading = ref(false)
 const isOnline = ref(true)
-const isCloudUsed = ref(true)
 
 vi.mock('@shared/lib', () => ({
   addBreadcrumb: vi.fn(),
@@ -22,8 +21,7 @@ vi.mock('@shared/lib', () => ({
 
 vi.mock('@shared/model', () => ({
   useNetworkStatusState: () => ({
-    isOnline,
-    isCloudUsed
+    isOnline
   })
 }))
 
@@ -48,7 +46,6 @@ describe('useRegisterForm', () => {
     errorCode.value = null
     loading.value = false
     isOnline.value = true
-    isCloudUsed.value = true
   })
 
   it('stops when form validation fails', async () => {
@@ -85,7 +82,6 @@ describe('useRegisterForm', () => {
 
   it('does not submit when registration is disabled in offline mode', async () => {
     isOnline.value = false
-    isCloudUsed.value = true
     const validateMock = vi.fn().mockResolvedValue({ valid: true })
     const registerForm = useRegisterForm()
     registerForm.setFormRef({ validate: validateMock })
@@ -100,20 +96,8 @@ describe('useRegisterForm', () => {
     expect(registerForm.isRegistrationDisabled.value).toBe(true)
   })
 
-  it('prefers cloud hint over offline hint when both are inactive', () => {
-    isOnline.value = false
-    isCloudUsed.value = false
-    const registerForm = useRegisterForm()
-
-    expect(registerForm.registerUnavailableHintCode.value).toBe(
-      'auth.registerUser.unavailable.cloud'
-    )
-    expect(registerForm.isRegistrationDisabled.value).toBe(true)
-  })
-
   it('unlocks submit after reconnect when inputs exist', () => {
     isOnline.value = false
-    isCloudUsed.value = true
     const registerForm = useRegisterForm()
     registerForm.email.value = 'test@mail.com'
     registerForm.password.value = 'pw123456'

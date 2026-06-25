@@ -14,8 +14,7 @@ const translationKeys = {
   },
   submit: 'auth.registerUser.submit',
   unavailable: {
-    offline: 'auth.registerUser.unavailable.offline',
-    cloud: 'auth.registerUser.unavailable.cloud'
+    offline: 'auth.registerUser.unavailable.offline'
   },
   error: {
     retry: 'auth.registerUser.error.retry',

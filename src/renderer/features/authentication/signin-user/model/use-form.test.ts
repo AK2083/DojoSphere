@@ -11,7 +11,6 @@ const goToPasswordResetMock = vi.fn()
 const errorCode = ref<string | null>(null)
 const loading = ref(false)
 const isOnline = ref(true)
-const isCloudUsed = ref(true)
 
 vi.mock('@shared/lib', () => ({
   addBreadcrumb: vi.fn(),
@@ -23,8 +22,7 @@ vi.mock('@shared/lib', () => ({
 
 vi.mock('@shared/model', () => ({
   useNetworkStatusState: () => ({
-    isOnline,
-    isCloudUsed
+    isOnline
   })
 }))
 
@@ -50,7 +48,6 @@ describe('useLoginForm', () => {
     errorCode.value = null
     loading.value = false
     isOnline.value = true
-    isCloudUsed.value = true
   })
 
   it('stops when form validation fails', async () => {
@@ -95,7 +92,6 @@ describe('useLoginForm', () => {
 
   it('does not submit when login is disabled in offline mode', async () => {
     isOnline.value = false
-    isCloudUsed.value = true
     const validateMock = vi.fn().mockResolvedValue({ valid: true })
     const loginForm = useLoginForm()
     loginForm.setFormRef({ validate: validateMock })
@@ -107,15 +103,6 @@ describe('useLoginForm', () => {
     expect(loginForm.loginUnavailableHintCode.value).toBe('auth.signIn.unavailable.offline')
     expect(loginForm.isLoginDisabled.value).toBe(true)
     expect(loginForm.isSubmitDisabled.value).toBe(true)
-  })
-
-  it('prefers cloud hint over offline hint when both are inactive', () => {
-    isOnline.value = false
-    isCloudUsed.value = false
-    const loginForm = useLoginForm()
-
-    expect(loginForm.loginUnavailableHintCode.value).toBe('auth.signIn.unavailable.cloud')
-    expect(loginForm.isLoginDisabled.value).toBe(true)
   })
 
   it('navigates after successful submit', async () => {
@@ -176,7 +163,6 @@ describe('useLoginForm', () => {
 
   it('does not navigate to password reset when login is disabled', async () => {
     isOnline.value = false
-    isCloudUsed.value = true
     const loginForm = useLoginForm()
     loginForm.email.value = 'reset@mail.com'
 
@@ -187,7 +173,6 @@ describe('useLoginForm', () => {
 
   it('unlocks submit after reconnect when inputs exist', () => {
     isOnline.value = false
-    isCloudUsed.value = true
     const loginForm = useLoginForm()
     loginForm.email.value = 'test@mail.com'
     loginForm.password.value = 'pw123456'

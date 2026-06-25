@@ -19,7 +19,7 @@ const derivedWorkerCount = Math.max(2, Math.floor(logicalCpuCount * 0.75))
  */
 export default defineConfig({
   testDir: '.',
-  testMatch: ['src/renderer/{widgets,features,pages,shared}/**/ui/**/*.e2e.spec.ts'],
+  testMatch: ['src/renderer/**/ui/**/*.e2e.spec.ts'],
   testIgnore: ['**/node_modules/**', '**/dist/**'],
   /* Run tests in files in parallel */
   fullyParallel: true,

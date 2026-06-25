@@ -1,5 +1,7 @@
-export { default as cloudStatusDe } from './i18n/de'
-export { default as cloudStatusEn } from './i18n/en'
-export { setCloudMode } from './service/set-cloud-mode'
+export {
+  bootstrapCloudStatusFromAuth,
+  syncCloudUsageFromAuthSession
+} from './service/bootstrap-cloud-status-from-auth'
+export { hasSupabaseAuthSessionInStorage } from './service/cloud-status-storage'
 export { useCloudStatusStore } from './store'
 export { default as CloudStatus } from './ui/CloudStatus.vue'

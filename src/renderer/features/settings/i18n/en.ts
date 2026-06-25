@@ -1,4 +1,3 @@
-import { manageCloudEn } from '../manage-cloud'
 import { manageTelemetryUploadEn } from '../manage-telemetry-upload'
 import { setLanguageEn } from '../set-language/i18n'
 import { setThemeEn } from '../set-theme/i18n'
@@ -9,6 +8,5 @@ export default {
   language: setLanguageEn,
   theme: setThemeEn,
   username: setUsernameEn,
-  cloud: manageCloudEn,
   telemetry: manageTelemetryUploadEn
 }

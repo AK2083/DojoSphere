@@ -1,10 +1,10 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 
 test.describe('account page', () => {
-  test('redirects unauthenticated users to login with redirect query', async ({ page }) => {
+  test('bootstraps local auth and renders account page', async ({ page }) => {
     await page.goto('/#/account')
 
-    await expect(page).toHaveURL(/#\/login\?redirect=\/account$/)
-    await expect(page.locator('input[autocomplete="email"]')).toHaveCount(1)
+    await expect(page).toHaveURL(/#\/account$/)
+    await expect(page.getByText('Hallo')).toBeVisible()
   })
 })

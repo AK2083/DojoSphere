@@ -1,21 +1,21 @@
-import { getStorageItem, setStorageItem } from '@shared/lib'
-
-const CLOUD_STATUS_KEY = 'dojosphere.cloud.status.isCloudUsed'
+import { getAuthSessionStorageKey } from '@shared/api/supabase/model/auth-storage'
 
 /**
- * Reads whether cloud mode is enabled from browser storage.
+ * Indicates whether Supabase has persisted an auth session in browser storage.
  *
- * @returns Stored cloud mode flag, or null when unset.
+ * @returns `true` when the Supabase auth storage key contains an access token.
  */
-export function getCloudStatusFromStorage() {
-  return getStorageItem<boolean>(CLOUD_STATUS_KEY)
-}
+export function hasSupabaseAuthSessionInStorage(): boolean {
+  const raw = globalThis.localStorage?.getItem(getAuthSessionStorageKey())
 
-/**
- * Persists whether cloud mode is enabled.
- *
- * @param isCloudUsed Whether cloud mode is enabled.
- */
-export function setCloudStatusToStorage(isCloudUsed: boolean) {
-  setStorageItem(CLOUD_STATUS_KEY, isCloudUsed)
+  if (!raw) {
+    return false
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as { access_token?: string }
+    return Boolean(parsed.access_token)
+  } catch {
+    return false
+  }
 }

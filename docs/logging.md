@@ -11,7 +11,7 @@ This document describes the **offline-first logging architecture** for DojoSpher
 | **Capture** | **Implemented** | Local OTLP collector → `traces.jsonl`, audit in SQLite, debug log file, role-aware activity boundaries |
 | **Send** | **Partial** | Error-triggered OTLP upload to Grafana Cloud when Settings allow; export scrubber + HMAC |
 
-Capture works offline and with cloud mode off. Settings expose cloud mode and automatic diagnostic upload toggles (privacy-first defaults: both off).
+Capture works offline and without a Supabase session. Cloud usage (`isCloudUsed`) is derived from Supabase auth persistence (`dojosphere.auth.session`) after OTP or login — not from a separate settings flag. Settings expose automatic diagnostic upload only (privacy-first default: off).
 
 ## Current implementation
 
@@ -22,11 +22,11 @@ Capture works offline and with cloud mode off. Settings expose cloud mode and au
 | Public API | `@shared/lib` — `captureException`, `addBreadcrumb`, `setUserContext`, `auditRecord`, `shouldCaptureTelemetry`, `shouldUploadTelemetry`; features do not import OTel SDKs |
 | Main / Preload | `initTelemetryApp` (main), `initLoggingProvider` + router activity scope (renderer); `audit:record` IPC via preload |
 | Offline capture | `shouldCaptureTelemetry()` is always `true`; `navigator.onLine` does not block local capture |
-| Cloud mode | `isCloudUsed` gates **Supabase** access; independent of diagnostic upload |
+| Cloud usage | `isCloudUsed` reflects **Supabase session** in storage; gates UI indicators; independent of diagnostic upload |
 | Audit | `authorization_audit_logs` via `src/main/features/audit/`; IPC + repository; competitor create/update/delete audited in main; authorization events (session revoke, role assigned) supported |
 | Activity scope | Route meta `activityLogging: false` on audience paths; guards in `@shared/lib` skip activity breadcrumbs, `setUserContext`, and renderer `auditRecord` |
 | Connectivity | `isSupabaseReachable` and `isGrafanaCloudReachable` in network status store; `checkGrafanaCloudReachability()` in main (IPC); heartbeat for Supabase |
-| Settings | Cloud mode + auto diagnostic upload toggles; in-app legal notice; prefs synced to main via IPC |
+| Settings | Auto diagnostic upload toggle; in-app legal notice; prefs synced to main via IPC |
 | Grafana upload | Error-triggered upload from `traces.jsonl` with export scrubber (HMAC `user.id`, error codes only, denylist) |
 | Audience | `/audience` — anonymous read-only overview; see `src/renderer/features/audience/README.md` |
 
@@ -70,19 +70,19 @@ Capture works offline and with cloud mode off. Settings expose cloud mode and au
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Cloud mode (`isCloudUsed`)
+## Cloud usage (`isCloudUsed`)
 
-`isCloudUsed` controls **cloud services** (sign-in, sync) — independent of diagnostic upload to Grafana Cloud.
+`isCloudUsed` reflects whether Supabase has persisted a cloud auth session — independent of diagnostic upload to Grafana Cloud. It is updated from Supabase auth state (`watchAuthState`) and initial storage read (`dojosphere.auth.session`). Navigation exposes **Register** (explicit `router.push`) when not cloud-signed-in; guest routes remain reachable with a local-only session.
 
-| Action | Cloud on (`isCloudUsed = true`) | Cloud off (`isCloudUsed = false`) |
-|--------|----------------------------------|-----------------------------------|
+| Action | Supabase session active | No Supabase session |
+|--------|-------------------------|---------------------|
 | Telemetry **capture** (local OTLP / JSONL) | yes | yes |
 | Telemetry **upload** (Grafana Cloud) | when auto-upload on + reachable | when auto-upload on + reachable |
-| Supabase access | yes, after heartbeat | no |
+| Supabase access | yes, after heartbeat | yes when online (registration/login flows) |
 | Audit (SQLite) | yes | yes |
 | Debug file | yes (configurable) | yes (configurable) |
 
-**Core rule:** Cloud mode does **not** gate local capture or Grafana upload. Upload is controlled by the separate auto-upload toggle.
+**Core rule:** Cloud usage does **not** gate local capture or Grafana upload. Upload is controlled by the separate auto-upload toggle.
 
 ### Send phase — upload (error-triggered)
 
@@ -91,7 +91,7 @@ Applies only when **sending** exception telemetry to Grafana Cloud — not when 
 - **Capture:** always on (local OTLP collector / SQLite audit); no dialog, no upload required.
 - **Send:** on `captureException`, when `uploadAllowed` (see below), main reads new `traces.jsonl` lines, scrubs them, and POSTs to Grafana OTLP.
 
-**Settings UX:** `/settings` — two independent toggles in separate sections: cloud mode and “send diagnostic data on errors”. Data-processing notice (accordion) is always visible on the diagnostic section. No PDF required.
+**Settings UX:** `/settings` — “send diagnostic data on errors” toggle. Data-processing notice (accordion) is always visible on the diagnostic section. No PDF required. Cloud registration is started from navigation (**Register**), not from Settings.
 
 **Telemetry upload gate:**
 

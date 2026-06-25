@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@shared/tests/e2e/fixtures'
 
 test.describe('Navigation widget', () => {
   test('shows at least one settings action on app start', async ({ page }) => {
@@ -32,10 +32,11 @@ test.describe('Navigation widget', () => {
     await expect(settingsActions.first()).toBeVisible()
   })
 
-  test('does not show account navigation action on app start', async ({ page }) => {
+  test('navigates to register from navigation when not cloud signed in', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
 
-    const accountActions = page.locator('a[href$="#/register"], a[href$="#/emailverification"]')
-    await expect(accountActions).toHaveCount(0)
+    await page.getByRole('listitem', { name: 'Register' }).click()
+    await expect(page).toHaveURL(/#\/register$/)
   })
 })

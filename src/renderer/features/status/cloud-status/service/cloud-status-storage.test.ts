@@ -1,32 +1,31 @@
-import { getStorageItem, setStorageItem } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getCloudStatusFromStorage, setCloudStatusToStorage } from './cloud-status-storage'
+import { hasSupabaseAuthSessionInStorage } from './cloud-status-storage'
 
-vi.mock('@shared/lib', () => ({
-  getStorageItem: vi.fn(),
-  setStorageItem: vi.fn()
-}))
+const AUTH_SESSION_KEY = 'dojosphere.auth.session'
 
 describe('cloud-status storage', () => {
-  const CLOUD_STATUS_KEY = 'dojosphere.cloud.status.isCloudUsed'
-
   beforeEach(() => {
     vi.clearAllMocks()
+    globalThis.localStorage.clear()
   })
 
-  it('reads cloud status from storage', () => {
-    vi.mocked(getStorageItem).mockReturnValue(true)
-
-    const result = getCloudStatusFromStorage()
-
-    expect(result).toBe(true)
-    expect(getStorageItem).toHaveBeenCalledWith(CLOUD_STATUS_KEY)
+  it('returns false when supabase auth storage is empty', () => {
+    expect(hasSupabaseAuthSessionInStorage()).toBe(false)
   })
 
-  it('writes cloud status to storage', () => {
-    setCloudStatusToStorage(false)
+  it('returns true when supabase auth storage contains an access token', () => {
+    globalThis.localStorage.setItem(
+      AUTH_SESSION_KEY,
+      JSON.stringify({ access_token: 'token-value' })
+    )
 
-    expect(setStorageItem).toHaveBeenCalledWith(CLOUD_STATUS_KEY, false)
+    expect(hasSupabaseAuthSessionInStorage()).toBe(true)
+  })
+
+  it('returns false when supabase auth storage is invalid json', () => {
+    globalThis.localStorage.setItem(AUTH_SESSION_KEY, 'not-json')
+
+    expect(hasSupabaseAuthSessionInStorage()).toBe(false)
   })
 })

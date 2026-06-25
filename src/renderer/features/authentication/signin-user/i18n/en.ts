@@ -3,8 +3,7 @@ export default {
   description: 'Sign in to your account',
   submit: 'Log in',
   unavailable: {
-    offline: 'Login is currently unavailable while you are offline.',
-    cloud: 'Login is currently unavailable because cloud mode is disabled.'
+    offline: 'Login is currently unavailable while you are offline.'
   },
   forgotPassword: 'Forgot your password?',
   noAccount: "Don't have an account yet?",

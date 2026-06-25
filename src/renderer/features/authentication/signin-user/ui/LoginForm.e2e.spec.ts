@@ -1,7 +1,7 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
-import { setCloudModeDisabled, setupLoginAvailable } from '@shared/tests/e2e/setup-login-available'
+import { setupLoginAvailable } from '@shared/tests/e2e/setup-login-available'
 
 test.describe('LoginForm', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,23 +37,5 @@ test.describe('LoginForm', () => {
     await expect(forgotPasswordButton).toBeEnabled({ timeout: 15_000 })
     await forgotPasswordButton.click()
     await expect(page).toHaveURL(/#\/passwordreset$/, { timeout: 15_000 })
-  })
-
-  test('disables forgot-password when cloud mode is off', async ({ page }) => {
-    await setCloudModeDisabled(page)
-    await gotoHashRoute(page, '/#/login', 'input[autocomplete="email"]')
-
-    const forgotPasswordButton = page.getByRole('button', {
-      name: 'Forgot your password?',
-      exact: true
-    })
-    const unavailableAlert = page.getByRole('alert').filter({
-      hasText: /Login is currently unavailable/
-    })
-
-    await expect(unavailableAlert).toBeVisible()
-    await expect(unavailableAlert).toContainText(/because cloud mode is disabled/)
-    await expect(forgotPasswordButton).toBeDisabled()
-    await expect(page).toHaveURL(/#\/login$/)
   })
 })

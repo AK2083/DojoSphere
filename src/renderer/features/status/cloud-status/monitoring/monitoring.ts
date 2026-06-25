@@ -13,5 +13,6 @@ const { monitorDebug, monitorInformation, monitorWarning, monitorError } =
 export const MONITORING_EVENTS = {
   STORAGE_READ: 'cloud.status.storage.read',
   STORAGE_WRITE: 'cloud.status.storage.write',
-  TOGGLE_CHANGED: 'cloud.status.toggle.changed'
+  TOGGLE_CHANGED: 'cloud.status.toggle.changed',
+  CLOUD_CONFIRMED: 'cloud.status.confirmed'
 } as const
