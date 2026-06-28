@@ -1,12 +1,14 @@
 import { mapSupabaseError, updateUserPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException } from '@shared/lib'
+import { logError } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { setNewPassword } from './set-new-password'
 
 vi.mock('@shared/api')
-vi.mock('@shared/lib')
+vi.mock('@shared/lib', () => ({
+  logError: vi.fn()
+}))
 
 describe('setNewPassword', () => {
   beforeEach(() => {
@@ -24,7 +26,7 @@ describe('setNewPassword', () => {
     expect(result).toEqual({ success: true })
     expect(updateUserPassword).toHaveBeenCalledWith('new-password-123')
     expect(mapSupabaseError).not.toHaveBeenCalled()
-    expect(captureException).not.toHaveBeenCalled()
+    expect(logError).not.toHaveBeenCalled()
   })
 
   it('maps and reports error when password update fails', async () => {
@@ -46,6 +48,6 @@ describe('setNewPassword', () => {
 
     expect(result).toEqual({ success: false, error: mappedError })
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
-    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'setNewPassword')
+    expect(logError).toHaveBeenCalledWith(mappedError, 'auth', 'setNewPassword')
   })
 })

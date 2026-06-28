@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { recordRoleAssigned } from '@main/features/audit'
 import { findRoleIdByName } from '@main/features/authorization'
 import { getDatabase, runInTransaction } from '@main/shared/database'
+import { withDbErrorLogging } from '@main/shared/logging'
 
 /** Input for creating a user record. */
 export type CreateUserInput = {
@@ -27,11 +28,12 @@ export type UserRecord = {
  * @returns All user records in the database.
  */
 export function getUsers(): UserRecord[] {
-  const db = getDatabase()
+  return withDbErrorLogging('users', 'list', () => {
+    const db = getDatabase()
 
-  return db
-    .prepare(
-      `
+    return db
+      .prepare(
+        `
       SELECT
         id,
         display_name AS displayName,
@@ -41,8 +43,9 @@ export function getUsers(): UserRecord[] {
         updated_at AS updatedAt
       FROM users
     `
-    )
-    .all() as UserRecord[]
+      )
+      .all() as UserRecord[]
+  })
 }
 
 /**
@@ -66,26 +69,28 @@ export function addUser(user: CreateUserInput) {
     VALUES (?, ?, ?, 'global', ?)
   `)
 
-  runInTransaction(db, () => {
-    insertUser.run(id, user.displayName, user.email ?? null, userType)
+  return withDbErrorLogging('users', 'create', () => {
+    runInTransaction(db, () => {
+      insertUser.run(id, user.displayName, user.email ?? null, userType)
 
-    if (userType === 'local') {
-      const roleId = findRoleIdByName('list_keeper')
-      const assignmentId = randomUUID()
+      if (userType === 'local') {
+        const roleId = findRoleIdByName('list_keeper')
+        const assignmentId = randomUUID()
 
-      insertRoleAssignment.run(assignmentId, id, roleId, id)
+        insertRoleAssignment.run(assignmentId, id, roleId, id)
 
-      recordRoleAssigned({
-        actorUserId: id,
-        roleId,
-        userId: id,
-        assignmentId,
-        scopeType: 'global'
-      })
-    }
+        recordRoleAssigned({
+          actorUserId: id,
+          roleId,
+          userId: id,
+          assignmentId,
+          scopeType: 'global'
+        })
+      }
+    })
+
+    return { id }
   })
-
-  return { id }
 }
 
 /**
@@ -95,11 +100,12 @@ export function addUser(user: CreateUserInput) {
  * @returns The matching user or null when not found.
  */
 export function findLocalUserByDisplayName(displayName: string): UserRecord | null {
-  const db = getDatabase()
+  return withDbErrorLogging('users', 'findByDisplayName', () => {
+    const db = getDatabase()
 
-  const row = db
-    .prepare(
-      `
+    const row = db
+      .prepare(
+        `
       SELECT
         id,
         display_name AS displayName,
@@ -112,10 +118,11 @@ export function findLocalUserByDisplayName(displayName: string): UserRecord | nu
         AND user_type = 'local'
       LIMIT 1
     `
-    )
-    .get(displayName) as UserRecord | undefined
+      )
+      .get(displayName) as UserRecord | undefined
 
-  return row ?? null
+    return row ?? null
+  })
 }
 
 function getUserById(userId: string): UserRecord | null {
@@ -155,27 +162,29 @@ export function updateUserDisplayName(userId: string, displayName: string): User
     throw new Error('Display name must not be empty')
   }
 
-  const db = getDatabase()
+  return withDbErrorLogging('users', 'updateDisplayName', () => {
+    const db = getDatabase()
 
-  const result = db
-    .prepare(
-      `
+    const result = db
+      .prepare(
+        `
       UPDATE users
       SET display_name = ?, updated_at = datetime('now')
       WHERE id = ?
     `
-    )
-    .run(trimmedDisplayName, userId) as { changes: number }
+      )
+      .run(trimmedDisplayName, userId) as { changes: number }
 
-  if (result.changes === 0) {
-    throw new Error('User not found')
-  }
+    if (result.changes === 0) {
+      throw new Error('User not found')
+    }
 
-  const user = getUserById(userId)
+    const user = getUserById(userId)
 
-  if (!user) {
-    throw new Error('User not found')
-  }
+    if (!user) {
+      throw new Error('User not found')
+    }
 
-  return user
+    return user
+  })
 }

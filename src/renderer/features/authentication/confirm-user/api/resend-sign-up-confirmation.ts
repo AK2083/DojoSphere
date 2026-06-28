@@ -1,5 +1,5 @@
 import { mapSupabaseError, resendSignUpConfirmation } from '@shared/api'
-import { captureException } from '@shared/lib'
+import { logError } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 /**
@@ -11,10 +11,12 @@ export async function resendSignUpConfirmationEmail(email: string): Promise<Auth
   const { error } = await resendSignUpConfirmation(email)
 
   if (error) {
-    captureException(error, 'auth', 'resendSignUpConfirmationEmail')
+    const mappedError = mapSupabaseError(error)
+    logError(mappedError, 'auth', 'resendSignUpConfirmationEmail')
+
     return {
       success: false,
-      error: mapSupabaseError(error)
+      error: mappedError
     }
   }
 

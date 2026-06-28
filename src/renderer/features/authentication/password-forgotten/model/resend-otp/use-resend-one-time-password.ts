@@ -1,7 +1,6 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue'
 
 import { signInWithOneTimePassword } from '../../api/sign-in-with-otp'
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 
 type UseResendReturn = {
   errorCode: Ref<string | null>
@@ -52,9 +51,6 @@ export function useResendOneTimePassword(): UseResendReturn {
       const response = await signInWithOneTimePassword(email.value)
 
       if (!response.success) {
-        monitorWarning(MONITORING_EVENTS.RESEND_OTP, {
-          errorCode: response.error.code
-        })
         errorCode.value = response.error.code
         return false
       }

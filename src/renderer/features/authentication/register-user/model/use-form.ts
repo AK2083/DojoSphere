@@ -3,7 +3,6 @@ import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 import { useNetworkStatusState } from '@shared/model'
 
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useRegister } from './use-register'
 import { useRegisterRouting } from './use-routing'
 
@@ -68,7 +67,6 @@ export function useRegisterForm() {
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorWarning(MONITORING_EVENTS.REGISTER_FORM_INVALID)
       return
     }
 
@@ -76,7 +74,6 @@ export function useRegisterForm() {
     const success = await execute(submittedEmail, password.value)
 
     if (!success) {
-      monitorWarning(MONITORING_EVENTS.REGISTER_FORM_EXECUTE_FAILED)
       return
     }
 

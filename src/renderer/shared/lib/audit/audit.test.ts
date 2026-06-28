@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const isActivityLoggingEnabled = vi.hoisted(() => vi.fn(() => true))
 
-vi.mock('@shared/lib/telemetry/activity-logging-scope', () => ({
+vi.mock('@shared/lib/logging/activity-logging-scope', () => ({
   isActivityLoggingEnabled
 }))
 

@@ -4,8 +4,7 @@ import { newStore } from '@shared/lib/pinia/store-define'
 export const useNetworkStatusStore = newStore('network-status', {
   state: () => ({
     isOnline: true,
-    isSupabaseReachable: true,
-    isGrafanaCloudReachable: false
+    isSupabaseReachable: true
   }),
   actions: {
     setOnline(value: boolean) {
@@ -13,9 +12,6 @@ export const useNetworkStatusStore = newStore('network-status', {
     },
     setSupabaseReachable(value: boolean) {
       this.isSupabaseReachable = value
-    },
-    setGrafanaCloudReachable(value: boolean) {
-      this.isGrafanaCloudReachable = value
     }
   }
 })

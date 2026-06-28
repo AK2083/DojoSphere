@@ -1,7 +1,15 @@
-/** Result of probing Grafana Cloud OTLP reachability via main-process IPC. */
-export type GrafanaReachabilityResult =
-  | { reachable: true }
-  | { reachable: false; reason: 'not_configured' | 'request_failed' }
+/** Error payload forwarded from the renderer to the main-process log file. */
+export type RecordErrorInput = {
+  service: string
+  action: string
+  code?: string
+  message: string
+}
+
+/** Cloud diagnostic upload preferences synced to the main process. */
+export type DiagnosticsUploadPreferences = {
+  autoUploadDiagnostics: boolean
+}
 
 /** Result of a SQLite health check exposed over IPC. */
 export interface DbHealthcheckResult {
@@ -89,10 +97,8 @@ export interface AuditRecordInput {
 /** Audit event fields without the session token (added by the caller or shared lib). */
 export type AuditEventPayload = Omit<AuditRecordInput, 'token'>
 
-/** Telemetry upload preferences synced to the main process. */
-export type TelemetryUploadPreferences = {
-  autoUploadDiagnostics: boolean
-}
+/** @deprecated Use {@link DiagnosticsUploadPreferences}. */
+export type TelemetryUploadPreferences = DiagnosticsUploadPreferences
 
 /** Typed IPC surface exposed on `window.api` by the preload script. */
 export interface ElectronAPI {
@@ -103,9 +109,8 @@ export interface ElectronAPI {
   revokeLocalSession: (token: string) => Promise<void>
   updateUserDisplayName: (token: string, displayName: string) => Promise<User>
   dbHealthcheck: () => Promise<DbHealthcheckResult>
-  checkGrafanaCloudReachability: () => Promise<GrafanaReachabilityResult>
-  setTelemetryUploadPreferences: (preferences: TelemetryUploadPreferences) => Promise<void>
-  uploadTelemetryOnError: () => Promise<void>
+  recordError: (input: RecordErrorInput) => Promise<void>
+  setDiagnosticsUploadPreferences: (preferences: DiagnosticsUploadPreferences) => Promise<void>
   auditRecord: (input: AuditRecordInput) => Promise<void>
   getCompetitors: (token: string) => Promise<Competitor[]>
   addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>

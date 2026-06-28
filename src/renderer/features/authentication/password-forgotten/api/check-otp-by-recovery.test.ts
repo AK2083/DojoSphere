@@ -5,13 +5,15 @@ import {
   verifyOneTimePasswordByRecovery
 } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException } from '@shared/lib'
+import { logError } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { checkOneTimePasswordByRecovery } from '../api/check-otp-by-recovery'
 
 vi.mock('@shared/api')
-vi.mock('@shared/lib')
+vi.mock('@shared/lib', () => ({
+  logError: vi.fn()
+}))
 
 describe('checkOneTimePasswordByRecovery', () => {
   const email = 'recovery@test.com'
@@ -38,11 +40,7 @@ describe('checkOneTimePasswordByRecovery', () => {
 
     const result = await checkOneTimePasswordByRecovery(email, token)
 
-    expect(captureException).toHaveBeenCalledWith(
-      authError,
-      'auth',
-      'checkOneTimePasswordByRecovery'
-    )
+    expect(logError).toHaveBeenCalledWith(mappedError, 'auth', 'checkOneTimePasswordByRecovery')
     expect(mapSupabaseError).toHaveBeenCalledWith(authError)
     expect(result).toEqual({ success: false, error: mappedError })
   })
@@ -56,7 +54,7 @@ describe('checkOneTimePasswordByRecovery', () => {
     const result = await checkOneTimePasswordByRecovery(email, token)
 
     expect(result).toEqual({ success: true })
-    expect(captureException).not.toHaveBeenCalled()
+    expect(logError).not.toHaveBeenCalled()
     expect(mapSupabaseError).not.toHaveBeenCalled()
   })
 })

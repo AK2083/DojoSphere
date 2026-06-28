@@ -1,10 +1,10 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { AuthSession } from '@shared/types'
 
+import { watchAuthState } from '../api/watch-auth-state'
 import { getCurrentSession } from '../service/get-current-session'
 import { isLocalAuthSession } from '../service/is-local-auth-session'
 import { onLocalAuthStateChanged } from '../service/local-auth-state'
-import { watchAuthState } from '../service/on-auth-state-change'
 
 /**
  * Composable for the current Supabase auth session (e.g. navigation, account page).

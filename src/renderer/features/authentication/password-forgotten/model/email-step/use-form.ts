@@ -2,7 +2,6 @@ import { type Ref, ref, watch } from 'vue'
 import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, useTranslation } from '@shared/lib'
 
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 import { useEmailStep } from './use-email-step'
 
 type UseEmailStepFormOptions = {
@@ -42,7 +41,6 @@ export function useEmailStepForm(options: UseEmailStepFormOptions) {
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorWarning(MONITORING_EVENTS.EMAIL_STEP_FORM_INVALID)
       return false
     }
 
@@ -50,7 +48,6 @@ export function useEmailStepForm(options: UseEmailStepFormOptions) {
     const success = await execute()
 
     if (!success) {
-      monitorWarning(MONITORING_EVENTS.EMAIL_STEP_EXECUTE_FAILED)
       return false
     }
 

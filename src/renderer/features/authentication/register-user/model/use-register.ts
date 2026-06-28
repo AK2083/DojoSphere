@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 
 import { signUpWithMailAndPassword } from '../api/sign-up-with-mail-and-password'
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { setIsOtpActiveToStorage, setRegisterEmailToStorage } from '../service/register-storage'
 
 /**
@@ -36,10 +35,6 @@ export function useRegister() {
       const response = await signUpWithMailAndPassword(email, password)
 
       if (!response.success) {
-        monitorWarning(MONITORING_EVENTS.REGISTER_SIGN_UP_FAILED, {
-          errorCode: response.error.code
-        })
-
         errorCode.value = response.error.code
         return false
       }

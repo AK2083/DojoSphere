@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { signInWithEmailPassword } from '../service/sign-in-with-email-password'
+import { signInWithEmailPassword } from '../api/sign-in-with-email-password'
 import { useLogin } from './use-login'
 
-vi.mock('../service/sign-in-with-email-password', () => ({
+vi.mock('../api/sign-in-with-email-password', () => ({
   signInWithEmailPassword: vi.fn()
 }))
 

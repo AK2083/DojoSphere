@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { getDatabase } from '@main/shared/database'
+import { withDbErrorLogging } from '@main/shared/logging'
 
 /** Fields persisted to `authorization_audit_logs`. */
 export type AuditLogInsert = {
@@ -21,11 +22,12 @@ export type AuditLogInsert = {
  * @returns The generated audit log identifier.
  */
 export function insertAuditLog(record: AuditLogInsert): string {
-  const db = getDatabase()
-  const id = randomUUID()
+  return withDbErrorLogging('audit', 'insert', () => {
+    const db = getDatabase()
+    const id = randomUUID()
 
-  db.prepare(
-    `
+    db.prepare(
+      `
     INSERT INTO authorization_audit_logs (
       id,
       actor_user_id,
@@ -39,17 +41,18 @@ export function insertAuditLog(record: AuditLogInsert): string {
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
-  ).run(
-    id,
-    record.actorUserId,
-    record.action,
-    record.entityType,
-    record.entityId ?? null,
-    record.oldValueJson ?? null,
-    record.newValueJson ?? null,
-    record.ipAddress ?? null,
-    record.userAgent ?? null
-  )
+    ).run(
+      id,
+      record.actorUserId,
+      record.action,
+      record.entityType,
+      record.entityId ?? null,
+      record.oldValueJson ?? null,
+      record.newValueJson ?? null,
+      record.ipAddress ?? null,
+      record.userAgent ?? null
+    )
 
-  return id
+    return id
+  })
 }

@@ -1,6 +1,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto'
 
 import { getDatabase } from '@main/shared/database'
+import { withDbErrorLogging } from '@main/shared/logging'
 
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000
 
@@ -35,20 +36,22 @@ function createToken() {
  * @returns Session metadata including the raw token (returned once).
  */
 export function createSession(userId: string) {
-  const db = getDatabase()
-  const id = randomUUID()
-  const token = createToken()
-  const tokenHash = hashToken(token)
-  const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString()
+  return withDbErrorLogging('sessions', 'create', () => {
+    const db = getDatabase()
+    const id = randomUUID()
+    const token = createToken()
+    const tokenHash = hashToken(token)
+    const expiresAt = new Date(Date.now() + SESSION_TTL_MS).toISOString()
 
-  db.prepare(
-    `
+    db.prepare(
+      `
     INSERT INTO sessions (id, user_id, token_hash, expires_at)
     VALUES (?, ?, ?, ?)
   `
-  ).run(id, userId, tokenHash, expiresAt)
+    ).run(id, userId, tokenHash, expiresAt)
 
-  return { id, token, expiresAt }
+    return { id, token, expiresAt }
+  })
 }
 
 /**
@@ -58,12 +61,13 @@ export function createSession(userId: string) {
  * @returns The session with user profile, or null when invalid or expired.
  */
 export function getActiveSessionByToken(token: string): LocalSessionRecord | null {
-  const db = getDatabase()
-  const tokenHash = hashToken(token)
+  return withDbErrorLogging('sessions', 'getActive', () => {
+    const db = getDatabase()
+    const tokenHash = hashToken(token)
 
-  const row = db
-    .prepare(
-      `
+    const row = db
+      .prepare(
+        `
       SELECT
         s.id,
         s.user_id AS userId,
@@ -81,42 +85,43 @@ export function getActiveSessionByToken(token: string): LocalSessionRecord | nul
         AND s.revoked_at IS NULL
         AND s.expires_at > datetime('now')
     `
-    )
-    .get(tokenHash) as
-    | {
-        id: string
-        userId: string
-        expiresAt: string
-        createdAt: string
-        user_id: string
-        displayName: string
-        email: string | null
-        userType: 'local' | 'device' | 'system'
-        userCreatedAt: string
-        userUpdatedAt: string | null
-      }
-    | undefined
+      )
+      .get(tokenHash) as
+      | {
+          id: string
+          userId: string
+          expiresAt: string
+          createdAt: string
+          user_id: string
+          displayName: string
+          email: string | null
+          userType: 'local' | 'device' | 'system'
+          userCreatedAt: string
+          userUpdatedAt: string | null
+        }
+      | undefined
 
-  if (!row) {
-    return null
-  }
-
-  db.prepare(`UPDATE sessions SET last_seen_at = datetime('now') WHERE id = ?`).run(row.id)
-
-  return {
-    id: row.id,
-    userId: row.userId,
-    expiresAt: row.expiresAt,
-    createdAt: row.createdAt,
-    user: {
-      id: row.user_id,
-      displayName: row.displayName,
-      email: row.email,
-      userType: row.userType,
-      createdAt: row.userCreatedAt,
-      updatedAt: row.userUpdatedAt
+    if (!row) {
+      return null
     }
-  }
+
+    db.prepare(`UPDATE sessions SET last_seen_at = datetime('now') WHERE id = ?`).run(row.id)
+
+    return {
+      id: row.id,
+      userId: row.userId,
+      expiresAt: row.expiresAt,
+      createdAt: row.createdAt,
+      user: {
+        id: row.user_id,
+        displayName: row.displayName,
+        email: row.email,
+        userType: row.userType,
+        createdAt: row.userCreatedAt,
+        updatedAt: row.userUpdatedAt
+      }
+    }
+  })
 }
 
 /**
@@ -125,15 +130,17 @@ export function getActiveSessionByToken(token: string): LocalSessionRecord | nul
  * @param token - Raw session token to revoke.
  */
 export function revokeSessionByToken(token: string) {
-  const db = getDatabase()
-  const tokenHash = hashToken(token)
+  withDbErrorLogging('sessions', 'revoke', () => {
+    const db = getDatabase()
+    const tokenHash = hashToken(token)
 
-  db.prepare(
-    `
+    db.prepare(
+      `
     UPDATE sessions
     SET revoked_at = datetime('now')
     WHERE token_hash = ?
       AND revoked_at IS NULL
   `
-  ).run(tokenHash)
+    ).run(tokenHash)
+  })
 }

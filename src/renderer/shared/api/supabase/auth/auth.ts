@@ -1,5 +1,3 @@
-import { captureException } from '@shared/lib'
-
 import { supabase } from '../client'
 import { createSupabaseUnreachableAuthError, isSupabaseRequestAllowed } from '../connectivity-guard'
 import type { AuthChangeEvent, AuthResponse, Session, UserResponse } from '../types/auth-user'
@@ -81,13 +79,11 @@ export async function getCurrentSession(): Promise<Session | null> {
     const { data, error } = await supabase.auth.getSession()
 
     if (error) {
-      captureException(error, 'auth', 'getCurrentSession')
       return null
     }
 
     return data.session
-  } catch (error) {
-    captureException(error as Error, 'auth', 'getCurrentSession')
+  } catch {
     return null
   }
 }

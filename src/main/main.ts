@@ -2,23 +2,22 @@ import { app } from 'electron'
 
 import { resolveDevServerUrl } from '../../config/dev'
 import { bootstrap } from './app/bootstrap'
-import { initTelemetryApp } from './app/init-telemetry'
+import { initLogging } from './app/init-logging'
 import { createWindow } from './window/main-window'
-import { createLogger } from '@main/shared/logging'
-import { captureException } from '@main/shared/telemetry'
+import { createLogger, logError, toError } from '@main/shared/logging'
 
 const mainLogger = createLogger('main')
 
 const DEV_SERVER_URL = resolveDevServerUrl()
 
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   try {
-    await initTelemetryApp(import.meta.env.MODE ?? 'production')
+    initLogging()
     bootstrap()
     createWindow(DEV_SERVER_URL)
   } catch (error) {
-    const startupError = error instanceof Error ? error : new Error(String(error))
-    captureException(startupError, 'main', 'startup')
+    const startupError = toError(error)
+    logError(startupError, 'main', 'startup')
     mainLogger.error('Application startup failed', {
       reason: startupError.message
     })

@@ -11,10 +11,9 @@ const api: ElectronAPI = {
   updateUserDisplayName: (token, displayName) =>
     ipcRenderer.invoke('users:updateDisplayName', { token, displayName }),
   dbHealthcheck: () => ipcRenderer.invoke('db:healthcheck'),
-  checkGrafanaCloudReachability: () => ipcRenderer.invoke('telemetry:checkGrafanaReachability'),
-  setTelemetryUploadPreferences: (preferences) =>
-    ipcRenderer.invoke('telemetry:setUploadPreferences', preferences),
-  uploadTelemetryOnError: () => ipcRenderer.invoke('telemetry:uploadOnError'),
+  recordError: (input) => ipcRenderer.invoke('logging:recordError', input),
+  setDiagnosticsUploadPreferences: (preferences) =>
+    ipcRenderer.invoke('diagnostics:setUploadPreferences', preferences),
   auditRecord: (input) => ipcRenderer.invoke('audit:record', input),
   getCompetitors: (token) => ipcRenderer.invoke('competitors:list', token),
   addCompetitor: (token, input) => ipcRenderer.invoke('competitors:add', { token, ...input }),

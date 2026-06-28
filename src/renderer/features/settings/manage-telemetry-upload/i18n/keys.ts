@@ -9,7 +9,6 @@ const translationKeys = {
   legal: {
     title: 'settings.telemetry.legal.title',
     body: 'settings.telemetry.legal.body',
-    grafanaPrivacy: 'settings.telemetry.legal.grafanaPrivacy',
     withdraw: 'settings.telemetry.legal.withdraw'
   }
 }

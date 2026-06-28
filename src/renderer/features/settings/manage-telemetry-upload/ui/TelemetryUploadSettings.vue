@@ -6,8 +6,6 @@ import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 
-const GRAFANA_PRIVACY_URL = 'https://grafana.com/legal/privacy-policy/'
-
 defineProps<{
   autoUploadDiagnostics: boolean
 }>()
@@ -63,14 +61,6 @@ function handleDiagnosticsChange(value: boolean | null) {
         <v-expansion-panel-text>
           <p class="text-body-2">{{ t(translationKeys.legal.body) }}</p>
           <p class="text-body-2 mt-2">{{ t(translationKeys.legal.withdraw) }}</p>
-          <a
-            class="text-body-2"
-            :href="GRAFANA_PRIVACY_URL"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {{ t(translationKeys.legal.grafanaPrivacy) }}
-          </a>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>

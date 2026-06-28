@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
-import { signInWithEmailPassword } from '../service/sign-in-with-email-password'
+import { signInWithEmailPassword } from '../api/sign-in-with-email-password'
 
 /**
  * Runs sign-in via {@link loginUserAccount}.
@@ -30,10 +29,6 @@ export function useLogin() {
       const response = await signInWithEmailPassword(email, password)
 
       if (!response.success) {
-        monitorWarning(MONITORING_EVENTS.LOGIN_FAILED, {
-          errorCode: response.error.code
-        })
-
         errorCode.value = response.error.code
         return false
       }

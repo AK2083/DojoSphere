@@ -1,9 +1,9 @@
 import type { AuthSession, AuthState, AuthUser } from '@shared/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { watchAuthState } from '../api/watch-auth-state'
 import { getCurrentSession } from '../service/get-current-session'
 import { onLocalAuthStateChanged } from '../service/local-auth-state'
-import { watchAuthState } from '../service/on-auth-state-change'
 import { useAuthSession } from './use-auth-session'
 
 type AuthWatcherPayload = { event: string; session: AuthSession | null }
@@ -34,7 +34,7 @@ vi.mock('../service/local-auth-state', () => ({
   onLocalAuthStateChanged: vi.fn(() => () => undefined)
 }))
 
-vi.mock('../service/on-auth-state-change', () => ({
+vi.mock('../api/watch-auth-state', () => ({
   watchAuthState: vi.fn()
 }))
 

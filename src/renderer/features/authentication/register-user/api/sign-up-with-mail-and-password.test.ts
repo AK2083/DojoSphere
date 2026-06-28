@@ -6,13 +6,15 @@ import {
   type User
 } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException, setUserContext } from '@shared/lib'
+import { logError } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { signUpWithMailAndPassword } from './sign-up-with-mail-and-password'
 
 vi.mock('@shared/api')
-vi.mock('@shared/lib')
+vi.mock('@shared/lib', () => ({
+  logError: vi.fn()
+}))
 
 describe('signUpWithMailAndPassword', () => {
   const email = 'test@test.com'
@@ -30,11 +32,7 @@ describe('signUpWithMailAndPassword', () => {
 
     const result = await signUpWithMailAndPassword(email, password)
 
-    expect(captureException).toHaveBeenCalledWith(
-      expect.any(AppError),
-      'auth',
-      'signUpWithMailAndPassword'
-    )
+    expect(logError).toHaveBeenCalledWith(expect.any(AppError), 'auth', 'signUpWithMailAndPassword')
     expect(result).toMatchObject({ success: false, error: { message: 'User not found' } })
   })
 
@@ -56,12 +54,11 @@ describe('signUpWithMailAndPassword', () => {
     const result = await signUpWithMailAndPassword(email, password)
 
     expect(mapSupabaseError).toHaveBeenCalledWith(supabaseError)
-    expect(captureException).toHaveBeenCalledWith(mappedError, 'auth', 'signUpWithMailAndPassword')
-    expect(setUserContext).not.toHaveBeenCalled()
+    expect(logError).toHaveBeenCalledWith(mappedError, 'auth', 'signUpWithMailAndPassword')
     expect(result).toEqual({ success: false, error: mappedError })
   })
 
-  it('returns success and sets user context when signup succeeds', async () => {
+  it('returns success when signup succeeds', async () => {
     const mockUser: User = { id: 'user-123' } as User
 
     vi.mocked(signUpByEmailPassword).mockResolvedValue({
@@ -71,7 +68,7 @@ describe('signUpWithMailAndPassword', () => {
 
     const result = await signUpWithMailAndPassword(email, password)
 
-    expect(setUserContext).toHaveBeenCalledWith({ id: 'user-123' })
+    expect(logError).not.toHaveBeenCalled()
     expect(result).toEqual({ success: true })
   })
 })

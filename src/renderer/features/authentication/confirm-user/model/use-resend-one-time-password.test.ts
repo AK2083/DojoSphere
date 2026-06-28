@@ -12,18 +12,6 @@ vi.mock('../service/register-storage', () => ({
   getRegisterEmailFromStorage: vi.fn()
 }))
 
-vi.mock('../monitoring/monitoring', () => ({
-  MONITORING_EVENTS: {
-    RESEND_OTP_SUBMITTED: 'auth.otp.resend.submitted',
-    STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
-    RESEND_OTP_VALIDATION_FAILED: 'auth.otp.resend.validation.failed',
-    RESEND_OTP_REQUEST_STARTED: 'auth.otp.resend.request.started',
-    RESEND_OTP_FAILED: 'auth.otp.resend.failed',
-    RESEND_OTP_SUCCEEDED: 'auth.otp.resend.succeeded'
-  },
-  monitorWarning: vi.fn()
-}))
-
 describe('useResendOneTimePassword', () => {
   beforeEach(() => {
     vi.clearAllMocks()

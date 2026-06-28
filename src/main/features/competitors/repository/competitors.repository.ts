@@ -6,6 +6,7 @@ import {
   recordCompetitorUpdated
 } from '@main/features/audit'
 import { getDatabase, runInTransaction } from '@main/shared/database'
+import { withDbErrorLogging } from '@main/shared/logging'
 
 /** Input for creating a competitor record. */
 export type CreateCompetitorInput = {
@@ -82,11 +83,12 @@ function getCompetitorById(competitorId: string): CompetitorRecord | null {
  * @returns All competitor records in the database.
  */
 export function getCompetitors(): CompetitorRecord[] {
-  const db = getDatabase()
+  return withDbErrorLogging('competitors', 'list', () => {
+    const db = getDatabase()
 
-  return db
-    .prepare(
-      `
+    return db
+      .prepare(
+        `
       SELECT
         id,
         given_name AS givenName,
@@ -98,8 +100,9 @@ export function getCompetitors(): CompetitorRecord[] {
       FROM competitors
       ORDER BY created_at ASC
     `
-    )
-    .all() as CompetitorRecord[]
+      )
+      .all() as CompetitorRecord[]
+  })
 }
 
 /**
@@ -124,24 +127,26 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
   const db = getDatabase()
   const id = randomUUID()
 
-  runInTransaction(db, () => {
-    db.prepare(
-      `
+  return withDbErrorLogging('competitors', 'create', () => {
+    runInTransaction(db, () => {
+      db.prepare(
+        `
       INSERT INTO competitors (id, given_name, family_name, club, weight_class)
       VALUES (?, ?, ?, ?, ?)
     `
-    ).run(id, givenName, familyName, input.club ?? null, input.weightClass ?? null)
+      ).run(id, givenName, familyName, input.club ?? null, input.weightClass ?? null)
 
-    recordCompetitorCreated({ actorUserId, competitorId: id })
+      recordCompetitorCreated({ actorUserId, competitorId: id })
+    })
+
+    const competitor = getCompetitorById(id)
+
+    if (!competitor) {
+      throw new Error('Competitor not found')
+    }
+
+    return competitor
   })
-
-  const competitor = getCompetitorById(id)
-
-  if (!competitor) {
-    throw new Error('Competitor not found')
-  }
-
-  return competitor
 }
 
 /**
@@ -188,35 +193,37 @@ export function updateCompetitor(
 
   const db = getDatabase()
 
-  runInTransaction(db, () => {
-    db.prepare(
-      `
+  return withDbErrorLogging('competitors', 'update', () => {
+    runInTransaction(db, () => {
+      db.prepare(
+        `
       UPDATE competitors
       SET given_name = ?, family_name = ?, club = ?, weight_class = ?, updated_at = datetime('now')
       WHERE id = ?
     `
-    ).run(
-      nextValues.givenName,
-      nextValues.familyName,
-      nextValues.club,
-      nextValues.weightClass,
-      competitorId
-    )
+      ).run(
+        nextValues.givenName,
+        nextValues.familyName,
+        nextValues.club,
+        nextValues.weightClass,
+        competitorId
+      )
 
-    recordCompetitorUpdated({
-      actorUserId,
-      competitorId,
-      changedFields: changedFields.map((field) => FIELD_NAME_MAP[field])
+      recordCompetitorUpdated({
+        actorUserId,
+        competitorId,
+        changedFields: changedFields.map((field) => FIELD_NAME_MAP[field])
+      })
     })
+
+    const competitor = getCompetitorById(competitorId)
+
+    if (!competitor) {
+      throw new Error('Competitor not found')
+    }
+
+    return competitor
   })
-
-  const competitor = getCompetitorById(competitorId)
-
-  if (!competitor) {
-    throw new Error('Competitor not found')
-  }
-
-  return competitor
 }
 
 /**
@@ -234,9 +241,11 @@ export function deleteCompetitor(actorUserId: string, competitorId: string): voi
 
   const db = getDatabase()
 
-  runInTransaction(db, () => {
-    db.prepare(`DELETE FROM competitors WHERE id = ?`).run(competitorId)
+  withDbErrorLogging('competitors', 'delete', () => {
+    runInTransaction(db, () => {
+      db.prepare(`DELETE FROM competitors WHERE id = ?`).run(competitorId)
 
-    recordCompetitorDeleted({ actorUserId, competitorId })
+      recordCompetitorDeleted({ actorUserId, competitorId })
+    })
   })
 }

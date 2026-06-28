@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 
+import { recordSessionRevoked } from '@main/features/audit'
 import { getActiveSessionByToken, revokeSessionByToken } from '../repository/sessions.repository'
 
 /**
@@ -10,13 +11,12 @@ export function registerSessionsIpc() {
     return getActiveSessionByToken(token)
   })
 
-  ipcMain.handle('sessions:revoke', async (_event, token: string) => {
+  ipcMain.handle('sessions:revoke', (_event, token: string) => {
     const session = getActiveSessionByToken(token)
 
     revokeSessionByToken(token)
 
     if (session) {
-      const { recordSessionRevoked } = await import('@main/features/audit')
       recordSessionRevoked(session)
     }
   })

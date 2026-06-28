@@ -3,7 +3,6 @@ export { default as settingsEn } from './i18n/en'
 export { default as translationKeys } from './i18n/keys'
 export {
   manageTelemetryUploadTranslationKeys,
-  requestTelemetryUploadOnError,
   syncTelemetryUploadPreferencesToMain,
   TelemetryUploadSettings,
   useTelemetryUploadStore

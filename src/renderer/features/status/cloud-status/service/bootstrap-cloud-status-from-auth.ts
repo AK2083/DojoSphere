@@ -1,8 +1,7 @@
+import { watchAuthState } from '@features/authentication/api/watch-auth-state'
 import { isLocalAuthSession } from '@features/authentication/service/is-local-auth-session'
-import { watchAuthState } from '@features/authentication/service/on-auth-state-change'
 import type { AuthSession } from '@shared/types'
 
-import { monitorInformation, MONITORING_EVENTS } from '../monitoring/monitoring'
 import { useCloudStatusStore } from '../store'
 import { hasSupabaseAuthSessionInStorage } from './cloud-status-storage'
 
@@ -27,10 +26,6 @@ export function syncCloudUsageFromAuthSession(session: AuthSession | null): void
   }
 
   store.setCloudUsed(isCloudUsed)
-
-  if (isCloudUsed) {
-    monitorInformation(MONITORING_EVENTS.CLOUD_CONFIRMED)
-  }
 }
 
 /**

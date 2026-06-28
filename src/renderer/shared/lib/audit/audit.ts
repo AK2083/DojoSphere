@@ -1,4 +1,4 @@
-import { isActivityLoggingEnabled } from '@shared/lib/telemetry/activity-logging-scope'
+import { isActivityLoggingEnabled } from '@shared/lib/logging/activity-logging-scope'
 import type { AuditEventPayload } from '@shared/types/electron-api'
 
 /**

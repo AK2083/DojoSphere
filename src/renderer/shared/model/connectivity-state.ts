@@ -5,14 +5,12 @@ type ConnectivityRefs = {
   isOnline: Ref<boolean>
   isCloudUsed: Ref<boolean>
   isSupabaseReachable: Ref<boolean>
-  isGrafanaCloudReachable: Ref<boolean>
 }
 
 let connectivityState: ConnectivityRefs = {
   isOnline: ref(getNavigatorOnline()),
   isCloudUsed: ref(false),
-  isSupabaseReachable: ref(true),
-  isGrafanaCloudReachable: ref(false)
+  isSupabaseReachable: ref(true)
 }
 
 /**

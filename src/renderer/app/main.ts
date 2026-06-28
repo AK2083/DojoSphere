@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { initLoggingProvider, registerGlobalErrorHandlers } from '@shared/lib'
+import { registerGlobalErrorHandlers } from '@shared/lib'
 import {
   installPlaywrightBrowserElectronApi,
   isPlaywrightBrowserOnly
@@ -18,7 +18,6 @@ if (isPlaywrightBrowserOnly()) {
 
 const app = createApp(App)
 bindActivityLoggingToRouter(router)
-initLoggingProvider(router, import.meta.env.MODE)
 registerGlobalErrorHandlers(app)
 
 app.use(i18n).use(router).use(vuetify).use(pinia).mount('#app')

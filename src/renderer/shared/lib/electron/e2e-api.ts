@@ -84,9 +84,8 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       }
     },
     dbHealthcheck: async () => ({ ok: true, version: 'playwright-browser' }),
-    checkGrafanaCloudReachability: async () => ({ reachable: false, reason: 'not_configured' }),
-    setTelemetryUploadPreferences: async () => undefined,
-    uploadTelemetryOnError: async () => undefined,
+    recordError: async () => undefined,
+    setDiagnosticsUploadPreferences: async () => undefined,
     auditRecord: async () => undefined,
     getCompetitors: async () => [],
     addCompetitor: async () => ({

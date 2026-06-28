@@ -15,15 +15,12 @@ export function useStatusState() {
     return {
       isOnline: ref(getNavigatorOnline()),
       isCloudUsed: ref(false),
-      isSupabaseReachable: ref(true),
-      isGrafanaCloudReachable: ref(false)
+      isSupabaseReachable: ref(true)
     }
   }
 
-  const { isOnline, isSupabaseReachable, isGrafanaCloudReachable } = newStoreToRefs(
-    useNetworkStatusStore(activeStore)
-  )
+  const { isOnline, isSupabaseReachable } = newStoreToRefs(useNetworkStatusStore(activeStore))
   const { isCloudUsed } = newStoreToRefs(useCloudStatusStore(activeStore))
 
-  return { isOnline, isCloudUsed, isSupabaseReachable, isGrafanaCloudReachable }
+  return { isOnline, isCloudUsed, isSupabaseReachable }
 }

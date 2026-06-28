@@ -3,7 +3,6 @@ import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 import { useNetworkStatusState } from '@shared/model'
 
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useLogin } from './use-login'
 import { useLoginRouting } from './use-routing'
 
@@ -72,14 +71,12 @@ export function useLoginForm() {
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorWarning(MONITORING_EVENTS.LOGIN_FORM_INVALID)
       return
     }
 
     const success = await execute(email.value, password.value)
 
     if (!success) {
-      monitorWarning(MONITORING_EVENTS.LOGIN_FORM_EXECUTE_FAILED)
       return
     }
 

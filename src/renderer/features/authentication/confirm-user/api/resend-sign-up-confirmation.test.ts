@@ -6,13 +6,15 @@ import {
   resendSignUpConfirmation
 } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException } from '@shared/lib'
+import { logError } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { resendSignUpConfirmationEmail } from './resend-sign-up-confirmation'
 
 vi.mock('@shared/api')
-vi.mock('@shared/lib')
+vi.mock('@shared/lib', () => ({
+  logError: vi.fn()
+}))
 
 describe('resendSignUpConfirmationEmail', () => {
   beforeEach(() => {
@@ -36,11 +38,7 @@ describe('resendSignUpConfirmationEmail', () => {
 
     const result = await resendSignUpConfirmationEmail('test@mail.com')
 
-    expect(captureException).toHaveBeenCalledWith(
-      authError,
-      'auth',
-      'resendSignUpConfirmationEmail'
-    )
+    expect(logError).toHaveBeenCalledWith(mappedError, 'auth', 'resendSignUpConfirmationEmail')
     expect(mapSupabaseError).toHaveBeenCalledWith(authError)
     expect(result).toEqual({ success: false, error: mappedError })
   })
@@ -54,7 +52,7 @@ describe('resendSignUpConfirmationEmail', () => {
     const result = await resendSignUpConfirmationEmail('test@mail.com')
 
     expect(result).toEqual({ success: true })
-    expect(captureException).not.toHaveBeenCalled()
+    expect(logError).not.toHaveBeenCalled()
     expect(mapSupabaseError).not.toHaveBeenCalled()
   })
 })

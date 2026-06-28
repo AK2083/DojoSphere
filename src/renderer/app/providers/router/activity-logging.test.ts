@@ -1,16 +1,8 @@
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const clearUserContext = vi.fn()
-const monitorInformation = vi.fn()
-
-vi.mock('@shared/lib/telemetry/logging', () => ({
-  clearUserContext
-}))
-
-vi.mock('@shared/lib/telemetry/activity-logging-scope', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('@shared/lib/telemetry/activity-logging-scope')>()
+vi.mock('@shared/lib/logging/activity-logging-scope', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@shared/lib/logging/activity-logging-scope')>()
 
   return {
     ...actual,
@@ -18,21 +10,14 @@ vi.mock('@shared/lib/telemetry/activity-logging-scope', async (importOriginal) =
   }
 })
 
-vi.mock('./monitoring', () => ({
-  MONITORING_EVENTS: {
-    ROUTE_CHANGED: 'router.route.changed'
-  },
-  monitorInformation
-}))
-
 describe('bindActivityLoggingToRouter', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('disables activity logging and clears user context on audience routes', async () => {
+  it('disables activity logging on audience routes', async () => {
     const { setActivityLoggingEnabled, resetActivityLoggingScope } =
-      await import('@shared/lib/telemetry/activity-logging-scope')
+      await import('@shared/lib/logging/activity-logging-scope')
     const { bindActivityLoggingToRouter } = await import('./activity-logging')
 
     resetActivityLoggingScope()
@@ -55,13 +40,11 @@ describe('bindActivityLoggingToRouter', () => {
     await router.isReady()
 
     expect(setActivityLoggingEnabled).toHaveBeenLastCalledWith(false)
-    expect(clearUserContext).toHaveBeenCalledOnce()
-    expect(monitorInformation).not.toHaveBeenCalled()
   })
 
-  it('records route breadcrumbs on authenticated paths', async () => {
+  it('enables activity logging on authenticated paths', async () => {
     const { setActivityLoggingEnabled, resetActivityLoggingScope } =
-      await import('@shared/lib/telemetry/activity-logging-scope')
+      await import('@shared/lib/logging/activity-logging-scope')
     const { bindActivityLoggingToRouter } = await import('./activity-logging')
 
     resetActivityLoggingScope()
@@ -76,6 +59,5 @@ describe('bindActivityLoggingToRouter', () => {
     await router.isReady()
 
     expect(setActivityLoggingEnabled).toHaveBeenLastCalledWith(true)
-    expect(monitorInformation).toHaveBeenCalledWith('router.route.changed', { name: 'dashboard' })
   })
 })

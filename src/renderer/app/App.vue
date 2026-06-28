@@ -2,10 +2,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { syncTelemetryUploadPreferencesToMain, useTelemetryUploadStore } from '@features/settings'
 import { bootstrapCloudStatusFromAuth, bootstrapNetworkStatus } from '@features/status'
-import { setAutoUploadDiagnosticsCheck } from '@shared/lib'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
-
-setAutoUploadDiagnosticsCheck(() => useTelemetryUploadStore().autoUploadDiagnostics)
 
 void bootstrapNetworkStatus()
 

@@ -1,9 +1,8 @@
+import { watchAuthState } from '@features/authentication/api/watch-auth-state'
 import { isLocalAuthSession } from '@features/authentication/service/is-local-auth-session'
-import { watchAuthState } from '@features/authentication/service/on-auth-state-change'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { monitorInformation } from '../monitoring/monitoring'
 import { useCloudStatusStore } from '../store/use-cloud-status-store'
 import {
   bootstrapCloudStatusFromAuth,
@@ -15,19 +14,12 @@ vi.mock('@features/authentication/service/is-local-auth-session', () => ({
   isLocalAuthSession: vi.fn(() => false)
 }))
 
-vi.mock('@features/authentication/service/on-auth-state-change', () => ({
+vi.mock('@features/authentication/api/watch-auth-state', () => ({
   watchAuthState: vi.fn()
 }))
 
 vi.mock('./cloud-status-storage', () => ({
   hasSupabaseAuthSessionInStorage: vi.fn(() => false)
-}))
-
-vi.mock('../monitoring/monitoring', () => ({
-  monitorInformation: vi.fn(),
-  MONITORING_EVENTS: {
-    CLOUD_CONFIRMED: 'cloud.status.confirmed'
-  }
 }))
 
 describe('syncCloudUsageFromAuthSession', () => {
@@ -42,7 +34,6 @@ describe('syncCloudUsageFromAuthSession', () => {
     } as never)
 
     expect(useCloudStatusStore().isCloudUsed).toBe(true)
-    expect(monitorInformation).toHaveBeenCalledWith('cloud.status.confirmed')
   })
 
   it('marks cloud usage inactive for local sessions', () => {
@@ -53,7 +44,6 @@ describe('syncCloudUsageFromAuthSession', () => {
     } as never)
 
     expect(useCloudStatusStore().isCloudUsed).toBe(false)
-    expect(monitorInformation).not.toHaveBeenCalled()
   })
 
   it('marks cloud usage inactive when session is null and storage is empty', () => {
