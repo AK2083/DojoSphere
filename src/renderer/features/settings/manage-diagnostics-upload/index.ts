@@ -1,0 +1,5 @@
+export { manageDiagnosticsUploadDe, manageDiagnosticsUploadEn } from './i18n'
+export { default as manageDiagnosticsUploadTranslationKeys } from './i18n/keys'
+export { syncDiagnosticsUploadPreferencesToMain } from './service/sync-diagnostics-upload'
+export { useDiagnosticsUploadStore } from './store/use-diagnostics-upload-store'
+export { default as DiagnosticsUploadSettings } from './ui/DiagnosticsUploadSettings.vue'

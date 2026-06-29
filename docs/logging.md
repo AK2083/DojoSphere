@@ -57,6 +57,44 @@ Settings expose **“Send diagnostic data on errors”**. The preference is stor
 
 **There is no cloud provider configured yet** — the toggle is a placeholder for a future upload integration. No data leaves the device when enabled.
 
+### Local system snapshot (always)
+
+At every application start, the main process writes **one anonymous system snapshot** to `app.log`, independent of the cloud toggle:
+
+| Field | Example | Purpose |
+|-------|---------|---------|
+| `platform` | `win32` | OS family |
+| `arch` | `x64` | CPU architecture |
+| `osRelease` | `10.0.26200` | OS version |
+| `appVersion` | `0.1.0` | DojoSphere version |
+| `electronVersion` | `42.3.0` | Electron runtime |
+| `mode` | `production` | Build mode |
+
+Implementation: `captureSystemSnapshot()` in `src/main/shared/logging/diagnostic-context.ts`, called from `initLogging()`.
+
+Log line format:
+
+```text
+[info] [diagnostics] session_snapshot platform=… arch=… osRelease=… appVersion=… electronVersion=… mode=…
+```
+
+The snapshot is **not** merged into every `logError` line — it is a separate one-time entry per session.
+
+### What is never written to `app.log`
+
+| Category | Examples |
+|----------|----------|
+| Personal data | Email, names, tokens, passwords, session IDs |
+| Network identifiers | Hostname, MAC, IP addresses, client User-Agent |
+| User preferences | Language, theme (not needed for support context) |
+| Security products | Antivirus names, firewall product names |
+| Error messages | Raw `error.message` from exceptions (only `code` when present) |
+| OS username | Never — even though `getOsUsername` exists for UI |
+
+### LAN troubleshooting (future)
+
+When the intranet host for scorekeepers and audience is implemented, **port, firewall, and antivirus issues** should be explained to the tournament director in the **UI** (i18n hints, checklists) — not inferred and written to `app.log`. Technical server start failures may still use `logError` with scope, action, and code only.
+
 ## Connectivity
 
 | Check | Purpose |

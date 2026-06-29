@@ -29,7 +29,7 @@ Classify new dependencies by **role**, not technology:
 
 **Rules of thumb:**
 - Render framework and global providers (app shell) → `app/providers/` — configure directly, do not abstract.
-- Vendor/infrastructure clients (backend, monitoring, storage bridge, …) → `shared/` — wrap behind a public API (e.g. OpenTelemetry wiring in `app/main.ts`, usage via `shared/lib/telemetry/`).
+- Vendor/infrastructure clients (backend, storage bridge, …) → `shared/` — wrap behind a public API (e.g. `logError` via `@shared/lib`, main-process logging in `@main/shared/logging/`).
 - Thin helpers **built on** the framework that features use everywhere → `shared/lib/` (setup stays in `app`).
 
 **Split pattern:** A dependency can be both — instance/wiring in `app/providers/`, usage API in `shared/lib/` (e.g. plugin in `app`, composable in `shared`).

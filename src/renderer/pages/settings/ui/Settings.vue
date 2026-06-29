@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import {
+  DiagnosticsUploadSettings,
   LanguageSwitch,
-  syncTelemetryUploadPreferencesToMain,
-  TelemetryUploadSettings,
+  syncDiagnosticsUploadPreferencesToMain,
   ThemeToggle,
   translationKeys,
   UsernameEditor,
-  useTelemetryUploadStore
+  useDiagnosticsUploadStore
 } from '@features/settings'
 import { newStoreToRefs, useTranslation } from '@shared/lib'
 
 const { t } = useTranslation()
-const telemetryUploadStore = useTelemetryUploadStore()
-const { autoUploadDiagnostics } = newStoreToRefs(telemetryUploadStore)
+const diagnosticsUploadStore = useDiagnosticsUploadStore()
+const { autoUploadDiagnostics } = newStoreToRefs(diagnosticsUploadStore)
 
 async function handleDiagnosticsUpdate(value: boolean) {
-  telemetryUploadStore.setAutoUploadDiagnostics(value)
-  await syncTelemetryUploadPreferencesToMain({ autoUploadDiagnostics: value })
+  diagnosticsUploadStore.setAutoUploadDiagnostics(value)
+  await syncDiagnosticsUploadPreferencesToMain({ autoUploadDiagnostics: value })
 }
 </script>
 
@@ -32,7 +32,7 @@ async function handleDiagnosticsUpdate(value: boolean) {
 
     <v-sheet class="mb-4 border rounded pa-4">
       <v-row class="align-center">
-        <TelemetryUploadSettings
+        <DiagnosticsUploadSettings
           :auto-upload-diagnostics="autoUploadDiagnostics"
           @update:auto-upload-diagnostics="handleDiagnosticsUpdate"
         />

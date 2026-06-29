@@ -24,9 +24,9 @@ describe('logError', () => {
     const error = new Error('persist failed')
     Object.assign(error, { code: 'db_error' })
 
-    logError(error, 'telemetry', 'persist')
+    logError(error, 'database', 'persist')
 
-    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:telemetry]', 'persist', { code: 'db_error' })
+    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:database]', 'persist', { code: 'db_error' })
   })
 
   it('normalizes non-error values with toError', () => {

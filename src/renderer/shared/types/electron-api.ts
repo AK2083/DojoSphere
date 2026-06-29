@@ -97,9 +97,6 @@ export interface AuditRecordInput {
 /** Audit event fields without the session token (added by the caller or shared lib). */
 export type AuditEventPayload = Omit<AuditRecordInput, 'token'>
 
-/** @deprecated Use {@link DiagnosticsUploadPreferences}. */
-export type TelemetryUploadPreferences = DiagnosticsUploadPreferences
-
 /** Typed IPC surface exposed on `window.api` by the preload script. */
 export interface ElectronAPI {
   getUsers: () => Promise<User[]>

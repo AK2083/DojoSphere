@@ -38,11 +38,11 @@ Other common commands: `npm run storybook` (UI development), `npm run build` (pr
 - [Contributing](CONTRIBUTING.md) — development workflow, scripts, tests, adding features
 - [Architecture](docs/architecture.md) — FSD renderer, vertical slices in main
 - [Local database](docs/database.md) — SQLite, migrations, IPC
-- [Logging & monitoring](docs/logging.md) — telemetry, audit, and debug lanes
+- [Logging & audit](docs/logging.md) — local error log and SQLite audit
 
-## Logging & monitoring
+## Logging & audit
 
-DojoSphere uses two lanes: **error logging** (local `app.log`) and **audit** (business actions in SQLite). Logging is **offline-only**; a Settings toggle for future cloud diagnostics is stored but does not upload data yet.
+DojoSphere uses two lanes: **error logging** (local `app.log`) and **audit** (business actions in SQLite). Logging is **offline-only**; a Settings toggle for future cloud diagnostics is stored but does not upload data yet. At startup, an anonymous system snapshot (OS and app version) is written once to `app.log`.
 
 | Role                                  | Logging                                                                                                   |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |

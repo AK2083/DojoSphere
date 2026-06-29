@@ -1,27 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import TelemetryUploadSettings from './TelemetryUploadSettings.vue'
+import DiagnosticsUploadSettings from './DiagnosticsUploadSettings.vue'
 
 const meta = {
-  title: 'Features/Settings/ManageTelemetryUpload/TelemetryUploadSettings',
-  component: TelemetryUploadSettings,
+  title: 'Features/Settings/ManageDiagnosticsUpload/DiagnosticsUploadSettings',
+  component: DiagnosticsUploadSettings,
   parameters: {
     layout: 'fullscreen'
   },
   render: (args) => ({
-    components: { TelemetryUploadSettings },
+    components: { DiagnosticsUploadSettings },
     setup() {
       return { args }
     },
     template: `
       <v-container>
         <v-row>
-          <TelemetryUploadSettings v-bind="args" />
+          <DiagnosticsUploadSettings v-bind="args" />
         </v-row>
       </v-container>
     `
   })
-} satisfies Meta<typeof TelemetryUploadSettings>
+} satisfies Meta<typeof DiagnosticsUploadSettings>
 
 export default meta
 

@@ -8,9 +8,9 @@ Anonymous spectators open the tournament overview on the local network without s
 | ------------------ | ------------------------------------------------------------------------------------------- |
 | Authentication     | None — no session, no user record                                                           |
 | Personal data      | No name or identifier collected on this path                                                |
-| Telemetry activity | No info/debug breadcrumbs, no `setUserContext`                                              |
+| Activity logging   | No activity audit or user context on audience routes                                        |
 | Audit              | No audience activity rows in `authorization_audit_logs`                                     |
-| Errors             | Unhandled application errors may still surface via global telemetry (not activity tracking) |
+| Errors             | Unhandled application errors are still written to the local error log via global handlers   |
 
 ## Routing
 
@@ -20,7 +20,7 @@ Anonymous spectators open the tournament overview on the local network without s
 
 ## Implementation rules
 
-- Audience UI must not call `monitorInformation`, `auditRecord`, or `setUserContext` for activity tracking.
+- Audience UI must not call `auditRecord` for activity tracking on audience routes.
 - Authorization history (e.g. scorekeeper approval) is recorded when an **authenticated** user performs the action — not when the audience browses the overview.
 
 ## Scorekeepers

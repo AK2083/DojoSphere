@@ -1,6 +1,6 @@
 import { app } from 'electron'
 
-import { initLogger } from '@main/shared/logging'
+import { captureSystemSnapshot, initLogger } from '@main/shared/logging'
 import { registerProcessErrorHandlers } from '@main/shared/logging/register-process-error-handlers'
 
 /**
@@ -8,5 +8,6 @@ import { registerProcessErrorHandlers } from '@main/shared/logging/register-proc
  */
 export function initLogging(): void {
   initLogger(app.getPath('userData'))
+  captureSystemSnapshot()
   registerProcessErrorHandlers()
 }

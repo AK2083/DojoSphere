@@ -39,7 +39,7 @@ i18n/
 ```
 
 - One `de.ts` and one `en.ts` per slice — **no** language subfolders (`de/`, `en/`) and **no** extra topic files (e.g. `cloud.ts`, `legal.ts`). Nested objects inside `de.ts`/`en.ts` are fine when the UI has logical groups (same pattern as `set-theme` `tooltip`).
-- Parent feature bundles slice messages in `features/<feature>/i18n/de.ts` and `en.ts` (e.g. `telemetry: manageTelemetryUploadDe`).
+- Parent feature bundles slice messages in `features/<feature>/i18n/de.ts` and `en.ts` (e.g. `diagnostics: manageDiagnosticsUploadDe`).
 - `keys.ts` paths must match the nested structure registered in the parent feature i18n.
 
 ## Responsive design

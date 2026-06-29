@@ -1,4 +1,4 @@
-import { manageTelemetryUploadDe } from '../manage-telemetry-upload'
+import { manageDiagnosticsUploadDe } from '../manage-diagnostics-upload'
 import { setLanguageDe } from '../set-language/i18n'
 import { setThemeDe } from '../set-theme/i18n'
 import { setUsernameDe } from '../set-username/i18n'
@@ -8,5 +8,5 @@ export default {
   language: setLanguageDe,
   theme: setThemeDe,
   username: setUsernameDe,
-  telemetry: manageTelemetryUploadDe
+  diagnostics: manageDiagnosticsUploadDe
 }

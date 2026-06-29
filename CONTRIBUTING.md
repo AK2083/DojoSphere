@@ -72,4 +72,4 @@ The renderer follows [Feature-Sliced Design](https://feature-sliced.design/); th
 
 - [Architecture](docs/architecture.md) — FSD renderer, vertical slices in main, import rules
 - [Local database](docs/database.md) — SQLite, migrations, IPC API
-- [Logging & monitoring](docs/logging.md) — telemetry, audit, and debug lanes
+- [Logging & audit](docs/logging.md) — local error log and SQLite audit
