@@ -4,6 +4,7 @@ const { playwrightExpect } = vi.hoisted(() => ({
   playwrightExpect: vi.fn(() => ({
     toBeVisible: vi.fn().mockResolvedValue(undefined),
     toBeEnabled: vi.fn().mockResolvedValue(undefined),
+    toBeAttached: vi.fn().mockResolvedValue(undefined),
     toHaveCount: vi.fn().mockResolvedValue(undefined)
   }))
 }))
@@ -17,8 +18,10 @@ vi.mock('@playwright/test', async (importOriginal) => {
 })
 
 import {
+  getOtpFields,
   getOtpInputs,
-  OTP_INPUTS_SELECTOR,
+  OTP_FIELDS_SELECTOR,
+  OTP_INPUT_SELECTOR,
   typeOtp,
   waitForOtpInputs,
   waitForPasswordResetOtpStep
@@ -28,14 +31,19 @@ function createOtpPageDouble() {
   const fill = vi.fn().mockResolvedValue(undefined)
   const click = vi.fn().mockResolvedValue(undefined)
   const keyboardType = vi.fn().mockResolvedValue(undefined)
-  const fieldLocator = { fill, click }
+  const fieldLocator = { click }
+  const inputLocator = { fill }
 
   const page = {
     locator: vi.fn().mockImplementation((selector: string) => {
-      if (selector === OTP_INPUTS_SELECTOR) {
+      if (selector === OTP_FIELDS_SELECTOR) {
         return {
           first: vi.fn().mockReturnValue(fieldLocator)
         }
+      }
+
+      if (selector === OTP_INPUT_SELECTOR) {
+        return inputLocator
       }
 
       if (selector === '#otpTitle') {
@@ -57,19 +65,29 @@ function createOtpPageDouble() {
 }
 
 describe('otp-input e2e helpers', () => {
-  it('returns a locator for otp input fields', () => {
+  it('returns a locator for otp field cells', () => {
+    const { page } = createOtpPageDouble()
+
+    getOtpFields(page as never)
+
+    expect(page.locator).toHaveBeenCalledWith(OTP_FIELDS_SELECTOR)
+  })
+
+  it('returns the same locator from getOtpInputs alias', () => {
     const { page } = createOtpPageDouble()
 
     getOtpInputs(page as never)
 
-    expect(page.locator).toHaveBeenCalledWith(OTP_INPUTS_SELECTOR)
+    expect(page.locator).toHaveBeenCalledWith(OTP_FIELDS_SELECTOR)
   })
 
-  it('waits for six otp input fields', async () => {
+  it('waits for six otp field cells and the merged input', async () => {
     const { page } = createOtpPageDouble()
 
     await waitForOtpInputs(page as never)
 
+    expect(page.locator).toHaveBeenCalledWith(OTP_FIELDS_SELECTOR)
+    expect(page.locator).toHaveBeenCalledWith(OTP_INPUT_SELECTOR)
     expect(playwrightExpect).toHaveBeenCalled()
   })
 
@@ -87,8 +105,8 @@ describe('otp-input e2e helpers', () => {
 
     await typeOtp(page as never, '123456')
 
+    expect(click).toHaveBeenCalled()
     expect(fill).toHaveBeenCalledWith('123456')
-    expect(click).not.toHaveBeenCalled()
     expect(keyboardType).not.toHaveBeenCalled()
   })
 

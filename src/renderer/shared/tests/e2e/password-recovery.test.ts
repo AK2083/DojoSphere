@@ -4,6 +4,7 @@ const { playwrightExpect } = vi.hoisted(() => ({
   playwrightExpect: vi.fn(() => ({
     toBeVisible: vi.fn().mockResolvedValue(undefined),
     toBeEnabled: vi.fn().mockResolvedValue(undefined),
+    toBeAttached: vi.fn().mockResolvedValue(undefined),
     toHaveCount: vi.fn().mockResolvedValue(undefined)
   }))
 }))
@@ -23,6 +24,7 @@ import {
   mockRecoveryRequest,
   mockRecoveryVerify
 } from './password-recovery'
+import { OTP_FIELDS_SELECTOR, OTP_INPUT_SELECTOR } from './otp-input'
 
 function createPageDouble(options: { emailInputCount?: number } = {}) {
   const fill = vi.fn().mockResolvedValue(undefined)
@@ -77,10 +79,14 @@ function createPageDouble(options: { emailInputCount?: number } = {}) {
         }
       }
 
-      if (selector === '.v-otp-input input:visible') {
+      if (selector === OTP_FIELDS_SELECTOR) {
         return {
           first: vi.fn().mockReturnValue(fieldLocator)
         }
+      }
+
+      if (selector === OTP_INPUT_SELECTOR) {
+        return fieldLocator
       }
 
       return {
@@ -180,7 +186,7 @@ describe('password-recovery e2e helpers', () => {
     await goToPasswordResetNewPasswordStep(page as never)
 
     expect(fill).toHaveBeenCalledWith('123456')
-    expect(click).toHaveBeenCalledTimes(2)
+    expect(click).toHaveBeenCalledTimes(3)
     expect(waitForResponse).toHaveBeenCalledTimes(2)
   })
 

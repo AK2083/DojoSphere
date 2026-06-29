@@ -11,12 +11,7 @@ export type LowLevelAuthEvent = AuthChangeEvent
 
 /** Normalized auth lifecycle event used by application listeners. */
 export type AuthEvent =
-  | 'SIGNED_IN'
-  | 'SIGNED_OUT'
-  | 'USER_UPDATED'
-  | 'TOKEN_REFRESHED'
-  | 'INITIAL_SESSION'
-  | 'UNKNOWN'
+  'SIGNED_IN' | 'SIGNED_OUT' | 'USER_UPDATED' | 'TOKEN_REFRESHED' | 'INITIAL_SESSION' | 'UNKNOWN'
 
 /** Auth state snapshot passed to auth state change callbacks. */
 export interface AuthState {
