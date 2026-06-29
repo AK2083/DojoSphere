@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
-import { syncDiagnosticsUploadPreferencesToMain, useDiagnosticsUploadStore } from '@features/settings'
+import {
+  syncDiagnosticsUploadPreferencesToMain,
+  useDiagnosticsUploadStore
+} from '@features/settings'
 import { bootstrapCloudStatusFromAuth, bootstrapNetworkStatus } from '@features/status'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
 

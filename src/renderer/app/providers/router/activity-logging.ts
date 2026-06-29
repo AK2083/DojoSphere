@@ -6,7 +6,7 @@ function isActivityLoggingRoute(meta: { activityLogging?: boolean }): boolean {
 }
 
 /**
- * Syncs activity-logging scope from route meta for audit gating on audience routes.
+ * Syncs activity-logging scope from route meta for audit gating on opted-out routes.
  *
  * @param router - Application router instance.
  */

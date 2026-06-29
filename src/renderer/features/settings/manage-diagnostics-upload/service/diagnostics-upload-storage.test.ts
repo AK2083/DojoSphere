@@ -11,7 +11,11 @@ vi.mock('@shared/lib/browser/local-storage', () => ({
   setStorageItem: vi.fn()
 }))
 
-import { getStorageItem, removeStorageItem, setStorageItem } from '@shared/lib/browser/local-storage'
+import {
+  getStorageItem,
+  removeStorageItem,
+  setStorageItem
+} from '@shared/lib/browser/local-storage'
 
 describe('diagnostics-upload-storage', () => {
   beforeEach(() => {

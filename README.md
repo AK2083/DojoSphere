@@ -6,7 +6,6 @@ Open-source Electron application for managing Judo tournaments.
 
 - Tournament administration
 - Competitor and club management
-- Local intranet **audience** overview (`/audience`, anonymous, no activity logging)
 - Match and schedule overview
 - Offline/local-first capable setup
 
@@ -47,13 +46,12 @@ DojoSphere uses two lanes: **error logging** (local `app.log`) and **audit** (bu
 | Role                                  | Logging                                                                                                   |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | **Tournament director / scorekeeper** | Errors logged from feature `api/` (renderer) and repositories (main); privileged writes audited in SQLite |
-| **Audience** (`/audience`)            | Anonymous — no audit for browsing; errors still logged on real failures                                   |
 
 Features use `logError` from `@shared/lib` in `api/` layers — not ad-hoc `console` or file access.
 
 Local files (Electron `userData`): `logs/app.log`, `database.db` (`authorization_audit_logs`).
 
-Full architecture: [docs/logging.md](docs/logging.md). Audience rules: [src/renderer/features/audience/README.md](src/renderer/features/audience/README.md).
+Full architecture: [docs/logging.md](docs/logging.md).
 
 ## License
 

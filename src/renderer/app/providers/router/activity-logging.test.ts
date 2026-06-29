@@ -15,7 +15,7 @@ describe('bindActivityLoggingToRouter', () => {
     vi.clearAllMocks()
   })
 
-  it('disables activity logging on audience routes', async () => {
+  it('disables activity logging when route meta opts out', async () => {
     const { setActivityLoggingEnabled, resetActivityLoggingScope } =
       await import('@shared/lib/logging/activity-logging-scope')
     const { bindActivityLoggingToRouter } = await import('./activity-logging')
@@ -27,8 +27,8 @@ describe('bindActivityLoggingToRouter', () => {
       routes: [
         { path: '/', name: 'dashboard', component: { template: '<div />' } },
         {
-          path: '/audience',
-          name: 'audience',
+          path: '/public',
+          name: 'public',
           meta: { activityLogging: false },
           component: { template: '<div />' }
         }
@@ -36,7 +36,7 @@ describe('bindActivityLoggingToRouter', () => {
     })
 
     bindActivityLoggingToRouter(router)
-    await router.push('/audience')
+    await router.push('/public')
     await router.isReady()
 
     expect(setActivityLoggingEnabled).toHaveBeenLastCalledWith(false)

@@ -57,14 +57,16 @@ i18n/
 - Decorative icons: `aria-hidden="true"`; icon-only buttons: descriptive `aria-label`.
 - Error/status messages: accessible to screen readers (`role="alert"` or `aria-live="polite"`).
 
-## Tests per UI component
+## Tests per UI component (required on creation)
 
-Every UI component in `ui/` needs **both**, colocated next to the `.vue` file:
+When adding a **new** `.vue` file under any `ui/` folder (`features/`, `pages/`, `widgets/`, `shared/ui/`), add **both** spec files in the **same change** — not as a later follow-up:
 
 | File | Purpose |
 |------|---------|
 | `<Name>.stories.ts` | Storybook — isolated display, variants |
 | `<Name>.e2e.spec.ts` | Playwright — critical interactions and visible behavior |
+
+Every existing UI component in `ui/` must also keep both files when touched.
 
 **Storybook convention:**
 - `title` by layer: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`

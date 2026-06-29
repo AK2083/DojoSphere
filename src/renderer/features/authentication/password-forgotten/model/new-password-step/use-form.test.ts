@@ -9,7 +9,6 @@ const error = ref<string | null>(null)
 const loading = ref(false)
 
 vi.mock('@shared/lib', () => ({
-  addBreadcrumb: vi.fn(),
   passwordRules: [(value: unknown) => Boolean(value)],
   mapRule: (rule: (value: unknown) => boolean) => rule,
   useTranslation: () => ({ t: (key: string) => key })

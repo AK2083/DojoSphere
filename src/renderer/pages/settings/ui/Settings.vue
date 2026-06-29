@@ -5,8 +5,8 @@ import {
   syncDiagnosticsUploadPreferencesToMain,
   ThemeToggle,
   translationKeys,
-  UsernameEditor,
-  useDiagnosticsUploadStore
+  useDiagnosticsUploadStore,
+  UsernameEditor
 } from '@features/settings'
 import { newStoreToRefs, useTranslation } from '@shared/lib'
 

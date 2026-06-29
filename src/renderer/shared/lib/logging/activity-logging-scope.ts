@@ -3,7 +3,7 @@ let activityLoggingEnabled = true
 /**
  * Enables or disables activity-oriented audit calls.
  *
- * Audience routes set this to `false` so browsing is not tracked.
+ * Routes with `meta: { activityLogging: false }` set this to `false`.
  *
  * @param enabled - Whether audit IPC is allowed on the current route.
  */
@@ -14,7 +14,7 @@ export function setActivityLoggingEnabled(enabled: boolean) {
 /**
  * Indicates whether the current route allows activity logging.
  *
- * @returns `true` on authenticated director/scorekeeper paths; `false` on audience routes.
+ * @returns `true` unless the current route opted out via route meta.
  */
 export function isActivityLoggingEnabled(): boolean {
   return activityLoggingEnabled

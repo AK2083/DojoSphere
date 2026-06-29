@@ -48,7 +48,7 @@ describe('auditRecord', () => {
     ).resolves.toBeUndefined()
   })
 
-  it('no-ops on audience routes when activity logging is disabled', async () => {
+  it('no-ops when activity logging is disabled', async () => {
     isActivityLoggingEnabled.mockReturnValue(false)
 
     const auditRecordApi = vi.fn().mockResolvedValue(undefined)

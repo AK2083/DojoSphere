@@ -13,7 +13,6 @@ const loading = ref(false)
 const isOnline = ref(true)
 
 vi.mock('@shared/lib', () => ({
-  addBreadcrumb: vi.fn(),
   emailRules: [(value: unknown) => Boolean(value)],
   passwordRules: [(value: unknown) => Boolean(value)],
   mapRule: (rule: (value: unknown) => boolean) => rule,

@@ -47,7 +47,7 @@ Renderer features import only `@shared/lib` — not logging internals directly.
 - Validation errors (`throw new Error('…')` for empty fields) happen **before** DB logging wrappers.
 - `uncaughtException` / `unhandledRejection` are logged at process level.
 
-### Audience routes
+### Activity logging scope
 
 Routes with `meta: { activityLogging: false }` disable renderer `auditRecord` via activity scope. Error logging (`logError`) still runs for real failures.
 
@@ -93,7 +93,7 @@ The snapshot is **not** merged into every `logError` line — it is a separate o
 
 ### LAN troubleshooting (future)
 
-When the intranet host for scorekeepers and audience is implemented, **port, firewall, and antivirus issues** should be explained to the tournament director in the **UI** (i18n hints, checklists) — not inferred and written to `app.log`. Technical server start failures may still use `logError` with scope, action, and code only.
+When the intranet host for scorekeepers and spectators is implemented, **port, firewall, and antivirus issues** should be explained to the tournament director in the **UI** (i18n hints, checklists) — not inferred and written to `app.log`. Technical server start failures may still use `logError` with scope, action, and code only.
 
 ## Connectivity
 
@@ -107,4 +107,3 @@ When the intranet host for scorekeepers and audience is implemented, **port, fir
 - Renderer logging: `src/renderer/shared/lib/logging/`
 - Main logging: `src/main/shared/logging/`
 - Audit: `src/main/features/audit/`
-- Audience rules: `src/renderer/features/audience/README.md`

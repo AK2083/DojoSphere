@@ -50,6 +50,7 @@ Route components — one page per route. The router knows only `@pages/*`.
 
 - Pages compose features and optionally widgets; they contain no business logic.
 - Structure per page: `ui/`, `index.ts` (public API).
+- Each file in `ui/` is a page component: ship `<Name>.vue`, `<Name>.stories.ts`, and `<Name>.e2e.spec.ts` together (see [`vue-frontend.mdc`](vue-frontend.mdc)).
 - Example: `Login.vue` binds `@features/authentication/signin-user`.
 
 ## widgets
@@ -58,6 +59,7 @@ Standalone UI building blocks without feature affiliation (e.g. `Navigation`). N
 
 - May use features and `shared`, but should not be imported by pages when mounted globally.
 - Structure: `ui/`, optional `i18n/`, `index.ts`.
+- Each component in `ui/` requires colocated `<Name>.stories.ts` and `<Name>.e2e.spec.ts`.
 
 ## features
 
@@ -68,6 +70,7 @@ Ideal slice structure per use case:
 ```
 features/<feature>/<slice>/
   ui/          # Vue components for the use case
+               # Per component: <Name>.vue + <Name>.stories.ts + <Name>.e2e.spec.ts (all required)
   model/       # composables, state, form logic
   i18n/        # keys.ts, de.ts, en.ts, index.ts (one de/en file each — no language subfolders)
   api/         # use-case API: wraps shared/api for this slice
@@ -99,6 +102,7 @@ Abstraction of **swappable** dependencies. No feature or page logic. Features/wi
 - **Low-level**: direct technology abstractions (storage, HTTP client, validators).
 - **High-level**: domain-near abstractions (logging). Features use `@shared/lib` `logError` in `api/` layers instead of direct file or IPC access.
 - Vue components without feature affiliation → `shared/ui/`, not in features.
+- Each component in `shared/ui/` requires colocated `<Name>.stories.ts` and `<Name>.e2e.spec.ts`.
 - `shared` imports **no** features, pages, widgets, or `app`.
 
 ## Import aliases
@@ -114,3 +118,4 @@ Abstraction of **swappable** dependencies. No feature or page logic. Features/wi
 5. i18n keys in slice under `i18n/`, not in `shared`?
 6. Reusable UI without feature affiliation → `shared/ui/`?
 7. API access to `shared/api` → slice `api/` as intermediary, not directly in `model/`?
+8. New or changed file in `ui/` → colocated `<Name>.stories.ts` and `<Name>.e2e.spec.ts` added in the same change (not follow-up)?

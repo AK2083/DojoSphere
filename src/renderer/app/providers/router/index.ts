@@ -54,12 +54,6 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsPage
-  },
-  {
-    path: '/audience',
-    name: 'audience',
-    meta: { activityLogging: false },
-    component: () => import('@pages/audience')
   }
 ]
 
