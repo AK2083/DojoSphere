@@ -9,8 +9,7 @@ export function runDatabaseHealthcheck() {
   const db = getDatabase()
 
   const result = db.prepare('SELECT sqlite_version() AS version').get() as
-    | { version: string }
-    | undefined
+    { version: string } | undefined
 
   const version = result?.version ?? 'unknown'
 
