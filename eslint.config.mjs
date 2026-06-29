@@ -101,6 +101,11 @@ export default defineConfig([
   },
   {
     files: ['src/renderer/**/*.{js,ts,vue}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser
+      }
+    },
     plugins: {
       'unused-imports': unusedImports,
       'simple-import-sort': simpleImportSort

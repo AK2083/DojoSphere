@@ -1,12 +1,11 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { getCloudStatusFromStorage } from '../service/cloud-status-storage'
+import { hasSupabaseAuthSessionInStorage } from '../service/cloud-status-storage'
 import { useCloudStatus } from './use-cloud-status'
 
 vi.mock('../service/cloud-status-storage', () => ({
-  getCloudStatusFromStorage: vi.fn(() => true),
-  setCloudStatusToStorage: vi.fn()
+  hasSupabaseAuthSessionInStorage: vi.fn(() => true)
 }))
 
 describe('useCloudStatus', () => {
@@ -16,7 +15,7 @@ describe('useCloudStatus', () => {
   })
 
   it('returns reactive cloud status from store', () => {
-    vi.mocked(getCloudStatusFromStorage).mockReturnValue(true)
+    vi.mocked(hasSupabaseAuthSessionInStorage).mockReturnValue(true)
     const result = useCloudStatus()
 
     expect(result.isCloudUsed.value).toBe(true)

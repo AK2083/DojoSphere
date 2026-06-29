@@ -1,22 +1,20 @@
 import { heartbeat } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException, getNavigatorOnline, isBrowserRuntime } from '@shared/lib'
+import { getNavigatorOnline, isBrowserRuntime, logError } from '@shared/lib'
 import { bindConnectivityState } from '@shared/model'
 
 import { useStatusState } from '../model/use-status-state'
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useNetworkStatusStore } from '../network-status/store'
-import { checkGrafanaCloudReachability } from './check-grafana-cloud-reachability'
 
 /** Result of checking backend connectivity via the heartbeat edge function. */
 export type HeartbeatCheckResult = { success: true } | { success: false; error: AppError }
 
-function mapHeartbeatError(error: Error): AppError {
+function mapHeartbeatError(_error: Error): AppError {
   if (!getNavigatorOnline()) {
     return new AppError('shared.error.retry')
   }
 
-  return new AppError('shared.error.unknown', error.message)
+  return new AppError('shared.error.unknown')
 }
 
 /**
@@ -30,12 +28,8 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
     const mappedError = mapHeartbeatError(error)
 
     if (mappedError.code !== 'shared.error.retry') {
-      captureException(mappedError, 'network', 'checkHeartbeatConnectivity')
+      logError(mappedError, 'network', 'checkHeartbeatConnectivity')
     }
-
-    monitorWarning(MONITORING_EVENTS.HEARTBEAT_CHECK_FAILED, {
-      errorCode: mappedError.code
-    })
 
     return {
       success: false,
@@ -45,12 +39,7 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
 
   if (data?.status !== 'ok') {
     const payloadError = new AppError('shared.error.unknown', 'Invalid heartbeat response payload')
-    captureException(payloadError, 'network', 'checkHeartbeatConnectivity')
-
-    monitorWarning(MONITORING_EVENTS.HEARTBEAT_CHECK_FAILED, {
-      errorCode: payloadError.code,
-      reason: 'invalid_payload'
-    })
+    logError(payloadError, 'network', 'checkHeartbeatConnectivity')
 
     return {
       success: false,
@@ -62,11 +51,9 @@ export async function checkHeartbeatConnectivity(): Promise<HeartbeatCheckResult
 }
 
 function setOfflineState() {
-  monitorWarning(MONITORING_EVENTS.CONNECTIVITY_OFFLINE)
   const store = useNetworkStatusStore()
   store.setOnline(false)
   store.setSupabaseReachable(false)
-  store.setGrafanaCloudReachable(false)
 }
 
 async function runConnectivityChecks(): Promise<boolean> {
@@ -79,9 +66,6 @@ async function runConnectivityChecks(): Promise<boolean> {
   const store = useNetworkStatusStore()
   store.setSupabaseReachable(isSupabaseReachable)
   store.setOnline(isSupabaseReachable)
-
-  const grafanaResult = await checkGrafanaCloudReachability()
-  store.setGrafanaCloudReachable(grafanaResult.reachable)
 
   return isSupabaseReachable
 }

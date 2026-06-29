@@ -1,6 +1,5 @@
 import { type Ref, watch } from 'vue'
 
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 import { useOtpStep } from './use-otp-step'
 
 type UseOtpStepFormOptions = {
@@ -44,10 +43,6 @@ export function useOtpStepForm(options: UseOtpStepFormOptions) {
 
   async function submit(): Promise<boolean> {
     if (token.value.length !== 6) {
-      monitorWarning(MONITORING_EVENTS.OTP_FORM_INVALID, {
-        tokenLength: token.value.length
-      })
-
       return false
     }
 
@@ -55,7 +50,6 @@ export function useOtpStepForm(options: UseOtpStepFormOptions) {
     const success = await execute()
 
     if (!success) {
-      monitorWarning(MONITORING_EVENTS.OTP_FORM_EXECUTE_FAILED)
       return false
     }
 

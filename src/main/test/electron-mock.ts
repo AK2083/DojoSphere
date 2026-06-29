@@ -49,6 +49,7 @@ export const app = {
   quit: vi.fn(),
   on: vi.fn(),
   getPath: vi.fn(() => '/tmp/dojosphere-test'),
+  getVersion: vi.fn(() => '1.0.0-test'),
   isPackaged: false
 }
 
@@ -92,5 +93,7 @@ export function resetElectronMocks() {
   app.on.mockClear()
   app.getPath.mockClear()
   app.getPath.mockReturnValue('/tmp/dojosphere-test')
+  app.getVersion.mockClear()
+  app.getVersion.mockReturnValue('1.0.0-test')
   app.isPackaged = false
 }

@@ -28,6 +28,20 @@ alwaysApply: false
 - No hardcoded UI strings — text via `useTranslation()` and slice `i18n/keys.ts`.
 - ARIA labels and visible text also via i18n keys.
 
+**Slice layout** (per use case under `features/<feature>/<slice>/i18n/`):
+
+```
+i18n/
+  keys.ts    # translation key paths for components
+  de.ts      # German strings (single file)
+  en.ts      # English strings (single file)
+  index.ts   # re-exports de/en for parent feature aggregation
+```
+
+- One `de.ts` and one `en.ts` per slice — **no** language subfolders (`de/`, `en/`) and **no** extra topic files (e.g. `cloud.ts`, `legal.ts`). Nested objects inside `de.ts`/`en.ts` are fine when the UI has logical groups (same pattern as `set-theme` `tooltip`).
+- Parent feature bundles slice messages in `features/<feature>/i18n/de.ts` and `en.ts` (e.g. `diagnostics: manageDiagnosticsUploadDe`).
+- `keys.ts` paths must match the nested structure registered in the parent feature i18n.
+
 ## Responsive design
 
 - Layouts with Vuetify grid (`v-container`, `v-row`, `v-col`) and breakpoints (`cols`, `md`, `lg`, …).
@@ -43,14 +57,16 @@ alwaysApply: false
 - Decorative icons: `aria-hidden="true"`; icon-only buttons: descriptive `aria-label`.
 - Error/status messages: accessible to screen readers (`role="alert"` or `aria-live="polite"`).
 
-## Tests per UI component
+## Tests per UI component (required on creation)
 
-Every UI component in `ui/` needs **both**, colocated next to the `.vue` file:
+When adding a **new** `.vue` file under any `ui/` folder (`features/`, `pages/`, `widgets/`, `shared/ui/`), add **both** spec files in the **same change** — not as a later follow-up:
 
 | File | Purpose |
 |------|---------|
 | `<Name>.stories.ts` | Storybook — isolated display, variants |
 | `<Name>.e2e.spec.ts` | Playwright — critical interactions and visible behavior |
+
+Every existing UI component in `ui/` must also keep both files when touched.
 
 **Storybook convention:**
 - `title` by layer: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`

@@ -6,4 +6,3 @@ export {
   recordCompetitorUpdated
 } from './service/record-competitor-events'
 export { recordRoleAssigned, recordSessionRevoked } from './service/record-authorization-events'
-export { registerAuditIpc } from './ipc/register'

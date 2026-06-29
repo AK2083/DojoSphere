@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { mdiCloud, mdiCloudOff } from '@mdi/js'
-import { useTranslation } from '@shared/lib'
+import { newStoreToRefs, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys.ts'
-import { useCloudStatus } from '../model/use-cloud-status.ts'
+import { useCloudStatusStore } from '../store'
 
-const { isCloudUsed } = useCloudStatus()
+const cloudStatusStore = useCloudStatusStore()
+const { isCloudUsed } = newStoreToRefs(cloudStatusStore)
 
 const { t } = useTranslation()
 </script>

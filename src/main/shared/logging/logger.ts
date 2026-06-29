@@ -83,7 +83,7 @@ export type Logger = {
 /**
  * Creates a scoped logger for a main-process feature or module.
  *
- * @param scope Logical scope name, e.g. `users` or `telemetry:collector`.
+ * @param scope Logical scope name, e.g. `users` or `bootstrap`.
  * @returns Logger with debug/info/warn/error methods.
  */
 export function createLogger(scope: string): Logger {

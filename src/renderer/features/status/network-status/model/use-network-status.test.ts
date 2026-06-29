@@ -21,13 +21,11 @@ describe('useNetworkStatus', () => {
     const isOnline = ref(true)
     const isCloudUsed = ref(false)
     const isSupabaseReachable = ref(true)
-    const isGrafanaCloudReachable = ref(false)
 
     vi.mocked(useStatusState).mockReturnValue({
       isOnline,
       isCloudUsed,
-      isSupabaseReachable,
-      isGrafanaCloudReachable
+      isSupabaseReachable
     })
 
     const result = useNetworkStatus()
@@ -43,13 +41,11 @@ describe('useNetworkStatus', () => {
     const isOnline = ref(false)
     const isCloudUsed = ref(false)
     const isSupabaseReachable = ref(false)
-    const isGrafanaCloudReachable = ref(false)
 
     vi.mocked(useStatusState).mockReturnValue({
       isOnline,
       isCloudUsed,
-      isSupabaseReachable,
-      isGrafanaCloudReachable
+      isSupabaseReachable
     })
     vi.mocked(recheckNetworkStatusAfterFailedUserAction).mockResolvedValue(true)
 

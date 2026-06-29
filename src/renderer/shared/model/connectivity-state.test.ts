@@ -25,9 +25,8 @@ describe('connectivity-state', () => {
     const state = useNetworkStatusState()
 
     expect(state.isOnline.value).toBe(false)
-    expect(state.isCloudUsed.value).toBe(true)
+    expect(state.isCloudUsed.value).toBe(false)
     expect(state.isSupabaseReachable.value).toBe(true)
-    expect(state.isGrafanaCloudReachable.value).toBe(false)
   })
 
   it('returns bound refs after bindConnectivityState', async () => {
@@ -35,13 +34,11 @@ describe('connectivity-state', () => {
     const isOnline = ref(false)
     const isCloudUsed = ref(false)
     const isSupabaseReachable = ref(false)
-    const isGrafanaCloudReachable = ref(true)
 
     bindConnectivityState({
       isOnline,
       isCloudUsed,
-      isSupabaseReachable,
-      isGrafanaCloudReachable
+      isSupabaseReachable
     })
 
     const state = useNetworkStatusState()
@@ -49,11 +46,9 @@ describe('connectivity-state', () => {
     expect(state.isOnline).toBe(isOnline)
     expect(state.isCloudUsed).toBe(isCloudUsed)
     expect(state.isSupabaseReachable).toBe(isSupabaseReachable)
-    expect(state.isGrafanaCloudReachable).toBe(isGrafanaCloudReachable)
     expect(state.isOnline.value).toBe(false)
     expect(state.isCloudUsed.value).toBe(false)
     expect(state.isSupabaseReachable.value).toBe(false)
-    expect(state.isGrafanaCloudReachable.value).toBe(true)
 
     isOnline.value = true
     isCloudUsed.value = true

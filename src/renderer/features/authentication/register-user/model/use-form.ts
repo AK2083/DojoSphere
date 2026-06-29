@@ -3,7 +3,6 @@ import type { VForm } from 'vuetify/components'
 import { emailRules, mapRule, passwordRules, useTranslation } from '@shared/lib'
 import { useNetworkStatusState } from '@shared/model'
 
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import { useRegister } from './use-register'
 import { useRegisterRouting } from './use-routing'
 
@@ -24,7 +23,7 @@ export function useRegisterForm() {
   const { t } = useTranslation()
   const { execute, clearError, errorCode, loading } = useRegister()
   const { navigateAfterRegisterSuccess } = useRegisterRouting()
-  const { isOnline, isCloudUsed } = useNetworkStatusState()
+  const { isOnline } = useNetworkStatusState()
 
   const form = ref<VForm | null>(null)
   const isFormValid = ref(false)
@@ -35,10 +34,6 @@ export function useRegisterForm() {
   const translatedEmailRules = emailRules.map((rule) => mapRule(rule, t))
   const translatedPasswordRules = passwordRules.map((rule) => mapRule(rule, t))
   const registerUnavailableHintCode = computed<string | null>(() => {
-    if (!isCloudUsed.value) {
-      return 'auth.registerUser.unavailable.cloud'
-    }
-
     if (!isOnline.value) {
       return 'auth.registerUser.unavailable.offline'
     }
@@ -72,7 +67,6 @@ export function useRegisterForm() {
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorWarning(MONITORING_EVENTS.REGISTER_FORM_INVALID)
       return
     }
 
@@ -80,7 +74,6 @@ export function useRegisterForm() {
     const success = await execute(submittedEmail, password.value)
 
     if (!success) {
-      monitorWarning(MONITORING_EVENTS.REGISTER_FORM_EXECUTE_FAILED)
       return
     }
 

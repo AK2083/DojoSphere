@@ -1,7 +1,23 @@
 <script setup lang="ts">
-import { LanguageSwitch, ThemeToggle, translationKeys, UsernameEditor } from '@features/settings'
-import { useTranslation } from '@shared/lib'
+import {
+  DiagnosticsUploadSettings,
+  LanguageSwitch,
+  syncDiagnosticsUploadPreferencesToMain,
+  ThemeToggle,
+  translationKeys,
+  useDiagnosticsUploadStore,
+  UsernameEditor
+} from '@features/settings'
+import { newStoreToRefs, useTranslation } from '@shared/lib'
+
 const { t } = useTranslation()
+const diagnosticsUploadStore = useDiagnosticsUploadStore()
+const { autoUploadDiagnostics } = newStoreToRefs(diagnosticsUploadStore)
+
+async function handleDiagnosticsUpdate(value: boolean) {
+  diagnosticsUploadStore.setAutoUploadDiagnostics(value)
+  await syncDiagnosticsUploadPreferencesToMain({ autoUploadDiagnostics: value })
+}
 </script>
 
 <template>
@@ -11,6 +27,15 @@ const { t } = useTranslation()
     <v-sheet class="mb-4 border rounded pa-4">
       <v-row class="align-center">
         <UsernameEditor />
+      </v-row>
+    </v-sheet>
+
+    <v-sheet class="mb-4 border rounded pa-4">
+      <v-row class="align-center">
+        <DiagnosticsUploadSettings
+          :auto-upload-diagnostics="autoUploadDiagnostics"
+          @update:auto-upload-diagnostics="handleDiagnosticsUpdate"
+        />
       </v-row>
     </v-sheet>
 

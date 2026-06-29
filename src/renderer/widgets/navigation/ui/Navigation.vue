@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
+import router from '@app/providers/router'
 import { useAuthSession, useSignOut } from '@features/authentication'
-import { mdiCog, mdiLogout } from '@mdi/js'
+import { mdiAccountPlus, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -31,6 +32,10 @@ function closeLogoutError() {
   clearLogoutError()
 }
 
+function navigateToRegister() {
+  void router.push({ name: 'register' })
+}
+
 watch(
   smAndDown,
   (value) => {
@@ -43,6 +48,24 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #append>
+      <v-tooltip
+        v-if="!isCloudLoggedIn"
+        :text="t(translationKeys.navigation.signUp)"
+        location="bottom"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            icon
+            v-bind="props"
+            :aria-label="t(translationKeys.navigation.ariaSignUp)"
+            exact
+            @click="navigateToRegister"
+          >
+            <v-icon :icon="mdiAccountPlus"></v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
+
       <v-tooltip
         v-if="isCloudLoggedIn"
         :text="t(translationKeys.navigation.logout)"
@@ -81,6 +104,14 @@ watch(
   <v-navigation-drawer v-model="drawer" rail floating :temporary="isMobile" :permanent="!isMobile">
     <template #append>
       <v-list density="compact" role="navigation" :aria-label="t(translationKeys.label)" nav>
+        <v-list-item
+          v-if="!isCloudLoggedIn"
+          :prepend-icon="mdiAccountPlus"
+          :title="t(translationKeys.navigation.signUp)"
+          :aria-label="t(translationKeys.navigation.ariaSignUp)"
+          exact
+          @click="navigateToRegister"
+        />
         <v-list-item
           v-if="isCloudLoggedIn"
           :prepend-icon="mdiLogout"

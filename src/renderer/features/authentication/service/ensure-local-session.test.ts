@@ -5,10 +5,6 @@ import { getCurrentSession } from './get-current-session'
 import { notifyLocalAuthStateChanged } from './local-auth-state'
 import { getLocalSessionToken } from './local-session-storage'
 
-vi.mock('@shared/lib', () => ({
-  setUserContext: vi.fn()
-}))
-
 vi.mock('./get-current-session', () => ({
   getCurrentSession: vi.fn()
 }))
@@ -29,7 +25,8 @@ describe('ensureLocalSessionFromOsUsername', () => {
       revokeLocalSession: vi.fn(),
       updateUserDisplayName: vi.fn(),
       dbHealthcheck: vi.fn(),
-      checkGrafanaCloudReachability: vi.fn(),
+      recordError: vi.fn(),
+      setDiagnosticsUploadPreferences: vi.fn(),
       auditRecord: vi.fn(),
       getCompetitors: vi.fn(),
       addCompetitor: vi.fn(),

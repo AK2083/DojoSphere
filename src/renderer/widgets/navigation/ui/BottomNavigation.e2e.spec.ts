@@ -1,17 +1,11 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
-
-const CLOUD_STATUS_KEY = 'dojosphere.cloud.status.isCloudUsed'
+import { mockSupabaseCloudAuthForE2e } from '@shared/tests/e2e/setup-login-available'
 
 test.describe('BottomNavigation', () => {
   test('renders footer with cloud and network status chips', async ({ page }) => {
     await setEnglishLanguage(page)
-    await page.addInitScript(
-      ([cloudStatusKey]) => {
-        globalThis.localStorage?.setItem(cloudStatusKey, JSON.stringify(true))
-      },
-      [CLOUD_STATUS_KEY]
-    )
+    await mockSupabaseCloudAuthForE2e(page)
 
     await page.goto('/#/dashboard')
 

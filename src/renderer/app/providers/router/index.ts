@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { ensureLocalSessionFromOsUsername } from '@features/authentication/service/ensure-local-session'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { isLocalAuthSession } from '@features/authentication/service/is-local-auth-session'
 import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
@@ -53,12 +54,6 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsPage
-  },
-  {
-    path: '/audience',
-    name: 'audience',
-    meta: { activityLogging: false },
-    component: () => import('@pages/audience')
   }
 ]
 
@@ -124,7 +119,7 @@ router.beforeEach(async (to) => {
     const isPendingEmailVerification =
       to.name === 'emailverification' && getIsOtpActiveFromStorage()
 
-    if (session && !isPendingEmailVerification) {
+    if (session && !isPendingEmailVerification && !isLocalAuthSession(session)) {
       return { name: 'dashboard' }
     }
   }

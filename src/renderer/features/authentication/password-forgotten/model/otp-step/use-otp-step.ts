@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 
 import { checkOneTimePasswordByRecovery } from '../../api/check-otp-by-recovery'
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 
 /**
  * Handles OTP verification request state for recovery flow.
@@ -25,11 +24,6 @@ export function useOtpStep() {
     }
 
     if (!email.value.trim() || !token.value.trim()) {
-      monitorWarning(MONITORING_EVENTS.OTP_VALIDATION_FAILED, {
-        hasEmail: !!email.value.trim(),
-        hasToken: !!token.value.trim()
-      })
-
       return false
     }
 
@@ -41,10 +35,6 @@ export function useOtpStep() {
       const response = await checkOneTimePasswordByRecovery(email.value, token.value)
 
       if (!response.success) {
-        monitorWarning(MONITORING_EVENTS.OTP_CHECK_FAILED, {
-          errorCode: response.error.code
-        })
-
         error.value = response.error.code
         return false
       }

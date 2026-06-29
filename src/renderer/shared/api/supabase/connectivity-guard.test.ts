@@ -9,8 +9,7 @@ describe('connectivity-guard', () => {
     bindConnectivityState({
       isOnline: ref(true),
       isCloudUsed: ref(true),
-      isSupabaseReachable: ref(true),
-      isGrafanaCloudReachable: ref(false)
+      isSupabaseReachable: ref(true)
     })
   })
 
@@ -18,8 +17,7 @@ describe('connectivity-guard', () => {
     bindConnectivityState({
       isOnline: ref(false),
       isCloudUsed: ref(true),
-      isSupabaseReachable: ref(false),
-      isGrafanaCloudReachable: ref(false)
+      isSupabaseReachable: ref(false)
     })
 
     expect(isSupabaseRequestAllowed()).toBe(false)

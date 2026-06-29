@@ -23,7 +23,7 @@ Import rules and slice conventions: `.cursor/rules/architecture-fsd.mdc`.
 ## Main process (vertical slices)
 
 - `src/main/app/` — bootstrap, IPC registration (`register-ipc.ts`)
-- `src/main/features/<slice>/` — one use case per slice (users, sessions, health, telemetry, …)
+- `src/main/features/<slice>/` — one use case per slice (users, sessions, health, logging, diagnostics, …)
 - `src/main/shared/` — infrastructure (database, security helpers)
 - `src/main/window/` — main-process window setup
 - `src/preload/` — IPC bridge to `window.api`

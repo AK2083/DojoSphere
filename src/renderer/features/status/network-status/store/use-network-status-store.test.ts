@@ -13,7 +13,6 @@ describe('useNetworkStatusStore', () => {
 
     expect(store.isOnline).toBe(true)
     expect(store.isSupabaseReachable).toBe(true)
-    expect(store.isGrafanaCloudReachable).toBe(false)
   })
 
   it('updates online state through action', () => {
@@ -26,13 +25,11 @@ describe('useNetworkStatusStore', () => {
     expect(store.isOnline).toBe(true)
   })
 
-  it('updates reachability flags independently', () => {
+  it('updates Supabase reachability independently', () => {
     const store = useNetworkStatusStore()
 
     store.setSupabaseReachable(false)
-    store.setGrafanaCloudReachable(true)
 
     expect(store.isSupabaseReachable).toBe(false)
-    expect(store.isGrafanaCloudReachable).toBe(true)
   })
 })

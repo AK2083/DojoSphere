@@ -6,7 +6,6 @@ Open-source Electron application for managing Judo tournaments.
 
 - Tournament administration
 - Competitor and club management
-- Local intranet **audience** overview (`/audience`, anonymous, no activity logging)
 - Match and schedule overview
 - Offline/local-first capable setup
 
@@ -18,7 +17,7 @@ Open-source Electron application for managing Judo tournaments.
 - **Local Database:** [SQLite](https://www.sqlite.org/) via Node.js built-in [`node:sqlite`](https://nodejs.org/api/sqlite.html) (Electron main process)
 - **Internationalization:** [vue-i18n](https://vue-i18n.intlify.dev/)
 - **Backend Services:** [Supabase](https://supabase.com/) (optional cloud sync)
-- **Monitoring:** [OpenTelemetry](https://opentelemetry.io/) — local trace capture; see [Logging & monitoring](docs/logging.md)
+- **Logging:** Local error log + SQLite audit; see [Logging & monitoring](docs/logging.md)
 - **Testing:** [Vitest](https://vitest.dev/) (unit), [Playwright](https://playwright.dev/) (E2E), [Storybook](https://storybook.js.org/) (UI components)
 - **Code Quality:** [ESLint](https://eslint.org/), [Prettier](https://prettier.io/)
 
@@ -38,22 +37,21 @@ Other common commands: `npm run storybook` (UI development), `npm run build` (pr
 - [Contributing](CONTRIBUTING.md) — development workflow, scripts, tests, adding features
 - [Architecture](docs/architecture.md) — FSD renderer, vertical slices in main
 - [Local database](docs/database.md) — SQLite, migrations, IPC
-- [Logging & monitoring](docs/logging.md) — telemetry, audit, and debug lanes
+- [Logging & audit](docs/logging.md) — local error log and SQLite audit
 
-## Logging & monitoring
+## Logging & audit
 
-DojoSphere separates three lanes: **telemetry** (OpenTelemetry traces), **audit** (business actions in SQLite), and **debug** (support logs in main). Capture is **local-first** and works offline; uploading traces to Grafana Cloud is prepared but not enabled in the product yet.
+DojoSphere uses two lanes: **error logging** (local `app.log`) and **audit** (business actions in SQLite). Logging is **offline-only**; a Settings toggle for future cloud diagnostics is stored but does not upload data yet. At startup, an anonymous system snapshot (OS and app version) is written once to `app.log`.
 
-| Role                                  | Logging                                                                                       |
-| ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **Tournament director / scorekeeper** | Full telemetry on authenticated paths; every privileged write is audited with `actor_user_id` |
-| **Audience** (`/audience`)            | Anonymous — no sign-in, no name, no activity breadcrumbs or audit for browsing                |
+| Role                                  | Logging                                                                                                   |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **Tournament director / scorekeeper** | Errors logged from feature `api/` (renderer) and repositories (main); privileged writes audited in SQLite |
 
-Features use the stable public API in `@shared/lib` (`captureException`, `addBreadcrumb`, `setUserContext`, `auditRecord`, …) — not OpenTelemetry SDK calls directly.
+Features use `logError` from `@shared/lib` in `api/` layers — not ad-hoc `console` or file access.
 
-Local files (Electron `userData`): `telemetry/traces.jsonl`, `database.db` (`authorization_audit_logs`), `logs/app.log`.
+Local files (Electron `userData`): `logs/app.log`, `database.db` (`authorization_audit_logs`).
 
-Full architecture, roles, and deferred upload phase: [docs/logging.md](docs/logging.md). Audience rules: [src/renderer/features/audience/README.md](src/renderer/features/audience/README.md).
+Full architecture: [docs/logging.md](docs/logging.md).
 
 ## License
 

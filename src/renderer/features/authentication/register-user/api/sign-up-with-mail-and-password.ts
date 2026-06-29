@@ -1,6 +1,6 @@
 import { mapSupabaseError, signUpByEmailPassword } from '@shared/api'
 import { AppError } from '@shared/errors'
-import { captureException, setUserContext } from '@shared/lib'
+import { logError } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 /**
@@ -18,7 +18,7 @@ export async function signUpWithMailAndPassword(
 
   if (error) {
     const mappedError = mapSupabaseError(error)
-    captureException(mappedError, 'auth', 'signUpWithMailAndPassword')
+    logError(mappedError, 'auth', 'signUpWithMailAndPassword')
 
     return {
       success: false,
@@ -28,7 +28,7 @@ export async function signUpWithMailAndPassword(
 
   if (!data.user) {
     const err = new AppError('unknown', 'User not found')
-    captureException(err, 'auth', 'signUpWithMailAndPassword')
+    logError(err, 'auth', 'signUpWithMailAndPassword')
 
     return {
       success: false,
@@ -36,6 +36,5 @@ export async function signUpWithMailAndPassword(
     }
   }
 
-  setUserContext({ id: data.user.id })
   return { success: true }
 }

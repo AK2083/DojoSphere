@@ -46,18 +46,6 @@ vi.mock('../service/register-storage', () => ({
   clearRegisterEmailFromStorage: vi.fn()
 }))
 
-vi.mock('../monitoring/monitoring', () => ({
-  MONITORING_EVENTS: {
-    STORAGE_REGISTER_EMAIL_READ: 'auth.register.email.storage.read',
-    CHECK_OTP_SUBMITTED: 'auth.otp.verify.submitted',
-    CHECK_OTP_VALIDATION_FAILED: 'auth.otp.verify.validation.failed',
-    CHECK_OTP_REQUEST_STARTED: 'auth.otp.verify.request.started',
-    CHECK_OTP_FAILED: 'auth.otp.verify.failed',
-    CHECK_OTP_SUCCEEDED: 'auth.otp.verify.succeeded'
-  },
-  monitorWarning: vi.fn()
-}))
-
 describe('useSendOneTimePassword', () => {
   beforeEach(() => {
     vi.clearAllMocks()

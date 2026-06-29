@@ -13,7 +13,6 @@ export default {
   },
   submit: 'Registriere mich',
   unavailable: {
-    offline: 'Registrierung ist derzeit nicht verfügbar, da du offline bist.',
-    cloud: 'Registrierung ist derzeit nicht verfügbar, weil der Cloud-Modus deaktiviert ist.'
+    offline: 'Registrierung ist derzeit nicht verfügbar, da du offline bist.'
   }
 }

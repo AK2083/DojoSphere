@@ -3,7 +3,6 @@ import type { VForm } from 'vuetify/components'
 import { mapRule, passwordRules, useTranslation } from '@shared/lib'
 
 import translationKeys from '../../i18n/keys'
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 import { useNewPasswordStep } from './use-new-password-step'
 
 type UseNewPasswordStepFormOptions = {
@@ -65,12 +64,10 @@ export function useNewPasswordStepForm(options: UseNewPasswordStepFormOptions) {
     const result = await form.value.validate()
 
     if (!result.valid) {
-      monitorWarning(MONITORING_EVENTS.NEW_PASSWORD_FORM_INVALID)
       return false
     }
 
     if (!passwordsMatch.value) {
-      monitorWarning(MONITORING_EVENTS.NEW_PASSWORD_FORM_PASSWORDS_MISMATCH)
       return false
     }
 

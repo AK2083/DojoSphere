@@ -37,9 +37,25 @@ describe('preload', () => {
     await api.dbHealthcheck()
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('db:healthcheck')
 
-    ipcRenderer.invoke.mockResolvedValueOnce({ reachable: true })
-    await api.checkGrafanaCloudReachability()
-    expect(ipcRenderer.invoke).toHaveBeenCalledWith('telemetry:checkGrafanaReachability')
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.recordError({
+      service: 'auth',
+      action: 'login',
+      message: 'Invalid credentials',
+      code: 'auth.invalid_credentials'
+    })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('logging:recordError', {
+      service: 'auth',
+      action: 'login',
+      message: 'Invalid credentials',
+      code: 'auth.invalid_credentials'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.setDiagnosticsUploadPreferences({ autoUploadDiagnostics: true })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('diagnostics:setUploadPreferences', {
+      autoUploadDiagnostics: true
+    })
 
     ipcRenderer.invoke.mockResolvedValueOnce(undefined)
     await api.auditRecord({

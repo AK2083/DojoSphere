@@ -5,7 +5,6 @@ import { navigateToDashboard } from '@features/authentication/service/navigate-t
 import { clearIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 
 import { checkOneTimePassword } from '../api/check-one-time-password'
-import { MONITORING_EVENTS, monitorWarning } from '../monitoring/monitoring'
 import {
   clearRegisterEmailFromStorage,
   getRegisterEmailFromStorage
@@ -42,16 +41,10 @@ export function useSendOneTimePassword() {
     const storedEmail = getRegisterEmailFromStorage()
 
     if (!token.value) {
-      monitorWarning(MONITORING_EVENTS.CHECK_OTP_VALIDATION_FAILED, {
-        reason: 'missing_token'
-      })
       return false
     }
 
     if (!email.value) {
-      monitorWarning(MONITORING_EVENTS.CHECK_OTP_VALIDATION_FAILED, {
-        reason: 'missing_email'
-      })
       email.value = storedEmail ?? ''
       return false
     }
@@ -65,10 +58,6 @@ export function useSendOneTimePassword() {
     loading.value = false
 
     if (!response.success) {
-      monitorWarning(MONITORING_EVENTS.CHECK_OTP_FAILED, {
-        errorCode: response.error.code
-      })
-
       errorCode.value = response.error.code
       return false
     }

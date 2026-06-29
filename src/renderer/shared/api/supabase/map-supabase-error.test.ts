@@ -95,14 +95,14 @@ describe('mapSupabaseError', () => {
     expect(result.code).toBe('auth.weak_password')
   })
 
-  it('maps unknown errors to unknown_error and keeps message', () => {
+  it('maps unknown errors to unknown_error without leaking supabase message', () => {
     const error = createAuthError('something_else', 'Original supabase message')
 
     const result = mapSupabaseError(error)
 
     expect(result).toBeInstanceOf(AppError)
     expect(result.code).toBe('shared.error.unknown')
-    expect(result.message).toBe('Original supabase message')
+    expect(result.message).toBe('')
   })
 
   it('maps over_request_rate_limit to retry error', () => {

@@ -1,10 +1,27 @@
 <script setup lang="ts">
-import { bootstrapNetworkStatus, useCloudStatusStore } from '@features/status'
-import { setCloudModeMonitoringCheck } from '@shared/lib'
+import { onMounted, onUnmounted } from 'vue'
+import {
+  syncDiagnosticsUploadPreferencesToMain,
+  useDiagnosticsUploadStore
+} from '@features/settings'
+import { bootstrapCloudStatusFromAuth, bootstrapNetworkStatus } from '@features/status'
 import { BottomNavigation, Navigation } from '@widgets/navigation'
 
-setCloudModeMonitoringCheck(() => useCloudStatusStore().isCloudUsed)
 void bootstrapNetworkStatus()
+
+let unsubscribeCloudStatus: (() => void) | undefined
+
+onMounted(() => {
+  unsubscribeCloudStatus = bootstrapCloudStatusFromAuth()
+
+  void syncDiagnosticsUploadPreferencesToMain({
+    autoUploadDiagnostics: useDiagnosticsUploadStore().autoUploadDiagnostics
+  })
+})
+
+onUnmounted(() => {
+  unsubscribeCloudStatus?.()
+})
 </script>
 
 <template>

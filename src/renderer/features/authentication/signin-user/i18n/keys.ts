@@ -4,8 +4,7 @@ const translationKeys = {
   description: 'auth.signIn.description',
   submit: 'auth.signIn.submit',
   unavailable: {
-    offline: 'auth.signIn.unavailable.offline',
-    cloud: 'auth.signIn.unavailable.cloud'
+    offline: 'auth.signIn.unavailable.offline'
   },
   forgotPassword: 'auth.signIn.forgotPassword',
   noAccount: 'auth.signIn.noAccount',

@@ -1,18 +1,15 @@
 import { newStore } from '@shared/lib/pinia/store-define'
 
-import { getCloudStatusFromStorage, setCloudStatusToStorage } from '../service/cloud-status-storage'
+import { hasSupabaseAuthSessionInStorage } from '../service/cloud-status-storage'
 
-const DEFAULT_CLOUD_STATUS = true
-
-/** Pinia store tracking whether cloud services are enabled. */
+/** Pinia store tracking whether a Supabase cloud session is active. */
 export const useCloudStatusStore = newStore('cloud-status', {
   state: () => ({
-    isCloudUsed: getCloudStatusFromStorage() ?? DEFAULT_CLOUD_STATUS
+    isCloudUsed: hasSupabaseAuthSessionInStorage()
   }),
   actions: {
     setCloudUsed(value: boolean) {
       this.isCloudUsed = value
-      setCloudStatusToStorage(value)
     }
   }
 })

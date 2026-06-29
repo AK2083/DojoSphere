@@ -1,5 +1,5 @@
 import { mapSupabaseError, verifyOneTimePasswordBySignUp } from '@shared/api'
-import { captureException } from '@shared/lib'
+import { logError } from '@shared/lib'
 import type { AuthActionResult } from '@shared/types'
 
 /**
@@ -15,10 +15,12 @@ export async function checkOneTimePassword(
   const { error } = await verifyOneTimePasswordBySignUp(email, token)
 
   if (error) {
-    captureException(error, 'auth', 'checkOneTimePassword')
+    const mappedError = mapSupabaseError(error)
+    logError(mappedError, 'auth', 'checkOneTimePassword')
+
     return {
       success: false,
-      error: mapSupabaseError(error)
+      error: mappedError
     }
   }
 

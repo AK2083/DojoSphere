@@ -1,7 +1,6 @@
 import { ref } from 'vue'
 
 import { setNewPassword } from '../../api/set-new-password'
-import { MONITORING_EVENTS, monitorWarning } from '../../monitoring/monitoring'
 
 /**
  * Handles new-password request state for recovery flow.
@@ -24,10 +23,6 @@ export function useNewPasswordStep() {
     }
 
     if (!password.value.trim()) {
-      monitorWarning(MONITORING_EVENTS.NEW_PASSWORD_VALIDATION_FAILED, {
-        reason: 'missing_password'
-      })
-
       return false
     }
 
@@ -39,10 +34,6 @@ export function useNewPasswordStep() {
       const response = await setNewPassword(password.value)
 
       if (!response.success) {
-        monitorWarning(MONITORING_EVENTS.NEW_PASSWORD_FAILED, {
-          errorCode: response.error.code
-        })
-
         error.value = response.error.code
         return false
       }

@@ -1,4 +1,3 @@
-import { captureException } from '@shared/lib'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const { isSupabaseRequestAllowed } = vi.hoisted(() => ({
@@ -44,11 +43,6 @@ vi.mock('../client', () => ({
       onAuthStateChange: vi.fn()
     }
   }
-}))
-
-vi.mock('@shared/lib', () => ({
-  captureException: vi.fn(),
-  setUserContext: vi.fn()
 }))
 
 vi.mock('../connectivity-guard', async (importOriginal) => {
@@ -325,7 +319,6 @@ describe('getCurrentSession', () => {
     const result = await getCurrentSession()
 
     expect(result).toBeNull()
-    expect(captureException).toHaveBeenCalledTimes(1)
   })
 })
 
