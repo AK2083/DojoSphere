@@ -1,5 +1,6 @@
 import { createI18n } from 'vue-i18n'
 import { authDe, authEn } from '@features/authentication'
+import { competitorsDe, competitorsEn } from '@features/competitors'
 import { getInitialLanguage, settingsDe, settingsEn } from '@features/settings'
 import { statusDe, statusEn } from '@features/status'
 import { FallbackLanguage, sharedDe, sharedEn } from '@shared/lib/i18n'
@@ -19,6 +20,7 @@ export const i18n = createI18n({
       navigation: navigationDe,
       status: statusDe,
       auth: authDe,
+      competitors: competitorsDe,
       settings: settingsDe,
       shared: sharedDe
     },
@@ -27,6 +29,7 @@ export const i18n = createI18n({
       navigation: navigationEn,
       status: statusEn,
       auth: authEn,
+      competitors: competitorsEn,
       settings: settingsEn,
       shared: sharedEn
     }

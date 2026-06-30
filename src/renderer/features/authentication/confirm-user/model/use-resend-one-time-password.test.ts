@@ -4,6 +4,19 @@ import { resendSignUpConfirmationEmail } from '../api/resend-sign-up-confirmatio
 import { getRegisterEmailFromStorage } from '../service/register-storage'
 import { useResendOneTimePassword } from './use-resend-one-time-password'
 
+let onMountedHandler: (() => void) | undefined
+
+vi.mock('vue', async () => {
+  const actual = await vi.importActual<typeof import('vue')>('vue')
+
+  return {
+    ...actual,
+    onMounted: (callback: () => void) => {
+      onMountedHandler = callback
+    }
+  }
+})
+
 vi.mock('../api/resend-sign-up-confirmation', () => ({
   resendSignUpConfirmationEmail: vi.fn()
 }))
@@ -14,7 +27,26 @@ vi.mock('../service/register-storage', () => ({
 
 describe('useResendOneTimePassword', () => {
   beforeEach(() => {
+    onMountedHandler = undefined
     vi.clearAllMocks()
+  })
+
+  it('loads stored email on mount', () => {
+    vi.mocked(getRegisterEmailFromStorage).mockReturnValue('stored@mail.com')
+
+    const { email } = useResendOneTimePassword()
+    onMountedHandler?.()
+
+    expect(email.value).toBe('stored@mail.com')
+  })
+
+  it('falls back to empty email when storage has no value on mount', () => {
+    vi.mocked(getRegisterEmailFromStorage).mockReturnValue(null)
+
+    const { email } = useResendOneTimePassword()
+    onMountedHandler?.()
+
+    expect(email.value).toBe('')
   })
 
   it('computes canResend based on trimmed email', () => {

@@ -36,7 +36,31 @@ test.describe('Navigation widget', () => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
 
-    await page.getByRole('listitem', { name: 'Register' }).click()
+    await page
+      .getByRole('navigation', { name: 'Authentication' })
+      .getByRole('listitem', { name: 'Register' })
+      .click()
     await expect(page).toHaveURL(/#\/register$/)
+  })
+
+  test('navigates to participants from navigation', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await page.goto('/')
+
+    await page
+      .getByRole('navigation', { name: 'Main navigation' })
+      .getByRole('link', { name: 'Participant list' })
+      .click()
+    await expect(page).toHaveURL(/#\/participants$/)
+  })
+
+  test('mobile view exposes participants action', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+
+    const participantsAction = page
+      .getByRole('banner')
+      .getByRole('link', { name: 'Open participant list' })
+    await expect(participantsAction).toBeVisible()
   })
 })

@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, type Ref, ref } from 'vue'
+import { computed, type ComputedRef, onMounted, type Ref, ref } from 'vue'
 
 import { resendSignUpConfirmationEmail } from '../api/resend-sign-up-confirmation'
 import { getRegisterEmailFromStorage } from '../service/register-storage'
@@ -35,6 +35,10 @@ export function useResendOneTimePassword(): UseResendReturn {
   const success = ref(false)
 
   const canResend = computed(() => email.value.trim().length > 0)
+
+  onMounted(() => {
+    email.value = getRegisterEmailFromStorage() ?? ''
+  })
 
   /**
    * Resends an OTP to the given email address.

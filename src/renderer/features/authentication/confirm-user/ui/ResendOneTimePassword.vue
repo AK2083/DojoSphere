@@ -14,7 +14,7 @@ const resendOtp = useResendOneTimePassword()
     color="primary"
     variant="text"
     :loading="resendOtp.loading.value"
-    :disabled="resendOtp.canResend.value"
+    :disabled="!resendOtp.canResend.value"
     :aria-label="t(translationKeys.steps.otp.resend.ariaResendLabel)"
     @click="resendOtp.resend()"
   >
