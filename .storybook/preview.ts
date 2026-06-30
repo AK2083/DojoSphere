@@ -8,6 +8,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
 import { i18n } from '../src/renderer/app/providers/i18n'
 import { pinia } from '../src/renderer/app/providers/pinia'
+import { vuetifyDefaults } from '../src/renderer/app/providers/vuetify/defaults'
 import { useCloudStatusStore, useNetworkStatusStore } from '../src/renderer/features/status'
 
 import '@fontsource/roboto/100.css'
@@ -38,6 +39,7 @@ void router.push({ name: 'dashboard' })
 
 const vuetify = createVuetify({
   components,
+  defaults: vuetifyDefaults,
   directives,
   icons: {
     defaultSet: 'mdi',

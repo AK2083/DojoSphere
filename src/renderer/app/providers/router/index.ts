@@ -54,6 +54,12 @@ const routes = [
     path: '/settings',
     name: 'settings',
     component: SettingsPage
+  },
+  {
+    path: '/participants',
+    name: 'participants',
+    meta: { requiresAuth: true },
+    component: () => import('@pages/participants')
   }
 ]
 

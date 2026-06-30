@@ -17,6 +17,7 @@ vi.mock('@playwright/test', async (importOriginal) => {
   }
 })
 
+import { OTP_FIELDS_SELECTOR, OTP_INPUT_SELECTOR } from './otp-input'
 import {
   goToPasswordResetNewPasswordStep,
   goToPasswordResetOtpStep,
@@ -24,7 +25,6 @@ import {
   mockRecoveryRequest,
   mockRecoveryVerify
 } from './password-recovery'
-import { OTP_FIELDS_SELECTOR, OTP_INPUT_SELECTOR } from './otp-input'
 
 function createPageDouble(options: { emailInputCount?: number } = {}) {
   const fill = vi.fn().mockResolvedValue(undefined)
