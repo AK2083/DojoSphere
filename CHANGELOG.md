@@ -1,3 +1,9 @@
+# [1.18.0](https://github.com/AK2083/DojoSphere/compare/v1.17.0...v1.18.0) (2026-06-30)
+
+### Features
+
+- add participant table and edit form ([#172](https://github.com/AK2083/DojoSphere/issues/172)) ([8e44618](https://github.com/AK2083/DojoSphere/commit/8e446183f3aa69484ce08eea66ee28690454b3c0))
+
 # [1.17.0](https://github.com/AK2083/DojoSphere/compare/v1.16.0...v1.17.0) (2026-06-24)
 
 ### Features
