@@ -1,7 +1,7 @@
 import { onMounted } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ParticipantOverview from './ParticipantOverview.vue'
+import ParticipantOverviewSection from './ParticipantOverviewSection.vue'
 
 function setMobileViewport(): void {
   Object.defineProperty(window, 'innerWidth', {
@@ -12,12 +12,12 @@ function setMobileViewport(): void {
 }
 
 const meta = {
-  title: 'Features/Competitors/GetParticipantOverview/ParticipantOverview',
-  component: ParticipantOverview,
+  title: 'Features/Competitors/GetParticipantOverview/ParticipantOverviewSection',
+  component: ParticipantOverviewSection,
   parameters: {
     layout: 'padded'
   }
-} satisfies Meta<typeof ParticipantOverview>
+} satisfies Meta<typeof ParticipantOverviewSection>
 
 export default meta
 
@@ -25,10 +25,10 @@ type Story = StoryObj<typeof meta>
 
 export const Desktop: Story = {
   render: () => ({
-    components: { ParticipantOverview },
+    components: { ParticipantOverviewSection },
     template: `
       <div style="max-width: 1200px; margin: 0 auto;">
-        <ParticipantOverview />
+        <ParticipantOverviewSection />
       </div>
     `
   })
@@ -36,7 +36,7 @@ export const Desktop: Story = {
 
 export const Mobile: Story = {
   render: () => ({
-    components: { ParticipantOverview },
+    components: { ParticipantOverviewSection },
     setup() {
       onMounted(() => {
         setMobileViewport()
@@ -44,7 +44,7 @@ export const Mobile: Story = {
     },
     template: `
       <div style="max-width: 390px; margin: 0 auto;">
-        <ParticipantOverview />
+        <ParticipantOverviewSection />
       </div>
     `
   })

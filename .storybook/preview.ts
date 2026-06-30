@@ -31,6 +31,17 @@ const router = createRouter({
       path: '/emailverification',
       name: 'emailverification',
       component: { template: '<div />' }
+    },
+    { path: '/participants', name: 'participants', component: { template: '<div />' } },
+    {
+      path: '/participants/new',
+      name: 'participant-create',
+      component: { template: '<div />' }
+    },
+    {
+      path: '/participants/:id/edit',
+      name: 'participant-edit',
+      component: { template: '<div />' }
     }
   ]
 })
