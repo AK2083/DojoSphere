@@ -1,4 +1,5 @@
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -23,7 +24,7 @@ export type ParticipantTableSortItem = TableSortItem
 /**
  *
  */
-export type ParticipantListHeader = {
+export type ParticipantOverviewHeader = {
   title: string
   key: string
   sortable: boolean
@@ -39,12 +40,13 @@ export type ParticipantTableRow = Omit<ParticipantRow, 'gender'> & {
 }
 
 /**
- * UI state for the participant list table, including a simulated initial load.
+ * UI state for the participant overview table, including a simulated initial load.
  *
- * @returns Reactive table state and no-op CRUD handlers for the UI prototype.
+ * @returns Reactive table state and CRUD handlers for the UI prototype.
  */
-export function useParticipantList() {
+export function useParticipantOverview() {
   const { t } = useTranslation()
+  const router = useRouter()
   const loading = ref(true)
   const participants = ref<ParticipantRow[]>([])
   const sortBy = ref<TableSortItem[]>([{ key: 'familyName', order: 'asc' }])
@@ -158,11 +160,14 @@ export function useParticipantList() {
   })
 
   function handleAdd(): void {
-    // UI placeholder until competitor create flow is implemented.
+    void router.push({ name: 'participant-create' })
   }
 
-  function handleEdit(_participant: ParticipantTableRow): void {
-    // UI placeholder until competitor update flow is implemented.
+  function handleEdit(participant: ParticipantTableRow): void {
+    void router.push({
+      name: 'participant-edit',
+      params: { id: participant.id }
+    })
   }
 
   function handleDelete(_participant: ParticipantTableRow): void {

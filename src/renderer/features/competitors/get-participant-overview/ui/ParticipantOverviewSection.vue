@@ -4,14 +4,14 @@ import { useDisplay } from 'vuetify'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useParticipantList } from '../model/use-participant-list'
-import ParticipantListMobile from './ParticipantListMobile.vue'
-import ParticipantListTable from './ParticipantListTable.vue'
+import { useParticipantOverview } from '../model/use-participant-overview'
+import ParticipantOverviewMobile from './ParticipantOverviewMobile.vue'
+import ParticipantOverviewTable from './ParticipantOverviewTable.vue'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
 const { loading, tableItems, headers, sortBy, handleAdd, handleEdit, handleDelete } =
-  useParticipantList()
+  useParticipantOverview()
 
 const isMobile = computed(() => smAndDown.value)
 </script>
@@ -23,7 +23,7 @@ const isMobile = computed(() => smAndDown.value)
     role="region"
     :aria-label="t(translationKeys.table.ariaLabel)"
   >
-    <ParticipantListMobile
+    <ParticipantOverviewMobile
       v-if="isMobile"
       v-model:sort-by="sortBy"
       :headers="headers"
@@ -33,7 +33,7 @@ const isMobile = computed(() => smAndDown.value)
       @delete="handleDelete"
       @edit="handleEdit"
     />
-    <ParticipantListTable
+    <ParticipantOverviewTable
       v-else
       v-model:sort-by="sortBy"
       :headers="headers"

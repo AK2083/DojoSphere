@@ -40,6 +40,15 @@ describe('useResendOneTimePassword', () => {
     expect(email.value).toBe('stored@mail.com')
   })
 
+  it('falls back to empty email when storage has no value on mount', () => {
+    vi.mocked(getRegisterEmailFromStorage).mockReturnValue(null)
+
+    const { email } = useResendOneTimePassword()
+    onMountedHandler?.()
+
+    expect(email.value).toBe('')
+  })
+
   it('computes canResend based on trimmed email', () => {
     const { canResend, email } = useResendOneTimePassword()
 

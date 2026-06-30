@@ -60,6 +60,18 @@ const routes = [
     name: 'participants',
     meta: { requiresAuth: true },
     component: () => import('@pages/participants')
+  },
+  {
+    path: '/participants/new',
+    name: 'participant-create',
+    meta: { requiresAuth: true },
+    component: () => import('@pages/participant-form')
+  },
+  {
+    path: '/participants/:id/edit',
+    name: 'participant-edit',
+    meta: { requiresAuth: true },
+    component: () => import('@pages/participant-form')
   }
 ]
 

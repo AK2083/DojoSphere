@@ -1,5 +1,5 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
-import { gotoParticipantsPage } from '@shared/tests/e2e/participant-list'
+import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('participants page', () => {

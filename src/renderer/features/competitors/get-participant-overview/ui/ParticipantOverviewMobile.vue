@@ -7,13 +7,13 @@ import translationKeys from '../i18n/keys'
 import { participantAvatarColor, participantInitials } from '../lib/participant-avatar'
 import { participantLabel } from '../lib/participant-label'
 import type {
-  ParticipantListHeader,
+  ParticipantOverviewHeader,
   ParticipantTableRow,
   ParticipantTableSortItem
-} from '../model/use-participant-list'
+} from '../model/use-participant-overview'
 
 const props = defineProps<{
-  headers: ParticipantListHeader[]
+  headers: ParticipantOverviewHeader[]
   items: ParticipantTableRow[]
   loading: boolean
 }>()
@@ -49,7 +49,7 @@ const mobileSecondaryFieldKeys = [
 function mobileHeadersForKeys(keys: readonly string[]) {
   return keys
     .map((key) => props.headers.find((header) => header.key === key))
-    .filter((header): header is ParticipantListHeader => header != null)
+    .filter((header): header is ParticipantOverviewHeader => header != null)
 }
 
 const mobileSummaryHeaders = computed(() => mobileHeadersForKeys(mobileSummaryFieldKeys))
@@ -203,14 +203,22 @@ function mobileFieldValue(participant: Record<string, string>, key: string): str
 .participant-list-mobile {
   width: 100%;
   border: none;
+  background-color: rgb(var(--v-theme-background));
 }
 
+.participant-list-mobile :deep(.v-data-table),
 .participant-list-mobile :deep(.v-table),
 .participant-list-mobile :deep(.v-table__wrapper),
 .participant-list-mobile :deep(table),
 .participant-list-mobile :deep(tbody) {
-  background: transparent;
-  background-color: transparent;
+  background: rgb(var(--v-theme-background));
+  background-color: rgb(var(--v-theme-background));
+}
+
+.participant-list-mobile :deep(tbody) {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .participant-list-mobile :deep(table) {
@@ -247,7 +255,7 @@ function mobileFieldValue(participant: Record<string, string>, key: string): str
 
 .participant-list-mobile :deep(tr.participant-list-mobile__row) {
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 12px;
   background: rgb(var(--v-theme-surface));
@@ -255,7 +263,7 @@ function mobileFieldValue(participant: Record<string, string>, key: string): str
 }
 
 .participant-list-mobile :deep(tr.participant-list-mobile__row:first-child) {
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .participant-list-mobile :deep(tr.participant-list-mobile__row:nth-child(even)) {

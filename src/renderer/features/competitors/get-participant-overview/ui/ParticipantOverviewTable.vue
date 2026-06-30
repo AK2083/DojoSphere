@@ -5,13 +5,13 @@ import { useTranslation } from '@shared/lib'
 import translationKeys from '../i18n/keys'
 import { participantLabel } from '../lib/participant-label'
 import type {
-  ParticipantListHeader,
+  ParticipantOverviewHeader,
   ParticipantTableRow,
   ParticipantTableSortItem
-} from '../model/use-participant-list'
+} from '../model/use-participant-overview'
 
 defineProps<{
-  headers: ParticipantListHeader[]
+  headers: ParticipantOverviewHeader[]
   items: ParticipantTableRow[]
   loading: boolean
 }>()

@@ -1,13 +1,13 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from '@shared/tests/e2e/fixtures'
-import { gotoParticipantsPage } from '@shared/tests/e2e/participant-list'
+import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 async function givenNameCells(page: Page) {
   return page.locator('tbody tr td:nth-child(1)')
 }
 
-test.describe('ParticipantList', () => {
+test.describe('ParticipantOverview', () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
@@ -69,13 +69,20 @@ test.describe('ParticipantList', () => {
     await expect(page.getByText('Date of birth', { exact: true })).not.toBeVisible()
   })
 
-  test('exposes CRUD actions without backend behavior', async ({ page }) => {
+  test('navigates to create and edit form pages', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await gotoParticipantsPage(page)
 
     const addButton = page.getByRole('button', { name: 'Add participant' })
     await expect(addButton).toBeVisible()
     await expect(addButton).toBeEnabled()
+
+    await addButton.click()
+    await expect(page).toHaveURL(/#\/participants\/new$/)
+    await expect(page.getByRole('heading', { name: 'Add participant', exact: true })).toBeVisible()
+
+    await page.goto('/#/participants')
+    await gotoParticipantsPage(page)
 
     const editButton = page.getByRole('button', { name: 'Edit Yuki Tanaka' })
     await expect(editButton).toBeVisible()
@@ -85,9 +92,14 @@ test.describe('ParticipantList', () => {
     await expect(deleteButton).toBeVisible()
     await expect(deleteButton).toBeEnabled()
 
-    await addButton.click()
     await editButton.click()
-    await deleteButton.click()
+    await expect(page).toHaveURL(/#\/participants\/participant-1\/edit$/)
+    await expect(page.getByRole('heading', { name: 'Edit participant', exact: true })).toBeVisible()
+
+    await page.goto('/#/participants')
+    await gotoParticipantsPage(page)
+
+    await page.getByRole('button', { name: 'Delete Anna Weber' }).click()
 
     await expect(page.getByRole('cell', { name: 'Yuki', exact: true })).toBeVisible()
   })

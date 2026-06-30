@@ -1,6 +1,8 @@
-import { participantListDe } from '../participant-list/i18n'
+import { getParticipantOverviewDe } from '../get-participant-overview/i18n'
+import { saveParticipantDe } from '../save-participant/i18n'
 
 export default {
   title: 'Teilnehmerliste',
-  participantList: participantListDe
+  getParticipantOverview: getParticipantOverviewDe,
+  saveParticipant: saveParticipantDe
 }
