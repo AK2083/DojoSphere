@@ -7,8 +7,10 @@ const translationKeys = {
   form: {
     ariaLabel: 'competitors.saveParticipant.form.ariaLabel',
     hint: 'competitors.saveParticipant.form.hint',
-    fieldHint: 'competitors.saveParticipant.form.fieldHint',
     openBirthDatePicker: 'competitors.saveParticipant.form.openBirthDatePicker',
+    flexibleWeightHint: 'competitors.saveParticipant.form.flexibleWeightHint',
+    requiredFieldsLegend: 'competitors.saveParticipant.form.requiredFieldsLegend',
+    selectAgeClassFirst: 'competitors.saveParticipant.form.selectAgeClassFirst',
     fields: {
       givenName: 'competitors.saveParticipant.form.fields.givenName',
       familyName: 'competitors.saveParticipant.form.fields.familyName',
@@ -21,7 +23,6 @@ const translationKeys = {
       passNumber: 'competitors.saveParticipant.form.fields.passNumber',
       grade: 'competitors.saveParticipant.form.fields.grade',
       licenseNumber: 'competitors.saveParticipant.form.fields.licenseNumber',
-      clubContactEmail: 'competitors.saveParticipant.form.fields.clubContactEmail',
       contactPhone: 'competitors.saveParticipant.form.fields.contactPhone',
       coach: 'competitors.saveParticipant.form.fields.coach'
     }
@@ -35,6 +36,44 @@ const translationKeys = {
     back: 'competitors.saveParticipant.actions.back',
     reset: 'competitors.saveParticipant.actions.reset',
     save: 'competitors.saveParticipant.actions.save'
+  },
+  validation: {
+    required: 'competitors.saveParticipant.validation.required',
+    textTooLong: 'competitors.saveParticipant.validation.textTooLong',
+    gender: {
+      invalid: 'competitors.saveParticipant.validation.gender.invalid'
+    },
+    birthDate: {
+      invalid: 'competitors.saveParticipant.validation.birthDate.invalid',
+      inFuture: 'competitors.saveParticipant.validation.birthDate.inFuture'
+    },
+    nationality: {
+      invalid: 'competitors.saveParticipant.validation.nationality.invalid'
+    },
+    passNumber: {
+      invalid: 'competitors.saveParticipant.validation.passNumber.invalid'
+    },
+    phone: {
+      invalid: 'competitors.saveParticipant.validation.phone.invalid'
+    },
+    weightClass: {
+      ageMismatch: 'competitors.saveParticipant.validation.weightClass.ageMismatch'
+    }
+  },
+  reference: {
+    gradeNone: 'competitors.saveParticipant.reference.gradeNone',
+    clubs: {
+      unknown: 'competitors.saveParticipant.reference.clubs.unknown'
+    },
+    nationalities: {
+      DE: 'competitors.saveParticipant.reference.nationalities.DE',
+      AT: 'competitors.saveParticipant.reference.nationalities.AT',
+      CH: 'competitors.saveParticipant.reference.nationalities.CH'
+    },
+    weightClass: {
+      minus: 'competitors.saveParticipant.reference.weightClass.minus',
+      plus: 'competitors.saveParticipant.reference.weightClass.plus'
+    }
   }
 }
 

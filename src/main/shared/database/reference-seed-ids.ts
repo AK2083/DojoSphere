@@ -24,3 +24,7 @@ export /**
  *
  */
 const DEFAULT_BIRTH_DATE = '2000-01-01'
+export /**
+ * Placeholder pass number for legacy repository paths until full participant form IPC is wired.
+ */
+const DEFAULT_PASS_NUMBER = '00000000'

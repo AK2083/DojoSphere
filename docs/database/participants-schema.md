@@ -192,6 +192,24 @@ WHERE c.id = ?;
 
 ## Constraints
 
+SQLite stores all text columns without a native `VARCHAR(n)` limit. Length and format rules are enforced with `CHECK` constraints in `V008__competitors_create_table.sql`. The same limits are defined in `src/renderer/shared/domain/competitor-field-limits.ts` for the participant form.
+
+| Column | Limit | Notes |
+| ------ | ----- | ----- |
+| `given_name`, `family_name` | 1–80 chars | Trimmed length |
+| `birth_date` | 10 chars | `YYYY-MM-DD` (`GLOB '????-??-??'`) |
+| `nationality` | 2 chars | ISO 3166-1 alpha-2 letters |
+| `pass_number` | 1–32 chars | Letters, digits, `-`, `/` (no fixed DJB format) |
+| `license_number` | 1–32 chars | Same character set as `pass_number`, optional |
+| `contact_phone` | ≤ 32 chars | Optional; format validated in the app |
+| `coach` | 1–80 chars | Optional; trimmed length |
+
+### Pass number validation
+
+The [DJB Passordnung](https://www.judobund.de/fileadmin/user_upload/judobund.de/Downloads/Regeln_und_Ordnungen/WIP_20241012_DJB_Passordnung_Final.pdf) requires a **Lizenznummer** on the digital JudoPass but does **not** publish a fixed format (length, prefix, or checksum). Numbers are assigned centrally in DokuMe. Legacy paper passes used varying alphanumeric values.
+
+DojoSphere therefore validates pragmatically: non-empty, max. 32 characters, printable identifier characters (`0-9`, `A-Z`, `a-z`, `-`, `/`). This does **not** verify pass validity against the DJB — only plausibility for local registration. The separate optional field `license_number` holds the **Wettkampflizenznummer**, which is also not format-specified publicly.
+
 ```mermaid
 flowchart LR
   subgraph checks["CHECK constraints"]
@@ -202,6 +220,7 @@ flowchart LR
     ACID["age_class_id · FK → age_classes"]
     GID["grade_id · FK → grades or NULL"]
     NAT["nationality · country code, length 2"]
+    PN["pass_number · 1–32 chars, identifier charset"]
     CA["created_at · DATETIME ISO 8601"]
     UA["updated_at · DATETIME ISO 8601 or NULL"]
   end

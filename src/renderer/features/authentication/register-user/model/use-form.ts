@@ -46,7 +46,6 @@ export function useRegisterForm() {
       return true
     }
 
-    // Keep initial disabled state, but avoid a stale "invalid" lock after mode switches.
     return !isFormValid.value && !email.value && !password.value
   })
 

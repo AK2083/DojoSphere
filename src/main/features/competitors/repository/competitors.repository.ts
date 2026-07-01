@@ -11,6 +11,7 @@ import {
   DEFAULT_BIRTH_DATE,
   DEFAULT_GENDER,
   DEFAULT_NATIONALITY,
+  DEFAULT_PASS_NUMBER,
   DEFAULT_WEIGHT_CLASS_ID,
   PLACEHOLDER_DISTRICT_ID,
   UNKNOWN_CLUB_ID
@@ -293,7 +294,7 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
         DEFAULT_NATIONALITY,
         weightClassId,
         ageClassId,
-        ''
+        DEFAULT_PASS_NUMBER
       )
 
       recordCompetitorCreated({ actorUserId, competitorId: id })
