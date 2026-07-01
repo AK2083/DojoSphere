@@ -57,31 +57,63 @@ export interface EnsureLocalSessionResult {
   expiresAt: string
 }
 
+/** Gender code stored in `competitors.gender`. */
+export type CompetitorGender = 'd' | 'f' | 'm'
+
 /** Tournament competitor record stored in SQLite. */
 export interface Competitor {
   id: string
   givenName: string
   familyName: string
+  gender: CompetitorGender
+  birthDate: string
+  nationality: string
+  passNumber: string
   club: string | null
   weightClass: string | null
+  licenseNumber: string | null
+  contactPhone: string | null
+  coach: string | null
+  clubId: string
+  weightClassId: string
+  ageClassId: string
+  gradeId: string | null
   createdAt: string
   updatedAt: string | null
 }
 
+/** Optional detail fields shared by competitor create and update inputs. */
+interface CompetitorDetailInput {
+  gender?: CompetitorGender | null
+  birthDate?: string | null
+  nationality?: string | null
+  passNumber?: string | null
+  gradeId?: string | null
+  licenseNumber?: string | null
+  contactPhone?: string | null
+  coach?: string | null
+}
+
 /** Input for creating a competitor via IPC. */
-export interface CreateCompetitorInput {
+export interface CreateCompetitorInput extends CompetitorDetailInput {
   givenName: string
   familyName: string
   club?: string | null
   weightClass?: string | null
+  clubId?: string | null
+  weightClassId?: string | null
+  ageClassId?: string | null
 }
 
 /** Input for updating a competitor via IPC. */
-export interface UpdateCompetitorInput {
+export interface UpdateCompetitorInput extends CompetitorDetailInput {
   givenName?: string
   familyName?: string
   club?: string | null
   weightClass?: string | null
+  clubId?: string | null
+  weightClassId?: string | null
+  ageClassId?: string | null
 }
 
 /** Input for recording an audit event via IPC. */

@@ -1,7 +1,7 @@
 import { expect, type Page } from '@playwright/test'
 
 /**
- * Opens the participants route and waits until static rows are rendered.
+ * Opens the participants route and waits until sample rows are rendered.
  *
  * @param page - Playwright page instance.
  */

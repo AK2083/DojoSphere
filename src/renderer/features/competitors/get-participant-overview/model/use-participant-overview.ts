@@ -1,15 +1,17 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTranslation } from '@shared/lib'
+import { logError, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import {
-  type ParticipantGender,
-  type ParticipantRow,
-  STATIC_PARTICIPANTS
-} from './static-participants'
+import { deleteParticipant, loadParticipants } from '../service/load-participants'
+import { mapCompetitorToRow } from './map-competitor-to-row'
+import { type ParticipantGender, type ParticipantRow } from './static-participants'
 
-const INITIAL_LOAD_DELAY_MS = 400
+const GENDER_TRANSLATION_KEY: Record<ParticipantGender, string> = {
+  f: translationKeys.gender.female,
+  m: translationKeys.gender.male,
+  d: translationKeys.gender.diverse
+}
 
 type TableSortItem = {
   key: string
@@ -48,6 +50,7 @@ export function useParticipantOverview() {
   const { t } = useTranslation()
   const router = useRouter()
   const loading = ref(true)
+  const loadErrorMessage = ref('')
   const participants = ref<ParticipantRow[]>([])
   const sortBy = ref<TableSortItem[]>([{ key: 'familyName', order: 'asc' }])
 
@@ -148,15 +151,28 @@ export function useParticipantOverview() {
   const tableItems = computed<ParticipantTableRow[]>(() =>
     participants.value.map((participant) => ({
       ...participant,
-      gender: t(translationKeys.gender[participant.gender as ParticipantGender])
+      gender: t(GENDER_TRANSLATION_KEY[participant.gender])
     }))
   )
 
-  onMounted(() => {
-    globalThis.setTimeout(() => {
-      participants.value = [...STATIC_PARTICIPANTS]
+  async function refresh(): Promise<void> {
+    loading.value = true
+    loadErrorMessage.value = ''
+
+    try {
+      const competitors = await loadParticipants()
+
+      participants.value = competitors.map((competitor) => mapCompetitorToRow(competitor, t))
+    } catch (error) {
+      loadErrorMessage.value = t(translationKeys.loadError)
+      logError(error as Error, 'competitors', 'load-participants')
+    } finally {
       loading.value = false
-    }, INITIAL_LOAD_DELAY_MS)
+    }
+  }
+
+  onMounted(() => {
+    void refresh()
   })
 
   function handleAdd(): void {
@@ -170,15 +186,23 @@ export function useParticipantOverview() {
     })
   }
 
-  function handleDelete(_participant: ParticipantTableRow): void {
-    // UI placeholder until competitor delete flow is implemented.
+  async function handleDelete(participant: ParticipantTableRow): Promise<void> {
+    try {
+      await deleteParticipant(participant.id)
+      await refresh()
+    } catch (error) {
+      loadErrorMessage.value = t(translationKeys.loadError)
+      logError(error as Error, 'competitors', 'delete-participant')
+    }
   }
 
   return {
     loading,
+    loadErrorMessage,
     tableItems,
     headers,
     sortBy,
+    refresh,
     handleAdd,
     handleEdit,
     handleDelete

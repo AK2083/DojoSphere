@@ -10,6 +10,7 @@ const translationKeys = {
     openBirthDatePicker: 'competitors.saveParticipant.form.openBirthDatePicker',
     flexibleWeightHint: 'competitors.saveParticipant.form.flexibleWeightHint',
     requiredFieldsLegend: 'competitors.saveParticipant.form.requiredFieldsLegend',
+    saveError: 'competitors.saveParticipant.form.saveError',
     selectAgeClassFirst: 'competitors.saveParticipant.form.selectAgeClassFirst',
     fields: {
       givenName: 'competitors.saveParticipant.form.fields.givenName',

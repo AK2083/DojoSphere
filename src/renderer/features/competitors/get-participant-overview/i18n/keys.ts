@@ -26,8 +26,11 @@ const translationKeys = {
   },
   gender: {
     female: 'competitors.getParticipantOverview.gender.female',
-    male: 'competitors.getParticipantOverview.gender.male'
+    male: 'competitors.getParticipantOverview.gender.male',
+    diverse: 'competitors.getParticipantOverview.gender.diverse'
   },
+  emptyGrade: 'competitors.getParticipantOverview.emptyGrade',
+  loadError: 'competitors.getParticipantOverview.loadError',
   actions: {
     add: 'competitors.getParticipantOverview.actions.add',
     edit: 'competitors.getParticipantOverview.actions.edit',

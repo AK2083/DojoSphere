@@ -1,7 +1,9 @@
 import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
-import { useTranslation } from '@shared/lib'
+import { logError, useTranslation } from '@shared/lib'
 
+import translationKeys from '../i18n/keys'
 import { mapParticipantFormRule } from '../lib/participant-form-error-manager'
 import {
   birthDateRule,
@@ -16,6 +18,7 @@ import {
   passNumberRule,
   requiredFieldRule
 } from '../lib/participant-form-rules'
+import { createParticipant } from '../service/save-participant'
 import { createEmptyParticipantForm } from './participant-form-state'
 import { getWeightClassSeedsForAgeClass, useParticipantFormOptions } from './use-form-options'
 
@@ -26,9 +29,12 @@ import { getWeightClassSeedsForAgeClass, useParticipantFormOptions } from './use
  */
 export function useParticipantForm() {
   const { t } = useTranslation()
+  const router = useRouter()
 
   const formRef = ref<VForm | null>(null)
   const isFormValid = ref(false)
+  const isSaving = ref(false)
+  const saveErrorMessage = ref('')
   const fields = ref(createEmptyParticipantForm())
 
   const {
@@ -72,7 +78,7 @@ export function useParticipantForm() {
     )
   ])
 
-  const isSubmitDisabled = computed(() => !isFormValid.value)
+  const isSubmitDisabled = computed(() => !isFormValid.value || isSaving.value)
 
   function setFormRef(value: unknown) {
     formRef.value = value as VForm | null
@@ -95,27 +101,41 @@ export function useParticipantForm() {
   )
 
   async function submit(): Promise<void> {
-    if (!formRef.value) {
+    if (!formRef.value || isSaving.value) {
       return
     }
 
-    const result = await formRef.value.validate()
+    isSaving.value = true
+    saveErrorMessage.value = ''
 
-    if (!result.valid) {
-      return
+    try {
+      const result = await formRef.value.validate()
+
+      if (!result.valid) {
+        return
+      }
+
+      await createParticipant(fields.value)
+      await router?.push({ name: 'participants' })
+    } catch (error) {
+      saveErrorMessage.value = t(translationKeys.form.saveError)
+      logError(error as Error, 'competitors', 'save-participant')
+    } finally {
+      isSaving.value = false
     }
-
-    // Placeholder until participant save flow is wired to IPC.
   }
 
   function reset(): void {
     fields.value = createEmptyParticipantForm()
+    saveErrorMessage.value = ''
     formRef.value?.resetValidation()
   }
 
   return {
     fields,
     isFormValid,
+    isSaving,
+    saveErrorMessage,
     isSubmitDisabled,
     isWeightClassRequired,
     selectedAgeClass,

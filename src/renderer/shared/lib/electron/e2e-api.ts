@@ -1,4 +1,56 @@
-import type { ElectronAPI } from '@shared/types/electron-api'
+import type { Competitor, CreateCompetitorInput, ElectronAPI } from '@shared/types/electron-api'
+
+/** Fictional sample competitors for Playwright browser-only runs (no Electron SQLite). */
+const PLAYWRIGHT_SAMPLE_COMPETITORS: Array<{ id: string; input: CreateCompetitorInput }> = [
+  {
+    id: 'participant-1',
+    input: {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      gender: 'm',
+      birthDate: '2011-04-12',
+      nationality: 'DE',
+      passNumber: 'JP-000142',
+      club: 'Dojo Nord',
+      weightClass: '-60',
+      licenseNumber: 'WL-2024-001',
+      contactPhone: '+49 555 010201',
+      coach: 'S. Fischer'
+    }
+  },
+  {
+    id: 'participant-2',
+    input: {
+      givenName: 'Anna',
+      familyName: 'Weber',
+      gender: 'f',
+      birthDate: '2013-08-03',
+      nationality: 'DE',
+      passNumber: 'JP-000287',
+      club: 'JC West',
+      weightClass: '-52',
+      licenseNumber: 'WL-2024-014',
+      contactPhone: '+49 555 010202',
+      coach: 'M. Keller'
+    }
+  },
+  {
+    id: 'participant-3',
+    input: {
+      givenName: 'Leo',
+      familyName: 'Martin',
+      gender: 'm',
+      birthDate: '2009-11-21',
+      nationality: 'AT',
+      passNumber: 'JP-000391',
+      club: 'SV Süd',
+      weightClass: '-73',
+      licenseNumber: 'WL-2024-028',
+      contactPhone: '+43 555 010203',
+      coach: 'T. Brandt'
+    }
+  }
+]
 
 /**
  * Whether the renderer runs in Playwright browser-only mode (without Electron).
@@ -13,6 +65,36 @@ export function isPlaywrightBrowserOnly(
 }
 
 /**
+ * Builds an in-memory competitor stub for the Playwright browser-only API.
+ *
+ * @param id - Generated competitor identifier.
+ * @param input - Competitor create input from the form.
+ * @returns A fully populated competitor record.
+ */
+function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competitor {
+  return {
+    id,
+    givenName: input.givenName,
+    familyName: input.familyName,
+    gender: input.gender ?? 'f',
+    birthDate: input.birthDate ?? '2000-01-01',
+    nationality: input.nationality ?? 'DE',
+    passNumber: input.passNumber ?? '00000000',
+    club: input.club ?? null,
+    weightClass: input.weightClass ?? null,
+    licenseNumber: input.licenseNumber ?? null,
+    contactPhone: input.contactPhone ?? null,
+    coach: input.coach ?? null,
+    clubId: input.clubId ?? 'stub-club-id',
+    weightClassId: input.weightClassId ?? 'stub-weight-class-id',
+    ageClassId: input.ageClassId ?? 'stub-age-class-id',
+    gradeId: input.gradeId ?? null,
+    createdAt: new Date().toISOString(),
+    updatedAt: null
+  }
+}
+
+/**
  * Installs a stub `window.api` when Playwright runs the renderer in a browser
  * without Electron (see `VITE_PLAYWRIGHT_BROWSER_ONLY` in `.env.e2e`).
  *
@@ -20,6 +102,9 @@ export function isPlaywrightBrowserOnly(
  */
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
   const localSessions = new Map<string, { userId: string; displayName: string }>()
+  const competitors: Competitor[] = PLAYWRIGHT_SAMPLE_COMPETITORS.map(({ id, input }) =>
+    buildStubCompetitor(id, input)
+  )
 
   const api: ElectronAPI = {
     getUsers: async () => [],
@@ -87,26 +172,54 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     recordError: async () => undefined,
     setDiagnosticsUploadPreferences: async () => undefined,
     auditRecord: async () => undefined,
-    getCompetitors: async () => [],
-    addCompetitor: async () => ({
-      id: 'competitor-1',
-      givenName: 'Test',
-      familyName: 'Competitor',
-      club: null,
-      weightClass: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: null
-    }),
-    updateCompetitor: async (_token, id) => ({
-      id,
-      givenName: 'Test',
-      familyName: 'Competitor',
-      club: 'Updated Club',
-      weightClass: '-60',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }),
-    deleteCompetitor: async () => undefined,
+    getCompetitors: async () => [...competitors],
+    addCompetitor: async (_token, input) => {
+      const competitor = buildStubCompetitor(`competitor-${competitors.length + 1}`, input)
+
+      competitors.push(competitor)
+
+      return competitor
+    },
+    updateCompetitor: async (_token, id, input) => {
+      const index = competitors.findIndex((competitor) => competitor.id === id)
+      const base =
+        index >= 0
+          ? competitors[index]!
+          : buildStubCompetitor(id, { givenName: 'Test', familyName: 'Competitor' })
+      const updated: Competitor = {
+        ...base,
+        givenName: input.givenName ?? base.givenName,
+        familyName: input.familyName ?? base.familyName,
+        gender: input.gender ?? base.gender,
+        birthDate: input.birthDate ?? base.birthDate,
+        nationality: input.nationality ?? base.nationality,
+        passNumber: input.passNumber ?? base.passNumber,
+        club: input.club ?? base.club,
+        weightClass: input.weightClass ?? base.weightClass,
+        licenseNumber: input.licenseNumber ?? base.licenseNumber,
+        contactPhone: input.contactPhone ?? base.contactPhone,
+        coach: input.coach ?? base.coach,
+        clubId: input.clubId ?? base.clubId,
+        weightClassId: input.weightClassId ?? base.weightClassId,
+        ageClassId: input.ageClassId ?? base.ageClassId,
+        gradeId: input.gradeId ?? base.gradeId,
+        id,
+        updatedAt: new Date().toISOString()
+      }
+
+      if (index >= 0) {
+        competitors[index] = updated
+      }
+
+      return updated
+    },
+    deleteCompetitor: async (_token, id) => {
+      const index = competitors.findIndex((competitor) => competitor.id === id)
+
+      if (index >= 0) {
+        competitors.splice(index, 1)
+      }
+    },
     getOsUsername: async () => 'TestUser',
     ...overrides
   }

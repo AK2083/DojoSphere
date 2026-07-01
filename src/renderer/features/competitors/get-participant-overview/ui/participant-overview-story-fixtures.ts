@@ -38,8 +38,9 @@ export const storyHeaders: ParticipantOverviewHeader[] = [
 ]
 
 const genderLabels: Record<(typeof STATIC_PARTICIPANTS)[number]['gender'], string> = {
-  female: 'Female',
-  male: 'Male'
+  f: 'Female',
+  m: 'Male',
+  d: 'Diverse'
 }
 
 /** Static table rows for participant overview stories. */

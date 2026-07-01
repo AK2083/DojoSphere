@@ -228,6 +228,119 @@ describe('competitors.repository', () => {
     expect(getCompetitors()[0]?.weightClass).toBeNull()
   })
 
+  it('persists all detail fields when provided', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Detail Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      gender: 'm',
+      birthDate: '2011-04-12',
+      nationality: 'de',
+      passNumber: 'JP-000142',
+      gradeId: 'a1000000-0000-4000-8000-000000000001',
+      licenseNumber: 'WL-1',
+      contactPhone: '+49 1',
+      coach: 'Coach'
+    })
+
+    expect(competitor).toMatchObject({
+      gender: 'm',
+      birthDate: '2011-04-12',
+      nationality: 'DE',
+      passNumber: 'JP-000142',
+      gradeId: 'a1000000-0000-4000-8000-000000000001',
+      licenseNumber: 'WL-1',
+      contactPhone: '+49 1',
+      coach: 'Coach'
+    })
+  })
+
+  it('falls back to defaults for invalid or empty detail fields', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_GENDER, DEFAULT_NATIONALITY, DEFAULT_BIRTH_DATE, DEFAULT_PASS_NUMBER } =
+      await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Default Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      gender: 'x' as never,
+      birthDate: '   ',
+      nationality: '  ',
+      passNumber: '   ',
+      gradeId: '   ',
+      licenseNumber: '   ',
+      contactPhone: '   ',
+      coach: '   '
+    })
+
+    expect(competitor).toMatchObject({
+      gender: DEFAULT_GENDER,
+      nationality: DEFAULT_NATIONALITY,
+      birthDate: DEFAULT_BIRTH_DATE,
+      passNumber: DEFAULT_PASS_NUMBER,
+      gradeId: null,
+      licenseNumber: null,
+      contactPhone: null,
+      coach: null
+    })
+  })
+
+  it('updates detail fields without recording a field-name audit', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+
+    const { id: actorUserId } = addUser({ displayName: 'Detail Update Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka'
+    })
+
+    const updated = updateCompetitor(actorUserId, competitor.id, {
+      gender: 'd',
+      birthDate: '2010-01-01',
+      nationality: 'AT',
+      passNumber: 'JP-999',
+      gradeId: 'a1000000-0000-4000-8000-000000000001',
+      licenseNumber: 'WL-9',
+      contactPhone: '+43 9',
+      coach: 'Coach B'
+    })
+
+    expect(updated).toMatchObject({
+      gender: 'd',
+      birthDate: '2010-01-01',
+      nationality: 'AT',
+      passNumber: 'JP-999',
+      gradeId: 'a1000000-0000-4000-8000-000000000001',
+      licenseNumber: 'WL-9',
+      contactPhone: '+43 9',
+      coach: 'Coach B'
+    })
+
+    const auditCount = getDatabase()
+      .prepare(
+        `
+        SELECT COUNT(*) AS count
+        FROM authorization_audit_logs
+        WHERE entity_type = 'competitor' AND action = 'updated'
+      `
+      )
+      .get() as { count: number }
+
+    expect(auditCount.count).toBe(0)
+  })
+
   it('throws when creating a competitor with an empty given name', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')

@@ -5,10 +5,15 @@ import { requireActiveSession } from '@main/shared/security'
 
 import {
   addCompetitor,
+  type CreateCompetitorInput,
   deleteCompetitor,
   getCompetitors,
+  type UpdateCompetitorInput,
   updateCompetitor
 } from '../repository/competitors.repository'
+
+type AddCompetitorIpcInput = CreateCompetitorInput & { token: string }
+type UpdateCompetitorIpcInput = UpdateCompetitorInput & { token: string; id: string }
 
 /**
  * Registers IPC handlers for competitor lifecycle management.
@@ -20,52 +25,23 @@ export function registerCompetitorsIpc() {
     return getCompetitors()
   })
 
-  ipcMain.handle(
-    'competitors:add',
-    (
-      _event,
-      input: {
-        token: string
-        givenName: string
-        familyName: string
-        club?: string | null
-        weightClass?: string | null
-      }
-    ) => {
-      const session = requireActiveSession(input.token, getActiveSessionByToken)
+  ipcMain.handle('competitors:add', (_event, input: AddCompetitorIpcInput) => {
+    const session = requireActiveSession(input.token, getActiveSessionByToken)
+    const { token, ...competitor } = input
 
-      return addCompetitor(session.userId, {
-        givenName: input.givenName,
-        familyName: input.familyName,
-        club: input.club,
-        weightClass: input.weightClass
-      })
-    }
-  )
+    void token
 
-  ipcMain.handle(
-    'competitors:update',
-    (
-      _event,
-      input: {
-        token: string
-        id: string
-        givenName?: string
-        familyName?: string
-        club?: string | null
-        weightClass?: string | null
-      }
-    ) => {
-      const session = requireActiveSession(input.token, getActiveSessionByToken)
+    return addCompetitor(session.userId, competitor)
+  })
 
-      return updateCompetitor(session.userId, input.id, {
-        givenName: input.givenName,
-        familyName: input.familyName,
-        club: input.club,
-        weightClass: input.weightClass
-      })
-    }
-  )
+  ipcMain.handle('competitors:update', (_event, input: UpdateCompetitorIpcInput) => {
+    const session = requireActiveSession(input.token, getActiveSessionByToken)
+    const { token, id, ...competitor } = input
+
+    void token
+
+    return updateCompetitor(session.userId, id, competitor)
+  })
 
   ipcMain.handle('competitors:delete', (_event, input: { token: string; id: string }) => {
     const session = requireActiveSession(input.token, getActiveSessionByToken)

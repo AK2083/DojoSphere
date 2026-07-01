@@ -63,6 +63,7 @@ export default defineConfig({
         '**/*.spec.ts',
         '**/*.test.ts',
         '**/*.stories.ts',
+        '**/tests/e2e/**',
         '**/shared/lib/**',
         '**/node_modules/**',
         'src/renderer/app/**',

@@ -1,12 +1,34 @@
 import { nextTick } from 'vue'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createEmptyParticipantForm } from './participant-form-state'
 import { useParticipantForm } from './use-form'
 
-vi.mock('@shared/lib', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
+const pushMock = vi.fn()
+const createParticipantMock = vi.fn()
+const logErrorMock = vi.fn()
+let routerValue: { push: typeof pushMock } | undefined
+
+vi.mock('vue-router', () => ({
+  useRouter: () => routerValue
 }))
+
+vi.mock('@shared/lib', () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+  logError: (...args: unknown[]) => logErrorMock(...args)
+}))
+
+vi.mock('../service/save-participant', () => ({
+  createParticipant: (...args: unknown[]) => createParticipantMock(...args)
+}))
+
+beforeEach(() => {
+  pushMock.mockReset()
+  routerValue = { push: pushMock }
+  createParticipantMock.mockReset()
+  createParticipantMock.mockResolvedValue({ id: 'competitor-1' })
+  logErrorMock.mockReset()
+})
 
 describe('useParticipantForm', () => {
   it('starts with empty fields', () => {
@@ -36,7 +58,7 @@ describe('useParticipantForm', () => {
     expect(validateMock).toHaveBeenCalled()
   })
 
-  it('completes submit when validation succeeds', async () => {
+  it('saves the participant and navigates to the list when validation succeeds', async () => {
     const validateMock = vi.fn().mockResolvedValue({ valid: true })
     const participantForm = useParticipantForm()
     participantForm.setFormRef({ validate: validateMock })
@@ -44,6 +66,71 @@ describe('useParticipantForm', () => {
     await participantForm.submit()
 
     expect(validateMock).toHaveBeenCalled()
+    expect(createParticipantMock).toHaveBeenCalledWith(participantForm.fields.value)
+    expect(pushMock).toHaveBeenCalledWith({ name: 'participants' })
+    expect(participantForm.isSaving.value).toBe(false)
+  })
+
+  it('saves without navigating when no router is available', async () => {
+    routerValue = undefined
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    await participantForm.submit()
+
+    expect(createParticipantMock).toHaveBeenCalled()
+    expect(pushMock).not.toHaveBeenCalled()
+    expect(participantForm.saveErrorMessage.value).toBe('')
+  })
+
+  it('shows a save error and logs when persisting fails', async () => {
+    createParticipantMock.mockRejectedValueOnce(new Error('boom'))
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    await participantForm.submit()
+
+    expect(participantForm.saveErrorMessage.value).toBe(
+      'competitors.saveParticipant.form.saveError'
+    )
+    expect(pushMock).not.toHaveBeenCalled()
+    expect(logErrorMock).toHaveBeenCalled()
+    expect(participantForm.isSaving.value).toBe(false)
+  })
+
+  it('ignores concurrent submits while saving', async () => {
+    let resolveCreate: (() => void) | undefined
+    createParticipantMock.mockImplementationOnce(
+      () =>
+        new Promise<{ id: string }>((resolve) => {
+          resolveCreate = () => resolve({ id: 'competitor-1' })
+        })
+    )
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    const first = participantForm.submit()
+    await participantForm.submit()
+
+    expect(createParticipantMock).toHaveBeenCalledTimes(1)
+
+    resolveCreate?.()
+    await first
+  })
+
+  it('keeps submit enabled only when the form is valid and not saving', () => {
+    const participantForm = useParticipantForm()
+
+    participantForm.isFormValid.value = true
+
+    expect(participantForm.isSubmitDisabled.value).toBe(false)
+
+    participantForm.isSaving.value = true
+
+    expect(participantForm.isSubmitDisabled.value).toBe(true)
   })
 
   it('normalizes cleared grade selection to an empty string', async () => {

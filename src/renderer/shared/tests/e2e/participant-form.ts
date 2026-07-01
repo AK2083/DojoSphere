@@ -32,9 +32,7 @@ export async function chooseParticipantSelectOption(
   optionLabel: string,
   options: { exact?: boolean } = {}
 ): Promise<void> {
-  await page
-    .getByRole('option', { name: optionLabel, exact: options.exact ?? true })
-    .click()
+  await page.getByRole('option', { name: optionLabel, exact: options.exact ?? true }).click()
 }
 
 /**

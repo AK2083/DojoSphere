@@ -10,8 +10,16 @@ import ParticipantOverviewTable from './ParticipantOverviewTable.vue'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
-const { loading, tableItems, headers, sortBy, handleAdd, handleEdit, handleDelete } =
-  useParticipantOverview()
+const {
+  loading,
+  loadErrorMessage,
+  tableItems,
+  headers,
+  sortBy,
+  handleAdd,
+  handleEdit,
+  handleDelete
+} = useParticipantOverview()
 
 const isMobile = computed(() => smAndDown.value)
 </script>
@@ -23,6 +31,16 @@ const isMobile = computed(() => smAndDown.value)
     role="region"
     :aria-label="t(translationKeys.table.ariaLabel)"
   >
+    <v-alert
+      v-if="loadErrorMessage"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      class="mb-4"
+      role="alert"
+    >
+      {{ loadErrorMessage }}
+    </v-alert>
     <ParticipantOverviewMobile
       v-if="isMobile"
       v-model:sort-by="sortBy"

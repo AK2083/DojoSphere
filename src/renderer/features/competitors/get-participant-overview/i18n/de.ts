@@ -25,8 +25,11 @@ export default {
   },
   gender: {
     female: 'Weiblich',
-    male: 'Männlich'
+    male: 'Männlich',
+    diverse: 'Divers'
   },
+  emptyGrade: '—',
+  loadError: 'Die Teilnehmer konnten nicht geladen werden.',
   actions: {
     add: 'Teilnehmer hinzufügen',
     edit: 'Teilnehmer bearbeiten',

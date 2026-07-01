@@ -21,6 +21,8 @@ const { smAndDown } = useDisplay()
 const {
   fields,
   isFormValid,
+  isSaving,
+  saveErrorMessage,
   isSubmitDisabled,
   isWeightClassRequired,
   genderOptions,
@@ -75,6 +77,16 @@ function openBirthDatePicker(): void {
       <v-card-text class="d-flex flex-column ga-3">
         <v-alert type="info" variant="tonal" density="comfortable">
           {{ t(translationKeys.form.hint) }}
+        </v-alert>
+
+        <v-alert
+          v-if="saveErrorMessage"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          role="alert"
+        >
+          {{ saveErrorMessage }}
         </v-alert>
 
         <p class="text-body-2 text-medium-emphasis mb-0">
@@ -269,6 +281,7 @@ function openBirthDatePicker(): void {
               color="primary"
               density="default"
               :disabled="isSubmitDisabled"
+              :loading="isSaving"
               :icon="isMobile"
               :prepend-icon="isMobile ? undefined : mdiContentSave"
               :aria-label="isMobile ? saveLabel : undefined"

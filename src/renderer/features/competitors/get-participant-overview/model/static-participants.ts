@@ -1,5 +1,7 @@
-/** Participant gender code for i18n lookup. */
-export type ParticipantGender = 'female' | 'male'
+import type { CompetitorGender } from '@shared/types/electron-api'
+
+/** Participant gender code stored in `competitors.gender`. */
+export type ParticipantGender = CompetitorGender
 
 /** Static participant row for UI prototyping without backend integration. */
 export interface ParticipantRow {
@@ -26,7 +28,7 @@ export const STATIC_PARTICIPANTS: ParticipantRow[] = [
     id: 'participant-1',
     givenName: 'Yuki',
     familyName: 'Tanaka',
-    gender: 'male',
+    gender: 'm',
     birthDate: '2011-04-12',
     club: 'Dojo Nord',
     nationality: 'DE',
@@ -43,7 +45,7 @@ export const STATIC_PARTICIPANTS: ParticipantRow[] = [
     id: 'participant-2',
     givenName: 'Anna',
     familyName: 'Weber',
-    gender: 'female',
+    gender: 'f',
     birthDate: '2013-08-03',
     club: 'JC West',
     nationality: 'DE',
@@ -60,7 +62,7 @@ export const STATIC_PARTICIPANTS: ParticipantRow[] = [
     id: 'participant-3',
     givenName: 'Leo',
     familyName: 'Martin',
-    gender: 'male',
+    gender: 'm',
     birthDate: '2009-11-21',
     club: 'SV Süd',
     nationality: 'AT',

@@ -60,6 +60,7 @@ export default {
     flexibleWeightHint:
       'This age class uses flexible weights. Weight class selection is not required for registration.',
     requiredFieldsLegend: 'Fields marked with * are required.',
+    saveError: 'The participant could not be saved. Please try again.',
     selectAgeClassFirst: 'Select an age class first to choose a weight class.',
     fields: {
       givenName: 'Given name',

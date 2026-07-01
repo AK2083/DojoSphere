@@ -19,8 +19,23 @@ import {
 import { getDatabase, runInTransaction } from '@main/shared/database'
 import { withDbErrorLogging } from '@main/shared/logging'
 
+/** Gender codes stored in `competitors.gender`. */
+export type CompetitorGender = 'd' | 'f' | 'm'
+
+/** Detail fields shared by create and update inputs. */
+type CompetitorDetailInput = {
+  gender?: CompetitorGender | null
+  birthDate?: string | null
+  nationality?: string | null
+  passNumber?: string | null
+  gradeId?: string | null
+  licenseNumber?: string | null
+  contactPhone?: string | null
+  coach?: string | null
+}
+
 /** Input for creating a competitor record. */
-export type CreateCompetitorInput = {
+export type CreateCompetitorInput = CompetitorDetailInput & {
   givenName: string
   familyName: string
   club?: string | null
@@ -31,7 +46,7 @@ export type CreateCompetitorInput = {
 }
 
 /** Partial input for updating a competitor record. */
-export type UpdateCompetitorInput = {
+export type UpdateCompetitorInput = CompetitorDetailInput & {
   givenName?: string
   familyName?: string
   club?: string | null
@@ -46,11 +61,19 @@ export type CompetitorRecord = {
   id: string
   givenName: string
   familyName: string
+  gender: CompetitorGender
+  birthDate: string
+  nationality: string
+  passNumber: string
   club: string | null
   weightClass: string | null
+  licenseNumber: string | null
+  contactPhone: string | null
+  coach: string | null
   clubId: string
   weightClassId: string
   ageClassId: string
+  gradeId: string | null
   createdAt: string
   updatedAt: string | null
 }
@@ -65,9 +88,17 @@ const COMPETITOR_SELECT = `
     c.id,
     c.given_name AS givenName,
     c.family_name AS familyName,
+    c.gender AS gender,
+    c.birth_date AS birthDate,
+    c.nationality AS nationality,
+    c.pass_number AS passNumber,
     c.club_id AS clubId,
     c.weight_class_id AS weightClassId,
     c.age_class_id AS ageClassId,
+    c.grade_id AS gradeId,
+    c.license_number AS licenseNumber,
+    c.contact_phone AS contactPhone,
+    c.coach AS coach,
     cl.name AS club,
     wc.max_weight_kg AS maxWeightKg,
     wc.min_weight_kg AS minWeightKg,
@@ -217,6 +248,38 @@ function resolveWeightClassId(
   return minusMatch?.id ?? DEFAULT_WEIGHT_CLASS_ID
 }
 
+const GENDER_CODES: ReadonlySet<CompetitorGender> = new Set(['f', 'm', 'd'])
+
+function normalizeGender(gender?: CompetitorGender | null): CompetitorGender {
+  const value = gender?.trim() as CompetitorGender | undefined
+
+  return value && GENDER_CODES.has(value) ? value : DEFAULT_GENDER
+}
+
+function normalizeBirthDate(birthDate?: string | null): string {
+  const trimmed = birthDate?.trim()
+
+  return trimmed || DEFAULT_BIRTH_DATE
+}
+
+function normalizeNationality(nationality?: string | null): string {
+  const trimmed = nationality?.trim()
+
+  return trimmed ? trimmed.toUpperCase() : DEFAULT_NATIONALITY
+}
+
+function normalizePassNumber(passNumber?: string | null): string {
+  const trimmed = passNumber?.trim()
+
+  return trimmed || DEFAULT_PASS_NUMBER
+}
+
+function normalizeOptionalText(value?: string | null): string | null {
+  const trimmed = value?.trim()
+
+  return trimmed ? trimmed : null
+}
+
 function getCompetitorById(competitorId: string): CompetitorRecord | null {
   const db = getDatabase()
 
@@ -265,6 +328,10 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
   const ageClassId = input.ageClassId?.trim() || DEFAULT_AGE_CLASS_ID
   const clubId = resolveClubId(db, input.club, input.clubId)
   const weightClassId = resolveWeightClassId(db, input.weightClass, input.weightClassId, ageClassId)
+  const gradeId = normalizeOptionalText(input.gradeId)
+  const licenseNumber = normalizeOptionalText(input.licenseNumber)
+  const contactPhone = normalizeOptionalText(input.contactPhone)
+  const coach = normalizeOptionalText(input.coach)
 
   return withDbErrorLogging('competitors', 'create', () => {
     runInTransaction(db, () => {
@@ -280,21 +347,29 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
         nationality,
         weight_class_id,
         age_class_id,
-        pass_number
+        pass_number,
+        grade_id,
+        license_number,
+        contact_phone,
+        coach
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
       ).run(
         id,
         givenName,
         familyName,
-        DEFAULT_GENDER,
-        DEFAULT_BIRTH_DATE,
+        normalizeGender(input.gender),
+        normalizeBirthDate(input.birthDate),
         clubId,
-        DEFAULT_NATIONALITY,
+        normalizeNationality(input.nationality),
         weightClassId,
         ageClassId,
-        DEFAULT_PASS_NUMBER
+        normalizePassNumber(input.passNumber),
+        gradeId,
+        licenseNumber,
+        contactPhone,
+        coach
       )
 
       recordCompetitorCreated({ actorUserId, competitorId: id })
@@ -349,6 +424,28 @@ export function updateCompetitor(
     ageClassId: nextAgeClassId
   }
 
+  const nextDetails = {
+    gender: input.gender !== undefined ? normalizeGender(input.gender) : existing.gender,
+    birthDate:
+      input.birthDate !== undefined ? normalizeBirthDate(input.birthDate) : existing.birthDate,
+    nationality:
+      input.nationality !== undefined
+        ? normalizeNationality(input.nationality)
+        : existing.nationality,
+    passNumber:
+      input.passNumber !== undefined ? normalizePassNumber(input.passNumber) : existing.passNumber,
+    gradeId: input.gradeId !== undefined ? normalizeOptionalText(input.gradeId) : existing.gradeId,
+    licenseNumber:
+      input.licenseNumber !== undefined
+        ? normalizeOptionalText(input.licenseNumber)
+        : existing.licenseNumber,
+    contactPhone:
+      input.contactPhone !== undefined
+        ? normalizeOptionalText(input.contactPhone)
+        : existing.contactPhone,
+    coach: input.coach !== undefined ? normalizeOptionalText(input.coach) : existing.coach
+  }
+
   if (!nextValues.givenName) {
     throw new Error('Given name must not be empty')
   }
@@ -361,7 +458,11 @@ export function updateCompetitor(
     (field) => nextValues[field] !== existing[field]
   )
 
-  if (changedFields.length === 0) {
+  const detailChanged = (Object.keys(nextDetails) as Array<keyof typeof nextDetails>).some(
+    (field) => nextDetails[field] !== existing[field]
+  )
+
+  if (changedFields.length === 0 && !detailChanged) {
     return existing
   }
 
@@ -378,6 +479,14 @@ export function updateCompetitor(
         club_id = ?,
         weight_class_id = ?,
         age_class_id = ?,
+        gender = ?,
+        birth_date = ?,
+        nationality = ?,
+        pass_number = ?,
+        grade_id = ?,
+        license_number = ?,
+        contact_phone = ?,
+        coach = ?,
         updated_at = datetime('now')
       WHERE id = ?
     `
@@ -387,14 +496,24 @@ export function updateCompetitor(
         nextValues.clubId,
         nextValues.weightClassId,
         nextValues.ageClassId,
+        nextDetails.gender,
+        nextDetails.birthDate,
+        nextDetails.nationality,
+        nextDetails.passNumber,
+        nextDetails.gradeId,
+        nextDetails.licenseNumber,
+        nextDetails.contactPhone,
+        nextDetails.coach,
         competitorId
       )
 
-      recordCompetitorUpdated({
-        actorUserId,
-        competitorId,
-        changedFields: changedFields.map((field) => AUDIT_FIELD_NAME_MAP[field])
-      })
+      if (changedFields.length > 0) {
+        recordCompetitorUpdated({
+          actorUserId,
+          competitorId,
+          changedFields: changedFields.map((field) => AUDIT_FIELD_NAME_MAP[field])
+        })
+      }
     })
 
     const competitor = getCompetitorById(competitorId)
