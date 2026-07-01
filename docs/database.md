@@ -30,6 +30,16 @@ To add a migration:
 
 Migrations must not delete user data without an explicit, documented decision.
 
+## Domain schemas
+
+| Domain | Doc | Tables |
+| ------ | --- | ------ |
+| Participants | [participants-schema.md](./database/participants-schema.md) | `competitors` |
+| Clubs (federation hierarchy) | [clubs-schema.md](./database/clubs-schema.md) | `countries`, `associations`, `regional_associations`, `districts`, `clubs`, `club_identifiers`, `club_addresses`, `club_contacts` |
+| Grades (Kyu/Dan) | [grades-schema.md](./database/grades-schema.md) | `grades` |
+| Age classes (DJB) | [age-classes-schema.md](./database/age-classes-schema.md) | `age_classes` |
+| Weight classes (DJB) | [weight-classes-schema.md](./database/weight-classes-schema.md) | `weight_classes` |
+
 ## IPC API
 
 The preload script (`src/preload/preload.ts`) exposes these methods on `window.api`:

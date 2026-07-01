@@ -54,9 +54,178 @@ describe('competitors.repository', () => {
     expect(competitor).toMatchObject({
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: null,
-      weightClass: null
+      club: 'Unknown',
+      weightClass: '-34'
     })
+  })
+
+  it('resolves plus-prefixed weight classes', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Plus Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '+66'
+    })
+
+    expect(competitor.weightClass).toBe('+66')
+  })
+
+  it('accepts explicit club and weight class ids', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { UNKNOWN_CLUB_ID, DEFAULT_WEIGHT_CLASS_ID } =
+      await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Id Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      clubId: UNKNOWN_CLUB_ID,
+      weightClassId: DEFAULT_WEIGHT_CLASS_ID
+    })
+
+    expect(competitor.clubId).toBe(UNKNOWN_CLUB_ID)
+    expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('reuses an existing club when the name already exists', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Club Actor', userType: 'system' })
+
+    const first = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      club: 'Tokyo Dojo'
+    })
+    const second = addCompetitor(actorUserId, {
+      givenName: 'Hana',
+      familyName: 'Sato',
+      club: 'Tokyo Dojo'
+    })
+
+    expect(second.clubId).toBe(first.clubId)
+  })
+
+  it('falls back to the default weight class for unparseable values', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_WEIGHT_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Fallback Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: 'open'
+    })
+
+    expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+    expect(competitor.weightClass).toBe('-34')
+  })
+
+  it('falls back when the weight class string is only a sign', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_WEIGHT_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Sign Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '+'
+    })
+
+    expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('falls back to the default weight class when a plus class is unknown', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_WEIGHT_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Plus Fallback Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '+999'
+    })
+
+    expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('falls back to the default weight class when a minus class is unknown', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_WEIGHT_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Minus Fallback Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '-999'
+    })
+
+    expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('formats decimal weight classes without trailing zeros', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, getCompetitors } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+
+    const { id: actorUserId } = addUser({ displayName: 'Decimal Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '-60'
+    })
+    const db = getDatabase()
+
+    db.prepare(`UPDATE weight_classes SET max_weight_kg = 60.5 WHERE id = ?`).run(
+      competitor.weightClassId
+    )
+
+    expect(getCompetitors()[0]?.weightClass).toBe('-60.5')
+  })
+
+  it('returns null weight class display when limits are missing', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, getCompetitors } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+
+    const { id: actorUserId } = addUser({ displayName: 'Display Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '-60'
+    })
+    const db = getDatabase()
+
+    db.exec('PRAGMA foreign_keys = OFF')
+    db.prepare(`UPDATE competitors SET weight_class_id = 'missing-weight-class' WHERE id = ?`).run(
+      competitor.id
+    )
+
+    expect(getCompetitors()[0]?.weightClass).toBeNull()
   })
 
   it('throws when creating a competitor with an empty given name', async () => {
@@ -111,7 +280,7 @@ describe('competitors.repository', () => {
           const result = statement.run(...args)
 
           vi.spyOn(db, 'prepare').mockImplementation((innerSql: string) => {
-            if (innerSql.includes('FROM competitors') && innerSql.includes('WHERE id = ?')) {
+            if (innerSql.includes('FROM competitors') && innerSql.includes('WHERE c.id = ?')) {
               return {
                 get: () => undefined
               } as never
@@ -334,7 +503,7 @@ describe('competitors.repository', () => {
           const result = statement.run(...args)
 
           vi.spyOn(db, 'prepare').mockImplementation((innerSql: string) => {
-            if (innerSql.includes('FROM competitors') && innerSql.includes('WHERE id = ?')) {
+            if (innerSql.includes('FROM competitors') && innerSql.includes('WHERE c.id = ?')) {
               return {
                 get: () => undefined
               } as never
