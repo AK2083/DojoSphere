@@ -26,34 +26,51 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
     class="participant-overview-actions"
     :aria-label="t(translationKeys.toolbar.ariaLabel)"
   >
-    <v-tooltip :text="addLabel" location="top">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          v-bind="tooltipProps"
-          rounded
-          :icon="isMobile"
-          :prepend-icon="isMobile ? undefined : mdiPlus"
-          :aria-label="isMobile ? addLabel : undefined"
-          @click="emit('add')"
-        >
-          <v-icon v-if="isMobile" :icon="mdiPlus" aria-hidden="true" />
-          <span v-if="!isMobile">{{ addLabel }}</span>
-        </v-btn>
-      </template>
-    </v-tooltip>
-    <v-spacer />
-    <v-tooltip :text="filterLabel" location="top">
-      <template #activator="{ props: tooltipProps }">
-        <v-btn
-          v-bind="tooltipProps"
-          icon
-          :aria-label="filterLabel"
-          class="participant-overview-actions__placeholder-action"
-        >
-          <v-icon :icon="mdiTune" aria-hidden="true" />
-        </v-btn>
-      </template>
-    </v-tooltip>
+    <div class="participant-overview-actions__inner">
+      <div class="participant-overview-actions__start">
+        <v-tooltip :text="addLabel" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon-btn
+              v-if="isMobile"
+              v-bind="tooltipProps"
+              :icon="mdiPlus"
+              variant="text"
+              :aria-label="addLabel"
+              @click="emit('add')"
+            />
+            <v-btn
+              v-else
+              v-bind="tooltipProps"
+              variant="text"
+              rounded
+              class="participant-overview-actions__add"
+              @click="emit('add')"
+            >
+              <span class="participant-overview-actions__add-content">
+                <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
+                <span>{{ addLabel }}</span>
+              </span>
+            </v-btn>
+          </template>
+        </v-tooltip>
+      </div>
+
+      <v-spacer />
+
+      <div class="participant-overview-actions__end">
+        <v-tooltip :text="filterLabel" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon-btn
+              v-bind="tooltipProps"
+              :icon="mdiTune"
+              variant="text"
+              :aria-label="filterLabel"
+              class="participant-overview-actions__placeholder-action"
+            />
+          </template>
+        </v-tooltip>
+      </div>
+    </div>
   </v-toolbar>
 </template>
 
@@ -63,6 +80,36 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
   border-radius: 12px;
   background: rgb(var(--v-theme-surface));
   overflow: hidden;
+}
+
+.participant-overview-actions :deep(.v-toolbar__content) {
+  padding: 0;
+}
+
+.participant-overview-actions__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding-inline: 1.25rem;
+}
+
+.participant-overview-actions__start,
+.participant-overview-actions__end {
+  display: flex;
+  align-items: center;
+}
+
+.participant-overview-actions__add {
+  min-width: 0;
+  padding-inline: 0;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.participant-overview-actions__add-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .participant-overview-actions__placeholder-action {

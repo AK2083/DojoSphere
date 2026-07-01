@@ -80,36 +80,30 @@ function detailsPanelId(): string {
       <div class="participant-entry__actions">
         <v-tooltip :text="t(translationKeys.actions.edit)" location="bottom">
           <template #activator="{ props: tooltipProps }">
-            <v-btn
+            <v-icon-btn
               v-bind="tooltipProps"
-              icon
-              size="small"
+              :icon="mdiPencil"
+              variant="text"
               :aria-label="
                 t(translationKeys.actions.ariaEdit, { name: participantLabel(participant) })
               "
               @click="emit('edit', participant)"
-            >
-              <v-icon :icon="mdiPencil" aria-hidden="true" />
-            </v-btn>
+            />
           </template>
         </v-tooltip>
 
         <v-tooltip :text="t(translationKeys.actions.delete)" location="bottom">
           <template #activator="{ props: tooltipProps }">
-            <v-btn
+            <v-icon-btn
               v-bind="tooltipProps"
-              icon
-              size="small"
+              :icon="mdiDelete"
               variant="text"
               color="error"
-              class="participant-entry__delete-btn"
               :aria-label="
                 t(translationKeys.actions.ariaDelete, { name: participantLabel(participant) })
               "
               @click="emit('delete', participant)"
-            >
-              <v-icon :icon="mdiDelete" aria-hidden="true" />
-            </v-btn>
+            />
           </template>
         </v-tooltip>
       </div>
@@ -215,14 +209,6 @@ function detailsPanelId(): string {
   display: flex;
   flex-shrink: 0;
   gap: 0.25rem;
-}
-
-.participant-entry__delete-btn {
-  color: rgb(var(--v-theme-error));
-}
-
-.participant-entry__delete-btn :deep(.v-icon) {
-  opacity: 1;
 }
 
 .participant-entry__summary,
