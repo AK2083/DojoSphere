@@ -6,6 +6,7 @@ import {
   AGE_CLASS_SEEDS,
   CLUB_SEEDS,
   GRADE_SEEDS,
+  GRADING_SYSTEM_SEEDS,
   NATIONALITY_CODES,
   WEIGHT_CLASS_SEEDS
 } from '../model/static-reference-data'
@@ -22,9 +23,13 @@ function resolveReferenceLabelKey(labelKey: string): string {
  * Builds select options and labels for the participant form.
  *
  * @param ageClassId - Currently selected age class id.
+ * @param gradingSystemId - Currently selected grading system id.
  * @returns Localized select options and derived form state.
  */
-export function useParticipantFormOptions(ageClassId: MaybeRef<string>) {
+export function useParticipantFormOptions(
+  ageClassId: MaybeRef<string>,
+  gradingSystemId: MaybeRef<string>
+) {
   const { t } = useTranslation()
 
   const genderOptions = computed(() => [
@@ -58,13 +63,26 @@ export function useParticipantFormOptions(ageClassId: MaybeRef<string>) {
     }))
   )
 
-  const gradeOptions = computed(() => [
-    { title: t(translationKeys.reference.gradeNone), value: '' },
-    ...GRADE_SEEDS.map((grade) => ({
-      title: t(resolveReferenceLabelKey(grade.labelKey)),
-      value: grade.id
+  const gradingSystemOptions = computed(() =>
+    GRADING_SYSTEM_SEEDS.map((system) => ({
+      title: t(resolveReferenceLabelKey(system.nameKey)),
+      value: system.id
     }))
-  ])
+  )
+
+  const gradeOptions = computed(() => {
+    const currentGradingSystemId = unref(gradingSystemId)
+
+    return [
+      { title: t(translationKeys.reference.gradeNone), value: '' },
+      ...GRADE_SEEDS.filter((grade) => grade.gradingSystemId === currentGradingSystemId).map(
+        (grade) => ({
+          title: t(resolveReferenceLabelKey(grade.labelKey)),
+          value: grade.id
+        })
+      )
+    ]
+  })
 
   const selectedAgeClass = computed(() =>
     AGE_CLASS_SEEDS.find((ageClass) => ageClass.id === unref(ageClassId))
@@ -99,6 +117,7 @@ export function useParticipantFormOptions(ageClassId: MaybeRef<string>) {
     clubOptions,
     nationalityOptions,
     ageClassOptions,
+    gradingSystemOptions,
     gradeOptions,
     weightClassOptions,
     isWeightClassRequired,

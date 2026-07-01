@@ -1,6 +1,7 @@
 import type { Competitor } from '@shared/types/electron-api'
 
-import { AGE_CLASS_SEEDS, GRADE_SEEDS } from '../../save-participant/model/static-reference-data'
+import { findGradeSeed } from '../../save-participant/model/grade-reference-data'
+import { AGE_CLASS_SEEDS } from '../../save-participant/model/static-reference-data'
 import overviewKeys from '../i18n/keys'
 import type { ParticipantRow } from './participant-row'
 
@@ -16,14 +17,27 @@ function resolveAgeClassLabel(t: Translate, ageClassId: string): string {
   return seed ? t(resolveReferenceLabelKey(seed.labelKey)) : ''
 }
 
-function resolveGradeLabel(t: Translate, gradeId: string | null): string {
+function resolveGradePresentation(t: Translate, gradeId: string | null) {
   if (!gradeId) {
-    return t(overviewKeys.emptyGrade)
+    return {
+      label: t(overviewKeys.emptyGrade),
+      beltColorToken: null
+    }
   }
 
-  const seed = GRADE_SEEDS.find((grade) => grade.id === gradeId)
+  const seed = findGradeSeed(gradeId)
 
-  return seed ? t(resolveReferenceLabelKey(seed.labelKey)) : t(overviewKeys.emptyGrade)
+  if (!seed) {
+    return {
+      label: t(overviewKeys.emptyGrade),
+      beltColorToken: null
+    }
+  }
+
+  return {
+    label: t(resolveReferenceLabelKey(seed.labelKey)),
+    beltColorToken: seed.beltColorToken
+  }
 }
 
 /**
@@ -34,6 +48,8 @@ function resolveGradeLabel(t: Translate, gradeId: string | null): string {
  * @returns Row shape consumed by the participant overview table.
  */
 export function mapCompetitorToRow(competitor: Competitor, t: Translate): ParticipantRow {
+  const grade = resolveGradePresentation(t, competitor.gradeId)
+
   return {
     id: competitor.id,
     createdAt: competitor.createdAt,
@@ -46,7 +62,8 @@ export function mapCompetitorToRow(competitor: Competitor, t: Translate): Partic
     weightClass: competitor.weightClass ?? '',
     ageClass: resolveAgeClassLabel(t, competitor.ageClassId),
     passNumber: competitor.passNumber,
-    grade: resolveGradeLabel(t, competitor.gradeId),
+    grade: grade.label,
+    gradeBeltColorToken: grade.beltColorToken,
     licenseNumber: competitor.licenseNumber ?? '',
     clubContactEmail: '',
     contactPhone: competitor.contactPhone ?? '',

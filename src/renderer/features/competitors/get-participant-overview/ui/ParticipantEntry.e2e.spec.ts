@@ -20,17 +20,19 @@ test.describe('ParticipantEntry', () => {
   test('shows summary fields and expandable details', async ({ page }) => {
     await gotoParticipantsPage(page, { withParticipants: true })
 
-    await expect(page.getByText('JP-000142')).toBeVisible()
+    const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
+
+    await expect(yukiCard.getByText('JP-000142')).toBeVisible()
     await expect(
-      page.getByRole('button', { name: 'Show additional details' }).first()
+      yukiCard.getByRole('button', { name: 'Show additional details' })
     ).toBeVisible()
 
-    await page.getByRole('button', { name: 'Show additional details' }).first().click()
+    await yukiCard.getByRole('button', { name: 'Show additional details' }).click()
 
     await expect(
-      page.getByRole('button', { name: 'Hide additional details' }).first()
+      yukiCard.getByRole('button', { name: 'Hide additional details' })
     ).toBeVisible()
-    await expect(page.getByText('S. Fischer').first()).toBeVisible()
+    await expect(yukiCard.getByText('S. Fischer')).toBeVisible()
   })
 
   test('exposes edit and delete actions with accessible names', async ({ page }) => {

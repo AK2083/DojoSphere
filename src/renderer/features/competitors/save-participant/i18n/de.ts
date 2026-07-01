@@ -22,7 +22,7 @@ const ageClasses = {
 }
 
 const grades = {
-  k: {
+  kyu: {
     '10': '10. Kyu',
     '9': '9. Kyu',
     '8': '8. Kyu',
@@ -34,7 +34,7 @@ const grades = {
     '2': '2. Kyu',
     '1': '1. Kyu'
   },
-  d: {
+  dan: {
     '1': '1. Dan',
     '2': '2. Dan',
     '3': '3. Dan',
@@ -46,6 +46,12 @@ const grades = {
     '9': '9. Dan',
     '10': '10. Dan'
   }
+}
+
+const gradingSystems = {
+  deDjb: 'DJB (Deutschland)',
+  atOjv: 'ÖJV (Österreich)',
+  kodokan: 'Kodokan (Japan)'
 }
 
 export default {
@@ -74,6 +80,7 @@ export default {
       weightClass: 'Gewichtsklasse',
       ageClass: 'Altersklasse',
       passNumber: 'Passnummer',
+      gradingSystem: 'Graduierungssystem',
       grade: 'Graduierung',
       licenseNumber: 'Wettkampflizenznummer',
       contactPhone: 'Telefon für Rückfragen',
@@ -129,6 +136,7 @@ export default {
       plus: 'über {weight} kg'
     },
     ageClasses,
+    gradingSystems,
     grades
   }
 }

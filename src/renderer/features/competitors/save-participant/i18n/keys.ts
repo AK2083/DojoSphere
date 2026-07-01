@@ -23,6 +23,7 @@ const translationKeys = {
       weightClass: 'competitors.saveParticipant.form.fields.weightClass',
       ageClass: 'competitors.saveParticipant.form.fields.ageClass',
       passNumber: 'competitors.saveParticipant.form.fields.passNumber',
+      gradingSystem: 'competitors.saveParticipant.form.fields.gradingSystem',
       grade: 'competitors.saveParticipant.form.fields.grade',
       licenseNumber: 'competitors.saveParticipant.form.fields.licenseNumber',
       contactPhone: 'competitors.saveParticipant.form.fields.contactPhone',

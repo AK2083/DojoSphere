@@ -1,6 +1,7 @@
 import type { Competitor } from '@shared/types/electron-api'
 import { describe, expect, it } from 'vitest'
 
+import { DE_DJB_SYSTEM_ID } from './grade-reference-data'
 import { mapCompetitorToFormState } from './map-competitor-to-form-state'
 
 function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
@@ -39,6 +40,7 @@ describe('mapCompetitorToFormState', () => {
       ageClassId: 'c2000000-0000-4000-8000-000000000003',
       weightClassId: 'b3000000-0000-4000-8000-000000000008',
       passNumber: 'JP-000142',
+      gradingSystemId: DE_DJB_SYSTEM_ID,
       gradeId: 'a1000000-0000-4000-8000-000000000001',
       licenseNumber: 'WL-2024-001',
       contactPhone: '+49 555 010201',

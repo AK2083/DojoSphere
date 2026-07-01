@@ -17,6 +17,7 @@ export interface ParticipantRow {
   ageClass: string
   passNumber: string
   grade: string
+  gradeBeltColorToken: string | null
   licenseNumber: string
   clubContactEmail: string
   contactPhone: string

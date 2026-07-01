@@ -4,6 +4,7 @@ import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createEmptyParticipantForm } from './participant-form-state'
+import { AT_OJV_SYSTEM_ID, DE_DJB_SYSTEM_ID, KODOKAN_SYSTEM_ID } from './grade-reference-data'
 import { useParticipantForm } from './use-form'
 
 const pushMock = vi.fn()
@@ -105,6 +106,54 @@ describe('useParticipantForm', () => {
     await nextTick()
 
     expect(fields.value.weightClassId).toBe('')
+  })
+
+  it('clears grade when grading system changes and grade does not belong', async () => {
+    const { fields } = useParticipantForm()
+
+    fields.value.gradingSystemId = DE_DJB_SYSTEM_ID
+    fields.value.gradeId = 'a1000000-0000-4000-8000-000000000001'
+    fields.value.gradingSystemId = KODOKAN_SYSTEM_ID
+    await nextTick()
+
+    expect(fields.value.gradeId).toBe('')
+  })
+
+  it('keeps grade when it belongs to the newly selected grading system', async () => {
+    const { fields } = useParticipantForm()
+    const atGradeId = 'a2000000-0000-4000-8000-000000000005'
+
+    fields.value.gradingSystemId = DE_DJB_SYSTEM_ID
+    fields.value.gradeId = 'a1000000-0000-4000-8000-000000000005'
+    fields.value.gradingSystemId = AT_OJV_SYSTEM_ID
+    fields.value.gradeId = atGradeId
+    await nextTick()
+
+    expect(fields.value.gradeId).toBe(atGradeId)
+  })
+
+  it('does not clear grade when grading system id is unchanged', async () => {
+    const { fields } = useParticipantForm()
+    const gradeId = 'a1000000-0000-4000-8000-000000000001'
+
+    fields.value.gradingSystemId = DE_DJB_SYSTEM_ID
+    fields.value.gradeId = gradeId
+    fields.value.gradingSystemId = DE_DJB_SYSTEM_ID
+    await nextTick()
+
+    expect(fields.value.gradeId).toBe(gradeId)
+  })
+
+  it('derives grading system when loading a participant in edit mode', async () => {
+    loadParticipantMock.mockResolvedValueOnce(
+      createCompetitor({ gradeId: 'a2000000-0000-4000-8000-000000000003' })
+    )
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    await flushPromises()
+
+    expect(participantForm.fields.value.gradingSystemId).toBe(AT_OJV_SYSTEM_ID)
+    expect(participantForm.fields.value.gradeId).toBe('a2000000-0000-4000-8000-000000000003')
   })
 
   it('stops submit when form validation fails', async () => {

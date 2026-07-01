@@ -11,9 +11,11 @@ import {
   COMPETITOR_PASS_NUMBER_MAX_LENGTH
 } from '@shared/domain/competitor-field-limits'
 import { useTranslation } from '@shared/lib'
+import JudoBeltAvatar from '@shared/ui/JudoBeltAvatar.vue'
 import RequiredFieldLabel from '@shared/ui/RequiredFieldLabel.vue'
 
 import translationKeys from '../i18n/keys'
+import { findGradeSeed } from '../model/grade-reference-data'
 import { useParticipantForm } from '../model/use-form'
 
 const props = defineProps<{
@@ -35,6 +37,7 @@ const {
   clubOptions,
   nationalityOptions,
   ageClassOptions,
+  gradingSystemOptions,
   gradeOptions,
   weightClassOptions,
   givenNameRules,
@@ -59,6 +62,14 @@ const birthDateFieldRef = ref<VTextField | null>(null)
 const isMobile = computed(() => smAndDown.value)
 const saveLabel = computed(() => t(translationKeys.actions.save))
 const resetLabel = computed(() => t(translationKeys.actions.reset))
+
+const selectedGradeBeltToken = computed(() => {
+  if (!fields.value.gradeId) {
+    return null
+  }
+
+  return findGradeSeed(fields.value.gradeId)?.beltColorToken ?? null
+})
 
 function openBirthDatePicker(): void {
   const input = birthDateFieldRef.value?.$el?.querySelector('input[type="date"]')
@@ -255,14 +266,31 @@ function openBirthDatePicker(): void {
             </template>
           </v-text-field>
 
-          <v-select
-            v-model="fields.gradeId"
-            :items="gradeOptions"
-            item-title="title"
-            item-value="value"
-            :label="t(translationKeys.form.fields.grade)"
-            clearable
-          />
+          <v-row density="comfortable">
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="fields.gradingSystemId"
+                :items="gradingSystemOptions"
+                item-title="title"
+                item-value="value"
+                :label="t(translationKeys.form.fields.gradingSystem)"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <div class="participant-form__grade-field">
+                <v-select
+                  v-model="fields.gradeId"
+                  :items="gradeOptions"
+                  item-title="title"
+                  item-value="value"
+                  :label="t(translationKeys.form.fields.grade)"
+                  class="participant-form__grade-select"
+                  clearable
+                />
+                <JudoBeltAvatar :color-token="selectedGradeBeltToken" />
+              </div>
+            </v-col>
+          </v-row>
 
           <v-text-field
             v-model="fields.licenseNumber"
@@ -358,6 +386,27 @@ function openBirthDatePicker(): void {
 
 .participant-form__birth-date-icon-btn :deep(.v-icon) {
   font-size: 1.125rem;
+}
+
+.participant-form__grade-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.participant-form__grade-select {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The grade select is optional (no rules), so drop its empty details row to
+   keep the avatar centered on the input control. */
+.participant-form__grade-select :deep(.v-input__details) {
+  display: none;
+}
+
+.participant-form__grade-field > .judo-belt-avatar {
+  flex-shrink: 0;
 }
 
 /* Vuetify may add its own asterisk when `required` is set — hide duplicate markers. */

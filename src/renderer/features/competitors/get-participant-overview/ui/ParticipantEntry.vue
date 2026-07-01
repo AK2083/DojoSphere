@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiPencil } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
+import JudoBeltSwatch from '@shared/ui/JudoBeltSwatch.vue'
 
 import translationKeys from '../i18n/keys'
 import {
@@ -112,7 +113,14 @@ function detailsPanelId(): string {
     <dl class="participant-entry__summary">
       <template v-for="header in summaryHeaders" :key="header.key">
         <dt>{{ header.title }}</dt>
-        <dd>{{ fieldValue(header.key) }}</dd>
+        <dd v-if="header.key === 'grade'" class="participant-entry__grade-value">
+          <JudoBeltSwatch
+            v-if="participant.gradeBeltColorToken"
+            :color-token="participant.gradeBeltColorToken"
+          />
+          {{ fieldValue(header.key) }}
+        </dd>
+        <dd v-else>{{ fieldValue(header.key) }}</dd>
       </template>
     </dl>
 
@@ -237,6 +245,12 @@ function detailsPanelId(): string {
   margin: 0;
   text-align: left;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+}
+
+.participant-entry__grade-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .participant-entry__details-toggle {

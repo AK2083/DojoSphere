@@ -1,5 +1,6 @@
 import type { Competitor } from '@shared/types/electron-api'
 
+import { resolveGradingSystemIdForGrade } from './grade-reference-data'
 import type { ParticipantFormState } from './participant-form-state'
 
 /**
@@ -19,6 +20,7 @@ export function mapCompetitorToFormState(competitor: Competitor): ParticipantFor
     ageClassId: competitor.ageClassId,
     weightClassId: competitor.weightClassId,
     passNumber: competitor.passNumber,
+    gradingSystemId: resolveGradingSystemIdForGrade(competitor.gradeId ?? ''),
     gradeId: competitor.gradeId ?? '',
     licenseNumber: competitor.licenseNumber ?? '',
     contactPhone: competitor.contactPhone ?? '',

@@ -21,6 +21,7 @@ import {
 import { createParticipant, loadParticipant, updateParticipant } from '../service/save-participant'
 import { mapCompetitorToFormState } from './map-competitor-to-form-state'
 import { createEmptyParticipantForm, type ParticipantFormState } from './participant-form-state'
+import { GRADE_SEEDS } from './static-reference-data'
 import { getWeightClassSeedsForAgeClass, useParticipantFormOptions } from './use-form-options'
 
 type UseParticipantFormOptions = {
@@ -46,6 +47,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
   const fields = ref(createEmptyParticipantForm())
   const initialFields = ref<ParticipantFormState | null>(null)
   const skipWeightClassReset = ref(false)
+  const skipGradeReset = ref(false)
 
   const participantId = computed(() => toValue(options.participantId))
   const isEditMode = computed(() => Boolean(participantId.value))
@@ -55,11 +57,15 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     clubOptions,
     nationalityOptions,
     ageClassOptions,
+    gradingSystemOptions,
     gradeOptions,
     weightClassOptions,
     isWeightClassRequired,
     selectedAgeClass
-  } = useParticipantFormOptions(computed(() => fields.value.ageClassId))
+  } = useParticipantFormOptions(
+    computed(() => fields.value.ageClassId),
+    computed(() => fields.value.gradingSystemId)
+  )
 
   const mapRule = (rule: Parameters<typeof mapParticipantFormRule>[0]) =>
     mapParticipantFormRule(rule, t)
@@ -101,9 +107,11 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
 
   async function applyFields(nextFields: ParticipantFormState): Promise<void> {
     skipWeightClassReset.value = true
+    skipGradeReset.value = true
     fields.value = { ...nextFields }
     await nextTick()
     skipWeightClassReset.value = false
+    skipGradeReset.value = false
   }
 
   watch(
@@ -114,6 +122,24 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
       }
 
       fields.value.weightClassId = ''
+    }
+  )
+
+  watch(
+    () => fields.value.gradingSystemId,
+    (nextGradingSystemId, previousGradingSystemId) => {
+      if (skipGradeReset.value || nextGradingSystemId === previousGradingSystemId) {
+        return
+      }
+
+      const gradeBelongsToSystem = GRADE_SEEDS.some(
+        (grade) =>
+          grade.id === fields.value.gradeId && grade.gradingSystemId === nextGradingSystemId
+      )
+
+      if (!gradeBelongsToSystem) {
+        fields.value.gradeId = ''
+      }
     }
   )
 
@@ -214,6 +240,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     clubOptions,
     nationalityOptions,
     ageClassOptions,
+    gradingSystemOptions,
     gradeOptions,
     weightClassOptions,
     givenNameRules,

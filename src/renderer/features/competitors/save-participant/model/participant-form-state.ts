@@ -1,6 +1,8 @@
 /** Gender codes stored in `competitors.gender` (`f` | `m` | `d`). */
 export type ParticipantGender = '' | 'd' | 'f' | 'm'
 
+import { DEFAULT_GRADING_SYSTEM_ID } from './grade-reference-data'
+
 /** Editable participant fields for the save form. */
 export type ParticipantFormState = {
   givenName: string
@@ -12,15 +14,13 @@ export type ParticipantFormState = {
   ageClassId: string
   weightClassId: string
   passNumber: string
+  gradingSystemId: string
   gradeId: string
   licenseNumber: string
   contactPhone: string
   coach: string
 }
 
-/**
- *
- */
 /**
  * Creates an empty participant form state.
  *
@@ -37,6 +37,7 @@ export function createEmptyParticipantForm(): ParticipantFormState {
     ageClassId: '',
     weightClassId: '',
     passNumber: '',
+    gradingSystemId: DEFAULT_GRADING_SYSTEM_ID,
     gradeId: '',
     licenseNumber: '',
     contactPhone: '',

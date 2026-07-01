@@ -10,13 +10,14 @@ export type AgeClassSeed = {
   weightMode: 'fixed' | 'flexible'
 }
 
-export type GradeSeed = {
-  id: string
-  gradeType: 'k' | 'd'
-  level: number
-  labelKey: string
-  sortOrder: number
-}
+export type { GradeSeed, GradingSystemSeed } from './grade-reference-data'
+export {
+  DEFAULT_GRADING_SYSTEM_ID,
+  findGradeSeed,
+  GRADE_SEEDS,
+  GRADING_SYSTEM_SEEDS,
+  resolveGradingSystemIdForGrade
+} from './grade-reference-data'
 
 export type WeightClassSeed = {
   id: string
@@ -176,149 +177,6 @@ export const AGE_CLASS_SEEDS: AgeClassSeed[] = [
     competitionForm: 'team',
     labelKey: 'ageClasses.djb2025.row18',
     weightMode: 'fixed'
-  }
-]
-
-export const GRADE_SEEDS: GradeSeed[] = [
-  {
-    id: 'a1000000-0000-4000-8000-000000000001',
-    gradeType: 'k',
-    level: 10,
-    labelKey: 'grades.k.10',
-    sortOrder: 1
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000002',
-    gradeType: 'k',
-    level: 9,
-    labelKey: 'grades.k.9',
-    sortOrder: 2
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000003',
-    gradeType: 'k',
-    level: 8,
-    labelKey: 'grades.k.8',
-    sortOrder: 3
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000004',
-    gradeType: 'k',
-    level: 7,
-    labelKey: 'grades.k.7',
-    sortOrder: 4
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000005',
-    gradeType: 'k',
-    level: 6,
-    labelKey: 'grades.k.6',
-    sortOrder: 5
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000006',
-    gradeType: 'k',
-    level: 5,
-    labelKey: 'grades.k.5',
-    sortOrder: 6
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000007',
-    gradeType: 'k',
-    level: 4,
-    labelKey: 'grades.k.4',
-    sortOrder: 7
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000008',
-    gradeType: 'k',
-    level: 3,
-    labelKey: 'grades.k.3',
-    sortOrder: 8
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000009',
-    gradeType: 'k',
-    level: 2,
-    labelKey: 'grades.k.2',
-    sortOrder: 9
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000a',
-    gradeType: 'k',
-    level: 1,
-    labelKey: 'grades.k.1',
-    sortOrder: 10
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000b',
-    gradeType: 'd',
-    level: 1,
-    labelKey: 'grades.d.1',
-    sortOrder: 11
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000c',
-    gradeType: 'd',
-    level: 2,
-    labelKey: 'grades.d.2',
-    sortOrder: 12
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000d',
-    gradeType: 'd',
-    level: 3,
-    labelKey: 'grades.d.3',
-    sortOrder: 13
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000e',
-    gradeType: 'd',
-    level: 4,
-    labelKey: 'grades.d.4',
-    sortOrder: 14
-  },
-  {
-    id: 'a1000000-0000-4000-8000-00000000000f',
-    gradeType: 'd',
-    level: 5,
-    labelKey: 'grades.d.5',
-    sortOrder: 15
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000010',
-    gradeType: 'd',
-    level: 6,
-    labelKey: 'grades.d.6',
-    sortOrder: 16
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000011',
-    gradeType: 'd',
-    level: 7,
-    labelKey: 'grades.d.7',
-    sortOrder: 17
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000012',
-    gradeType: 'd',
-    level: 8,
-    labelKey: 'grades.d.8',
-    sortOrder: 18
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000013',
-    gradeType: 'd',
-    level: 9,
-    labelKey: 'grades.d.9',
-    sortOrder: 19
-  },
-  {
-    id: 'a1000000-0000-4000-8000-000000000014',
-    gradeType: 'd',
-    level: 10,
-    labelKey: 'grades.d.10',
-    sortOrder: 20
   }
 ]
 
