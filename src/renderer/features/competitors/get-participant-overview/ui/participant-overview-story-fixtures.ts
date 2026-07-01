@@ -1,4 +1,4 @@
-import { STATIC_PARTICIPANTS } from '../model/static-participants'
+import type { ParticipantGender } from '../model/participant-row'
 import type {
   ParticipantOverviewHeader,
   ParticipantTableRow,
@@ -37,14 +37,36 @@ export const storyHeaders: ParticipantOverviewHeader[] = [
   { title: 'Actions', key: 'actions', sortable: false, align: 'end', minWidth: '6rem' }
 ]
 
-const genderLabels: Record<(typeof STATIC_PARTICIPANTS)[number]['gender'], string> = {
+const storyParticipantRows: Array<{
+  gender: ParticipantGender
+  givenName: string
+  familyName: string
+}> = [
+  { gender: 'm', givenName: 'Alex', familyName: 'Example' },
+  { gender: 'f', givenName: 'Sam', familyName: 'Sample' }
+]
+
+const genderLabels: Record<ParticipantGender, string> = {
   f: 'Female',
   m: 'Male',
   d: 'Diverse'
 }
 
-/** Static table rows for participant overview stories. */
-export const storyItems: ParticipantTableRow[] = STATIC_PARTICIPANTS.map((participant) => ({
-  ...participant,
-  gender: genderLabels[participant.gender]
+/** Storybook table rows with fictional placeholder data. */
+export const storyItems: ParticipantTableRow[] = storyParticipantRows.map((participant, index) => ({
+  id: `story-participant-${index + 1}`,
+  givenName: participant.givenName,
+  familyName: participant.familyName,
+  gender: genderLabels[participant.gender],
+  birthDate: '2011-04-12',
+  club: 'Example Club',
+  nationality: 'DE',
+  weightClass: '-60',
+  ageClass: 'U15',
+  passNumber: 'EX-000001',
+  grade: '3. Kyu',
+  licenseNumber: 'WL-000001',
+  clubContactEmail: 'contact@example.invalid',
+  contactPhone: '+49 555 010201',
+  coach: 'C. Example'
 }))

@@ -1,4 +1,6 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
+import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
+import { getPlaywrightParticipantId } from '@shared/tests/e2e/playwright-competitor-fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 test.describe('ParticipantFormPage', () => {
@@ -19,13 +21,18 @@ test.describe('ParticipantFormPage', () => {
   })
 
   test('renders edit page shell with back link and form', async ({ page }) => {
-    await page.goto('/#/participants/participant-1/edit')
+    await gotoParticipantsPage(page, { withParticipants: true })
+    const participantId = await getPlaywrightParticipantId(page, 'Yuki')
 
-    await expect(page).toHaveURL(/#\/participants\/participant-1\/edit$/)
+    await page.goto(`/#/participants/${participantId}/edit`)
+
+    await expect(page).toHaveURL(new RegExp(`#/participants/${participantId}/edit$`))
     await expect(page.getByRole('heading', { name: 'Edit participant', exact: true })).toBeVisible()
     await expect(
       page.getByRole('link', { name: 'Back to participant list', exact: true })
     ).toBeVisible()
     await expect(page.getByRole('form', { name: 'Participant form' })).toBeVisible()
+    await expect(page.getByLabel('Given name')).toHaveValue('Yuki')
+    await expect(page.getByLabel('Family name')).toHaveValue('Tanaka')
   })
 })

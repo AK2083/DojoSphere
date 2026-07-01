@@ -1,4 +1,6 @@
 import { nextTick } from 'vue'
+import type { Competitor } from '@shared/types/electron-api'
+import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createEmptyParticipantForm } from './participant-form-state'
@@ -6,8 +8,34 @@ import { useParticipantForm } from './use-form'
 
 const pushMock = vi.fn()
 const createParticipantMock = vi.fn()
+const updateParticipantMock = vi.fn()
+const loadParticipantMock = vi.fn()
 const logErrorMock = vi.fn()
 let routerValue: { push: typeof pushMock } | undefined
+
+function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
+  return {
+    id: 'competitor-1',
+    givenName: 'Yuki',
+    familyName: 'Tanaka',
+    gender: 'm',
+    birthDate: '2011-04-12',
+    nationality: 'DE',
+    passNumber: 'JP-000142',
+    club: 'Dojo Nord',
+    weightClass: '-60',
+    licenseNumber: 'WL-2024-001',
+    contactPhone: '+49 555 010201',
+    coach: 'S. Fischer',
+    clubId: '00000000-0000-0000-0000-000000000000',
+    weightClassId: 'b3000000-0000-4000-8000-000000000008',
+    ageClassId: 'c2000000-0000-4000-8000-000000000003',
+    gradeId: null,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: null,
+    ...overrides
+  }
+}
 
 vi.mock('vue-router', () => ({
   useRouter: () => routerValue
@@ -19,7 +47,9 @@ vi.mock('@shared/lib', () => ({
 }))
 
 vi.mock('../service/save-participant', () => ({
-  createParticipant: (...args: unknown[]) => createParticipantMock(...args)
+  createParticipant: (...args: unknown[]) => createParticipantMock(...args),
+  updateParticipant: (...args: unknown[]) => updateParticipantMock(...args),
+  loadParticipant: (...args: unknown[]) => loadParticipantMock(...args)
 }))
 
 beforeEach(() => {
@@ -27,6 +57,10 @@ beforeEach(() => {
   routerValue = { push: pushMock }
   createParticipantMock.mockReset()
   createParticipantMock.mockResolvedValue({ id: 'competitor-1' })
+  updateParticipantMock.mockReset()
+  updateParticipantMock.mockResolvedValue({ id: 'competitor-1' })
+  loadParticipantMock.mockReset()
+  loadParticipantMock.mockResolvedValue(createCompetitor())
   logErrorMock.mockReset()
 })
 
@@ -35,6 +69,31 @@ describe('useParticipantForm', () => {
     const { fields } = useParticipantForm()
 
     expect(fields.value).toEqual(createEmptyParticipantForm())
+  })
+
+  it('loads participant fields in edit mode', async () => {
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    await flushPromises()
+
+    expect(loadParticipantMock).toHaveBeenCalledWith('competitor-1')
+    expect(participantForm.isEditMode.value).toBe(true)
+    expect(participantForm.fields.value.givenName).toBe('Yuki')
+    expect(participantForm.fields.value.weightClassId).toBe('b3000000-0000-4000-8000-000000000008')
+    expect(participantForm.isLoading.value).toBe(false)
+  })
+
+  it('shows a load error when edit data cannot be fetched', async () => {
+    loadParticipantMock.mockRejectedValueOnce(new Error('boom'))
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    await flushPromises()
+
+    expect(participantForm.loadErrorMessage.value).toBe(
+      'competitors.saveParticipant.form.loadError'
+    )
+    expect(participantForm.isSubmitDisabled.value).toBe(true)
+    expect(logErrorMock).toHaveBeenCalled()
   })
 
   it('clears weight class when age class changes', async () => {
@@ -69,6 +128,21 @@ describe('useParticipantForm', () => {
     expect(createParticipantMock).toHaveBeenCalledWith(participantForm.fields.value)
     expect(pushMock).toHaveBeenCalledWith({ name: 'participants' })
     expect(participantForm.isSaving.value).toBe(false)
+  })
+
+  it('updates the participant in edit mode', async () => {
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    await flushPromises()
+    participantForm.setFormRef({ validate: validateMock })
+    participantForm.fields.value.givenName = 'Hana'
+
+    await participantForm.submit()
+
+    expect(updateParticipantMock).toHaveBeenCalledWith('competitor-1', participantForm.fields.value)
+    expect(createParticipantMock).not.toHaveBeenCalled()
+    expect(pushMock).toHaveBeenCalledWith({ name: 'participants' })
   })
 
   it('saves without navigating when no router is available', async () => {
@@ -121,6 +195,32 @@ describe('useParticipantForm', () => {
     await first
   })
 
+  it('keeps submit disabled while loading or after a load error', async () => {
+    let resolveLoad: (() => void) | undefined
+    loadParticipantMock.mockImplementationOnce(
+      () =>
+        new Promise<Competitor>((resolve) => {
+          resolveLoad = () => resolve(createCompetitor())
+        })
+    )
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    participantForm.isFormValid.value = true
+    expect(participantForm.isSubmitDisabled.value).toBe(true)
+
+    resolveLoad?.()
+    await flushPromises()
+
+    expect(participantForm.isSubmitDisabled.value).toBe(false)
+
+    loadParticipantMock.mockRejectedValueOnce(new Error('boom'))
+    const failedForm = useParticipantForm({ participantId: () => 'missing' })
+    failedForm.isFormValid.value = true
+    await flushPromises()
+
+    expect(failedForm.isSubmitDisabled.value).toBe(true)
+  })
+
   it('keeps submit enabled only when the form is valid and not saving', () => {
     const participantForm = useParticipantForm()
 
@@ -143,15 +243,29 @@ describe('useParticipantForm', () => {
     expect(fields.value.gradeId).toBe('')
   })
 
-  it('resets all fields and validation state', () => {
+  it('resets all fields and validation state', async () => {
     const resetValidation = vi.fn()
     const participantForm = useParticipantForm()
     participantForm.setFormRef({ resetValidation })
     participantForm.fields.value.givenName = 'Yuki'
 
-    participantForm.reset()
+    await participantForm.reset()
 
     expect(participantForm.fields.value.givenName).toBe('')
+    expect(resetValidation).toHaveBeenCalled()
+  })
+
+  it('restores loaded fields when reset in edit mode', async () => {
+    const resetValidation = vi.fn()
+    const participantForm = useParticipantForm({ participantId: () => 'competitor-1' })
+
+    await flushPromises()
+    participantForm.setFormRef({ resetValidation })
+    participantForm.fields.value.givenName = 'Changed'
+
+    await participantForm.reset()
+
+    expect(participantForm.fields.value.givenName).toBe('Yuki')
     expect(resetValidation).toHaveBeenCalled()
   })
 

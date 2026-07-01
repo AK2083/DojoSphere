@@ -1,56 +1,44 @@
 import type { Competitor, CreateCompetitorInput, ElectronAPI } from '@shared/types/electron-api'
 
-/** Fictional sample competitors for Playwright browser-only runs (no Electron SQLite). */
-const PLAYWRIGHT_SAMPLE_COMPETITORS: Array<{ id: string; input: CreateCompetitorInput }> = [
-  {
-    id: 'participant-1',
-    input: {
-      givenName: 'Yuki',
-      familyName: 'Tanaka',
-      gender: 'm',
-      birthDate: '2011-04-12',
-      nationality: 'DE',
-      passNumber: 'JP-000142',
-      club: 'Dojo Nord',
-      weightClass: '-60',
-      licenseNumber: 'WL-2024-001',
-      contactPhone: '+49 555 010201',
-      coach: 'S. Fischer'
+const PLAYWRIGHT_LOCAL_SESSIONS_KEY = 'dojosphere.e2e.localSessions'
+const PLAYWRIGHT_COMPETITORS_KEY = 'dojosphere.e2e.competitors'
+
+type LocalSessionEntry = { userId: string; displayName: string }
+
+function loadLocalSessions(): Map<string, LocalSessionEntry> {
+  try {
+    const raw = sessionStorage.getItem(PLAYWRIGHT_LOCAL_SESSIONS_KEY)
+
+    if (!raw) {
+      return new Map()
     }
-  },
-  {
-    id: 'participant-2',
-    input: {
-      givenName: 'Anna',
-      familyName: 'Weber',
-      gender: 'f',
-      birthDate: '2013-08-03',
-      nationality: 'DE',
-      passNumber: 'JP-000287',
-      club: 'JC West',
-      weightClass: '-52',
-      licenseNumber: 'WL-2024-014',
-      contactPhone: '+49 555 010202',
-      coach: 'M. Keller'
-    }
-  },
-  {
-    id: 'participant-3',
-    input: {
-      givenName: 'Leo',
-      familyName: 'Martin',
-      gender: 'm',
-      birthDate: '2009-11-21',
-      nationality: 'AT',
-      passNumber: 'JP-000391',
-      club: 'SV Süd',
-      weightClass: '-73',
-      licenseNumber: 'WL-2024-028',
-      contactPhone: '+43 555 010203',
-      coach: 'T. Brandt'
-    }
+
+    return new Map(JSON.parse(raw) as Array<[string, LocalSessionEntry]>)
+  } catch {
+    return new Map()
   }
-]
+}
+
+function saveLocalSessions(localSessions: Map<string, LocalSessionEntry>): void {
+  sessionStorage.setItem(
+    PLAYWRIGHT_LOCAL_SESSIONS_KEY,
+    JSON.stringify([...localSessions.entries()])
+  )
+}
+
+function loadCompetitors(): Competitor[] {
+  try {
+    const raw = sessionStorage.getItem(PLAYWRIGHT_COMPETITORS_KEY)
+
+    return raw ? (JSON.parse(raw) as Competitor[]) : []
+  } catch {
+    return []
+  }
+}
+
+function saveCompetitors(competitors: Competitor[]): void {
+  sessionStorage.setItem(PLAYWRIGHT_COMPETITORS_KEY, JSON.stringify(competitors))
+}
 
 /**
  * Whether the renderer runs in Playwright browser-only mode (without Electron).
@@ -101,19 +89,16 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
  * @param overrides - Optional API method overrides (e.g. custom `getOsUsername` in Storybook).
  */
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
-  const localSessions = new Map<string, { userId: string; displayName: string }>()
-  const competitors: Competitor[] = PLAYWRIGHT_SAMPLE_COMPETITORS.map(({ id, input }) =>
-    buildStubCompetitor(id, input)
-  )
-
   const api: ElectronAPI = {
     getUsers: async () => [],
     addUser: async () => ({ id: 'local-user-id', sessionToken: 'local-session-token' }),
     ensureLocalSession: async (displayName) => {
       const id = 'local-user-id'
       const sessionToken = 'local-session-token'
+      const localSessions = loadLocalSessions()
 
       localSessions.set(sessionToken, { userId: id, displayName })
+      saveLocalSessions(localSessions)
 
       return {
         id,
@@ -122,7 +107,7 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       }
     },
     getLocalSession: async (token) => {
-      const session = localSessions.get(token)
+      const session = loadLocalSessions().get(token)
 
       if (!session) {
         return null
@@ -145,6 +130,7 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     },
     revokeLocalSession: async () => undefined,
     updateUserDisplayName: async (token, displayName) => {
+      const localSessions = loadLocalSessions()
       const session = localSessions.get(token)
 
       if (!session) {
@@ -158,6 +144,7 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       }
 
       session.displayName = trimmedDisplayName
+      saveLocalSessions(localSessions)
 
       return {
         id: session.userId,
@@ -172,15 +159,27 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     recordError: async () => undefined,
     setDiagnosticsUploadPreferences: async () => undefined,
     auditRecord: async () => undefined,
-    getCompetitors: async () => [...competitors],
+    getCompetitors: async () => [...loadCompetitors()],
+    getCompetitor: async (_token, id) => {
+      const competitor = loadCompetitors().find((entry) => entry.id === id)
+
+      if (!competitor) {
+        throw new Error('Competitor not found')
+      }
+
+      return competitor
+    },
     addCompetitor: async (_token, input) => {
+      const competitors = loadCompetitors()
       const competitor = buildStubCompetitor(`competitor-${competitors.length + 1}`, input)
 
       competitors.push(competitor)
+      saveCompetitors(competitors)
 
       return competitor
     },
     updateCompetitor: async (_token, id, input) => {
+      const competitors = loadCompetitors()
       const index = competitors.findIndex((competitor) => competitor.id === id)
       const base =
         index >= 0
@@ -209,15 +208,18 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
 
       if (index >= 0) {
         competitors[index] = updated
+        saveCompetitors(competitors)
       }
 
       return updated
     },
     deleteCompetitor: async (_token, id) => {
+      const competitors = loadCompetitors()
       const index = competitors.findIndex((competitor) => competitor.id === id)
 
       if (index >= 0) {
         competitors.splice(index, 1)
+        saveCompetitors(competitors)
       }
     },
     getOsUsername: async () => 'TestUser',

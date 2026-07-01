@@ -39,6 +39,24 @@ describe('competitors.repository', () => {
     expect(getCompetitors()).toHaveLength(1)
   })
 
+  it('returns a competitor by id', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, getCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Get Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka'
+    })
+
+    expect(getCompetitor(competitor.id)).toMatchObject({
+      givenName: 'Yuki',
+      familyName: 'Tanaka'
+    })
+    expect(getCompetitor('missing-competitor-id')).toBeNull()
+  })
+
   it('stores optional fields with null defaults', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')

@@ -11,7 +11,7 @@ test.describe('ParticipantOverviewTable', () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
   })
 
   test('renders desktop table columns and toolbar actions', async ({ page }) => {

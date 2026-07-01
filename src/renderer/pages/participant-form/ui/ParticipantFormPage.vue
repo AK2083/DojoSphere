@@ -10,6 +10,10 @@ const route = useRoute()
 
 const isCreateMode = computed(() => route.name === 'participant-create')
 
+const participantId = computed(() =>
+  route.name === 'participant-edit' ? String(route.params.id) : undefined
+)
+
 const pageTitle = computed(() =>
   t(
     isCreateMode.value
@@ -33,6 +37,6 @@ const pageTitle = computed(() =>
       </v-btn>
       <h1 class="text-h5">{{ pageTitle }}</h1>
     </div>
-    <ParticipantForm />
+    <ParticipantForm :participant-id="participantId" />
   </v-container>
 </template>

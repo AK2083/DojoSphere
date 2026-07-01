@@ -5,7 +5,7 @@ import { logError, useTranslation } from '@shared/lib'
 import translationKeys from '../i18n/keys'
 import { deleteParticipant, loadParticipants } from '../service/load-participants'
 import { mapCompetitorToRow } from './map-competitor-to-row'
-import { type ParticipantGender, type ParticipantRow } from './static-participants'
+import { type ParticipantGender, type ParticipantRow } from './participant-row'
 
 const GENDER_TRANSLATION_KEY: Record<ParticipantGender, string> = {
   f: translationKeys.gender.female,
@@ -42,9 +42,9 @@ export type ParticipantTableRow = Omit<ParticipantRow, 'gender'> & {
 }
 
 /**
- * UI state for the participant overview table, including a simulated initial load.
+ * UI state for the participant overview table loaded from the local database.
  *
- * @returns Reactive table state and CRUD handlers for the UI prototype.
+ * @returns Reactive table state and CRUD handlers for the participant overview.
  */
 export function useParticipantOverview() {
   const { t } = useTranslation()

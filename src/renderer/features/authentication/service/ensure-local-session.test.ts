@@ -29,6 +29,7 @@ describe('ensureLocalSessionFromOsUsername', () => {
       setDiagnosticsUploadPreferences: vi.fn(),
       auditRecord: vi.fn(),
       getCompetitors: vi.fn(),
+      getCompetitor: vi.fn(),
       addCompetitor: vi.fn(),
       updateCompetitor: vi.fn(),
       deleteCompetitor: vi.fn(),

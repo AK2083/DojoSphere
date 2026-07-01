@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
+import { getPlaywrightParticipantId } from '@shared/tests/e2e/playwright-competitor-fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 async function givenNameCells(page: Page) {
@@ -11,10 +12,10 @@ test.describe('ParticipantOverview', () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
   })
 
-  test('loads static participants in the desktop table', async ({ page }) => {
+  test('loads participants in the desktop table', async ({ page }) => {
     await expect(page.getByRole('cell', { name: 'Yuki', exact: true })).toBeVisible()
     await expect(page.getByRole('cell', { name: 'Tanaka', exact: true })).toBeVisible()
     await expect(page.getByRole('cell', { name: 'Anna', exact: true })).toBeVisible()
@@ -35,10 +36,11 @@ test.describe('ParticipantOverview', () => {
     await expect(page.getByRole('heading', { name: 'Add participant', exact: true })).toBeVisible()
 
     await page.goto('/#/participants')
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
 
+    const yukiId = await getPlaywrightParticipantId(page, 'Yuki')
     await page.getByRole('button', { name: 'Edit Yuki Tanaka' }).click()
-    await expect(page).toHaveURL(/#\/participants\/participant-1\/edit$/)
+    await expect(page).toHaveURL(new RegExp(`#/participants/${yukiId}/edit$`))
     await expect(page.getByRole('heading', { name: 'Edit participant', exact: true })).toBeVisible()
   })
 })

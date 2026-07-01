@@ -9,7 +9,7 @@ test.describe('ParticipantsPage', () => {
 
   test('renders desktop page heading and overview region', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
 
     await expect(page).toHaveURL(/#\/participants$/)
     await expect(page.getByRole('heading', { name: 'Participant list', exact: true })).toBeVisible()
@@ -18,7 +18,7 @@ test.describe('ParticipantsPage', () => {
 
   test('renders mobile page heading and participant cards', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
 
     await expect(page.getByRole('heading', { name: 'Participant list', exact: true })).toBeVisible()
     await expect(page.getByText('Yuki Tanaka')).toBeVisible()

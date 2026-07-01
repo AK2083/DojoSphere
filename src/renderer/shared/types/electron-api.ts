@@ -142,6 +142,7 @@ export interface ElectronAPI {
   setDiagnosticsUploadPreferences: (preferences: DiagnosticsUploadPreferences) => Promise<void>
   auditRecord: (input: AuditRecordInput) => Promise<void>
   getCompetitors: (token: string) => Promise<Competitor[]>
+  getCompetitor: (token: string, id: string) => Promise<Competitor>
   addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>
   updateCompetitor: (token: string, id: string, input: UpdateCompetitorInput) => Promise<Competitor>
   deleteCompetitor: (token: string, id: string) => Promise<void>

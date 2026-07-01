@@ -16,13 +16,19 @@ import RequiredFieldLabel from '@shared/ui/RequiredFieldLabel.vue'
 import translationKeys from '../i18n/keys'
 import { useParticipantForm } from '../model/use-form'
 
+const props = defineProps<{
+  participantId?: string
+}>()
+
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
 const {
   fields,
   isFormValid,
   isSaving,
+  isLoading,
   saveErrorMessage,
+  loadErrorMessage,
   isSubmitDisabled,
   isWeightClassRequired,
   genderOptions,
@@ -46,7 +52,7 @@ const {
   setFormRef,
   submit,
   reset
-} = useParticipantForm()
+} = useParticipantForm({ participantId: () => props.participantId })
 
 const birthDateFieldRef = ref<VTextField | null>(null)
 
@@ -74,9 +80,21 @@ function openBirthDatePicker(): void {
     @submit.prevent="submit"
   >
     <v-card class="border px-4 py-4">
+      <v-progress-linear v-if="isLoading" indeterminate color="primary" class="mb-4" />
+
       <v-card-text class="d-flex flex-column ga-3">
         <v-alert type="info" variant="tonal" density="comfortable">
           {{ t(translationKeys.form.hint) }}
+        </v-alert>
+
+        <v-alert
+          v-if="loadErrorMessage"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          role="alert"
+        >
+          {{ loadErrorMessage }}
         </v-alert>
 
         <v-alert
@@ -93,182 +111,184 @@ function openBirthDatePicker(): void {
           {{ t(translationKeys.form.requiredFieldsLegend) }}
         </p>
 
-        <v-row density="comfortable">
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="fields.givenName"
-              :rules="givenNameRules"
-              :maxlength="COMPETITOR_NAME_MAX_LENGTH"
-              autocomplete="off"
-              required
-            >
-              <template #label>
-                <RequiredFieldLabel :text="t(translationKeys.form.fields.givenName)" />
-              </template>
-            </v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="fields.familyName"
-              :rules="familyNameRules"
-              :maxlength="COMPETITOR_NAME_MAX_LENGTH"
-              autocomplete="off"
-              required
-            >
-              <template #label>
-                <RequiredFieldLabel :text="t(translationKeys.form.fields.familyName)" />
-              </template>
-            </v-text-field>
-          </v-col>
-        </v-row>
+        <fieldset :disabled="isLoading" class="participant-form__fields">
+          <v-row density="comfortable">
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="fields.givenName"
+                :rules="givenNameRules"
+                :maxlength="COMPETITOR_NAME_MAX_LENGTH"
+                autocomplete="off"
+                required
+              >
+                <template #label>
+                  <RequiredFieldLabel :text="t(translationKeys.form.fields.givenName)" />
+                </template>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="fields.familyName"
+                :rules="familyNameRules"
+                :maxlength="COMPETITOR_NAME_MAX_LENGTH"
+                autocomplete="off"
+                required
+              >
+                <template #label>
+                  <RequiredFieldLabel :text="t(translationKeys.form.fields.familyName)" />
+                </template>
+              </v-text-field>
+            </v-col>
+          </v-row>
 
-        <v-select
-          v-model="fields.gender"
-          :items="genderOptions"
-          item-title="title"
-          item-value="value"
-          :rules="genderRules"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.gender)" />
-          </template>
-        </v-select>
+          <v-select
+            v-model="fields.gender"
+            :items="genderOptions"
+            item-title="title"
+            item-value="value"
+            :rules="genderRules"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.gender)" />
+            </template>
+          </v-select>
 
-        <v-text-field
-          ref="birthDateFieldRef"
-          v-model="fields.birthDate"
-          type="date"
-          class="participant-form__birth-date"
-          :rules="birthDateRules"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.birthDate)" />
-          </template>
-          <template #append-inner>
-            <v-btn
-              type="button"
-              variant="text"
-              size="x-small"
-              density="compact"
-              class="participant-form__birth-date-icon-btn"
-              :icon="mdiCalendar"
-              :aria-label="t(translationKeys.form.openBirthDatePicker)"
-              @click="openBirthDatePicker"
-            />
-          </template>
-        </v-text-field>
+          <v-text-field
+            ref="birthDateFieldRef"
+            v-model="fields.birthDate"
+            type="date"
+            class="participant-form__birth-date"
+            :rules="birthDateRules"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.birthDate)" />
+            </template>
+            <template #append-inner>
+              <v-btn
+                type="button"
+                variant="text"
+                size="x-small"
+                density="compact"
+                class="participant-form__birth-date-icon-btn"
+                :icon="mdiCalendar"
+                :aria-label="t(translationKeys.form.openBirthDatePicker)"
+                @click="openBirthDatePicker"
+              />
+            </template>
+          </v-text-field>
 
-        <v-select
-          v-model="fields.clubId"
-          :items="clubOptions"
-          item-title="title"
-          item-value="value"
-          :rules="clubRules"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.club)" />
-          </template>
-        </v-select>
+          <v-select
+            v-model="fields.clubId"
+            :items="clubOptions"
+            item-title="title"
+            item-value="value"
+            :rules="clubRules"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.club)" />
+            </template>
+          </v-select>
 
-        <v-select
-          v-model="fields.nationality"
-          :items="nationalityOptions"
-          item-title="title"
-          item-value="value"
-          :rules="nationalityRules"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.nationality)" />
-          </template>
-        </v-select>
+          <v-select
+            v-model="fields.nationality"
+            :items="nationalityOptions"
+            item-title="title"
+            item-value="value"
+            :rules="nationalityRules"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.nationality)" />
+            </template>
+          </v-select>
 
-        <v-select
-          v-model="fields.ageClassId"
-          :items="ageClassOptions"
-          item-title="title"
-          item-value="value"
-          :rules="ageClassRules"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.ageClass)" />
-          </template>
-        </v-select>
+          <v-select
+            v-model="fields.ageClassId"
+            :items="ageClassOptions"
+            item-title="title"
+            item-value="value"
+            :rules="ageClassRules"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.ageClass)" />
+            </template>
+          </v-select>
 
-        <v-alert
-          v-if="fields.ageClassId && !isWeightClassRequired"
-          type="info"
-          variant="tonal"
-          density="comfortable"
-        >
-          {{ t(translationKeys.form.flexibleWeightHint) }}
-        </v-alert>
+          <v-alert
+            v-if="fields.ageClassId && !isWeightClassRequired"
+            type="info"
+            variant="tonal"
+            density="comfortable"
+          >
+            {{ t(translationKeys.form.flexibleWeightHint) }}
+          </v-alert>
 
-        <v-select
-          v-else-if="fields.ageClassId"
-          v-model="fields.weightClassId"
-          :items="weightClassOptions"
-          item-title="title"
-          item-value="value"
-          :rules="weightClassRules"
-          :hint="t(translationKeys.form.selectAgeClassFirst)"
-          :persistent-hint="!fields.ageClassId"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.weightClass)" />
-          </template>
-        </v-select>
+          <v-select
+            v-else-if="fields.ageClassId"
+            v-model="fields.weightClassId"
+            :items="weightClassOptions"
+            item-title="title"
+            item-value="value"
+            :rules="weightClassRules"
+            :hint="t(translationKeys.form.selectAgeClassFirst)"
+            :persistent-hint="!fields.ageClassId"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.weightClass)" />
+            </template>
+          </v-select>
 
-        <v-text-field
-          v-model="fields.passNumber"
-          :rules="passNumberRules"
-          :maxlength="COMPETITOR_PASS_NUMBER_MAX_LENGTH"
-          autocomplete="off"
-          required
-        >
-          <template #label>
-            <RequiredFieldLabel :text="t(translationKeys.form.fields.passNumber)" />
-          </template>
-        </v-text-field>
+          <v-text-field
+            v-model="fields.passNumber"
+            :rules="passNumberRules"
+            :maxlength="COMPETITOR_PASS_NUMBER_MAX_LENGTH"
+            autocomplete="off"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.passNumber)" />
+            </template>
+          </v-text-field>
 
-        <v-select
-          v-model="fields.gradeId"
-          :items="gradeOptions"
-          item-title="title"
-          item-value="value"
-          :label="t(translationKeys.form.fields.grade)"
-          clearable
-        />
+          <v-select
+            v-model="fields.gradeId"
+            :items="gradeOptions"
+            item-title="title"
+            item-value="value"
+            :label="t(translationKeys.form.fields.grade)"
+            clearable
+          />
 
-        <v-text-field
-          v-model="fields.licenseNumber"
-          :label="t(translationKeys.form.fields.licenseNumber)"
-          :rules="licenseNumberRules"
-          :maxlength="COMPETITOR_LICENSE_NUMBER_MAX_LENGTH"
-          autocomplete="off"
-        />
+          <v-text-field
+            v-model="fields.licenseNumber"
+            :label="t(translationKeys.form.fields.licenseNumber)"
+            :rules="licenseNumberRules"
+            :maxlength="COMPETITOR_LICENSE_NUMBER_MAX_LENGTH"
+            autocomplete="off"
+          />
 
-        <v-text-field
-          v-model="fields.contactPhone"
-          type="tel"
-          :label="t(translationKeys.form.fields.contactPhone)"
-          :rules="contactPhoneRules"
-          :maxlength="COMPETITOR_CONTACT_PHONE_MAX_LENGTH"
-          autocomplete="off"
-        />
+          <v-text-field
+            v-model="fields.contactPhone"
+            type="tel"
+            :label="t(translationKeys.form.fields.contactPhone)"
+            :rules="contactPhoneRules"
+            :maxlength="COMPETITOR_CONTACT_PHONE_MAX_LENGTH"
+            autocomplete="off"
+          />
 
-        <v-text-field
-          v-model="fields.coach"
-          :label="t(translationKeys.form.fields.coach)"
-          :rules="coachRules"
-          :maxlength="COMPETITOR_COACH_MAX_LENGTH"
-          autocomplete="off"
-        />
+          <v-text-field
+            v-model="fields.coach"
+            :label="t(translationKeys.form.fields.coach)"
+            :rules="coachRules"
+            :maxlength="COMPETITOR_COACH_MAX_LENGTH"
+            autocomplete="off"
+          />
+        </fieldset>
       </v-card-text>
 
       <v-card-actions class="px-4 pb-4 d-flex ga-2">
@@ -315,6 +335,13 @@ function openBirthDatePicker(): void {
 </template>
 
 <style scoped>
+.participant-form__fields {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
 .participant-form__birth-date :deep(input[type='date']::-webkit-calendar-picker-indicator) {
   display: none;
 }

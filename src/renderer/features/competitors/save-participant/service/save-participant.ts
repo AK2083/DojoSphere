@@ -54,6 +54,18 @@ function requireApi() {
 }
 
 /**
+ * Loads a single participant via IPC using the current local session.
+ *
+ * @param id - Competitor identifier to load.
+ * @returns The competitor record from the main process.
+ */
+export async function loadParticipant(id: string): Promise<Competitor> {
+  const { api, token } = requireApi()
+
+  return api.getCompetitor(token, id)
+}
+
+/**
  * Persists a new participant via IPC using the current local session.
  *
  * @param fields - Validated participant form values.

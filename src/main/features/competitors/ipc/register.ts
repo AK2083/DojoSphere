@@ -7,6 +7,7 @@ import {
   addCompetitor,
   type CreateCompetitorInput,
   deleteCompetitor,
+  getCompetitor,
   getCompetitors,
   type UpdateCompetitorInput,
   updateCompetitor
@@ -23,6 +24,18 @@ export function registerCompetitorsIpc() {
     requireActiveSession(token, getActiveSessionByToken)
 
     return getCompetitors()
+  })
+
+  ipcMain.handle('competitors:get', (_event, input: { token: string; id: string }) => {
+    requireActiveSession(input.token, getActiveSessionByToken)
+
+    const competitor = getCompetitor(input.id)
+
+    if (!competitor) {
+      throw new Error('Competitor not found')
+    }
+
+    return competitor
   })
 
   ipcMain.handle('competitors:add', (_event, input: AddCompetitorIpcInput) => {

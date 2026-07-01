@@ -2,6 +2,7 @@ export { registerCompetitorsIpc } from './ipc/register'
 export {
   addCompetitor,
   deleteCompetitor,
+  getCompetitor,
   getCompetitors,
   updateCompetitor
 } from './repository/competitors.repository'

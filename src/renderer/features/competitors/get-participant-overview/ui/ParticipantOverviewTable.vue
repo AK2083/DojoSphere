@@ -77,5 +77,12 @@ const { t } = useTranslation()
 <style scoped>
 .participant-list-table {
   width: 100%;
+  max-width: 100%;
+}
+
+.participant-list-table :deep(.v-table),
+.participant-list-table :deep(.v-table__wrapper) {
+  width: 100%;
+  max-width: 100%;
 }
 </style>

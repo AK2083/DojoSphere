@@ -61,6 +61,7 @@ export default {
       'Für diese Altersklasse gelten flexible Gewichte. Eine Gewichtsklasse muss nicht gewählt werden.',
     requiredFieldsLegend: 'Mit * markierte Felder sind Pflichtfelder.',
     saveError: 'Der Teilnehmer konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    loadError: 'Der Teilnehmer konnte nicht geladen werden.',
     selectAgeClassFirst:
       'Bitte zuerst eine Altersklasse wählen, um die Gewichtsklasse festzulegen.',
     fields: {

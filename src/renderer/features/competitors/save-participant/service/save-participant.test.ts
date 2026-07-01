@@ -2,7 +2,12 @@ import { getLocalSessionToken } from '@features/authentication/service/local-ses
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createEmptyParticipantForm } from '../model/participant-form-state'
-import { createParticipant, mapFormStateToInput, updateParticipant } from './save-participant'
+import {
+  createParticipant,
+  loadParticipant,
+  mapFormStateToInput,
+  updateParticipant
+} from './save-participant'
 
 vi.mock('@features/authentication/service/local-session-storage', () => ({
   getLocalSessionToken: vi.fn()
@@ -61,6 +66,23 @@ describe('save-participant service', () => {
       expect(input.licenseNumber).toBeNull()
       expect(input.contactPhone).toBeNull()
       expect(input.coach).toBeNull()
+    })
+  })
+
+  describe('loadParticipant', () => {
+    it('loads a competitor via the electron api', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+      globalThis.window.api.getCompetitor = vi.fn().mockResolvedValue({ id: 'competitor-1' })
+
+      await loadParticipant('competitor-1')
+
+      expect(globalThis.window.api.getCompetitor).toHaveBeenCalledWith('token-1', 'competitor-1')
+    })
+
+    it('throws when no local session token exists', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue(null)
+
+      await expect(loadParticipant('competitor-1')).rejects.toThrow('No local session')
     })
   })
 

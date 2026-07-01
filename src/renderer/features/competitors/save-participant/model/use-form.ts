@@ -1,4 +1,4 @@
-import { computed, ref, watch } from 'vue'
+import { computed, type MaybeRefOrGetter, nextTick, ref, toValue, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
 import { logError, useTranslation } from '@shared/lib'
@@ -18,24 +18,37 @@ import {
   passNumberRule,
   requiredFieldRule
 } from '../lib/participant-form-rules'
-import { createParticipant } from '../service/save-participant'
-import { createEmptyParticipantForm } from './participant-form-state'
+import { createParticipant, loadParticipant, updateParticipant } from '../service/save-participant'
+import { mapCompetitorToFormState } from './map-competitor-to-form-state'
+import { createEmptyParticipantForm, type ParticipantFormState } from './participant-form-state'
 import { getWeightClassSeedsForAgeClass, useParticipantFormOptions } from './use-form-options'
+
+type UseParticipantFormOptions = {
+  participantId?: MaybeRefOrGetter<string | undefined>
+}
 
 /**
  * Composable for participant form state, validation, and reference options.
  *
+ * @param options - Optional participant id for edit mode.
  * @returns Form fields, translated validation rules, select options, and submit/reset handlers.
  */
-export function useParticipantForm() {
+export function useParticipantForm(options: UseParticipantFormOptions = {}) {
   const { t } = useTranslation()
   const router = useRouter()
 
   const formRef = ref<VForm | null>(null)
   const isFormValid = ref(false)
   const isSaving = ref(false)
+  const isLoading = ref(false)
   const saveErrorMessage = ref('')
+  const loadErrorMessage = ref('')
   const fields = ref(createEmptyParticipantForm())
+  const initialFields = ref<ParticipantFormState | null>(null)
+  const skipWeightClassReset = ref(false)
+
+  const participantId = computed(() => toValue(options.participantId))
+  const isEditMode = computed(() => Boolean(participantId.value))
 
   const {
     genderOptions,
@@ -78,15 +91,28 @@ export function useParticipantForm() {
     )
   ])
 
-  const isSubmitDisabled = computed(() => !isFormValid.value || isSaving.value)
+  const isSubmitDisabled = computed(
+    () => !isFormValid.value || isSaving.value || isLoading.value || Boolean(loadErrorMessage.value)
+  )
 
   function setFormRef(value: unknown) {
     formRef.value = value as VForm | null
   }
 
+  async function applyFields(nextFields: ParticipantFormState): Promise<void> {
+    skipWeightClassReset.value = true
+    fields.value = { ...nextFields }
+    await nextTick()
+    skipWeightClassReset.value = false
+  }
+
   watch(
     () => fields.value.ageClassId,
-    () => {
+    (nextAgeClassId, previousAgeClassId) => {
+      if (skipWeightClassReset.value || nextAgeClassId === previousAgeClassId) {
+        return
+      }
+
       fields.value.weightClassId = ''
     }
   )
@@ -100,8 +126,40 @@ export function useParticipantForm() {
     }
   )
 
+  watch(
+    participantId,
+    async (id) => {
+      saveErrorMessage.value = ''
+      loadErrorMessage.value = ''
+
+      if (!id) {
+        initialFields.value = null
+        fields.value = createEmptyParticipantForm()
+        isLoading.value = false
+        return
+      }
+
+      isLoading.value = true
+
+      try {
+        const competitor = await loadParticipant(id)
+        const nextFields = mapCompetitorToFormState(competitor)
+
+        initialFields.value = { ...nextFields }
+        await applyFields(nextFields)
+        formRef.value?.resetValidation()
+      } catch (error) {
+        loadErrorMessage.value = t(translationKeys.form.loadError)
+        logError(error as Error, 'competitors', 'load-participant')
+      } finally {
+        isLoading.value = false
+      }
+    },
+    { immediate: true }
+  )
+
   async function submit(): Promise<void> {
-    if (!formRef.value || isSaving.value) {
+    if (!formRef.value || isSaving.value || isLoading.value || loadErrorMessage.value) {
       return
     }
 
@@ -115,7 +173,12 @@ export function useParticipantForm() {
         return
       }
 
-      await createParticipant(fields.value)
+      if (participantId.value) {
+        await updateParticipant(participantId.value, fields.value)
+      } else {
+        await createParticipant(fields.value)
+      }
+
       await router?.push({ name: 'participants' })
     } catch (error) {
       saveErrorMessage.value = t(translationKeys.form.saveError)
@@ -125,8 +188,13 @@ export function useParticipantForm() {
     }
   }
 
-  function reset(): void {
-    fields.value = createEmptyParticipantForm()
+  async function reset(): Promise<void> {
+    if (initialFields.value) {
+      await applyFields(initialFields.value)
+    } else {
+      fields.value = createEmptyParticipantForm()
+    }
+
     saveErrorMessage.value = ''
     formRef.value?.resetValidation()
   }
@@ -135,7 +203,10 @@ export function useParticipantForm() {
     fields,
     isFormValid,
     isSaving,
+    isLoading,
+    isEditMode,
     saveErrorMessage,
+    loadErrorMessage,
     isSubmitDisabled,
     isWeightClassRequired,
     selectedAgeClass,

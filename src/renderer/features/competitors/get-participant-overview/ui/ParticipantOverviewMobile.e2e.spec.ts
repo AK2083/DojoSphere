@@ -6,7 +6,7 @@ test.describe('ParticipantOverviewMobile', () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 390, height: 844 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
   })
 
   test('renders participant cards with detail toggle', async ({ page }) => {

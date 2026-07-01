@@ -9,14 +9,14 @@ test.describe('ParticipantOverviewSection', () => {
 
   test('switches between desktop table and mobile cards by viewport', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
 
     await expect(page.getByRole('columnheader', { name: 'Given name' })).toBeVisible()
     await expect(page.getByText('Yuki Tanaka')).not.toBeVisible()
 
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/#/participants')
-    await gotoParticipantsPage(page)
+    await gotoParticipantsPage(page, { withParticipants: true })
 
     await expect(page.getByText('Yuki Tanaka')).toBeVisible()
     await expect(page.getByRole('columnheader', { name: 'Given name' })).not.toBeVisible()

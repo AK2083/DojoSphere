@@ -2,7 +2,7 @@ import type { Competitor } from '@shared/types/electron-api'
 
 import { AGE_CLASS_SEEDS, GRADE_SEEDS } from '../../save-participant/model/static-reference-data'
 import overviewKeys from '../i18n/keys'
-import type { ParticipantRow } from './static-participants'
+import type { ParticipantRow } from './participant-row'
 
 type Translate = (key: string, params?: Record<string, unknown>) => string
 

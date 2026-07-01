@@ -280,6 +280,16 @@ function normalizeOptionalText(value?: string | null): string | null {
   return trimmed ? trimmed : null
 }
 
+/**
+ * Returns a single competitor by id, or null when not found.
+ *
+ * @param competitorId - Identifier of the competitor to load.
+ * @returns The competitor record or null.
+ */
+export function getCompetitor(competitorId: string): CompetitorRecord | null {
+  return getCompetitorById(competitorId)
+}
+
 function getCompetitorById(competitorId: string): CompetitorRecord | null {
   const db = getDatabase()
 
