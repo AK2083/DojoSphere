@@ -1,10 +1,12 @@
 export default {
   toolbar: {
-    ariaLabel: 'Teilnehmerliste-Werkzeugleiste'
+    ariaLabel: 'Teilnehmerliste-Werkzeugleiste',
+    placeholderAction: 'Filter (noch nicht verfügbar)'
   },
-  table: {
-    ariaLabel: 'Tabelle der Teilnehmer',
-    loading: 'Teilnehmer werden geladen …',
+  list: {
+    ariaLabel: 'Teilnehmerliste',
+    empty: 'Noch keine Teilnehmer erfasst.',
+    loadingPlaceholder: 'Teilnehmer wird geladen',
     columns: {
       givenName: 'Vorname',
       familyName: 'Nachname',
@@ -19,8 +21,7 @@ export default {
       licenseNumber: 'Wettkampflizenznummer',
       clubContactEmail: 'E-Mail Vereinsverantwortlicher',
       contactPhone: 'Telefon für Rückfragen',
-      coach: 'Trainer / Betreuer',
-      actions: 'Aktionen'
+      coach: 'Trainer / Betreuer'
     }
   },
   gender: {
@@ -37,7 +38,7 @@ export default {
     delete: 'Teilnehmer löschen',
     ariaDelete: '{name} löschen'
   },
-  mobile: {
+  entry: {
     showDetails: 'Weitere Angaben anzeigen',
     hideDetails: 'Weitere Angaben ausblenden'
   }

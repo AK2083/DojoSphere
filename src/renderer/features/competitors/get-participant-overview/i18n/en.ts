@@ -1,10 +1,12 @@
 export default {
   toolbar: {
-    ariaLabel: 'Participant list toolbar'
+    ariaLabel: 'Participant list toolbar',
+    placeholderAction: 'Filter (not available yet)'
   },
-  table: {
-    ariaLabel: 'Participants table',
-    loading: 'Loading participants …',
+  list: {
+    ariaLabel: 'Participants list',
+    empty: 'No participants registered yet.',
+    loadingPlaceholder: 'Loading participant',
     columns: {
       givenName: 'Given name',
       familyName: 'Family name',
@@ -19,8 +21,7 @@ export default {
       licenseNumber: 'Competition licence number',
       clubContactEmail: 'Club contact email',
       contactPhone: 'Contact phone',
-      coach: 'Coach / guardian',
-      actions: 'Actions'
+      coach: 'Coach / guardian'
     }
   },
   gender: {
@@ -37,7 +38,7 @@ export default {
     delete: 'Delete participant',
     ariaDelete: 'Delete {name}'
   },
-  mobile: {
+  entry: {
     showDetails: 'Show additional details',
     hideDetails: 'Hide additional details'
   }

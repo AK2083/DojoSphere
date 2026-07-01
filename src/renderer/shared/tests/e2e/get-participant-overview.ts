@@ -36,7 +36,7 @@ export async function gotoParticipantsPage(
   }
 
   await expect(page).toHaveURL(/#\/participants$/)
-  await expect(page.getByRole('region', { name: 'Participants table' })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Participants list' })).toBeVisible()
 
   if (options.withParticipants) {
     await expect(page.getByText('Yuki')).toBeVisible({ timeout: 10_000 })

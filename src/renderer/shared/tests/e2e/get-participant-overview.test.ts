@@ -36,7 +36,7 @@ describe('get-participant-overview e2e helpers', () => {
     await gotoParticipantsPage(page as never)
 
     expect(goto).toHaveBeenCalledWith('/#/participants')
-    expect(page.getByRole).toHaveBeenCalledWith('region', { name: 'Participants table' })
+    expect(page.getByRole).toHaveBeenCalledWith('region', { name: 'Participants list' })
     expect(page.getByText).not.toHaveBeenCalled()
     expect(playwrightExpect).toHaveBeenCalledTimes(2)
   })

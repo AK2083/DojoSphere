@@ -35,6 +35,7 @@ describe('mapCompetitorToRow', () => {
 
     expect(row).toMatchObject({
       id: 'competitor-1',
+      createdAt: '2026-01-01T00:00:00.000Z',
       givenName: 'Yuki',
       familyName: 'Tanaka',
       gender: 'm',

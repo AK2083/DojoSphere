@@ -72,25 +72,46 @@ describe('useParticipantOverview', () => {
     deleteParticipantMock.mockResolvedValue(undefined)
   })
 
-  it('starts in a loading state with default sort', () => {
-    const { loading, tableItems, sortBy, headers } = useParticipantOverview()
+  it('starts in a loading state with field headers', () => {
+    const { loading, overviewItems, fieldHeaders } = useParticipantOverview()
 
     expect(loading.value).toBe(true)
-    expect(tableItems.value).toEqual([])
-    expect(sortBy.value).toEqual([{ key: 'familyName', order: 'asc' }])
-    expect(headers.value.some((header) => header.key === 'actions')).toBe(true)
+    expect(overviewItems.value).toEqual([])
+    expect(fieldHeaders.value.some((header) => header.key === 'club')).toBe(true)
   })
 
   it('loads participants from the database on mount', async () => {
-    const { loading, tableItems } = useParticipantOverview()
+    const { loading, overviewItems } = useParticipantOverview()
 
     await onMountedHandler?.()
     await flushPromises()
 
     expect(loading.value).toBe(false)
-    expect(tableItems.value).toHaveLength(1)
-    expect(tableItems.value[0]?.givenName).toBe('Yuki')
-    expect(tableItems.value[0]?.gender).toBe('competitors.getParticipantOverview.gender.male')
+    expect(overviewItems.value).toHaveLength(1)
+    expect(overviewItems.value[0]?.givenName).toBe('Yuki')
+    expect(overviewItems.value[0]?.gender).toBe('competitors.getParticipantOverview.gender.male')
+  })
+
+  it('sorts participants with the newest entry first', async () => {
+    loadParticipantsMock.mockResolvedValue([
+      createCompetitor({
+        id: 'competitor-old',
+        givenName: 'Old',
+        createdAt: '2026-01-01T00:00:00.000Z'
+      }),
+      createCompetitor({
+        id: 'competitor-new',
+        givenName: 'New',
+        createdAt: '2026-06-01T00:00:00.000Z'
+      })
+    ])
+
+    const { overviewItems } = useParticipantOverview()
+
+    await onMountedHandler?.()
+    await flushPromises()
+
+    expect(overviewItems.value.map((item) => item.givenName)).toEqual(['New', 'Old'])
   })
 
   it('records an error message when loading fails', async () => {
@@ -116,12 +137,12 @@ describe('useParticipantOverview', () => {
   })
 
   it('navigates to the participant edit page when editing', async () => {
-    const { handleEdit, tableItems } = useParticipantOverview()
+    const { handleEdit, overviewItems } = useParticipantOverview()
 
     await onMountedHandler?.()
     await flushPromises()
 
-    handleEdit(tableItems.value[0]!)
+    handleEdit(overviewItems.value[0]!)
 
     expect(push).toHaveBeenCalledWith({
       name: 'participant-edit',
@@ -130,12 +151,12 @@ describe('useParticipantOverview', () => {
   })
 
   it('deletes a participant and reloads the list', async () => {
-    const { handleDelete, tableItems } = useParticipantOverview()
+    const { handleDelete, overviewItems } = useParticipantOverview()
 
     await onMountedHandler?.()
     await flushPromises()
 
-    await handleDelete(tableItems.value[0]!)
+    await handleDelete(overviewItems.value[0]!)
 
     expect(deleteParticipantMock).toHaveBeenCalledWith('competitor-1')
     expect(loadParticipantsMock).toHaveBeenCalledTimes(2)
@@ -143,12 +164,12 @@ describe('useParticipantOverview', () => {
 
   it('records an error message when deleting fails', async () => {
     deleteParticipantMock.mockRejectedValueOnce(new Error('boom'))
-    const { handleDelete, tableItems, loadErrorMessage } = useParticipantOverview()
+    const { handleDelete, overviewItems, loadErrorMessage } = useParticipantOverview()
 
     await onMountedHandler?.()
     await flushPromises()
 
-    await handleDelete(tableItems.value[0]!)
+    await handleDelete(overviewItems.value[0]!)
 
     expect(loadErrorMessage.value).toBe('competitors.getParticipantOverview.loadError')
     expect(logErrorMock).toHaveBeenCalled()

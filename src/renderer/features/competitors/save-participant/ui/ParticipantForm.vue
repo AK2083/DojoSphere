@@ -292,7 +292,7 @@ function openBirthDatePicker(): void {
       </v-card-text>
 
       <v-card-actions class="px-4 pb-4 d-flex ga-2">
-        <v-tooltip :disabled="!isMobile" :text="saveLabel" location="top">
+        <v-tooltip :text="saveLabel" :location="isMobile ? 'bottom' : 'top'">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"
@@ -312,7 +312,7 @@ function openBirthDatePicker(): void {
           </template>
         </v-tooltip>
 
-        <v-tooltip :disabled="!isMobile" :text="resetLabel" location="top">
+        <v-tooltip :text="resetLabel" :location="isMobile ? 'bottom' : 'top'">
           <template #activator="{ props: tooltipProps }">
             <v-btn
               v-bind="tooltipProps"

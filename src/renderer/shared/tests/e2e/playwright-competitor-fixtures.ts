@@ -1,5 +1,5 @@
-import type { CreateCompetitorInput } from '@shared/types/electron-api'
 import type { Page } from '@playwright/test'
+import type { CreateCompetitorInput } from '@shared/types/electron-api'
 
 /** Local session token key — must match `local-session-storage.ts`. */
 export const LOCAL_SESSION_STORAGE_KEY = 'dojosphere.auth.local.session'

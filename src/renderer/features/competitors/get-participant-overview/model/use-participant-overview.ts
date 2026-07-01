@@ -13,38 +13,29 @@ const GENDER_TRANSLATION_KEY: Record<ParticipantGender, string> = {
   d: translationKeys.gender.diverse
 }
 
-type TableSortItem = {
-  key: string
-  order: 'asc' | 'desc'
-}
-
 /**
  *
  */
-export type ParticipantTableSortItem = TableSortItem
-
-/**
- *
- */
-export type ParticipantOverviewHeader = {
+export type ParticipantFieldHeader = {
   title: string
   key: string
-  sortable: boolean
-  minWidth?: string
-  align?: 'end' | 'start' | 'center'
 }
 
 /**
  *
  */
-export type ParticipantTableRow = Omit<ParticipantRow, 'gender'> & {
+export type ParticipantOverviewItem = Omit<ParticipantRow, 'gender'> & {
   gender: string
 }
 
+function sortByNewestFirst(rows: ParticipantRow[]): ParticipantRow[] {
+  return [...rows].sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+}
+
 /**
- * UI state for the participant overview table loaded from the local database.
+ * UI state for the participant overview loaded from the local database.
  *
- * @returns Reactive table state and CRUD handlers for the participant overview.
+ * @returns Reactive list state and CRUD handlers for the participant overview.
  */
 export function useParticipantOverview() {
   const { t } = useTranslation()
@@ -52,104 +43,26 @@ export function useParticipantOverview() {
   const loading = ref(true)
   const loadErrorMessage = ref('')
   const participants = ref<ParticipantRow[]>([])
-  const sortBy = ref<TableSortItem[]>([{ key: 'familyName', order: 'asc' }])
 
-  const headers = computed(() => [
-    {
-      title: t(translationKeys.table.columns.givenName),
-      key: 'givenName',
-      sortable: true,
-      minWidth: '7rem'
-    },
-    {
-      title: t(translationKeys.table.columns.familyName),
-      key: 'familyName',
-      sortable: true,
-      minWidth: '7rem'
-    },
-    {
-      title: t(translationKeys.table.columns.gender),
-      key: 'gender',
-      sortable: true,
-      minWidth: '6rem'
-    },
-    {
-      title: t(translationKeys.table.columns.birthDate),
-      key: 'birthDate',
-      sortable: true,
-      minWidth: '8rem'
-    },
-    {
-      title: t(translationKeys.table.columns.club),
-      key: 'club',
-      sortable: true,
-      minWidth: '8rem'
-    },
-    {
-      title: t(translationKeys.table.columns.nationality),
-      key: 'nationality',
-      sortable: true,
-      minWidth: '5rem'
-    },
-    {
-      title: t(translationKeys.table.columns.weightClass),
-      key: 'weightClass',
-      sortable: true,
-      minWidth: '7rem'
-    },
-    {
-      title: t(translationKeys.table.columns.ageClass),
-      key: 'ageClass',
-      sortable: true,
-      minWidth: '6rem'
-    },
-    {
-      title: t(translationKeys.table.columns.passNumber),
-      key: 'passNumber',
-      sortable: true,
-      minWidth: '8rem'
-    },
-    {
-      title: t(translationKeys.table.columns.grade),
-      key: 'grade',
-      sortable: true,
-      minWidth: '6rem'
-    },
-    {
-      title: t(translationKeys.table.columns.licenseNumber),
-      key: 'licenseNumber',
-      sortable: true,
-      minWidth: '9rem'
-    },
-    {
-      title: t(translationKeys.table.columns.clubContactEmail),
-      key: 'clubContactEmail',
-      sortable: true,
-      minWidth: '12rem'
-    },
-    {
-      title: t(translationKeys.table.columns.contactPhone),
-      key: 'contactPhone',
-      sortable: true,
-      minWidth: '9rem'
-    },
-    {
-      title: t(translationKeys.table.columns.coach),
-      key: 'coach',
-      sortable: true,
-      minWidth: '8rem'
-    },
-    {
-      title: t(translationKeys.table.columns.actions),
-      key: 'actions',
-      sortable: false,
-      align: 'end' as const,
-      minWidth: '6rem'
-    }
+  const fieldHeaders = computed<ParticipantFieldHeader[]>(() => [
+    { title: t(translationKeys.list.columns.givenName), key: 'givenName' },
+    { title: t(translationKeys.list.columns.familyName), key: 'familyName' },
+    { title: t(translationKeys.list.columns.gender), key: 'gender' },
+    { title: t(translationKeys.list.columns.birthDate), key: 'birthDate' },
+    { title: t(translationKeys.list.columns.club), key: 'club' },
+    { title: t(translationKeys.list.columns.nationality), key: 'nationality' },
+    { title: t(translationKeys.list.columns.weightClass), key: 'weightClass' },
+    { title: t(translationKeys.list.columns.ageClass), key: 'ageClass' },
+    { title: t(translationKeys.list.columns.passNumber), key: 'passNumber' },
+    { title: t(translationKeys.list.columns.grade), key: 'grade' },
+    { title: t(translationKeys.list.columns.licenseNumber), key: 'licenseNumber' },
+    { title: t(translationKeys.list.columns.clubContactEmail), key: 'clubContactEmail' },
+    { title: t(translationKeys.list.columns.contactPhone), key: 'contactPhone' },
+    { title: t(translationKeys.list.columns.coach), key: 'coach' }
   ])
 
-  const tableItems = computed<ParticipantTableRow[]>(() =>
-    participants.value.map((participant) => ({
+  const overviewItems = computed<ParticipantOverviewItem[]>(() =>
+    sortByNewestFirst(participants.value).map((participant) => ({
       ...participant,
       gender: t(GENDER_TRANSLATION_KEY[participant.gender])
     }))
@@ -179,14 +92,14 @@ export function useParticipantOverview() {
     void router.push({ name: 'participant-create' })
   }
 
-  function handleEdit(participant: ParticipantTableRow): void {
+  function handleEdit(participant: ParticipantOverviewItem): void {
     void router.push({
       name: 'participant-edit',
       params: { id: participant.id }
     })
   }
 
-  async function handleDelete(participant: ParticipantTableRow): Promise<void> {
+  async function handleDelete(participant: ParticipantOverviewItem): Promise<void> {
     try {
       await deleteParticipant(participant.id)
       await refresh()
@@ -199,9 +112,8 @@ export function useParticipantOverview() {
   return {
     loading,
     loadErrorMessage,
-    tableItems,
-    headers,
-    sortBy,
+    overviewItems,
+    fieldHeaders,
     refresh,
     handleAdd,
     handleEdit,

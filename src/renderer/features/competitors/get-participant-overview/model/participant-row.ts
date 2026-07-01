@@ -3,9 +3,10 @@ import type { CompetitorGender } from '@shared/types/electron-api'
 /** Participant gender code stored in `competitors.gender`. */
 export type ParticipantGender = CompetitorGender
 
-/** Participant row displayed in the overview table. */
+/** Participant row displayed in the card list. */
 export interface ParticipantRow {
   id: string
+  createdAt: string
   givenName: string
   familyName: string
   gender: ParticipantGender

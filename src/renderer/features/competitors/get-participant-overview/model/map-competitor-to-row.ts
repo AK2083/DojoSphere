@@ -36,6 +36,7 @@ function resolveGradeLabel(t: Translate, gradeId: string | null): string {
 export function mapCompetitorToRow(competitor: Competitor, t: Translate): ParticipantRow {
   return {
     id: competitor.id,
+    createdAt: competitor.createdAt,
     givenName: competitor.givenName,
     familyName: competitor.familyName,
     gender: competitor.gender,
