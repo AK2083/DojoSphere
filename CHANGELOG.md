@@ -1,3 +1,9 @@
+# [1.19.0](https://github.com/AK2083/DojoSphere/compare/v1.18.0...v1.19.0) (2026-07-02)
+
+### Features
+
+- add participant data ([#178](https://github.com/AK2083/DojoSphere/issues/178)) ([5ca760d](https://github.com/AK2083/DojoSphere/commit/5ca760d87826d166982eca6857d23efdce9d12ba))
+
 # [1.18.0](https://github.com/AK2083/DojoSphere/compare/v1.17.0...v1.18.0) (2026-06-30)
 
 ### Features
