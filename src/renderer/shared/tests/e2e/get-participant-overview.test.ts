@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 const { playwrightExpect } = vi.hoisted(() => ({
   playwrightExpect: vi.fn(() => ({
     toHaveURL: vi.fn().mockResolvedValue(undefined),
-    toBeVisible: vi.fn().mockResolvedValue(undefined)
+    toBeVisible: vi.fn().mockResolvedValue(undefined),
+    toHaveAttribute: vi.fn().mockResolvedValue(undefined)
   }))
 }))
 
@@ -30,14 +31,14 @@ function createPageDouble() {
 }
 
 describe('get-participant-overview e2e helpers', () => {
-  it('opens participants route and waits for static rows', async () => {
+  it('opens participants route and waits for the table region', async () => {
     const { page, goto } = createPageDouble()
 
     await gotoParticipantsPage(page as never)
 
     expect(goto).toHaveBeenCalledWith('/#/participants')
-    expect(page.getByRole).toHaveBeenCalledWith('region', { name: 'Participants table' })
-    expect(page.getByText).toHaveBeenCalledWith('Yuki')
+    expect(page.getByRole).toHaveBeenCalledWith('region', { name: 'Participants list' })
+    expect(page.getByText).not.toHaveBeenCalled()
     expect(playwrightExpect).toHaveBeenCalledTimes(3)
   })
 })

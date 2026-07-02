@@ -1,6 +1,7 @@
 /** Shared i18n keys for validation and generic error messages. */
 const translationKeys = {
   error: {
+    accessDenied: 'shared.error.accessDenied',
     retry: 'shared.error.retry',
     unknown: 'shared.error.unknown'
   },

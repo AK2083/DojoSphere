@@ -1,3 +1,4 @@
+import { registerAuthorizationIpc } from '@main/features/authorization'
 import { registerAuditIpc } from '@main/features/audit/ipc/register'
 import { registerCompetitorsIpc } from '@main/features/competitors'
 import { registerDiagnosticsIpc } from '@main/features/diagnostics'
@@ -15,6 +16,7 @@ export function registerIpcHandlers() {
   registerSystemIpc()
   registerUsersIpc()
   registerSessionsIpc()
+  registerAuthorizationIpc()
   registerCompetitorsIpc()
   registerLoggingIpc()
   registerDiagnosticsIpc()

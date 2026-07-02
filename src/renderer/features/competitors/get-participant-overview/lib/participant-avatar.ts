@@ -35,10 +35,10 @@ export function participantInitials(participant: {
 /**
  * Resolves a Vuetify color token from the participant's club name.
  *
- * Club-specific configuration can replace this lookup later.
+ * Used for avatar accents and subtle club header tints.
  *
  * @param club - Club name used as the color lookup key.
- * @returns Vuetify color token for the avatar background.
+ * @returns Vuetify color token for club-based surfaces.
  */
 export function participantAvatarColor(club: string): string {
   let hash = 0
@@ -50,4 +50,20 @@ export function participantAvatarColor(club: string): string {
   const colorIndex = Math.abs(hash) % CLUB_AVATAR_COLORS.length
 
   return CLUB_AVATAR_COLORS[colorIndex]
+}
+
+const CLUB_HEADER_TINT_PERCENT = 8
+
+/**
+ * Returns a subtle club-tinted background for card headers.
+ *
+ * Keeps body text on the default surface color for accessible contrast.
+ *
+ * @param club - Club name used as the color lookup key.
+ * @returns CSS `background-color` value with a low club-color mix ratio.
+ */
+export function participantClubHeaderBackground(club: string): string {
+  const colorToken = participantAvatarColor(club)
+
+  return `color-mix(in srgb, rgb(var(--v-theme-${colorToken})) ${CLUB_HEADER_TINT_PERCENT}%, rgb(var(--v-theme-surface)))`
 }

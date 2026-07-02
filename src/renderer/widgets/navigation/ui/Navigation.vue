@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import router from '@app/providers/router'
-import { useAuthSession, useSignOut } from '@features/authentication'
+import { useAuthSession, useParticipantsOverviewAccess, useSignOut } from '@features/authentication'
 import { mdiAccountGroup, mdiAccountPlus, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
@@ -11,6 +11,7 @@ import translationKeys from '../i18n/keys'
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { isCloudLoggedIn } = useAuthSession()
+const { canReadParticipantsOverview } = useParticipantsOverviewAccess()
 const {
   logout,
   loading: isSigningOut,
@@ -21,6 +22,11 @@ const { t } = useTranslation()
 
 const isMobile = computed(() => smAndDown.value)
 const showLogoutError = ref(false)
+
+const participantsLabel = computed(() => t(translationKeys.navigation.participants))
+const signUpLabel = computed(() => t(translationKeys.navigation.signUp))
+const logoutLabel = computed(() => t(translationKeys.navigation.logout))
+const settingsLabel = computed(() => t(translationKeys.navigation.settings))
 
 async function handleLogout() {
   const success = await logout()
@@ -48,45 +54,63 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #prepend>
-      <v-btn
-        icon
-        :aria-label="t(translationKeys.navigation.ariaParticipants)"
-        :to="{ name: 'participants' }"
-      >
-        <v-icon :icon="mdiAccountGroup" aria-hidden="true" />
-      </v-btn>
+      <v-tooltip v-if="canReadParticipantsOverview" :text="participantsLabel" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            :aria-label="t(translationKeys.navigation.ariaParticipants)"
+            :to="{ name: 'participants' }"
+          >
+            <v-icon :icon="mdiAccountGroup" aria-hidden="true" />
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
 
     <template #append>
-      <v-btn
-        v-if="!isCloudLoggedIn"
-        icon
-        :aria-label="t(translationKeys.navigation.ariaSignUp)"
-        exact
-        @click="navigateToRegister"
-      >
-        <v-icon :icon="mdiAccountPlus" aria-hidden="true" />
-      </v-btn>
+      <v-tooltip v-if="!isCloudLoggedIn" :text="signUpLabel" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            :aria-label="t(translationKeys.navigation.ariaSignUp)"
+            exact
+            @click="navigateToRegister"
+          >
+            <v-icon :icon="mdiAccountPlus" aria-hidden="true" />
+          </v-btn>
+        </template>
+      </v-tooltip>
 
-      <v-btn
-        v-if="isCloudLoggedIn"
-        icon
-        :loading="isSigningOut"
-        :disabled="isSigningOut"
-        :aria-label="t(translationKeys.navigation.ariaLogout)"
-        exact
-        @click="handleLogout"
-      >
-        <v-icon :icon="mdiLogout" aria-hidden="true" />
-      </v-btn>
+      <v-tooltip v-if="isCloudLoggedIn" :text="logoutLabel" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            :loading="isSigningOut"
+            :disabled="isSigningOut"
+            :aria-label="t(translationKeys.navigation.ariaLogout)"
+            exact
+            @click="handleLogout"
+          >
+            <v-icon :icon="mdiLogout" aria-hidden="true" />
+          </v-btn>
+        </template>
+      </v-tooltip>
 
-      <v-btn
-        icon
-        :aria-label="t(translationKeys.navigation.ariaSettings)"
-        :to="{ name: 'settings' }"
-      >
-        <v-icon :icon="mdiCog" aria-hidden="true" />
-      </v-btn>
+      <v-tooltip :text="settingsLabel" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            :aria-label="t(translationKeys.navigation.ariaSettings)"
+            :to="{ name: 'settings' }"
+          >
+            <v-icon :icon="mdiCog" aria-hidden="true" />
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-app-bar>
 
@@ -94,10 +118,11 @@ watch(
     <nav :aria-label="t(translationKeys.mainLabel)">
       <v-list density="compact" nav>
         <v-list-item
+          v-if="canReadParticipantsOverview"
           :prepend-icon="mdiAccountGroup"
           :to="{ name: 'participants' }"
-          :title="t(translationKeys.navigation.participants)"
-          :aria-label="t(translationKeys.navigation.participants)"
+          :title="participantsLabel"
+          :aria-label="participantsLabel"
         />
       </v-list>
     </nav>
@@ -108,16 +133,16 @@ watch(
           <v-list-item
             v-if="!isCloudLoggedIn"
             :prepend-icon="mdiAccountPlus"
-            :title="t(translationKeys.navigation.signUp)"
-            :aria-label="t(translationKeys.navigation.signUp)"
+            :title="signUpLabel"
+            :aria-label="signUpLabel"
             exact
             @click="navigateToRegister"
           />
           <v-list-item
             v-if="isCloudLoggedIn"
             :prepend-icon="mdiLogout"
-            :title="t(translationKeys.navigation.logout)"
-            :aria-label="t(translationKeys.navigation.logout)"
+            :title="logoutLabel"
+            :aria-label="logoutLabel"
             :disabled="isSigningOut"
             exact
             @click="handleLogout"
@@ -125,8 +150,8 @@ watch(
           <v-list-item
             :prepend-icon="mdiCog"
             :to="{ name: 'settings' }"
-            :title="t(translationKeys.navigation.settings)"
-            :aria-label="t(translationKeys.navigation.settings)"
+            :title="settingsLabel"
+            :aria-label="settingsLabel"
           />
         </v-list>
       </nav>

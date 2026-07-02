@@ -110,6 +110,64 @@ describe('registerCompetitorsIpc', () => {
     ])
   })
 
+  it('returns a competitor through competitors:get', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const addHandler = getIpcHandler('competitors:add')
+    const getHandler = getIpcHandler('competitors:get')
+    const { sessionToken } = await createLocalUserWithSession()
+
+    const competitor = (await addHandler(
+      {},
+      {
+        token: sessionToken,
+        givenName: 'Yuki',
+        familyName: 'Tanaka'
+      }
+    )) as Competitor
+
+    const loaded = (await getHandler(
+      {},
+      {
+        token: sessionToken,
+        id: competitor.id
+      }
+    )) as Competitor
+
+    expect(loaded).toMatchObject({
+      id: competitor.id,
+      givenName: 'Yuki',
+      familyName: 'Tanaka'
+    })
+  })
+
+  it('throws when competitors:get is called for an unknown id', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const getHandler = getIpcHandler('competitors:get')
+    const { sessionToken } = await createLocalUserWithSession()
+
+    expect(() =>
+      getHandler(
+        {},
+        {
+          token: sessionToken,
+          id: 'missing-competitor-id'
+        }
+      )
+    ).toThrow('Competitor not found')
+  })
+
   it('rejects competitor operations without a valid session', async () => {
     await initTestDatabase()
     const { registerCompetitorsIpc } = await import('./register')
@@ -128,6 +186,29 @@ describe('registerCompetitorsIpc', () => {
         }
       )
     ).toThrow('Unauthorized')
+  })
+
+  it('rejects competitor operations without participants-overview permission', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+    const { createSession } = await import('@main/features/sessions')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const addHandler = getIpcHandler('users:add')
+    const listHandler = getIpcHandler('competitors:list')
+    const { id: userId } = (await addHandler(
+      {},
+      {
+        displayName: 'Device User',
+        userType: 'device'
+      }
+    )) as AddUserResult
+    const { token: sessionToken } = createSession(userId)
+
+    expect(() => listHandler({}, sessionToken)).toThrow('Forbidden')
   })
 
   it('updates and deletes competitors through IPC', async () => {

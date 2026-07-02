@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { participantAvatarColor, participantInitials } from './participant-avatar'
+import {
+  participantAvatarColor,
+  participantClubHeaderBackground,
+  participantInitials
+} from './participant-avatar'
 
 describe('participantInitials', () => {
   it('returns uppercase initials from given and family names', () => {
@@ -51,5 +55,15 @@ describe('participantAvatarColor', () => {
 
   it('returns a color for an empty club name', () => {
     expect(participantAvatarColor('')).toBe('teal')
+  })
+})
+
+describe('participantClubHeaderBackground', () => {
+  it('returns a subtle color-mix background for the club header', () => {
+    const background = participantClubHeaderBackground('Dojo Nord')
+
+    expect(background).toContain('color-mix')
+    expect(background).toContain('8%')
+    expect(background).toContain(participantAvatarColor('Dojo Nord'))
   })
 })

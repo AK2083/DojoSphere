@@ -1,12 +1,14 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { ensureLocalSessionFromOsUsername } from '@features/authentication/service/ensure-local-session'
 import { getCurrentSession } from '@features/authentication/service/get-current-session'
+import { hasUserPermission } from '@features/authentication/service/has-user-permission'
 import { isLocalAuthSession } from '@features/authentication/service/is-local-auth-session'
 import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
+import { PARTICIPANTS_OVERVIEW_PERMISSION } from '@shared/constants/participants-overview-permission'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
 
 const routes = [
@@ -58,19 +60,37 @@ const routes = [
   {
     path: '/participants',
     name: 'participants',
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: PARTICIPANTS_OVERVIEW_PERMISSION.resource,
+        action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.read
+      }
+    },
     component: () => import('@pages/participants')
   },
   {
     path: '/participants/new',
     name: 'participant-create',
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: PARTICIPANTS_OVERVIEW_PERMISSION.resource,
+        action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.create
+      }
+    },
     component: () => import('@pages/participant-form')
   },
   {
     path: '/participants/:id/edit',
     name: 'participant-edit',
-    meta: { requiresAuth: true },
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: PARTICIPANTS_OVERVIEW_PERMISSION.resource,
+        action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.update
+      }
+    },
     component: () => import('@pages/participant-form')
   }
 ]
@@ -104,6 +124,16 @@ async function getCurrentSessionWithTimeout() {
   ])
 }
 
+async function isRequiredPermissionGranted(
+  requiredPermission: { resource: string; action: string } | undefined
+): Promise<boolean> {
+  if (!requiredPermission) {
+    return true
+  }
+
+  return hasUserPermission(requiredPermission.resource, requiredPermission.action)
+}
+
 router.beforeEach(async (to) => {
   const requiresAuth = Boolean(to.meta.requiresAuth)
   const guestOnly = Boolean(to.meta.guestOnly)
@@ -118,6 +148,12 @@ router.beforeEach(async (to) => {
     }
 
     if (session) {
+      const allowed = await isRequiredPermissionGranted(to.meta.requiredPermission)
+
+      if (!allowed) {
+        return { name: 'dashboard' }
+      }
+
       return
     }
 

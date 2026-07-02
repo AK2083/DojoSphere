@@ -17,7 +17,44 @@ describe('isPlaywrightBrowserOnly', () => {
 
 describe('installPlaywrightBrowserElectronApi', () => {
   beforeEach(() => {
+    sessionStorage.clear()
     installPlaywrightBrowserElectronApi()
+  })
+
+  it('persists competitors without sensitive fields and rehydrates them after reload', async () => {
+    const { sessionToken } = await globalThis.window.api.ensureLocalSession('TestUser')
+
+    await globalThis.window.api.addCompetitor(sessionToken, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      gender: 'm',
+      birthDate: '2011-04-12',
+      nationality: 'DE',
+      passNumber: 'JP-000142',
+      club: 'Dojo Nord',
+      weightClass: '-60'
+    })
+
+    const stored = sessionStorage.getItem('dojosphere.e2e.competitors')
+
+    expect(stored).not.toBeNull()
+    expect(stored).not.toContain('2011-04-12')
+    expect(stored).not.toContain('JP-000142')
+
+    installPlaywrightBrowserElectronApi()
+
+    const competitors = await globalThis.window.api.getCompetitors(sessionToken)
+
+    expect(competitors).toEqual([
+      expect.objectContaining({
+        givenName: 'Yuki',
+        familyName: 'Tanaka',
+        gender: 'm',
+        birthDate: '2011-04-12',
+        nationality: 'DE',
+        passNumber: 'JP-000142'
+      })
+    ])
   })
 
   it('bootstraps and resolves a local session', async () => {

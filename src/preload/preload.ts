@@ -16,10 +16,13 @@ const api: ElectronAPI = {
     ipcRenderer.invoke('diagnostics:setUploadPreferences', preferences),
   auditRecord: (input) => ipcRenderer.invoke('audit:record', input),
   getCompetitors: (token) => ipcRenderer.invoke('competitors:list', token),
+  getCompetitor: (token, id) => ipcRenderer.invoke('competitors:get', { token, id }),
   addCompetitor: (token, input) => ipcRenderer.invoke('competitors:add', { token, ...input }),
   updateCompetitor: (token, id, input) =>
     ipcRenderer.invoke('competitors:update', { token, id, ...input }),
   deleteCompetitor: (token, id) => ipcRenderer.invoke('competitors:delete', { token, id }),
+  hasPermission: (token, resource, action) =>
+    ipcRenderer.invoke('authorization:hasPermission', { token, resource, action }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')
 }
 
