@@ -40,6 +40,10 @@ Migrations must not delete user data without an explicit, documented decision.
 | Age classes (DJB) | [age-classes-schema.md](./database/age-classes-schema.md) | `age_classes` |
 | Weight classes (DJB) | [weight-classes-schema.md](./database/weight-classes-schema.md) | `weight_classes` |
 
+## Encryption at rest (planned)
+
+Participant and tournament data are currently stored in **plaintext** SQLite. For encryption design (SQLCipher, key handling, migration), see [encryption-at-rest.md](./database/encryption-at-rest.md).
+
 ## IPC API
 
 The preload script (`src/preload/preload.ts`) exposes these methods on `window.api`:
