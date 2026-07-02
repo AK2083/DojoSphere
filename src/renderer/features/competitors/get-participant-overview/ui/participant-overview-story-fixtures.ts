@@ -163,6 +163,7 @@ export function installStorybookParticipantApi(competitors: Competitor[] = story
 
   globalThis.window.api = {
     ...existingApi,
+    hasPermission: async () => true,
     getCompetitors: async (token: string) => {
       if (token !== STORYBOOK_SESSION_TOKEN) {
         return []

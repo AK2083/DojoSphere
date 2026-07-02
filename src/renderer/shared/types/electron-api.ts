@@ -146,5 +146,6 @@ export interface ElectronAPI {
   addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>
   updateCompetitor: (token: string, id: string, input: UpdateCompetitorInput) => Promise<Competitor>
   deleteCompetitor: (token: string, id: string) => Promise<void>
+  hasPermission: (token: string, resource: string, action: string) => Promise<boolean>
   getOsUsername: () => Promise<string>
 }

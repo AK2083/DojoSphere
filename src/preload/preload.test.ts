@@ -139,5 +139,13 @@ describe('preload', () => {
       token: 'token-1',
       id: 'competitor-1'
     })
+
+    ipcRenderer.invoke.mockResolvedValueOnce(true)
+    await api.hasPermission('token-1', 'participants-overview', 'read')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('authorization:hasPermission', {
+      token: 'token-1',
+      resource: 'participants-overview',
+      action: 'read'
+    })
   })
 })

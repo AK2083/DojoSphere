@@ -188,6 +188,29 @@ describe('registerCompetitorsIpc', () => {
     ).toThrow('Unauthorized')
   })
 
+  it('rejects competitor operations without participants-overview permission', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+    const { createSession } = await import('@main/features/sessions')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const addHandler = getIpcHandler('users:add')
+    const listHandler = getIpcHandler('competitors:list')
+    const { id: userId } = (await addHandler(
+      {},
+      {
+        displayName: 'Device User',
+        userType: 'device'
+      }
+    )) as AddUserResult
+    const { token: sessionToken } = createSession(userId)
+
+    expect(() => listHandler({}, sessionToken)).toThrow('Forbidden')
+  })
+
   it('updates and deletes competitors through IPC', async () => {
     await initTestDatabase()
     const { registerUsersIpc } = await import('@main/features/users')

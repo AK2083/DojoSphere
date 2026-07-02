@@ -40,8 +40,12 @@ test.describe('ParticipantOverviewSection', () => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await gotoParticipantsPage(page, { withParticipants: true })
 
-    await page.getByRole('button', { name: 'Add participant' }).click()
-    await expect(page).toHaveURL(/#\/participants\/new$/)
+    const section = page.getByRole('region', { name: 'Participants list' })
+    const addButton = section.getByRole('button', { name: 'Add participant' })
+
+    await expect(addButton).toBeVisible()
+    await addButton.click()
+    await expect(page).toHaveURL(/#\/participants\/new$/, { timeout: 10_000 })
 
     await gotoParticipantsPage(page, { withParticipants: true })
 

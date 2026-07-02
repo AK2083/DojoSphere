@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import router from '@app/providers/router'
-import { useAuthSession, useSignOut } from '@features/authentication'
+import { useAuthSession, useParticipantsOverviewAccess, useSignOut } from '@features/authentication'
 import { mdiAccountGroup, mdiAccountPlus, mdiCog, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
@@ -11,6 +11,7 @@ import translationKeys from '../i18n/keys'
 const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { isCloudLoggedIn } = useAuthSession()
+const { canReadParticipantsOverview } = useParticipantsOverviewAccess()
 const {
   logout,
   loading: isSigningOut,
@@ -53,7 +54,7 @@ watch(
 <template>
   <v-app-bar v-if="isMobile" density="compact">
     <template #prepend>
-      <v-tooltip :text="participantsLabel" location="bottom">
+      <v-tooltip v-if="canReadParticipantsOverview" :text="participantsLabel" location="bottom">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             v-bind="tooltipProps"
@@ -117,6 +118,7 @@ watch(
     <nav :aria-label="t(translationKeys.mainLabel)">
       <v-list density="compact" nav>
         <v-list-item
+          v-if="canReadParticipantsOverview"
           :prepend-icon="mdiAccountGroup"
           :to="{ name: 'participants' }"
           :title="participantsLabel"

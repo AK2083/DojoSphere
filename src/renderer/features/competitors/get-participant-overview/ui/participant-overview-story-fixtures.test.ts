@@ -47,6 +47,9 @@ describe('participant-overview-story-fixtures', () => {
   it('installs storybook participant api stubs', async () => {
     installStorybookParticipantApi()
 
+    await expect(
+      globalThis.window.api.hasPermission('token', 'participants-overview', 'read')
+    ).resolves.toBe(true)
     await expect(globalThis.window.api.getCompetitors(STORYBOOK_SESSION_TOKEN)).resolves.toEqual(
       storyCompetitors
     )

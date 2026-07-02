@@ -33,6 +33,7 @@ describe('ensureLocalSessionFromOsUsername', () => {
       addCompetitor: vi.fn(),
       updateCompetitor: vi.fn(),
       deleteCompetitor: vi.fn(),
+      hasPermission: vi.fn(),
       getOsUsername: vi.fn()
     }
   })

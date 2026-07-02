@@ -38,9 +38,9 @@ export async function gotoParticipantsPage(
   await expect(page).toHaveURL(/#\/participants$/)
   const participantsSection = page.getByRole('region', { name: 'Participants list' })
   await expect(participantsSection).toBeVisible()
+  await expect(participantsSection).toHaveAttribute('aria-busy', 'false', { timeout: 10_000 })
 
   if (options.withParticipants) {
-    await expect(participantsSection).toHaveAttribute('aria-busy', 'false', { timeout: 10_000 })
     await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
   }
 }

@@ -1,5 +1,6 @@
 export default {
   error: {
+    accessDenied: 'You do not have permission to access this page.',
     retry: 'Too many attempts. Please try again later.',
     unknown: 'An unknown error occurred. Please try again later.'
   },

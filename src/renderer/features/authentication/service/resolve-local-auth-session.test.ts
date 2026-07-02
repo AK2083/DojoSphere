@@ -22,6 +22,7 @@ describe('resolveLocalAuthSession', () => {
       addCompetitor: vi.fn(),
       updateCompetitor: vi.fn(),
       deleteCompetitor: vi.fn(),
+      hasPermission: vi.fn(),
       getOsUsername: vi.fn()
     }
   })
@@ -99,6 +100,7 @@ describe('revokeLocalAuthSession', () => {
       addCompetitor: vi.fn(),
       updateCompetitor: vi.fn(),
       deleteCompetitor: vi.fn(),
+      hasPermission: vi.fn(),
       getOsUsername: vi.fn()
     }
   })

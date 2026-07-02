@@ -1,5 +1,6 @@
 export default {
   error: {
+    accessDenied: 'Du hast keine Berechtigung, diese Seite aufzurufen.',
     retry: 'Zu viele Versuche. Bitte später erneut versuchen.',
     unknown: 'Ein unbekannter Fehler ist aufgetreten. Bitte versuche es später erneut.'
   },

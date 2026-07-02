@@ -21,6 +21,8 @@ const api: ElectronAPI = {
   updateCompetitor: (token, id, input) =>
     ipcRenderer.invoke('competitors:update', { token, id, ...input }),
   deleteCompetitor: (token, id) => ipcRenderer.invoke('competitors:delete', { token, id }),
+  hasPermission: (token, resource, action) =>
+    ipcRenderer.invoke('authorization:hasPermission', { token, resource, action }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')
 }
 

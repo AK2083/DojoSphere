@@ -222,6 +222,7 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
         saveCompetitors(competitors)
       }
     },
+    hasPermission: async () => true,
     getOsUsername: async () => 'TestUser',
     ...overrides
   }

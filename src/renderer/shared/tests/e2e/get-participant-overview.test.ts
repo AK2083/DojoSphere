@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 const { playwrightExpect } = vi.hoisted(() => ({
   playwrightExpect: vi.fn(() => ({
     toHaveURL: vi.fn().mockResolvedValue(undefined),
-    toBeVisible: vi.fn().mockResolvedValue(undefined)
+    toBeVisible: vi.fn().mockResolvedValue(undefined),
+    toHaveAttribute: vi.fn().mockResolvedValue(undefined)
   }))
 }))
 
@@ -38,6 +39,6 @@ describe('get-participant-overview e2e helpers', () => {
     expect(goto).toHaveBeenCalledWith('/#/participants')
     expect(page.getByRole).toHaveBeenCalledWith('region', { name: 'Participants list' })
     expect(page.getByText).not.toHaveBeenCalled()
-    expect(playwrightExpect).toHaveBeenCalledTimes(2)
+    expect(playwrightExpect).toHaveBeenCalledTimes(3)
   })
 })

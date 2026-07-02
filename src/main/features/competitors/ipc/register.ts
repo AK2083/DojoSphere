@@ -1,7 +1,10 @@
 import { ipcMain } from 'electron'
 
+import { userHasPermission } from '@main/features/authorization'
 import { getActiveSessionByToken } from '@main/features/sessions'
-import { requireActiveSession } from '@main/shared/security'
+import { requireActiveSession, requirePermission } from '@main/shared/security'
+
+const PARTICIPANTS_OVERVIEW_RESOURCE = 'participants-overview'
 
 import {
   addCompetitor,
@@ -21,13 +24,17 @@ type UpdateCompetitorIpcInput = UpdateCompetitorInput & { token: string; id: str
  */
 export function registerCompetitorsIpc() {
   ipcMain.handle('competitors:list', (_event, token: string) => {
-    requireActiveSession(token, getActiveSessionByToken)
+    const session = requireActiveSession(token, getActiveSessionByToken)
+
+    requirePermission(session.userId, PARTICIPANTS_OVERVIEW_RESOURCE, 'read', userHasPermission)
 
     return getCompetitors()
   })
 
   ipcMain.handle('competitors:get', (_event, input: { token: string; id: string }) => {
-    requireActiveSession(input.token, getActiveSessionByToken)
+    const session = requireActiveSession(input.token, getActiveSessionByToken)
+
+    requirePermission(session.userId, PARTICIPANTS_OVERVIEW_RESOURCE, 'read', userHasPermission)
 
     const competitor = getCompetitor(input.id)
 
@@ -44,6 +51,8 @@ export function registerCompetitorsIpc() {
 
     void token
 
+    requirePermission(session.userId, PARTICIPANTS_OVERVIEW_RESOURCE, 'create', userHasPermission)
+
     return addCompetitor(session.userId, competitor)
   })
 
@@ -53,11 +62,15 @@ export function registerCompetitorsIpc() {
 
     void token
 
+    requirePermission(session.userId, PARTICIPANTS_OVERVIEW_RESOURCE, 'update', userHasPermission)
+
     return updateCompetitor(session.userId, id, competitor)
   })
 
   ipcMain.handle('competitors:delete', (_event, input: { token: string; id: string }) => {
     const session = requireActiveSession(input.token, getActiveSessionByToken)
+
+    requirePermission(session.userId, PARTICIPANTS_OVERVIEW_RESOURCE, 'delete', userHasPermission)
 
     deleteCompetitor(session.userId, input.id)
   })

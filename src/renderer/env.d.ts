@@ -17,6 +17,10 @@ declare module 'vue-router' {
   interface RouteMeta {
     activityLogging?: boolean
     guestOnly?: boolean
+    requiredPermission?: {
+      resource: string
+      action: string
+    }
     requiresAuth?: boolean
   }
 }
