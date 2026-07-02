@@ -57,12 +57,12 @@ const KODOKAN_KYU_BELTS = {
   10: 'judo-belt-white',
   9: 'judo-belt-white',
   8: 'judo-belt-white',
-  7: 'judo-belt-white',
-  6: 'judo-belt-white',
-  5: 'judo-belt-white',
-  4: 'judo-belt-white',
-  3: 'judo-belt-brown',
-  2: 'judo-belt-brown',
+  7: 'judo-belt-light-blue',
+  6: 'judo-belt-light-blue',
+  5: 'judo-belt-yellow',
+  4: 'judo-belt-orange',
+  3: 'judo-belt-green',
+  2: 'judo-belt-purple',
   1: 'judo-belt-brown'
 }
 
@@ -76,21 +76,29 @@ function gradeId(prefix, rankOrder) {
   return `${prefix}000000-0000-4000-8000-0000000000${RANK_ORDER_HEX[rankOrder - 1]}`
 }
 
-function buildGrades(systemId, prefix, kyuBelts) {
+function resolveKyuLabelKey(kyu, labelScope) {
+  return labelScope === 'kodokan' ? `grades.kodokan.kyu.${kyu}` : `grades.kyu.${kyu}`
+}
+
+function resolveDanLabelKey(dan, labelScope) {
+  return labelScope === 'kodokan' ? `grades.kodokan.dan.${dan}` : `grades.dan.${dan}`
+}
+
+function buildGrades(systemId, prefix, kyuBelts, labelScope = 'default') {
   const rows = []
 
   for (let kyu = 10; kyu >= 1; kyu -= 1) {
     const rankOrder = 11 - kyu
     const belt = kyuBelts[kyu]
     rows.push(
-      `  ('${gradeId(prefix, rankOrder)}', '${systemId}', 'kyu-${kyu}', 'grades.kyu.${kyu}', ${rankOrder}, 'kyu', ${kyu}, '${belt}')`
+      `  ('${gradeId(prefix, rankOrder)}', '${systemId}', 'kyu-${kyu}', '${resolveKyuLabelKey(kyu, labelScope)}', ${rankOrder}, 'kyu', ${kyu}, '${belt}')`
     )
   }
 
   for (let dan = 1; dan <= 10; dan += 1) {
     const rankOrder = 10 + dan
     rows.push(
-      `  ('${gradeId(prefix, rankOrder)}', '${systemId}', 'dan-${dan}', 'grades.dan.${dan}', ${rankOrder}, 'dan', ${dan}, '${danBeltColor(dan)}')`
+      `  ('${gradeId(prefix, rankOrder)}', '${systemId}', 'dan-${dan}', '${resolveDanLabelKey(dan, labelScope)}', ${rankOrder}, 'dan', ${dan}, '${danBeltColor(dan)}')`
     )
   }
 
@@ -100,7 +108,7 @@ function buildGrades(systemId, prefix, kyuBelts) {
 const gradeRows = [
   ...buildGrades(DE_DJB_SYSTEM_ID, 'a1', DE_DJB_KYU_BELTS),
   ...buildGrades(AT_OJV_SYSTEM_ID, 'a2', AT_OJV_KYU_BELTS),
-  ...buildGrades(KODOKAN_SYSTEM_ID, 'a3', KODOKAN_KYU_BELTS)
+  ...buildGrades(KODOKAN_SYSTEM_ID, 'a3', KODOKAN_KYU_BELTS, 'kodokan')
 ]
 
 const sql = `CREATE TABLE IF NOT EXISTS grading_systems (

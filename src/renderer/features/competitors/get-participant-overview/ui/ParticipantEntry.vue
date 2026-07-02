@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiPencil } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
-import JudoBeltSwatch from '@shared/ui/JudoBeltSwatch.vue'
+import { judoBeltStripeStyle } from '@shared/lib/judo-belt/judo-belt-color'
 
 import translationKeys from '../i18n/keys'
 import {
@@ -51,6 +51,8 @@ const secondaryHeaders = computed(() => headersForKeys(secondaryFieldKeys))
 const detailsExpanded = ref(false)
 const clubColor = computed(() => participantAvatarColor(props.participant.club))
 const headerBackground = computed(() => participantClubHeaderBackground(props.participant.club))
+const beltStripeStyle = computed(() => judoBeltStripeStyle(props.participant.gradeBeltColorToken))
+const hasBeltStripe = computed(() => Object.keys(beltStripeStyle.value).length > 0)
 
 function fieldValue(key: string): string {
   return props.participant[key as keyof ParticipantOverviewItem]?.toString() ?? ''
@@ -63,7 +65,11 @@ function detailsPanelId(): string {
 
 <template>
   <v-card variant="outlined" class="participant-entry" :aria-label="participantLabel(participant)">
-    <div class="participant-entry__header" :style="{ backgroundColor: headerBackground }">
+    <div
+      class="participant-entry__header"
+      :class="{ 'participant-entry__header--bordered': !hasBeltStripe }"
+      :style="{ backgroundColor: headerBackground }"
+    >
       <div class="participant-entry__identity">
         <v-avatar :color="clubColor" size="40" class="participant-entry__avatar">
           <span aria-hidden="true">{{ participantInitials(participant) }}</span>
@@ -110,17 +116,17 @@ function detailsPanelId(): string {
       </div>
     </div>
 
+    <div
+      v-if="hasBeltStripe"
+      class="participant-entry__belt-stripe"
+      :style="beltStripeStyle"
+      aria-hidden="true"
+    />
+
     <dl class="participant-entry__summary">
       <template v-for="header in summaryHeaders" :key="header.key">
         <dt>{{ header.title }}</dt>
-        <dd v-if="header.key === 'grade'" class="participant-entry__grade-value">
-          <JudoBeltSwatch
-            v-if="participant.gradeBeltColorToken"
-            :color-token="participant.gradeBeltColorToken"
-          />
-          {{ fieldValue(header.key) }}
-        </dd>
-        <dd v-else>{{ fieldValue(header.key) }}</dd>
+        <dd>{{ fieldValue(header.key) }}</dd>
       </template>
     </dl>
 
@@ -143,19 +149,20 @@ function detailsPanelId(): string {
     </div>
 
     <v-expand-transition>
-      <dl v-if="detailsExpanded" :id="detailsPanelId()" class="participant-entry__details">
-        <template v-for="header in secondaryHeaders" :key="header.key">
-          <dt>{{ header.title }}</dt>
-          <dd>{{ fieldValue(header.key) }}</dd>
-        </template>
-      </dl>
+      <div v-if="detailsExpanded" :id="detailsPanelId()" class="participant-entry__details-panel">
+        <dl class="participant-entry__details">
+          <template v-for="header in secondaryHeaders" :key="header.key">
+            <dt>{{ header.title }}</dt>
+            <dd>{{ fieldValue(header.key) }}</dd>
+          </template>
+        </dl>
+      </div>
     </v-expand-transition>
   </v-card>
 </template>
 
 <style scoped>
 .participant-entry {
-  height: 100%;
   overflow: hidden;
   background: rgb(var(--v-theme-surface));
 }
@@ -166,8 +173,18 @@ function detailsPanelId(): string {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: none;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+}
+
+.participant-entry__header--bordered {
+  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
+.participant-entry__belt-stripe {
+  width: 100%;
+  height: 1rem;
+  border-bottom: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
 .participant-entry__identity {
@@ -247,12 +264,6 @@ function detailsPanelId(): string {
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
 }
 
-.participant-entry__grade-value {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .participant-entry__details-toggle {
   border-top: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
@@ -261,14 +272,19 @@ function detailsPanelId(): string {
   justify-content: flex-start;
   height: auto;
   min-height: unset;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem 1.25rem;
   text-transform: none;
   letter-spacing: normal;
   font-weight: 500;
 }
 
+.participant-entry__details-panel {
+  overflow: hidden;
+}
+
 .participant-entry__details {
   padding-top: 0;
+  padding-bottom: 1rem;
 }
 
 .participant-entry__details dt,

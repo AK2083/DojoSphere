@@ -45,6 +45,32 @@ const grades = {
     '8': '8th Dan',
     '9': '9th Dan',
     '10': '10th Dan'
+  },
+  kodokan: {
+    kyu: {
+      '10': '10th Kyū (Jūkyū)',
+      '9': '9th Kyū (Kyūkyū)',
+      '8': '8th Kyū (Hakkyū)',
+      '7': '7th Kyū (Shichikyū)',
+      '6': '6th Kyū (Rokkyū)',
+      '5': '5th Kyū (Gokyū)',
+      '4': '4th Kyū (Yonkyū)',
+      '3': '3rd Kyū (Sankyū)',
+      '2': '2nd Kyū (Nikyū)',
+      '1': '1st Kyū (Ikkyū)'
+    },
+    dan: {
+      '1': 'Shodan (1st Dan)',
+      '2': 'Nidan (2nd Dan)',
+      '3': 'Sandan (3rd Dan)',
+      '4': 'Yodan (4th Dan)',
+      '5': 'Godan (5th Dan)',
+      '6': 'Rokudan (6th Dan)',
+      '7': 'Nanadan (7th Dan)',
+      '8': 'Hachidan (8th Dan)',
+      '9': 'Kudan (9th Dan)',
+      '10': 'Judan (10th Dan)'
+    }
   }
 }
 

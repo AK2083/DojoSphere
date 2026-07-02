@@ -111,19 +111,20 @@ const AT_OJV_KYU_BELTS: Record<number, string> = {
 }
 
 /**
- * Kodokan Kyu belt colors: Weiß bis 4. Kyu, Braun ab 3. Kyu (Kodokan-Tradition).
+ * Kodokan youth belt colors (講道館少年級位), mapped onto 10.–1. Kyū.
+ * 10.–8.: Weiß · 7./6.: Mizuiro (水色) · 5.: Gelb · 4.: Orange · 3.: Grün · 2.: Lila · 1.: Braun
  * Dan: Schwarz (1.–5.), Rot-Weiß (6.–8.), Rot (9.–10.)
  */
 const KODOKAN_KYU_BELTS: Record<number, string> = {
   10: 'judo-belt-white',
   9: 'judo-belt-white',
   8: 'judo-belt-white',
-  7: 'judo-belt-white',
-  6: 'judo-belt-white',
-  5: 'judo-belt-white',
-  4: 'judo-belt-white',
-  3: 'judo-belt-brown',
-  2: 'judo-belt-brown',
+  7: 'judo-belt-light-blue',
+  6: 'judo-belt-light-blue',
+  5: 'judo-belt-yellow',
+  4: 'judo-belt-orange',
+  3: 'judo-belt-green',
+  2: 'judo-belt-purple',
   1: 'judo-belt-brown'
 }
 
@@ -143,16 +144,28 @@ function gradeId(idPrefix: string, rankOrder: number): string {
   return `${idPrefix}000000-0000-4000-8000-0000000000${RANK_ORDER_HEX[rankOrder - 1]}`
 }
 
+type GradeLabelScope = 'default' | 'kodokan'
+
 type BuildGradesOptions = {
   gradingSystemId: string
   idPrefix: string
   kyuBeltColors: Record<number, string>
   danBeltColors?: (dan: number) => string
+  labelScope?: GradeLabelScope
+}
+
+function resolveKyuLabelKey(kyu: number, labelScope: GradeLabelScope): string {
+  return labelScope === 'kodokan' ? `grades.kodokan.kyu.${kyu}` : `grades.kyu.${kyu}`
+}
+
+function resolveDanLabelKey(dan: number, labelScope: GradeLabelScope): string {
+  return labelScope === 'kodokan' ? `grades.kodokan.dan.${dan}` : `grades.dan.${dan}`
 }
 
 export function buildKyuDanGrades(options: BuildGradesOptions): GradeSeed[] {
   const grades: GradeSeed[] = []
   const resolveDanBelt = options.danBeltColors ?? (() => 'judo-belt-black')
+  const labelScope = options.labelScope ?? 'default'
 
   for (let kyu = 10; kyu >= 1; kyu -= 1) {
     const rankOrder = 11 - kyu
@@ -161,7 +174,7 @@ export function buildKyuDanGrades(options: BuildGradesOptions): GradeSeed[] {
       id: gradeId(options.idPrefix, rankOrder),
       gradingSystemId: options.gradingSystemId,
       code: `kyu-${kyu}`,
-      labelKey: `grades.kyu.${kyu}`,
+      labelKey: resolveKyuLabelKey(kyu, labelScope),
       rankOrder,
       levelType: 'kyu',
       levelNumber: kyu,
@@ -176,7 +189,7 @@ export function buildKyuDanGrades(options: BuildGradesOptions): GradeSeed[] {
       id: gradeId(options.idPrefix, rankOrder),
       gradingSystemId: options.gradingSystemId,
       code: `dan-${dan}`,
-      labelKey: `grades.dan.${dan}`,
+      labelKey: resolveDanLabelKey(dan, labelScope),
       rankOrder,
       levelType: 'dan',
       levelNumber: dan,
@@ -204,7 +217,8 @@ export const GRADE_SEEDS: GradeSeed[] = [
     gradingSystemId: KODOKAN_SYSTEM_ID,
     idPrefix: 'a3',
     kyuBeltColors: KODOKAN_KYU_BELTS,
-    danBeltColors: danBeltColor
+    danBeltColors: danBeltColor,
+    labelScope: 'kodokan'
   })
 ]
 

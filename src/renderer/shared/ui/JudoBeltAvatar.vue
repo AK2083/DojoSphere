@@ -30,19 +30,16 @@ const hasBelt = computed(() => fill.value.kind !== 'empty')
       class="judo-belt-avatar__fill"
       :style="{ backgroundColor: fill.color }"
     />
-    <div v-else-if="fill.kind === 'banded'" class="judo-belt-avatar__fill">
-      <span
-        class="judo-belt-avatar__band judo-belt-avatar__band--top"
-        :style="{ backgroundColor: fill.outerColor }"
-      />
+    <div
+      v-else-if="fill.kind === 'banded'"
+      class="judo-belt-avatar__fill judo-belt-avatar__fill--banded"
+    >
+      <span class="judo-belt-avatar__band" :style="{ backgroundColor: fill.outerColor }" />
       <span
         class="judo-belt-avatar__band judo-belt-avatar__band--center"
         :style="{ backgroundColor: fill.centerColor }"
       />
-      <span
-        class="judo-belt-avatar__band judo-belt-avatar__band--bottom"
-        :style="{ backgroundColor: fill.outerColor }"
-      />
+      <span class="judo-belt-avatar__band" :style="{ backgroundColor: fill.outerColor }" />
     </div>
     <div
       v-else-if="fill.kind === 'striped'"
@@ -54,8 +51,17 @@ const hasBelt = computed(() => fill.value.kind !== 'empty')
 
 <style scoped>
 .judo-belt-avatar {
+  position: relative;
   flex-shrink: 0;
+}
+
+.judo-belt-avatar::after {
+  position: absolute;
+  inset: 0;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
 }
 
 .judo-belt-avatar--empty {
@@ -68,6 +74,8 @@ const hasBelt = computed(() => fill.value.kind !== 'empty')
 
 .judo-belt-avatar :deep(.v-avatar__content) {
   display: block;
+  align-items: stretch;
+  justify-content: stretch;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -75,29 +83,24 @@ const hasBelt = computed(() => fill.value.kind !== 'empty')
 }
 
 .judo-belt-avatar__fill {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.judo-belt-avatar__band {
-  position: absolute;
-  left: 0;
+.judo-belt-avatar__fill--banded {
+  display: flex;
+  flex-direction: column;
+}
+
+.judo-belt-avatar__fill--banded .judo-belt-avatar__band {
+  flex: 1 1 0;
+  min-height: 0;
   width: 100%;
 }
 
-.judo-belt-avatar__band--top {
-  top: 0;
-  height: 30%;
-}
-
-.judo-belt-avatar__band--center {
-  top: 30%;
-  height: 40%;
-}
-
-.judo-belt-avatar__band--bottom {
-  bottom: 0;
-  height: 30%;
+.judo-belt-avatar__fill--banded .judo-belt-avatar__band--center {
+  flex-grow: 3;
 }
 </style>

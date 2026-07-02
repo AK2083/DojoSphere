@@ -90,7 +90,7 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
   display: flex;
   align-items: center;
   width: 100%;
-  padding-inline: 1.25rem;
+  padding: 0.375rem 1.25rem;
 }
 
 .participant-overview-actions__start,
@@ -101,7 +101,7 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
 
 .participant-overview-actions__add {
   min-width: 0;
-  padding-inline: 0;
+  padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
 }

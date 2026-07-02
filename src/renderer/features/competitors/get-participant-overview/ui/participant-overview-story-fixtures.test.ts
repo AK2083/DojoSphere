@@ -51,7 +51,9 @@ describe('participant-overview-story-fixtures', () => {
       storyCompetitors
     )
     await expect(globalThis.window.api.getCompetitors('other-token')).resolves.toEqual([])
-    await expect(globalThis.window.api.deleteCompetitor()).resolves.toBeUndefined()
+    await expect(
+      globalThis.window.api.deleteCompetitor(STORYBOOK_SESSION_TOKEN, 'participant-1')
+    ).resolves.toBeUndefined()
   })
 
   it('installs custom competitors in storybook api stub', async () => {

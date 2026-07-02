@@ -1,9 +1,11 @@
 /** CSS colors and gradients for judo belt tokens used in grade seeds. */
 const JUDO_BELT_COLORS: Record<string, string> = {
   'judo-belt-white': '#f5f5f5',
+  'judo-belt-light-blue': '#4fc3f7',
   'judo-belt-yellow': '#f5d000',
   'judo-belt-orange': '#f57c00',
   'judo-belt-green': '#2e7d32',
+  'judo-belt-purple': '#7b1fa2',
   'judo-belt-blue': '#1565c0',
   'judo-belt-brown': '#5d4037',
   'judo-belt-black': '#000000',
@@ -33,7 +35,7 @@ function threeBandGradient(
   const outerEnd = JUDO_BELT_BAND_OUTER_PERCENT
   const centerEnd = 100 - JUDO_BELT_BAND_OUTER_PERCENT
 
-  return `linear-gradient(${direction}, ${outerColor} 0 ${outerEnd}%, ${centerColor} ${outerEnd}% ${centerEnd}%, ${outerColor} ${centerEnd}% 100%)`
+  return `linear-gradient(${direction}, ${outerColor} 0%, ${outerColor} ${outerEnd}%, ${centerColor} ${outerEnd}%, ${centerColor} ${centerEnd}%, ${outerColor} ${centerEnd}%, ${outerColor} 100%)`
 }
 
 /**
@@ -47,6 +49,42 @@ export type JudoBeltAvatarFill =
 
 /** Share of each outer band in three-stripe belt rendering (percent). */
 export const judoBeltBandOuterPercent = JUDO_BELT_BAND_OUTER_PERCENT
+
+function resolveBeltBackgroundStyle(
+  token: string,
+  direction: 'to right' | 'to bottom'
+): Record<string, string> {
+  const bands = JUDO_BELT_BANDS[token]
+
+  if (bands) {
+    return { background: threeBandGradient(bands[0], bands[1], direction) }
+  }
+
+  if (token === 'judo-belt-red-white') {
+    return {
+      background:
+        direction === 'to bottom'
+          ? 'repeating-linear-gradient(to bottom, #c62828 0 3px, #f5f5f5 3px 6px)'
+          : 'repeating-linear-gradient(to right, #c62828 0 3px, #f5f5f5 3px 6px)'
+    }
+  }
+
+  return { backgroundColor: JUDO_BELT_COLORS[token] ?? '#e0e0e0' }
+}
+
+/**
+ * Builds inline styles for a full-width belt stripe below participant card headers.
+ *
+ * @param token - Belt color token from the grades table.
+ * @returns CSS properties for the stripe element, or empty when no token is set.
+ */
+export function judoBeltStripeStyle(token: string | null | undefined): Record<string, string> {
+  if (!token) {
+    return {}
+  }
+
+  return resolveBeltBackgroundStyle(token, 'to bottom')
+}
 
 /**
  * Resolves a persisted belt color token to a CSS color value.
@@ -73,19 +111,7 @@ export function judoBeltSwatchStyle(token: string | null | undefined): Record<st
     return { backgroundColor: '#e0e0e0' }
   }
 
-  const bands = JUDO_BELT_BANDS[token]
-
-  if (bands) {
-    return { background: threeBandGradient(bands[0], bands[1], 'to right') }
-  }
-
-  if (token === 'judo-belt-red-white') {
-    return {
-      background: 'repeating-linear-gradient(to right, #c62828 0 3px, #f5f5f5 3px 6px)'
-    }
-  }
-
-  return { backgroundColor: JUDO_BELT_COLORS[token] ?? '#e0e0e0' }
+  return resolveBeltBackgroundStyle(token, 'to right')
 }
 
 /**

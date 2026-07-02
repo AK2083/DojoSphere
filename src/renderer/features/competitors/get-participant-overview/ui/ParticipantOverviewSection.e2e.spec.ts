@@ -20,13 +20,12 @@ test.describe('ParticipantOverviewSection', () => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await gotoParticipantsPage(page, { withParticipants: true })
 
+    const participantsSection = page.getByRole('region', { name: 'Participants list' })
+
+    await expect(participantsSection).toHaveAttribute('aria-busy', 'false')
     await expect(page.getByText('Yuki Tanaka')).toBeVisible()
     await expect(page.getByText('Anna Weber')).toBeVisible()
     await expect(page.getByText('Leo Martin')).toBeVisible()
-    await expect(page.getByRole('region', { name: 'Participants list' })).toHaveAttribute(
-      'aria-busy',
-      'false'
-    )
   })
 
   test('renders a single-column grid on mobile', async ({ page }) => {

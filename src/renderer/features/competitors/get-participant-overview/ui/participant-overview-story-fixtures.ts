@@ -170,7 +170,7 @@ export function installStorybookParticipantApi(competitors: Competitor[] = story
 
       return competitors
     },
-    deleteCompetitor: async () => undefined
+    deleteCompetitor: async (_token, _id) => undefined
   } as typeof globalThis.window.api
 }
 

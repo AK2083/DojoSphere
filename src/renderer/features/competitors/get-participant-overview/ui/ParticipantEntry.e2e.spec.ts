@@ -23,15 +23,11 @@ test.describe('ParticipantEntry', () => {
     const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
 
     await expect(yukiCard.getByText('JP-000142')).toBeVisible()
-    await expect(
-      yukiCard.getByRole('button', { name: 'Show additional details' })
-    ).toBeVisible()
+    await expect(yukiCard.getByRole('button', { name: 'Show additional details' })).toBeVisible()
 
     await yukiCard.getByRole('button', { name: 'Show additional details' }).click()
 
-    await expect(
-      yukiCard.getByRole('button', { name: 'Hide additional details' })
-    ).toBeVisible()
+    await expect(yukiCard.getByRole('button', { name: 'Hide additional details' })).toBeVisible()
     await expect(yukiCard.getByText('S. Fischer')).toBeVisible()
   })
 

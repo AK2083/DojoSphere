@@ -3,8 +3,8 @@ import type { Competitor } from '@shared/types/electron-api'
 import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createEmptyParticipantForm } from './participant-form-state'
 import { AT_OJV_SYSTEM_ID, DE_DJB_SYSTEM_ID, KODOKAN_SYSTEM_ID } from './grade-reference-data'
+import { createEmptyParticipantForm } from './participant-form-state'
 import { useParticipantForm } from './use-form'
 
 const pushMock = vi.fn()

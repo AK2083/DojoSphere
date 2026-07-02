@@ -90,6 +90,7 @@ const gridClassNames = computed(() => ({
 
 .participant-overview-section__grid {
   display: grid;
+  align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
   gap: 1rem;
   width: 100%;

@@ -44,6 +44,20 @@ describe('grade-reference-data', () => {
     }
   })
 
+  it('assigns kodokan youth belt colors and japanese label keys', () => {
+    const grade = findGradeSeed('a3000000-0000-4000-8000-000000000005')
+
+    expect(grade?.labelKey).toBe('grades.kodokan.kyu.6')
+    expect(grade?.beltColorToken).toBe('judo-belt-light-blue')
+
+    expect(findGradeSeed('a3000000-0000-4000-8000-000000000008')?.beltColorToken).toBe(
+      'judo-belt-green'
+    )
+    expect(findGradeSeed('a3000000-0000-4000-8000-00000000000b')?.labelKey).toBe(
+      'grades.kodokan.dan.1'
+    )
+  })
+
   it('assigns dan belt colors by rank', () => {
     expect(findGradeSeed('a1000000-0000-4000-8000-00000000000b')?.beltColorToken).toBe(
       'judo-belt-black'
@@ -63,11 +77,11 @@ describe('grade-reference-data', () => {
       kyuBeltColors: {}
     })
 
-    expect(grades.find((grade) => grade.levelType === 'kyu' && grade.levelNumber === 5)?.beltColorToken).toBe(
-      'judo-belt-white'
-    )
-    expect(grades.find((grade) => grade.levelType === 'dan' && grade.levelNumber === 1)?.beltColorToken).toBe(
-      'judo-belt-black'
-    )
+    expect(
+      grades.find((grade) => grade.levelType === 'kyu' && grade.levelNumber === 5)?.beltColorToken
+    ).toBe('judo-belt-white')
+    expect(
+      grades.find((grade) => grade.levelType === 'dan' && grade.levelNumber === 1)?.beltColorToken
+    ).toBe('judo-belt-black')
   })
 })
