@@ -5,6 +5,105 @@ const PLAYWRIGHT_COMPETITORS_KEY = 'dojosphere.e2e.competitors'
 
 type LocalSessionEntry = { userId: string; displayName: string }
 
+/** Persisted competitor fields without personal data (Playwright browser-only stub). */
+type PlaywrightStoredCompetitor = Omit<
+  Competitor,
+  'gender' | 'birthDate' | 'nationality' | 'passNumber' | 'licenseNumber' | 'contactPhone' | 'coach'
+>
+
+type FictionalCompetitorSensitiveDetails = Pick<
+  Competitor,
+  'gender' | 'birthDate' | 'nationality' | 'passNumber' | 'licenseNumber' | 'contactPhone' | 'coach'
+>
+
+/**
+ * Fictional sensitive fields for Playwright seeds — not real personal data.
+ * Keyed by given name so competitors can be rehydrated after a full page reload.
+ */
+const FICTIONAL_COMPETITOR_SENSITIVE_BY_GIVEN_NAME: Record<
+  string,
+  FictionalCompetitorSensitiveDetails
+> = {
+  Yuki: {
+    gender: 'm',
+    birthDate: '2011-04-12',
+    nationality: 'DE',
+    passNumber: 'JP-000142',
+    licenseNumber: 'WL-2024-001',
+    contactPhone: '+49 555 010201',
+    coach: 'S. Fischer'
+  },
+  Anna: {
+    gender: 'f',
+    birthDate: '2013-08-03',
+    nationality: 'DE',
+    passNumber: 'JP-000287',
+    licenseNumber: 'WL-2024-014',
+    contactPhone: '+49 555 010202',
+    coach: 'M. Keller'
+  },
+  Leo: {
+    gender: 'm',
+    birthDate: '2009-11-21',
+    nationality: 'AT',
+    passNumber: 'JP-000391',
+    licenseNumber: 'WL-2024-028',
+    contactPhone: '+43 555 010203',
+    coach: 'T. Brandt'
+  }
+}
+
+const DEFAULT_FICTIONAL_SENSITIVE_DETAILS: FictionalCompetitorSensitiveDetails = {
+  gender: 'f',
+  birthDate: '2000-01-01',
+  nationality: 'DE',
+  passNumber: '00000000',
+  licenseNumber: null,
+  contactPhone: null,
+  coach: null
+}
+
+let competitorsMemory: Competitor[] | null = null
+
+function stripSensitiveFields(competitor: Competitor): PlaywrightStoredCompetitor {
+  return {
+    id: competitor.id,
+    givenName: competitor.givenName,
+    familyName: competitor.familyName,
+    club: competitor.club,
+    weightClass: competitor.weightClass,
+    clubId: competitor.clubId,
+    weightClassId: competitor.weightClassId,
+    ageClassId: competitor.ageClassId,
+    gradeId: competitor.gradeId,
+    createdAt: competitor.createdAt,
+    updatedAt: competitor.updatedAt
+  }
+}
+
+function resolveFictionalSensitiveDetails(givenName: string): FictionalCompetitorSensitiveDetails {
+  return (
+    FICTIONAL_COMPETITOR_SENSITIVE_BY_GIVEN_NAME[givenName] ?? DEFAULT_FICTIONAL_SENSITIVE_DETAILS
+  )
+}
+
+function rehydrateStoredCompetitor(stored: PlaywrightStoredCompetitor): Competitor {
+  return {
+    ...stored,
+    ...resolveFictionalSensitiveDetails(stored.givenName)
+  }
+}
+
+function loadStoredCompetitors(): PlaywrightStoredCompetitor[] {
+  try {
+    const raw = sessionStorage.getItem(PLAYWRIGHT_COMPETITORS_KEY)
+
+    return raw ? (JSON.parse(raw) as PlaywrightStoredCompetitor[]) : []
+  } catch {
+    return []
+  }
+}
+
 function loadLocalSessions(): Map<string, LocalSessionEntry> {
   try {
     const raw = sessionStorage.getItem(PLAYWRIGHT_LOCAL_SESSIONS_KEY)
@@ -27,17 +126,21 @@ function saveLocalSessions(localSessions: Map<string, LocalSessionEntry>): void 
 }
 
 function loadCompetitors(): Competitor[] {
-  try {
-    const raw = sessionStorage.getItem(PLAYWRIGHT_COMPETITORS_KEY)
-
-    return raw ? (JSON.parse(raw) as Competitor[]) : []
-  } catch {
-    return []
+  if (competitorsMemory) {
+    return competitorsMemory
   }
+
+  competitorsMemory = loadStoredCompetitors().map(rehydrateStoredCompetitor)
+
+  return competitorsMemory
 }
 
 function saveCompetitors(competitors: Competitor[]): void {
-  sessionStorage.setItem(PLAYWRIGHT_COMPETITORS_KEY, JSON.stringify(competitors))
+  competitorsMemory = competitors
+  sessionStorage.setItem(
+    PLAYWRIGHT_COMPETITORS_KEY,
+    JSON.stringify(competitors.map(stripSensitiveFields))
+  )
 }
 
 /**
@@ -89,6 +192,8 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
  * @param overrides - Optional API method overrides (e.g. custom `getOsUsername` in Storybook).
  */
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
+  competitorsMemory = null
+
   const api: ElectronAPI = {
     getUsers: async () => [],
     addUser: async () => ({ id: 'local-user-id', sessionToken: 'local-session-token' }),
