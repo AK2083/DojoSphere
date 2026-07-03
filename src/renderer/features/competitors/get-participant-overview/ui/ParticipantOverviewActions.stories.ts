@@ -11,6 +11,7 @@ const meta = {
   },
   args: {
     addLabel: 'Add participant',
+    importLabel: 'Import participants',
     isMobile: false
   }
 } satisfies Meta<typeof ParticipantOverviewActions>

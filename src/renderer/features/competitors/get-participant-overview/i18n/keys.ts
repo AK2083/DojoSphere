@@ -33,6 +33,8 @@ export default {
   loadError: 'competitors.getParticipantOverview.loadError',
   actions: {
     add: 'competitors.getParticipantOverview.actions.add',
+    import: 'competitors.getParticipantOverview.actions.import',
+    ariaImport: 'competitors.getParticipantOverview.actions.ariaImport',
     edit: 'competitors.getParticipantOverview.actions.edit',
     ariaEdit: 'competitors.getParticipantOverview.actions.ariaEdit',
     delete: 'competitors.getParticipantOverview.actions.delete',

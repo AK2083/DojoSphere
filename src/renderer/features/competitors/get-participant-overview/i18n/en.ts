@@ -33,6 +33,8 @@ export default {
   loadError: 'Participants could not be loaded.',
   actions: {
     add: 'Add participant',
+    import: 'Import participants',
+    ariaImport: 'Import participants from Excel',
     edit: 'Edit participant',
     ariaEdit: 'Edit {name}',
     delete: 'Delete participant',

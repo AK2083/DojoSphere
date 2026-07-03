@@ -5,4 +5,5 @@ export {
 export { default as competitorsDe } from './i18n/de'
 export { default as competitorsEn } from './i18n/en'
 export { default as translationKeys } from './i18n/keys'
+export { importParticipantsTranslationKeys, ParticipantImportStepper } from './import-participants'
 export { ParticipantForm, saveParticipantTranslationKeys } from './save-participant'

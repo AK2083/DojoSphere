@@ -70,6 +70,18 @@ const routes = [
     component: () => import('@pages/participants')
   },
   {
+    path: '/participants/import',
+    name: 'participant-import',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: PARTICIPANTS_OVERVIEW_PERMISSION.resource,
+        action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.create
+      }
+    },
+    component: () => import('@pages/participant-import')
+  },
+  {
     path: '/participants/new',
     name: 'participant-create',
     meta: {

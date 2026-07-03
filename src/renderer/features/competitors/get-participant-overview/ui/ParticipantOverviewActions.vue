@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mdiPlus, mdiTune } from '@mdi/js'
+import { mdiFileImport, mdiPlus, mdiTune } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 
 defineProps<{
   addLabel: string
+  importLabel: string
   isMobile: boolean
 }>()
 
 const emit = defineEmits<{
   add: []
+  import: []
 }>()
 
 const { t } = useTranslation()
@@ -49,6 +51,33 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
               <span class="participant-overview-actions__add-content">
                 <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
                 <span>{{ addLabel }}</span>
+              </span>
+            </v-btn>
+          </template>
+        </v-tooltip>
+
+        <v-tooltip :text="importLabel" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon-btn
+              v-if="isMobile"
+              v-bind="tooltipProps"
+              :icon="mdiFileImport"
+              variant="text"
+              :aria-label="importLabel"
+              class="participant-overview-actions__import"
+              @click="emit('import')"
+            />
+            <v-btn
+              v-else
+              v-bind="tooltipProps"
+              variant="text"
+              rounded
+              class="participant-overview-actions__import"
+              @click="emit('import')"
+            >
+              <span class="participant-overview-actions__import-content">
+                <v-icon :icon="mdiFileImport" size="default" aria-hidden="true" />
+                <span>{{ importLabel }}</span>
               </span>
             </v-btn>
           </template>
@@ -97,16 +126,19 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
 .participant-overview-actions__end {
   display: flex;
   align-items: center;
+  gap: 0.25rem;
 }
 
-.participant-overview-actions__add {
+.participant-overview-actions__add,
+.participant-overview-actions__import {
   min-width: 0;
   padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
 }
 
-.participant-overview-actions__add-content {
+.participant-overview-actions__add-content,
+.participant-overview-actions__import-content {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

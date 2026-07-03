@@ -16,6 +16,10 @@ test.describe('ParticipantOverviewActions', () => {
 
     await expect(addButton).toBeVisible()
     await expect(addButton).toContainText('Add participant')
+    await expect(section.getByRole('button', { name: 'Import participants' })).toBeVisible()
+    await expect(section.getByRole('button', { name: 'Import participants' })).toContainText(
+      'Import participants'
+    )
     await expect(section.getByRole('button', { name: 'Filter (not available yet)' })).toBeVisible()
   })
 
@@ -41,5 +45,17 @@ test.describe('ParticipantOverviewActions', () => {
     await expect(addButton).toBeVisible()
     await addButton.click()
     await expect(page).toHaveURL(/#\/participants\/new$/, { timeout: 10_000 })
+  })
+
+  test('navigates to the import page when import is clicked', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
+    await gotoParticipantsPage(page)
+
+    const section = page.getByRole('region', { name: 'Participants list' })
+    const importButton = section.getByRole('button', { name: 'Import participants' })
+
+    await expect(importButton).toBeVisible()
+    await importButton.click()
+    await expect(page).toHaveURL(/#\/participants\/import$/, { timeout: 10_000 })
   })
 })

@@ -11,6 +11,7 @@ import {
   ELECTRON_REMOTE_DEBUG_PORT,
   isPlaywrightBrowserOnly
 } from './config/dev'
+import { rendererOptimizeDepsInclude } from './config/vite-optimize-deps'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -79,6 +80,9 @@ export default defineConfig(({ mode }) => {
         '@widgets': path.resolve(__dirname, 'src/renderer/widgets'),
         '@pages': path.resolve(__dirname, 'src/renderer/pages')
       }
+    },
+    optimizeDeps: {
+      include: rendererOptimizeDepsInclude
     },
     build: {
       sourcemap: true
