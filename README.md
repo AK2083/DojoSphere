@@ -1,5 +1,12 @@
 # DojoSphere
 
+[![Checking](https://github.com/AK2083/DojoSphere/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/AK2083/DojoSphere/actions/workflows/check.yml)
+[![CodeQL](https://github.com/AK2083/DojoSphere/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/AK2083/DojoSphere/actions/workflows/codeql.yml)
+[![Vitest](https://img.shields.io/badge/unit_tests-Vitest-6E9F18?logo=vitest&logoColor=white)](https://github.com/AK2083/DojoSphere/actions/workflows/check.yml)
+[![Playwright](https://img.shields.io/badge/e2e-Playwright-2EAD33?logo=playwright&logoColor=white)](https://github.com/AK2083/DojoSphere/actions/workflows/check.yml)
+[![License: MIT](https://img.shields.io/github/license/AK2083/DojoSphere)](https://github.com/AK2083/DojoSphere/blob/main/LICENSE)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D24-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+
 Open-source Electron application for managing Judo tournaments.
 
 ## Features

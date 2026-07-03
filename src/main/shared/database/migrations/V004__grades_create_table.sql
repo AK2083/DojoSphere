@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS grades (
   level_type TEXT NOT NULL CHECK (level_type IN ('kyu', 'dan', 'mon', 'other')),
   level_number INTEGER NOT NULL,
   belt_color_token TEXT,
-  FOREIGN KEY (grading_system_id) REFERENCES grading_systems(id),
+  FOREIGN KEY (grading_system_id) REFERENCES grading_systems(id) ON DELETE RESTRICT,
   UNIQUE (grading_system_id, code),
   UNIQUE (grading_system_id, rank_order)
 );
@@ -99,3 +99,27 @@ INSERT INTO grades (
   ('a3000000-0000-4000-8000-000000000012', 'f1000000-0000-4000-8000-000000000003', 'dan-8', 'grades.kodokan.dan.8', 18, 'dan', 8, 'judo-belt-red-white'),
   ('a3000000-0000-4000-8000-000000000013', 'f1000000-0000-4000-8000-000000000003', 'dan-9', 'grades.kodokan.dan.9', 19, 'dan', 9, 'judo-belt-red'),
   ('a3000000-0000-4000-8000-000000000014', 'f1000000-0000-4000-8000-000000000003', 'dan-10', 'grades.kodokan.dan.10', 20, 'dan', 10, 'judo-belt-red');
+
+CREATE TRIGGER IF NOT EXISTS grading_systems_prevent_update
+BEFORE UPDATE ON grading_systems
+BEGIN
+  SELECT RAISE(ABORT, 'reference data is read-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS grading_systems_prevent_delete
+BEFORE DELETE ON grading_systems
+BEGIN
+  SELECT RAISE(ABORT, 'reference data cannot be deleted');
+END;
+
+CREATE TRIGGER IF NOT EXISTS grades_prevent_update
+BEFORE UPDATE ON grades
+BEGIN
+  SELECT RAISE(ABORT, 'reference data is read-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS grades_prevent_delete
+BEFORE DELETE ON grades
+BEGIN
+  SELECT RAISE(ABORT, 'reference data cannot be deleted');
+END;

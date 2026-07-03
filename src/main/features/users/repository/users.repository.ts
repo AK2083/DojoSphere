@@ -169,7 +169,7 @@ export function updateUserDisplayName(userId: string, displayName: string): User
       .prepare(
         `
       UPDATE users
-      SET display_name = ?, updated_at = datetime('now')
+      SET display_name = ?
       WHERE id = ?
     `
       )

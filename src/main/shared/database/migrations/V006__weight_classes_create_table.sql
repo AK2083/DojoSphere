@@ -418,3 +418,15 @@ FROM age_classes WHERE djb_row = 18 AND ruleset_version = 'djb-2025';
 INSERT INTO weight_classes (id, age_class_id, djb_row, max_weight_kg, min_weight_kg, label_key, sort_order)
 SELECT 'b3000000-0000-4000-8000-000000000101', id, 18, NULL, 78, 'weightClasses.djb2025.row18.plus78', 7
 FROM age_classes WHERE djb_row = 18 AND ruleset_version = 'djb-2025';
+
+CREATE TRIGGER IF NOT EXISTS weight_classes_prevent_update
+BEFORE UPDATE ON weight_classes
+BEGIN
+  SELECT RAISE(ABORT, 'reference data is read-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS weight_classes_prevent_delete
+BEFORE DELETE ON weight_classes
+BEGIN
+  SELECT RAISE(ABORT, 'reference data cannot be deleted');
+END;

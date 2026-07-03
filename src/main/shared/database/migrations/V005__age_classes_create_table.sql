@@ -41,3 +41,15 @@ INSERT INTO age_classes (
   ('c2000000-0000-4000-8000-000000000010', 16, 'f', 'individual', 'ageClasses.djb2025.row16', 17, 20, NULL, 4, '05/06/07/08', 'fixed', 'djb-2025', 16),
   ('c2000000-0000-4000-8000-000000000011', 17, 'f', 'individual', 'ageClasses.djb2025.row17', 17, NULL, 'from 17', 4, '08 and older', 'fixed', 'djb-2025', 17),
   ('c2000000-0000-4000-8000-000000000012', 18, 'f', 'team', 'ageClasses.djb2025.row18', 16, NULL, 'from 16', 4, '08 and older', 'fixed', 'djb-2025', 18);
+
+CREATE TRIGGER IF NOT EXISTS age_classes_prevent_update
+BEFORE UPDATE ON age_classes
+BEGIN
+  SELECT RAISE(ABORT, 'reference data is read-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS age_classes_prevent_delete
+BEFORE DELETE ON age_classes
+BEGIN
+  SELECT RAISE(ABORT, 'reference data cannot be deleted');
+END;

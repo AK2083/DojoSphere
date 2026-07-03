@@ -40,6 +40,18 @@ Migrations must not delete user data without an explicit, documented decision.
 | Age classes (DJB) | [age-classes-schema.md](./database/age-classes-schema.md) | `age_classes` |
 | Weight classes (DJB) | [weight-classes-schema.md](./database/weight-classes-schema.md) | `weight_classes` |
 
+Authorization tables (`users`, `roles`, `sessions`, `access_requests`, `authorization_audit_logs`, …) are defined in `V001__authorize_create_tables.sql`.
+
+### Foreign key delete behavior (summary)
+
+| Pattern | Where | Rationale |
+| ------- | ----- | --------- |
+| `ON DELETE CASCADE` | `sessions` → `users`, `user_role_assignments` → `users`, `role_permissions` → `roles` | Dependent auth rows belong to the parent |
+| `ON DELETE SET NULL` | Optional actor/request references (`sessions.access_request_id`, approval fields on `access_requests`, assignment metadata on `user_role_assignments`, …) | Keep history when a user or request row is removed |
+| `ON DELETE RESTRICT` | Reference data, federation hierarchy, `competitors` parents, `join_codes.created_by_user_id`, `authorization_audit_logs.actor_user_id`, `grades` → `grading_systems` | Prevent silent loss of tournament or audit context |
+
+UUID primary keys do not use `ON UPDATE` actions.
+
 ## Encryption at rest (planned)
 
 Participant and tournament data are currently stored in **plaintext** SQLite. For encryption design (SQLCipher, key handling, migration), see [encryption-at-rest.md](./database/encryption-at-rest.md).
