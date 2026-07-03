@@ -1,3 +1,9 @@
+# [1.20.0](https://github.com/AK2083/DojoSphere/compare/v1.19.0...v1.20.0) (2026-07-03)
+
+### Features
+
+- updated schema documentation ([#182](https://github.com/AK2083/DojoSphere/issues/182)) ([f8488a8](https://github.com/AK2083/DojoSphere/commit/f8488a8c1ddbeb80a1a55efcf262daab5df0173e))
+
 # [1.19.0](https://github.com/AK2083/DojoSphere/compare/v1.18.0...v1.19.0) (2026-07-02)
 
 ### Features
