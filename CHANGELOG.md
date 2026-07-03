@@ -1,3 +1,9 @@
+# [1.21.0](https://github.com/AK2083/DojoSphere/compare/v1.20.0...v1.21.0) (2026-07-03)
+
+### Features
+
+- add import button ([#185](https://github.com/AK2083/DojoSphere/issues/185)) ([eb83105](https://github.com/AK2083/DojoSphere/commit/eb831055265a186a07051bed5a4917db95989d6f))
+
 # [1.20.0](https://github.com/AK2083/DojoSphere/compare/v1.19.0...v1.20.0) (2026-07-03)
 
 ### Features
