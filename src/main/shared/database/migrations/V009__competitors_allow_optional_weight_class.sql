@@ -1,5 +1,7 @@
+ALTER TABLE competitors RENAME TO competitors_old;
+
 -- Text length limits mirror src/renderer/shared/domain/competitor-field-limits.ts
-CREATE TABLE IF NOT EXISTS competitors (
+CREATE TABLE competitors (
   id TEXT PRIMARY KEY,
   given_name TEXT NOT NULL
     CHECK (length(trim(given_name)) BETWEEN 1 AND 80),
@@ -44,6 +46,54 @@ CREATE TABLE IF NOT EXISTS competitors (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT
 );
+
+INSERT INTO competitors (
+  id,
+  given_name,
+  family_name,
+  gender,
+  birth_date,
+  club_id,
+  nationality,
+  weight_class_id,
+  age_class_id,
+  pass_number,
+  grade_id,
+  license_number,
+  contact_phone,
+  coach,
+  created_at,
+  updated_at
+)
+SELECT
+  c.id,
+  c.given_name,
+  c.family_name,
+  c.gender,
+  c.birth_date,
+  c.club_id,
+  c.nationality,
+  CASE
+    WHEN EXISTS (
+      SELECT 1
+      FROM weight_classes wc
+      WHERE wc.id = c.weight_class_id
+        AND wc.age_class_id = c.age_class_id
+    )
+      THEN c.weight_class_id
+    ELSE NULL
+  END,
+  c.age_class_id,
+  c.pass_number,
+  c.grade_id,
+  c.license_number,
+  c.contact_phone,
+  c.coach,
+  c.created_at,
+  c.updated_at
+FROM competitors_old c;
+
+DROP TABLE competitors_old;
 
 CREATE INDEX idx_competitors_family_name ON competitors(family_name);
 CREATE INDEX idx_competitors_club_id ON competitors(club_id);

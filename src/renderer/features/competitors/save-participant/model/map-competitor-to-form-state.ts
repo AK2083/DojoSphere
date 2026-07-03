@@ -18,7 +18,7 @@ export function mapCompetitorToFormState(competitor: Competitor): ParticipantFor
     clubId: competitor.clubId,
     nationality: competitor.nationality,
     ageClassId: competitor.ageClassId,
-    weightClassId: competitor.weightClassId,
+    weightClassId: competitor.weightClassId ?? '',
     passNumber: competitor.passNumber,
     gradingSystemId: resolveGradingSystemIdForGrade(competitor.gradeId ?? ''),
     gradeId: competitor.gradeId ?? '',

@@ -75,7 +75,7 @@ export interface Competitor {
   contactPhone: string | null
   coach: string | null
   clubId: string
-  weightClassId: string
+  weightClassId: string | null
   ageClassId: string
   gradeId: string | null
   createdAt: string

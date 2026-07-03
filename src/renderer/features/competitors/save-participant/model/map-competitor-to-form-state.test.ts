@@ -52,6 +52,7 @@ describe('mapCompetitorToFormState', () => {
     expect(
       mapCompetitorToFormState(
         createCompetitor({
+          weightClassId: null,
           gradeId: null,
           licenseNumber: null,
           contactPhone: null,
@@ -59,6 +60,7 @@ describe('mapCompetitorToFormState', () => {
         })
       )
     ).toMatchObject({
+      weightClassId: '',
       gradeId: '',
       licenseNumber: '',
       contactPhone: '',
