@@ -51,7 +51,9 @@ describe('hasUserPermission', () => {
   it('rethrows unexpected IPC errors', async () => {
     vi.mocked(globalThis.window.api.hasPermission).mockRejectedValue(new Error('network failed'))
 
-    await expect(hasUserPermission('participants-overview', 'read')).rejects.toThrow('network failed')
+    await expect(hasUserPermission('participants-overview', 'read')).rejects.toThrow(
+      'network failed'
+    )
     expect(clearLocalSessionToken).not.toHaveBeenCalled()
   })
 
