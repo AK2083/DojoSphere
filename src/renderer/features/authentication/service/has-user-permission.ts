@@ -1,4 +1,12 @@
-import { getLocalSessionToken } from './local-session-storage'
+import { clearLocalSessionToken, getLocalSessionToken } from './local-session-storage'
+
+function isUnauthorizedIpcError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false
+  }
+
+  return error.message.includes('Unauthorized')
+}
 
 /**
  * Checks whether the current local session has the given permission.
@@ -14,5 +22,14 @@ export async function hasUserPermission(resource: string, action: string): Promi
     return false
   }
 
-  return globalThis.window.api.hasPermission(token, resource, action)
+  try {
+    return await globalThis.window.api.hasPermission(token, resource, action)
+  } catch (error) {
+    if (isUnauthorizedIpcError(error)) {
+      clearLocalSessionToken()
+      return false
+    }
+
+    throw error
+  }
 }

@@ -496,8 +496,7 @@ export function updateCompetitor(
         grade_id = ?,
         license_number = ?,
         contact_phone = ?,
-        coach = ?,
-        updated_at = datetime('now')
+        coach = ?
       WHERE id = ?
     `
       ).run(

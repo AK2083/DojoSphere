@@ -101,12 +101,12 @@ flowchart TB
 
 | Column | References | ON DELETE | Notes |
 | ------ | ---------- | --------- | ----- |
-| `competitors.club_id` | `clubs.id` | `RESTRICT` | required; club must exist and `clubs.is_active = 1` at registration (application rule) |
+| `competitors.club_id` | `clubs.id` | `RESTRICT` | required; club must exist and `clubs.is_active = 1` (SQLite trigger) |
 | `competitors.age_class_id` | `age_classes.id` | `RESTRICT` | required |
 | `competitors.weight_class_id` | `weight_classes.id` | `RESTRICT` | required; must belong to selected age class (see below) |
 | `competitors.grade_id` | `grades.id` | `SET NULL` | optional |
 
-**Cross-table rule:** `competitors.weight_class_id` must reference a `weight_classes` row whose `age_class_id` equals `competitors.age_class_id`. Enforced in the application layer (or via trigger). When `age_classes.weight_mode = 'flexible'`, `weight_class_id` may point to a placeholder row or remain unset per tournament rules — document at implementation time.
+**Cross-table rule:** `competitors.weight_class_id` must reference a `weight_classes` row whose `age_class_id` equals `competitors.age_class_id`. Enforced by SQLite triggers `competitors_validate_weight_class_*`. When `age_classes.weight_mode = 'flexible'`, `weight_class_id` may point to a placeholder row or remain unset per tournament rules — document at implementation time.
 
 Reference table definitions:
 
@@ -138,7 +138,7 @@ Participants are managed as a flat list on the host for now. A future `tournamen
 | `contactPhone`               | `contact_phone`     | TEXT     | no       | optional |
 | `coach`                      | `coach`             | TEXT     | no       | optional |
 | —                            | `created_at`        | DATETIME | yes      | system, ISO 8601 timestamp |
-| —                            | `updated_at`        | DATETIME | no       | system, set on update |
+| —                            | `updated_at`        | DATETIME | no       | system, set by DB trigger on update |
 
 Club contact email is **not** stored on `competitors`; it belongs to `club_contacts` on the selected club (see [clubs-schema.md](./clubs-schema.md)).
 
@@ -188,7 +188,7 @@ WHERE c.id = ?;
 | `license_number` | Not required at every small club event. |
 | `contact_phone` | Participant contact — collected only when needed (data minimization). |
 | `coach` | Useful for mat-side communication; not mandatory for draw/scoring. |
-| `updated_at` | Set only after the first update. |
+| `updated_at` | Set only after the first update (SQLite trigger `competitors_set_updated_at`). |
 
 ## Constraints
 

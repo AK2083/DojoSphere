@@ -180,7 +180,7 @@ Districts (Bezirke) under a regional association.
 | `is_active` | INTEGER | yes | `1` = active, `0` = inactive |
 | `source` | TEXT | no | import origin, e.g. `djb-registry`, `manual` |
 | `created_at` | DATETIME | yes | system |
-| `updated_at` | DATETIME | no | system |
+| `updated_at` | DATETIME | no | system, set by DB trigger on update |
 
 ### `club_identifiers`
 

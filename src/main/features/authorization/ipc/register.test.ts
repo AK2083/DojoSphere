@@ -81,7 +81,7 @@ describe('registerAuthorizationIpc', () => {
     ).toBe(false)
   })
 
-  it('rejects authorization:hasPermission without a valid session', async () => {
+  it('returns false without a valid session', async () => {
     await initTestDatabase()
     const { registerAuthorizationIpc } = await import('./register')
 
@@ -89,8 +89,8 @@ describe('registerAuthorizationIpc', () => {
 
     const hasPermissionHandler = getIpcHandler('authorization:hasPermission')
 
-    expect(() =>
-      hasPermissionHandler(
+    expect(
+      await hasPermissionHandler(
         {},
         {
           token: 'invalid-token',
@@ -98,6 +98,6 @@ describe('registerAuthorizationIpc', () => {
           action: 'read'
         }
       )
-    ).toThrow('Unauthorized')
+    ).toBe(false)
   })
 })

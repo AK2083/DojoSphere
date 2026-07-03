@@ -59,8 +59,8 @@ CREATE TABLE IF NOT EXISTS user_role_assignments (
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
-  FOREIGN KEY (created_by_user_id) REFERENCES users(id),
-  FOREIGN KEY (revoked_by_user_id) REFERENCES users(id)
+  FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (revoked_by_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS join_codes (
@@ -81,8 +81,8 @@ CREATE TABLE IF NOT EXISTS join_codes (
   expires_at TEXT NOT NULL,
   revoked_at TEXT,
 
-  FOREIGN KEY (allowed_role_id) REFERENCES roles(id),
-  FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+  FOREIGN KEY (allowed_role_id) REFERENCES roles(id) ON DELETE SET NULL,
+  FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS access_requests (
@@ -121,11 +121,11 @@ CREATE TABLE IF NOT EXISTS access_requests (
 
   consumed_at TEXT,
 
-  FOREIGN KEY (requested_role_id) REFERENCES roles(id),
-  FOREIGN KEY (requested_user_id) REFERENCES users(id),
-  FOREIGN KEY (approved_by_user_id) REFERENCES users(id),
-  FOREIGN KEY (approved_user_id) REFERENCES users(id),
-  FOREIGN KEY (approved_assignment_id) REFERENCES user_role_assignments(id)
+  FOREIGN KEY (requested_role_id) REFERENCES roles(id) ON DELETE RESTRICT,
+  FOREIGN KEY (requested_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (approved_by_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (approved_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (approved_assignment_id) REFERENCES user_role_assignments(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   last_seen_at TEXT,
 
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (access_request_id) REFERENCES access_requests(id),
-  FOREIGN KEY (revoked_by_user_id) REFERENCES users(id)
+  FOREIGN KEY (access_request_id) REFERENCES access_requests(id) ON DELETE SET NULL,
+  FOREIGN KEY (revoked_by_user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS authorization_audit_logs (
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS authorization_audit_logs (
 
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  FOREIGN KEY (actor_user_id) REFERENCES users(id)
+  FOREIGN KEY (actor_user_id) REFERENCES users(id) ON DELETE RESTRICT
 );
 
 CREATE INDEX idx_role_permissions_permission_id
@@ -224,3 +224,119 @@ ON authorization_audit_logs(actor_user_id);
 
 CREATE INDEX idx_authorization_audit_logs_entity
 ON authorization_audit_logs(entity_type, entity_id);
+
+CREATE TRIGGER IF NOT EXISTS users_set_updated_at
+AFTER UPDATE ON users
+FOR EACH ROW
+WHEN NEW.updated_at IS OLD.updated_at
+BEGIN
+  UPDATE users SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS authorization_audit_logs_prevent_update
+BEFORE UPDATE ON authorization_audit_logs
+BEGIN
+  SELECT RAISE(ABORT, 'audit logs are immutable');
+END;
+
+CREATE TRIGGER IF NOT EXISTS authorization_audit_logs_prevent_delete
+BEFORE DELETE ON authorization_audit_logs
+BEGIN
+  SELECT RAISE(ABORT, 'audit logs cannot be deleted');
+END;
+
+CREATE TRIGGER IF NOT EXISTS roles_prevent_delete_system
+BEFORE DELETE ON roles
+WHEN OLD.is_system = 1
+BEGIN
+  SELECT RAISE(ABORT, 'system role cannot be deleted');
+END;
+
+CREATE TRIGGER IF NOT EXISTS roles_prevent_rename_system
+BEFORE UPDATE ON roles
+WHEN OLD.is_system = 1 AND NEW.name != OLD.name
+BEGIN
+  SELECT RAISE(ABORT, 'system role name is immutable');
+END;
+
+CREATE TRIGGER IF NOT EXISTS roles_prevent_unmark_system
+BEFORE UPDATE ON roles
+WHEN OLD.is_system = 1 AND NEW.is_system != 1
+BEGIN
+  SELECT RAISE(ABORT, 'system role flag is immutable');
+END;
+
+CREATE TRIGGER IF NOT EXISTS role_permissions_prevent_delete_system
+BEFORE DELETE ON role_permissions
+WHEN (SELECT is_system FROM roles WHERE id = OLD.role_id) = 1
+BEGIN
+  SELECT RAISE(ABORT, 'system role permissions cannot be removed');
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_prevent_final_status_change
+BEFORE UPDATE ON access_requests
+WHEN OLD.status IN ('approved', 'rejected', 'expired')
+  AND NEW.status != OLD.status
+BEGIN
+  SELECT RAISE(ABORT, 'access request status is final');
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_require_approval_fields_insert
+BEFORE INSERT ON access_requests
+WHEN NEW.status = 'approved'
+  AND (NEW.approved_by_user_id IS NULL OR NEW.approved_user_id IS NULL)
+BEGIN
+  SELECT RAISE(ABORT, 'approval requires actor and user');
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_require_approval_fields_update
+BEFORE UPDATE ON access_requests
+WHEN NEW.status = 'approved'
+  AND (NEW.approved_by_user_id IS NULL OR NEW.approved_user_id IS NULL)
+BEGIN
+  SELECT RAISE(ABORT, 'approval requires actor and user');
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_set_approved_at
+AFTER UPDATE ON access_requests
+FOR EACH ROW
+WHEN NEW.status = 'approved' AND NEW.approved_at IS OLD.approved_at
+BEGIN
+  UPDATE access_requests SET approved_at = datetime('now') WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_set_rejected_at
+AFTER UPDATE ON access_requests
+FOR EACH ROW
+WHEN NEW.status = 'rejected' AND NEW.rejected_at IS OLD.rejected_at
+BEGIN
+  UPDATE access_requests SET rejected_at = datetime('now') WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS access_requests_prevent_consumed_change
+BEFORE UPDATE ON access_requests
+WHEN OLD.consumed_at IS NOT NULL AND NEW.consumed_at IS NOT OLD.consumed_at
+BEGIN
+  SELECT RAISE(ABORT, 'access request consumption is final');
+END;
+
+CREATE TRIGGER IF NOT EXISTS sessions_prevent_revoke_change
+BEFORE UPDATE ON sessions
+WHEN OLD.revoked_at IS NOT NULL AND NEW.revoked_at IS NOT OLD.revoked_at
+BEGIN
+  SELECT RAISE(ABORT, 'session revocation is final');
+END;
+
+CREATE TRIGGER IF NOT EXISTS user_role_assignments_prevent_revoke_change
+BEFORE UPDATE ON user_role_assignments
+WHEN OLD.revoked_at IS NOT NULL AND NEW.revoked_at IS NOT OLD.revoked_at
+BEGIN
+  SELECT RAISE(ABORT, 'role assignment revocation is final');
+END;
+
+CREATE TRIGGER IF NOT EXISTS join_codes_prevent_revoke_change
+BEFORE UPDATE ON join_codes
+WHEN OLD.revoked_at IS NOT NULL AND NEW.revoked_at IS NOT OLD.revoked_at
+BEGIN
+  SELECT RAISE(ABORT, 'join code revocation is final');
+END;

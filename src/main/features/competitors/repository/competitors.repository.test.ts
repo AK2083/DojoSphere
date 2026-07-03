@@ -208,8 +208,35 @@ describe('competitors.repository', () => {
     const { addUser } = await import('@main/features/users')
     const { addCompetitor, getCompetitors } = await import('./competitors.repository')
     const { getDatabase } = await import('@main/shared/database')
+    const { DEFAULT_AGE_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
 
     const { id: actorUserId } = addUser({ displayName: 'Decimal Actor', userType: 'system' })
+    const db = getDatabase()
+    const decimalWeightClassId = 'b3000000-0000-4000-8000-00000000dec1'
+
+    db.prepare(
+      `
+      INSERT INTO weight_classes (id, age_class_id, djb_row, max_weight_kg, min_weight_kg, label_key, sort_order)
+      VALUES (?, ?, 99, 60.5, NULL, 'test.decimal', 99)
+    `
+    ).run(decimalWeightClassId, DEFAULT_AGE_CLASS_ID)
+
+    addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClassId: decimalWeightClassId
+    })
+
+    expect(getCompetitors()[0]?.weightClass).toBe('-60.5')
+  })
+
+  it('rejects competitors with an invalid weight_class_id on update', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+
+    const { id: actorUserId } = addUser({ displayName: 'Display Actor', userType: 'system' })
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
@@ -217,11 +244,11 @@ describe('competitors.repository', () => {
     })
     const db = getDatabase()
 
-    db.prepare(`UPDATE weight_classes SET max_weight_kg = 60.5 WHERE id = ?`).run(
-      competitor.weightClassId
-    )
-
-    expect(getCompetitors()[0]?.weightClass).toBe('-60.5')
+    expect(() =>
+      db
+        .prepare(`UPDATE competitors SET weight_class_id = 'missing-weight-class' WHERE id = ?`)
+        .run(competitor.id)
+    ).toThrow(/weight_class_id does not match age_class_id/i)
   })
 
   it('returns null weight class display when limits are missing', async () => {
@@ -237,11 +264,39 @@ describe('competitors.repository', () => {
       weightClass: '-60'
     })
     const db = getDatabase()
+    const originalPrepare = db.prepare.bind(db)
 
-    db.exec('PRAGMA foreign_keys = OFF')
-    db.prepare(`UPDATE competitors SET weight_class_id = 'missing-weight-class' WHERE id = ?`).run(
-      competitor.id
-    )
+    vi.spyOn(db, 'prepare').mockImplementation((sql: string) => {
+      if (sql.includes('FROM competitors c') && sql.includes('ORDER BY c.created_at')) {
+        return {
+          all: () => [
+            {
+              id: competitor.id,
+              givenName: competitor.givenName,
+              familyName: competitor.familyName,
+              gender: competitor.gender,
+              birthDate: competitor.birthDate,
+              nationality: competitor.nationality,
+              passNumber: competitor.passNumber,
+              clubId: competitor.clubId,
+              weightClassId: competitor.weightClassId,
+              ageClassId: competitor.ageClassId,
+              gradeId: competitor.gradeId,
+              licenseNumber: competitor.licenseNumber,
+              contactPhone: competitor.contactPhone,
+              coach: competitor.coach,
+              club: competitor.club,
+              maxWeightKg: null,
+              minWeightKg: null,
+              createdAt: competitor.createdAt,
+              updatedAt: competitor.updatedAt
+            }
+          ]
+        } as never
+      }
+
+      return originalPrepare(sql)
+    })
 
     expect(getCompetitors()[0]?.weightClass).toBeNull()
   })

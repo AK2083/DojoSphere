@@ -116,3 +116,30 @@ INSERT INTO clubs (id, district_id, name, is_active, source) VALUES
     1,
     'seed'
   );
+
+CREATE TRIGGER IF NOT EXISTS clubs_set_updated_at
+AFTER UPDATE ON clubs
+FOR EACH ROW
+WHEN NEW.updated_at IS OLD.updated_at
+BEGIN
+  UPDATE clubs SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS clubs_prevent_delete_seed
+BEFORE DELETE ON clubs
+WHEN OLD.source = 'seed'
+BEGIN
+  SELECT RAISE(ABORT, 'seed club cannot be deleted');
+END;
+
+CREATE TRIGGER IF NOT EXISTS clubs_prevent_seed_identity_change
+BEFORE UPDATE ON clubs
+WHEN OLD.source = 'seed'
+  AND (
+    NEW.id != OLD.id
+    OR NEW.district_id != OLD.district_id
+    OR NEW.source != OLD.source
+  )
+BEGIN
+  SELECT RAISE(ABORT, 'seed club identity is immutable');
+END;
