@@ -136,6 +136,16 @@ describe('useParticipantOverview', () => {
     })
   })
 
+  it('navigates to the participant import page when importing', () => {
+    const { handleImport } = useParticipantOverview()
+
+    handleImport()
+
+    expect(push).toHaveBeenCalledWith({
+      name: 'participant-import'
+    })
+  })
+
   it('navigates to the participant edit page when editing', async () => {
     const { handleEdit, overviewItems } = useParticipantOverview()
 

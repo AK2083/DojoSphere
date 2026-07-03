@@ -12,7 +12,6 @@ import {
   DEFAULT_GENDER,
   DEFAULT_NATIONALITY,
   DEFAULT_PASS_NUMBER,
-  DEFAULT_WEIGHT_CLASS_ID,
   PLACEHOLDER_DISTRICT_ID,
   UNKNOWN_CLUB_ID
 } from '@main/shared/database/reference-seed-ids'
@@ -71,7 +70,7 @@ export type CompetitorRecord = {
   contactPhone: string | null
   coach: string | null
   clubId: string
-  weightClassId: string
+  weightClassId: string | null
   ageClassId: string
   gradeId: string | null
   createdAt: string
@@ -207,16 +206,30 @@ function resolveWeightClassId(
   weightClass?: string | null,
   weightClassId?: string | null,
   ageClassId: string = DEFAULT_AGE_CLASS_ID
-): string {
+): string | null {
   if (weightClassId?.trim()) {
-    return weightClassId.trim()
+    const candidateId = weightClassId.trim()
+    const candidate = db
+      .prepare(
+        `
+        SELECT id
+        FROM weight_classes
+        WHERE id = ? AND age_class_id = ?
+        LIMIT 1
+      `
+      )
+      .get(candidateId, ageClassId) as { id: string } | undefined
+
+    if (candidate) {
+      return candidate.id
+    }
   }
 
   const trimmed = weightClass?.trim()
   const limitKg = parseWeightLimitKg(weightClass)
 
   if (limitKg === null) {
-    return DEFAULT_WEIGHT_CLASS_ID
+    return resolveDefaultWeightClassId(db, ageClassId)
   }
 
   if (trimmed?.startsWith('+')) {
@@ -231,7 +244,7 @@ function resolveWeightClassId(
       )
       .get(ageClassId, limitKg) as { id: string } | undefined
 
-    return plusMatch?.id ?? DEFAULT_WEIGHT_CLASS_ID
+    return plusMatch?.id ?? resolveDefaultWeightClassId(db, ageClassId)
   }
 
   const minusMatch = db
@@ -245,7 +258,23 @@ function resolveWeightClassId(
     )
     .get(ageClassId, limitKg) as { id: string } | undefined
 
-  return minusMatch?.id ?? DEFAULT_WEIGHT_CLASS_ID
+  return minusMatch?.id ?? resolveDefaultWeightClassId(db, ageClassId)
+}
+
+function resolveDefaultWeightClassId(db: Database, ageClassId: string): string | null {
+  const match = db
+    .prepare(
+      `
+      SELECT id
+      FROM weight_classes
+      WHERE age_class_id = ?
+      ORDER BY sort_order ASC
+      LIMIT 1
+    `
+    )
+    .get(ageClassId) as { id: string } | undefined
+
+  return match?.id ?? null
 }
 
 const GENDER_CODES: ReadonlySet<CompetitorGender> = new Set(['f', 'm', 'd'])
@@ -415,6 +444,7 @@ export function updateCompetitor(
   }
 
   const nextAgeClassId = input.ageClassId?.trim() || existing.ageClassId
+  const ageClassChanged = nextAgeClassId !== existing.ageClassId
   const nextValues = {
     givenName: input.givenName !== undefined ? input.givenName.trim() : existing.givenName,
     familyName: input.familyName !== undefined ? input.familyName.trim() : existing.familyName,
@@ -423,7 +453,7 @@ export function updateCompetitor(
         ? resolveClubId(getDatabase(), input.club, input.clubId)
         : existing.clubId,
     weightClassId:
-      input.weightClassId !== undefined || input.weightClass !== undefined
+      input.weightClassId !== undefined || input.weightClass !== undefined || ageClassChanged
         ? resolveWeightClassId(
             getDatabase(),
             input.weightClass,

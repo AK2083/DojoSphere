@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS competitors (
       length(nationality) = 2
       AND nationality GLOB '[A-Za-z][A-Za-z]'
     ),
-  weight_class_id TEXT NOT NULL
+  weight_class_id TEXT
     REFERENCES weight_classes(id) ON DELETE RESTRICT,
   age_class_id TEXT NOT NULL
     REFERENCES age_classes(id) ON DELETE RESTRICT,

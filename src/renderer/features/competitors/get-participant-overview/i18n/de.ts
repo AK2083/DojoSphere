@@ -33,6 +33,8 @@ export default {
   loadError: 'Die Teilnehmer konnten nicht geladen werden.',
   actions: {
     add: 'Teilnehmer hinzufügen',
+    import: 'Teilnehmer importieren',
+    ariaImport: 'Teilnehmer aus Excel importieren',
     edit: 'Teilnehmer bearbeiten',
     ariaEdit: '{name} bearbeiten',
     delete: 'Teilnehmer löschen',

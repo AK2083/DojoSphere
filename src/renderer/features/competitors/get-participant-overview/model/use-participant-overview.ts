@@ -92,6 +92,10 @@ export function useParticipantOverview() {
     void router.push({ name: 'participant-create' })
   }
 
+  function handleImport(): void {
+    void router.push({ name: 'participant-import' })
+  }
+
   function handleEdit(participant: ParticipantOverviewItem): void {
     void router.push({
       name: 'participant-edit',
@@ -116,6 +120,7 @@ export function useParticipantOverview() {
     fieldHeaders,
     refresh,
     handleAdd,
+    handleImport,
     handleEdit,
     handleDelete
   }

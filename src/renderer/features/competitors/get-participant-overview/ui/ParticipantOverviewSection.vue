@@ -18,11 +18,13 @@ const {
   fieldHeaders,
   handleAdd,
   handleEdit,
-  handleDelete
+  handleDelete,
+  handleImport
 } = useParticipantOverview()
 
 const isMobile = computed(() => smAndDown.value)
 const addLabel = computed(() => t(translationKeys.actions.add))
+const importLabel = computed(() => t(translationKeys.actions.import))
 const placeholderCount = computed(() => (isMobile.value ? 2 : 3))
 
 const gridClassNames = computed(() => ({
@@ -52,8 +54,10 @@ const gridClassNames = computed(() => ({
     <ParticipantOverviewActions
       class="mb-4"
       :add-label="addLabel"
+      :import-label="importLabel"
       :is-mobile="isMobile"
       @add="handleAdd"
+      @import="handleImport"
     />
 
     <div v-if="loading" class="participant-overview-section__grid" :class="gridClassNames">

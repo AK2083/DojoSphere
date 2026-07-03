@@ -1,0 +1,27 @@
+/** Shared Vite dependency pre-bundling for renderer dev, e2e, and Vitest. */
+export const rendererOptimizeDepsInclude = [
+  'vuetify/components/VAlert',
+  'vuetify/components/VAppBar',
+  'vuetify/components/VAvatar',
+  'vuetify/components/VBtn',
+  'vuetify/components/VBtnToggle',
+  'vuetify/components/VCard',
+  'vuetify/components/VChip',
+  'vuetify/components/VDivider',
+  'vuetify/components/VFileInput',
+  'vuetify/components/VFooter',
+  'vuetify/components/VForm',
+  'vuetify/components/VGrid',
+  'vuetify/components/VIcon',
+  'vuetify/components/VList',
+  'vuetify/components/VNavigationDrawer',
+  'vuetify/components/VOtpInput',
+  'vuetify/components/VProgressCircular',
+  'vuetify/components/VProgressLinear',
+  'vuetify/components/VSelect',
+  'vuetify/components/VSheet',
+  'vuetify/components/VSnackbar',
+  'vuetify/components/VStepper',
+  'vuetify/components/VTextField',
+  'vuetify/components/VTooltip'
+]

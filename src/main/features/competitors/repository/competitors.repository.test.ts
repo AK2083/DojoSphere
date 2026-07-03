@@ -77,6 +77,26 @@ describe('competitors.repository', () => {
     })
   })
 
+  it('stores flexible age classes without a weight class', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Flexible Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      ageClassId: 'c2000000-0000-4000-8000-000000000001'
+    })
+
+    expect(competitor).toMatchObject({
+      ageClassId: 'c2000000-0000-4000-8000-000000000001',
+      weightClassId: null,
+      weightClass: null
+    })
+  })
+
   it('resolves plus-prefixed weight classes', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
@@ -111,6 +131,28 @@ describe('competitors.repository', () => {
 
     expect(competitor.clubId).toBe(UNKNOWN_CLUB_ID)
     expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('falls back to the selected age class when an explicit weight class id mismatches', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+    const { DEFAULT_WEIGHT_CLASS_ID } = await import('@main/shared/database/reference-seed-ids')
+
+    const { id: actorUserId } = addUser({ displayName: 'Mismatch Actor', userType: 'system' })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      ageClassId: 'c2000000-0000-4000-8000-000000000005',
+      weightClassId: DEFAULT_WEIGHT_CLASS_ID
+    })
+
+    expect(competitor).toMatchObject({
+      ageClassId: 'c2000000-0000-4000-8000-000000000005',
+      weightClassId: 'b3000000-0000-4000-8000-000000000016',
+      weightClass: '-46'
+    })
   })
 
   it('reuses an existing club when the name already exists', async () => {
@@ -574,6 +616,32 @@ describe('competitors.repository', () => {
       newValueJson: JSON.stringify({ changed_fields: ['club', 'weight_class'] })
     })
     expect(auditRow.newValueJson).not.toContain('Osaka Dojo')
+  })
+
+  it('clears the weight class when updating to a flexible age class', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Flexible Update Actor',
+      userType: 'system'
+    })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      weightClass: '-60'
+    })
+
+    const updated = updateCompetitor(actorUserId, competitor.id, {
+      ageClassId: 'c2000000-0000-4000-8000-000000000001'
+    })
+
+    expect(updated).toMatchObject({
+      ageClassId: 'c2000000-0000-4000-8000-000000000001',
+      weightClassId: null,
+      weightClass: null
+    })
   })
 
   it('updates given and family names when provided explicitly', async () => {

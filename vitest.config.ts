@@ -6,6 +6,7 @@ import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
 
 import { DEV_HOST, VITEST_STORYBOOK_BROWSER_PORT } from './config/dev'
+import { rendererOptimizeDepsInclude } from './config/vite-optimize-deps'
 const dirname =
   typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url))
 const includeStorybookProject = process.env.VITEST_STORYBOOK === 'true'
@@ -13,30 +14,7 @@ const includeStorybookProject = process.env.VITEST_STORYBOOK === 'true'
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    include: [
-      'vuetify/components/VAlert',
-      'vuetify/components/VAppBar',
-      'vuetify/components/VAvatar',
-      'vuetify/components/VBtn',
-      'vuetify/components/VBtnToggle',
-      'vuetify/components/VCard',
-      'vuetify/components/VChip',
-      'vuetify/components/VDivider',
-      'vuetify/components/VFooter',
-      'vuetify/components/VForm',
-      'vuetify/components/VGrid',
-      'vuetify/components/VIcon',
-      'vuetify/components/VList',
-      'vuetify/components/VNavigationDrawer',
-      'vuetify/components/VOtpInput',
-      'vuetify/components/VProgressLinear',
-      'vuetify/components/VSelect',
-      'vuetify/components/VSheet',
-      'vuetify/components/VSnackbar',
-      'vuetify/components/VStepper',
-      'vuetify/components/VTextField',
-      'vuetify/components/VTooltip'
-    ]
+    include: rendererOptimizeDepsInclude
   },
   resolve: {
     alias: {

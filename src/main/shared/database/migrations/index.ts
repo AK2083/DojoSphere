@@ -7,6 +7,7 @@ import sqlV005 from './V005__age_classes_create_table.sql?raw'
 import sqlV006 from './V006__weight_classes_create_table.sql?raw'
 import sqlV007 from './V007__clubs_create_tables.sql?raw'
 import sqlV008 from './V008__competitors_create_table.sql?raw'
+import sqlV009 from './V009__competitors_allow_optional_weight_class.sql?raw'
 
 function migration(name: string, id: string, sql: string): Migration {
   return { id, name, sql }
@@ -28,7 +29,12 @@ const migrations: Migration[] = [
     sqlV006
   ),
   migration('V007__clubs_create_tables.sql', 'f9a0b1c2-3456-7890-abcd-ef0123456807', sqlV007),
-  migration('V008__competitors_create_table.sql', 'b5e6f7a8-9012-3456-abcd-ef0123456803', sqlV008)
+  migration('V008__competitors_create_table.sql', 'b5e6f7a8-9012-3456-abcd-ef0123456803', sqlV008),
+  migration(
+    'V009__competitors_allow_optional_weight_class.sql',
+    'c7f8a9b0-1234-4567-abcd-ef0123456809',
+    sqlV009
+  )
 ]
 
 export default migrations
