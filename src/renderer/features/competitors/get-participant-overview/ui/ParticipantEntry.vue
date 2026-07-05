@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { mdiChevronDown, mdiChevronUp, mdiDelete, mdiPencil } from '@mdi/js'
+import {
+  mdiCheckCircle,
+  mdiChevronDown,
+  mdiChevronUp,
+  mdiCloseCircle,
+  mdiDelete,
+  mdiPencil
+} from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 import { judoBeltStripeStyle } from '@shared/lib/judo-belt/judo-belt-color'
 
@@ -34,9 +41,11 @@ const secondaryFieldKeys = [
   'birthDate',
   'nationality',
   'licenseNumber',
-  'coach',
+  'contactPerson',
   'clubContactEmail',
-  'contactPhone'
+  'contactPhone',
+  'registrationStatus',
+  'remarks'
 ] as const
 
 function headersForKeys(keys: readonly string[]) {
@@ -47,6 +56,16 @@ function headersForKeys(keys: readonly string[]) {
 
 const summaryHeaders = computed(() => headersForKeys(summaryFieldKeys))
 const secondaryHeaders = computed(() => headersForKeys(secondaryFieldKeys))
+
+const startEligibleIcon = computed(() =>
+  props.participant.startEligible ? mdiCheckCircle : mdiCloseCircle
+)
+const startEligibleColor = computed(() => (props.participant.startEligible ? 'success' : 'error'))
+const startEligibleLabel = computed(() =>
+  props.participant.startEligible
+    ? t(translationKeys.startEligible.yes)
+    : t(translationKeys.startEligible.no)
+)
 
 const detailsExpanded = ref(false)
 const clubColor = computed(() => participantAvatarColor(props.participant.club))
@@ -85,6 +104,19 @@ function detailsPanelId(): string {
       </div>
 
       <div class="participant-entry__actions">
+        <v-tooltip :text="startEligibleLabel" location="bottom">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon
+              v-bind="tooltipProps"
+              :icon="startEligibleIcon"
+              :color="startEligibleColor"
+              :aria-label="startEligibleLabel"
+              class="participant-entry__eligibility"
+              role="img"
+            />
+          </template>
+        </v-tooltip>
+
         <v-tooltip :text="t(translationKeys.actions.edit)" location="bottom">
           <template #activator="{ props: tooltipProps }">
             <v-icon-btn
@@ -233,7 +265,12 @@ function detailsPanelId(): string {
 .participant-entry__actions {
   display: flex;
   flex-shrink: 0;
+  align-items: center;
   gap: 0.25rem;
+}
+
+.participant-entry__eligibility {
+  margin-right: 0.25rem;
 }
 
 .participant-entry__summary,

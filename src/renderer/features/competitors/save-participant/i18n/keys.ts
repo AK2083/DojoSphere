@@ -27,13 +27,21 @@ const translationKeys = {
       grade: 'competitors.saveParticipant.form.fields.grade',
       licenseNumber: 'competitors.saveParticipant.form.fields.licenseNumber',
       contactPhone: 'competitors.saveParticipant.form.fields.contactPhone',
-      coach: 'competitors.saveParticipant.form.fields.coach'
+      contactPerson: 'competitors.saveParticipant.form.fields.contactPerson',
+      startEligible: 'competitors.saveParticipant.form.fields.startEligible',
+      registrationStatus: 'competitors.saveParticipant.form.fields.registrationStatus',
+      remarks: 'competitors.saveParticipant.form.fields.remarks'
     }
   },
   gender: {
     diverse: 'competitors.saveParticipant.gender.diverse',
     female: 'competitors.saveParticipant.gender.female',
     male: 'competitors.saveParticipant.gender.male'
+  },
+  registrationStatus: {
+    none: 'competitors.saveParticipant.registrationStatus.none',
+    registered: 'competitors.saveParticipant.registrationStatus.registered',
+    lateRegistration: 'competitors.saveParticipant.registrationStatus.lateRegistration'
   },
   actions: {
     back: 'competitors.saveParticipant.actions.back',

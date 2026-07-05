@@ -21,5 +21,8 @@ export interface ParticipantRow {
   licenseNumber: string
   clubContactEmail: string
   contactPhone: string
-  coach: string
+  contactPerson: string
+  startEligible: boolean
+  registrationStatus: string
+  remarks: string
 }

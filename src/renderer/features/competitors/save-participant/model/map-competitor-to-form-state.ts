@@ -24,6 +24,9 @@ export function mapCompetitorToFormState(competitor: Competitor): ParticipantFor
     gradeId: competitor.gradeId ?? '',
     licenseNumber: competitor.licenseNumber ?? '',
     contactPhone: competitor.contactPhone ?? '',
-    coach: competitor.coach ?? ''
+    contactPerson: competitor.contactPerson ?? '',
+    startEligible: competitor.startEligible,
+    registrationStatus: competitor.registrationStatus ?? '',
+    remarks: competitor.remarks ?? ''
   }
 }

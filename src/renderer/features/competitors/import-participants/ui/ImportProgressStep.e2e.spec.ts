@@ -6,15 +6,19 @@ test.describe('ImportProgressStep', () => {
     await setEnglishLanguage(page)
     await page.goto('/#/participants/import')
     await expect(page.getByRole('heading', { name: 'Import participants' })).toBeVisible()
-    await page.getByRole('button', { name: 'Next step' }).click()
+
+    await page.getByLabel('Select Excel file for import').setInputFiles({
+      name: 'participants.xlsx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      buffer: globalThis.Buffer.from('stub')
+    })
+
     await page.getByRole('button', { name: 'Next step' }).click()
   })
 
-  test('renders circular import progress and participant results', async ({ page }) => {
-    await expect(page.getByRole('progressbar', { name: 'Import progress' })).toBeVisible()
+  test('renders imported participant results and a completion message', async ({ page }) => {
     await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('Max Miller')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByLabel('Max Miller could not be imported')).toBeVisible()
+    await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
     await expect(page.getByText('Import complete.')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible()
   })

@@ -8,6 +8,8 @@ import sqlV006 from './V006__weight_classes_create_table.sql?raw'
 import sqlV007 from './V007__clubs_create_tables.sql?raw'
 import sqlV008 from './V008__competitors_create_table.sql?raw'
 import sqlV009 from './V009__competitors_allow_optional_weight_class.sql?raw'
+import sqlV010 from './V010__competitors_import_fields.sql?raw'
+import sqlV011 from './V011__competitors_rename_coach_to_contact_person.sql?raw'
 
 function migration(name: string, id: string, sql: string): Migration {
   return { id, name, sql }
@@ -34,6 +36,12 @@ const migrations: Migration[] = [
     'V009__competitors_allow_optional_weight_class.sql',
     'c7f8a9b0-1234-4567-abcd-ef0123456809',
     sqlV009
+  ),
+  migration('V010__competitors_import_fields.sql', 'd8a9b0c1-2345-4678-abcd-ef0123456810', sqlV010),
+  migration(
+    'V011__competitors_rename_coach_to_contact_person.sql',
+    'e9b0c1d2-3456-4789-abcd-ef0123456811',
+    sqlV011
   )
 ]
 

@@ -5,7 +5,7 @@ import { mdiArrowLeftRight, mdiCancel, mdiCheck, mdiFileImport, mdiMicrosoftExce
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useParticipantImport } from '../model/use-participant-import'
+import { provideParticipantImport } from '../model/use-participant-import'
 import ImportFileStep from './ImportFileStep.vue'
 import ImportMappingStep from './ImportMappingStep.vue'
 import ImportProgressStep from './ImportProgressStep.vue'
@@ -13,14 +13,36 @@ import ImportStepSection from './ImportStepSection.vue'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
-const { step, importProgress, isImportComplete, visibleResults, goNext, finish, cancel } =
-  useParticipantImport()
+const {
+  step,
+  preview,
+  mappingValid,
+  importProgress,
+  isImportComplete,
+  importError,
+  results,
+  goNext,
+  finish,
+  cancel
+} = provideParticipantImport()
 
 const isMobile = computed(() => smAndDown.value)
 
 const showActions = computed(() => step.value < 2 || isImportComplete.value)
 
 const isFinishAction = computed(() => step.value === 2 && isImportComplete.value)
+
+const isPrimaryDisabled = computed(() => {
+  if (step.value === 0) {
+    return !preview.value
+  }
+
+  if (step.value === 1) {
+    return !mappingValid.value
+  }
+
+  return false
+})
 
 const primaryActionLabel = computed(() =>
   isFinishAction.value ? t(translationKeys.actions.finish) : t(translationKeys.actions.next)
@@ -97,7 +119,8 @@ function handlePrimaryAction(): void {
             <ImportProgressStep
               :progress="importProgress"
               :is-complete="isImportComplete"
-              :results="visibleResults"
+              :results="results"
+              :error-message="importError"
             />
           </ImportStepSection>
         </v-stepper-window-item>
@@ -122,6 +145,7 @@ function handlePrimaryAction(): void {
         :aria-label="primaryActionAriaLabel"
         :prepend-icon="mdiCheck"
         color="primary"
+        :disabled="isPrimaryDisabled"
         @click="handlePrimaryAction"
       >
         {{ primaryActionLabel }}

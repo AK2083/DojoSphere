@@ -16,6 +16,18 @@ function usersTableHasCurrentSchema(db: Database) {
 }
 
 /**
+ *
+ * @param db
+ */
+export function assertLegacyUsersTableCompatible(db: Database) {
+  if (usersTableExists(db) && !usersTableHasCurrentSchema(db)) {
+    throw new Error(
+      'The users table exists but does not match the expected schema. A manual migration is required.'
+    )
+  }
+}
+
+/**
  * Verifies that V001 created the expected users table schema.
  * Does not mutate schema — incompatible legacy tables require a manual migration.
  *

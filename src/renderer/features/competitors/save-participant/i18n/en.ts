@@ -109,13 +109,21 @@ export default {
       grade: 'Grade (kyu/dan)',
       licenseNumber: 'Competition licence number',
       contactPhone: 'Contact phone',
-      coach: 'Coach / guardian'
+      contactPerson: 'Contact person',
+      startEligible: 'Eligible to compete',
+      registrationStatus: 'Status',
+      remarks: 'Remarks'
     }
   },
   gender: {
     diverse: 'Diverse',
     female: 'Female',
     male: 'Male'
+  },
+  registrationStatus: {
+    none: 'Not specified',
+    registered: 'Registered',
+    lateRegistration: 'Late registration'
   },
   actions: {
     back: 'Back to participant list',

@@ -27,11 +27,14 @@ function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer',
+    contactPerson: 'S. Fischer',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: null,
+    startEligible: true,
+    registrationStatus: null,
+    remarks: null,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: null,
     ...overrides
@@ -330,6 +333,7 @@ describe('useParticipantForm', () => {
     const participantForm = useParticipantForm()
 
     expect(participantForm.genderOptions.value).toHaveLength(3)
+    expect(participantForm.registrationStatusOptions.value).toHaveLength(3)
     expect(participantForm.clubOptions.value.length).toBeGreaterThan(0)
     expect(participantForm.ageClassOptions.value).toHaveLength(18)
     expect(participantForm.gradeOptions.value.length).toBeGreaterThan(1)
@@ -358,5 +362,26 @@ describe('useParticipantForm', () => {
     expect(
       participantForm.weightClassRules.value[0]?.('b3000000-0000-4000-8000-000000000008')
     ).toBe(true)
+  })
+
+  it('accepts the vuetify form ref', async () => {
+    const participantForm = useParticipantForm()
+    const validate = vi.fn().mockResolvedValue({ valid: true })
+    const resetValidation = vi.fn()
+
+    participantForm.setFormRef({ validate, resetValidation })
+    participantForm.fields.value.givenName = 'Yuki'
+    participantForm.fields.value.familyName = 'Tanaka'
+    participantForm.fields.value.gender = 'm'
+    participantForm.fields.value.birthDate = '2011-01-01'
+    participantForm.fields.value.clubId = '00000000-0000-0000-0000-000000000000'
+    participantForm.fields.value.nationality = 'DE'
+    participantForm.fields.value.ageClassId = 'c2000000-0000-4000-8000-000000000003'
+    participantForm.fields.value.passNumber = 'JP-1'
+    participantForm.isFormValid.value = true
+
+    await participantForm.submit()
+
+    expect(validate).toHaveBeenCalled()
   })
 })

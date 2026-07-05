@@ -67,7 +67,10 @@ erDiagram
     UUID grade_id "optional · FK → grades"
     TEXT license_number "optional"
     TEXT contact_phone "optional"
-    TEXT coach "optional"
+    TEXT contact_person "optional"
+    INTEGER start_eligible "required · 0 | 1 · default 1"
+    TEXT registration_status "optional · registered | late_registration"
+    TEXT remarks "optional · ≤ 500 chars"
     DATETIME created_at "required · system"
     DATETIME updated_at "optional · system"
   }
@@ -136,7 +139,10 @@ Participants are managed as a flat list on the host for now. A future `tournamen
 | `grade`                      | `grade_id`          | UUID     | no       | optional FK → [grades](./grades-schema.md) |
 | `licenseNumber`              | `license_number`    | TEXT     | no       | optional |
 | `contactPhone`               | `contact_phone`     | TEXT     | no       | optional |
-| `coach`                      | `coach`             | TEXT     | no       | optional |
+| `contactPerson`              | `contact_person`    | TEXT     | no       | optional |
+| `startEligible`              | `start_eligible`    | INTEGER  | yes      | `0`/`1`, default `1`; UI checkbox |
+| `registrationStatus`         | `registration_status` | TEXT   | no       | code → UI label: `registered`→„gemeldet“, `late_registration`→„Nachmeldung“ |
+| `remarks`                    | `remarks`           | TEXT     | no       | optional free text, ≤ 500 chars |
 | —                            | `created_at`        | DATETIME | yes      | system, ISO 8601 timestamp |
 | —                            | `updated_at`        | DATETIME | no       | system, set by DB trigger on update |
 
@@ -187,12 +193,14 @@ WHERE c.id = ?;
 | `grade_id` | Kyu/Dan grade; not always available or needed at registration. |
 | `license_number` | Not required at every small club event. |
 | `contact_phone` | Participant contact — collected only when needed (data minimization). |
-| `coach` | Useful for mat-side communication; not mandatory for draw/scoring. |
+| `contact_person` | Useful for mat-side communication; not mandatory for draw/scoring. |
+| `registration_status` | Distinguishes regular vs. late registration; not always tracked at small events. |
+| `remarks` | Free-text notes (e.g. import annotations); optional and length-limited. |
 | `updated_at` | Set only after the first update (SQLite trigger `competitors_set_updated_at`). |
 
 ## Constraints
 
-SQLite stores all text columns without a native `VARCHAR(n)` limit. Length and format rules are enforced with `CHECK` constraints in `V008__competitors_create_table.sql`. The same limits are defined in `src/renderer/shared/domain/competitor-field-limits.ts` for the participant form.
+SQLite stores all text columns without a native `VARCHAR(n)` limit. Length and format rules are enforced with `CHECK` constraints. Most columns are defined in `V008__competitors_create_table.sql`; the import fields `start_eligible`, `registration_status`, and `remarks` are added later in `V010__competitors_import_fields.sql`. The same limits are defined in `src/renderer/shared/domain/competitor-field-limits.ts` for the participant form.
 
 | Column | Limit | Notes |
 | ------ | ----- | ----- |
@@ -202,7 +210,10 @@ SQLite stores all text columns without a native `VARCHAR(n)` limit. Length and f
 | `pass_number` | 1–32 chars | Letters, digits, `-`, `/` (no fixed DJB format) |
 | `license_number` | 1–32 chars | Same character set as `pass_number`, optional |
 | `contact_phone` | ≤ 32 chars | Optional; format validated in the app |
-| `coach` | 1–80 chars | Optional; trimmed length |
+| `contact_person` | 1–80 chars | Optional; trimmed length |
+| `start_eligible` | `0` or `1` | `CHECK (start_eligible IN (0, 1))`, default `1` |
+| `registration_status` | code set | `CHECK (... IN ('registered', 'late_registration'))` or NULL |
+| `remarks` | ≤ 500 chars | `CHECK (remarks IS NULL OR length(remarks) <= 500)` |
 
 ### Pass number validation
 
@@ -238,7 +249,7 @@ flowchart LR
 
 ## Target DDL (reference)
 
-Implemented in `V008__competitors_create_table.sql`. Create and seed `grades`, `age_classes`, `weight_classes`, and the [club hierarchy](./clubs-schema.md) **before** creating `competitors` (migration order: V004 → V007, then V008).
+Base table implemented in `V008__competitors_create_table.sql`. Create and seed `grades`, `age_classes`, `weight_classes`, and the [club hierarchy](./clubs-schema.md) **before** creating `competitors` (migration order: V004 → V007, then V008). `V009__competitors_allow_optional_weight_class.sql` makes `weight_class_id` optional, and `V010__competitors_import_fields.sql` adds `start_eligible`, `registration_status`, and `remarks` via `ALTER TABLE` (and repairs the triggers V009 dropped). The consolidated DDL below shows the resulting shape after all migrations.
 
 ```sql
 CREATE TABLE competitors (
@@ -250,7 +261,7 @@ CREATE TABLE competitors (
   club_id TEXT NOT NULL
     REFERENCES clubs(id) ON DELETE RESTRICT,
   nationality TEXT NOT NULL,
-  weight_class_id TEXT NOT NULL
+  weight_class_id TEXT
     REFERENCES weight_classes(id) ON DELETE RESTRICT,
   age_class_id TEXT NOT NULL
     REFERENCES age_classes(id) ON DELETE RESTRICT,
@@ -259,7 +270,16 @@ CREATE TABLE competitors (
     REFERENCES grades(id) ON DELETE SET NULL,
   license_number TEXT,
   contact_phone TEXT,
-  coach TEXT,
+  contact_person TEXT,
+  start_eligible INTEGER NOT NULL DEFAULT 1
+    CHECK (start_eligible IN (0, 1)),
+  registration_status TEXT
+    CHECK (
+      registration_status IS NULL
+      OR registration_status IN ('registered', 'late_registration')
+    ),
+  remarks TEXT
+    CHECK (remarks IS NULL OR length(remarks) <= 500),
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT
 );
@@ -278,7 +298,7 @@ CREATE INDEX idx_competitors_grade_id ON competitors(grade_id);
 | Form (renderer) | `src/renderer/features/competitors/save-participant/` |
 | Overview (renderer) | `src/renderer/features/competitors/get-participant-overview/` |
 | Repository (main) | `src/main/features/competitors/repository/competitors.repository.ts` |
-| Migration | `src/main/shared/database/migrations/V008__competitors_create_table.sql` |
+| Migration | `src/main/shared/database/migrations/V008__competitors_create_table.sql`, `V009__competitors_allow_optional_weight_class.sql`, `V010__competitors_import_fields.sql` |
 
 ## Related schemas
 

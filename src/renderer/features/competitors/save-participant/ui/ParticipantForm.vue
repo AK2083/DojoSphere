@@ -8,7 +8,8 @@ import {
   COMPETITOR_CONTACT_PHONE_MAX_LENGTH,
   COMPETITOR_LICENSE_NUMBER_MAX_LENGTH,
   COMPETITOR_NAME_MAX_LENGTH,
-  COMPETITOR_PASS_NUMBER_MAX_LENGTH
+  COMPETITOR_PASS_NUMBER_MAX_LENGTH,
+  COMPETITOR_REMARKS_MAX_LENGTH
 } from '@shared/domain/competitor-field-limits'
 import { useTranslation } from '@shared/lib'
 import JudoBeltAvatar from '@shared/ui/JudoBeltAvatar.vue'
@@ -40,6 +41,7 @@ const {
   gradingSystemOptions,
   gradeOptions,
   weightClassOptions,
+  registrationStatusOptions,
   givenNameRules,
   familyNameRules,
   genderRules,
@@ -51,7 +53,8 @@ const {
   passNumberRules,
   licenseNumberRules,
   contactPhoneRules,
-  coachRules,
+  contactPersonRules,
+  remarksRules,
   setFormRef,
   submit,
   reset
@@ -310,11 +313,37 @@ function openBirthDatePicker(): void {
           />
 
           <v-text-field
-            v-model="fields.coach"
-            :label="t(translationKeys.form.fields.coach)"
-            :rules="coachRules"
+            v-model="fields.contactPerson"
+            :label="t(translationKeys.form.fields.contactPerson)"
+            :rules="contactPersonRules"
             :maxlength="COMPETITOR_COACH_MAX_LENGTH"
             autocomplete="off"
+          />
+
+          <v-select
+            v-model="fields.registrationStatus"
+            :items="registrationStatusOptions"
+            item-title="title"
+            item-value="value"
+            :label="t(translationKeys.form.fields.registrationStatus)"
+          />
+
+          <v-textarea
+            v-model="fields.remarks"
+            :label="t(translationKeys.form.fields.remarks)"
+            :rules="remarksRules"
+            :maxlength="COMPETITOR_REMARKS_MAX_LENGTH"
+            counter
+            auto-grow
+            rows="2"
+            autocomplete="off"
+          />
+
+          <v-checkbox
+            v-model="fields.startEligible"
+            :label="t(translationKeys.form.fields.startEligible)"
+            density="comfortable"
+            hide-details
           />
         </fieldset>
       </v-card-text>

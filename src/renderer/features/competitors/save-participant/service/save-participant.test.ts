@@ -28,7 +28,7 @@ function filledForm() {
     gradeId: 'a1000000-0000-4000-8000-000000000001',
     licenseNumber: '  WL-1  ',
     contactPhone: '  +49 1  ',
-    coach: '  Coach  '
+    contactPerson: '  Coach  '
   }
 }
 
@@ -52,7 +52,7 @@ describe('save-participant service', () => {
         passNumber: 'JP-000142',
         licenseNumber: 'WL-1',
         contactPhone: '+49 1',
-        coach: 'Coach'
+        contactPerson: 'Coach'
       })
     })
 
@@ -65,7 +65,7 @@ describe('save-participant service', () => {
       expect(input.gradeId).toBeNull()
       expect(input.licenseNumber).toBeNull()
       expect(input.contactPhone).toBeNull()
-      expect(input.coach).toBeNull()
+      expect(input.contactPerson).toBeNull()
     })
   })
 

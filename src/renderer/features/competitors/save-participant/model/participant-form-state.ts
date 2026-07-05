@@ -1,6 +1,9 @@
 /** Gender codes stored in `competitors.gender` (`f` | `m` | `d`). */
 export type ParticipantGender = '' | 'd' | 'f' | 'm'
 
+/** Registration status codes (`''` = not specified). */
+export type ParticipantRegistrationStatus = '' | 'late_registration' | 'registered'
+
 import { DEFAULT_GRADING_SYSTEM_ID } from './grade-reference-data'
 
 /** Editable participant fields for the save form. */
@@ -18,7 +21,10 @@ export type ParticipantFormState = {
   gradeId: string
   licenseNumber: string
   contactPhone: string
-  coach: string
+  contactPerson: string
+  startEligible: boolean
+  registrationStatus: ParticipantRegistrationStatus
+  remarks: string
 }
 
 /**
@@ -41,6 +47,9 @@ export function createEmptyParticipantForm(): ParticipantFormState {
     gradeId: '',
     licenseNumber: '',
     contactPhone: '',
-    coach: ''
+    contactPerson: '',
+    startEligible: true,
+    registrationStatus: '',
+    remarks: ''
   }
 }

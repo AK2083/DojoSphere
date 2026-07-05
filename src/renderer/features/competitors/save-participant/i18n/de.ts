@@ -110,13 +110,21 @@ export default {
       grade: 'Graduierung',
       licenseNumber: 'Wettkampflizenznummer',
       contactPhone: 'Telefon für Rückfragen',
-      coach: 'Trainer / Betreuer'
+      contactPerson: 'Kontaktperson',
+      startEligible: 'Startberechtigt',
+      registrationStatus: 'Status',
+      remarks: 'Bemerkung'
     }
   },
   gender: {
     diverse: 'Divers',
     female: 'Weiblich',
     male: 'Männlich'
+  },
+  registrationStatus: {
+    none: 'Keine Angabe',
+    registered: 'Gemeldet',
+    lateRegistration: 'Nachmeldung'
   },
   actions: {
     back: 'Zurück zur Teilnehmerliste',

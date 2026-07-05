@@ -18,11 +18,14 @@ function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer',
+    contactPerson: 'S. Fischer',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: 'a1000000-0000-4000-8000-000000000001',
+    startEligible: true,
+    registrationStatus: 'registered',
+    remarks: null,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: null,
     ...overrides
@@ -55,7 +58,7 @@ describe('mapCompetitorToRow', () => {
         weightClass: null,
         licenseNumber: null,
         contactPhone: null,
-        coach: null,
+        contactPerson: null,
         gradeId: null
       }),
       t
@@ -65,7 +68,7 @@ describe('mapCompetitorToRow', () => {
     expect(row.weightClass).toBe('')
     expect(row.licenseNumber).toBe('')
     expect(row.contactPhone).toBe('')
-    expect(row.coach).toBe('')
+    expect(row.contactPerson).toBe('')
     expect(row.grade).toBe('competitors.getParticipantOverview.emptyGrade')
   })
 
@@ -79,5 +82,13 @@ describe('mapCompetitorToRow', () => {
     const row = mapCompetitorToRow(createCompetitor({ gradeId: 'unknown-grade' }), t)
 
     expect(row.grade).toBe('competitors.getParticipantOverview.emptyGrade')
+  })
+
+  it('maps late registration status to its label key', () => {
+    const row = mapCompetitorToRow(createCompetitor({ registrationStatus: 'late_registration' }), t)
+
+    expect(row.registrationStatus).toBe(
+      'competitors.saveParticipant.registrationStatus.lateRegistration'
+    )
   })
 })

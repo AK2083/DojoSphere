@@ -1,24 +1,48 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useTranslation } from '@shared/lib'
+import type { ImportRowResult } from '@shared/types/electron-api'
 
 import translationKeys from '../i18n/keys'
-import type { ImportPreviewParticipant } from '../model/import-preview-participants'
 import ImportResultEntry from './ImportResultEntry.vue'
 
 const props = defineProps<{
   progress: number
   isComplete: boolean
-  results: ImportPreviewParticipant[]
+  results: ImportRowResult[]
+  errorMessage?: string
 }>()
 
 const { t } = useTranslation()
 
-const showProgress = computed(() => !props.isComplete)
+const showProgress = computed(() => !props.isComplete && !props.errorMessage)
+
+const importedCount = computed(() => props.results.filter((result) => result.success).length)
+const failedCount = computed(() => props.results.filter((result) => !result.success).length)
+
+const hasFailures = computed(() => failedCount.value > 0)
+
+const summary = computed(() =>
+  t(translationKeys.steps.import.summary, {
+    imported: importedCount.value,
+    failed: failedCount.value
+  })
+)
 </script>
 
 <template>
   <div class="import-progress-step">
+    <v-alert
+      v-if="errorMessage"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      role="alert"
+      class="mb-4"
+    >
+      {{ errorMessage }}
+    </v-alert>
+
     <div v-if="showProgress" class="import-progress-step__progress d-flex justify-center mb-4">
       <v-progress-circular
         :model-value="progress"
@@ -41,7 +65,7 @@ const showProgress = computed(() => !props.isComplete)
       class="import-progress-step__results"
       :aria-label="t(translationKeys.steps.import.resultsListAria)"
     >
-      <li v-for="participant in results" :key="participant.id">
+      <li v-for="participant in results" :key="participant.index">
         <ImportResultEntry :participant="participant" />
       </li>
     </ul>
@@ -52,7 +76,14 @@ const showProgress = computed(() => !props.isComplete)
       role="status"
       aria-live="polite"
     >
-      {{ t(translationKeys.steps.import.complete) }}
+      {{ t(translationKeys.steps.import.complete) }} {{ summary }}
+    </p>
+
+    <p
+      v-if="isComplete && hasFailures"
+      class="import-progress-step__failed-hint text-body-2 text-medium-emphasis mt-1 mb-0"
+    >
+      {{ t(translationKeys.steps.import.failedHint) }}
     </p>
   </div>
 </template>

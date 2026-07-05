@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import { IMPORT_PREVIEW_PARTICIPANTS } from '../model/import-preview-participants'
+import { IMPORT_RESULT_FIXTURES } from '../model/import-result-fixtures'
 import ImportProgressStep from './ImportProgressStep.vue'
 
 const meta = {
@@ -12,7 +12,7 @@ const meta = {
   args: {
     progress: 45,
     isComplete: false,
-    results: IMPORT_PREVIEW_PARTICIPANTS.slice(0, 2)
+    results: IMPORT_RESULT_FIXTURES.slice(0, 2)
   }
 } satisfies Meta<typeof ImportProgressStep>
 
@@ -38,7 +38,7 @@ export const Complete: Story = {
   args: {
     progress: 100,
     isComplete: true,
-    results: IMPORT_PREVIEW_PARTICIPANTS
+    results: IMPORT_RESULT_FIXTURES
   },
   render: (args) => ({
     components: { ImportProgressStep },

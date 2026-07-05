@@ -8,12 +8,26 @@ type LocalSessionEntry = { userId: string; displayName: string }
 /** Persisted competitor fields without personal data (Playwright browser-only stub). */
 type PlaywrightStoredCompetitor = Omit<
   Competitor,
-  'gender' | 'birthDate' | 'nationality' | 'passNumber' | 'licenseNumber' | 'contactPhone' | 'coach'
+  | 'gender'
+  | 'birthDate'
+  | 'nationality'
+  | 'passNumber'
+  | 'licenseNumber'
+  | 'contactPhone'
+  | 'contactPerson'
+  | 'remarks'
 >
 
 type FictionalCompetitorSensitiveDetails = Pick<
   Competitor,
-  'gender' | 'birthDate' | 'nationality' | 'passNumber' | 'licenseNumber' | 'contactPhone' | 'coach'
+  | 'gender'
+  | 'birthDate'
+  | 'nationality'
+  | 'passNumber'
+  | 'licenseNumber'
+  | 'contactPhone'
+  | 'contactPerson'
+  | 'remarks'
 >
 
 /**
@@ -31,7 +45,8 @@ const FICTIONAL_COMPETITOR_SENSITIVE_BY_GIVEN_NAME: Record<
     passNumber: 'JP-000142',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer'
+    contactPerson: 'S. Fischer',
+    remarks: null
   },
   Anna: {
     gender: 'f',
@@ -40,7 +55,8 @@ const FICTIONAL_COMPETITOR_SENSITIVE_BY_GIVEN_NAME: Record<
     passNumber: 'JP-000287',
     licenseNumber: 'WL-2024-014',
     contactPhone: '+49 555 010202',
-    coach: 'M. Keller'
+    contactPerson: 'M. Keller',
+    remarks: null
   },
   Leo: {
     gender: 'm',
@@ -49,7 +65,8 @@ const FICTIONAL_COMPETITOR_SENSITIVE_BY_GIVEN_NAME: Record<
     passNumber: 'JP-000391',
     licenseNumber: 'WL-2024-028',
     contactPhone: '+43 555 010203',
-    coach: 'T. Brandt'
+    contactPerson: 'T. Brandt',
+    remarks: null
   }
 }
 
@@ -60,7 +77,8 @@ const DEFAULT_FICTIONAL_SENSITIVE_DETAILS: FictionalCompetitorSensitiveDetails =
   passNumber: '00000000',
   licenseNumber: null,
   contactPhone: null,
-  coach: null
+  contactPerson: null,
+  remarks: null
 }
 
 let competitorsMemory: Competitor[] | null = null
@@ -76,6 +94,8 @@ function stripSensitiveFields(competitor: Competitor): PlaywrightStoredCompetito
     weightClassId: competitor.weightClassId,
     ageClassId: competitor.ageClassId,
     gradeId: competitor.gradeId,
+    startEligible: competitor.startEligible,
+    registrationStatus: competitor.registrationStatus,
     createdAt: competitor.createdAt,
     updatedAt: competitor.updatedAt
   }
@@ -175,11 +195,14 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
     weightClass: input.weightClass ?? null,
     licenseNumber: input.licenseNumber ?? null,
     contactPhone: input.contactPhone ?? null,
-    coach: input.coach ?? null,
+    contactPerson: input.contactPerson ?? null,
     clubId: input.clubId ?? 'stub-club-id',
     weightClassId: input.weightClassId ?? 'stub-weight-class-id',
     ageClassId: input.ageClassId ?? 'stub-age-class-id',
     gradeId: input.gradeId ?? null,
+    startEligible: input.startEligible ?? true,
+    registrationStatus: input.registrationStatus ?? null,
+    remarks: input.remarks ?? null,
     createdAt: new Date().toISOString(),
     updatedAt: null
   }
@@ -302,11 +325,14 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
         weightClass: input.weightClass ?? base.weightClass,
         licenseNumber: input.licenseNumber ?? base.licenseNumber,
         contactPhone: input.contactPhone ?? base.contactPhone,
-        coach: input.coach ?? base.coach,
+        contactPerson: input.contactPerson ?? base.contactPerson,
         clubId: input.clubId ?? base.clubId,
         weightClassId: input.weightClassId ?? base.weightClassId,
         ageClassId: input.ageClassId ?? base.ageClassId,
         gradeId: input.gradeId ?? base.gradeId,
+        startEligible: input.startEligible ?? base.startEligible,
+        registrationStatus: input.registrationStatus ?? base.registrationStatus,
+        remarks: input.remarks ?? base.remarks,
         id,
         updatedAt: new Date().toISOString()
       }
@@ -327,6 +353,39 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
         saveCompetitors(competitors)
       }
     },
+    importParticipantsPreview: async () => ({
+      columns: [
+        { id: 'sheet1#0', sheetName: 'Sheet1', header: 'Given name', sampleValues: ['Yuki'] },
+        { id: 'sheet1#1', sheetName: 'Sheet1', header: 'Family name', sampleValues: ['Tanaka'] },
+        { id: 'sheet1#2', sheetName: 'Sheet1', header: 'Club', sampleValues: ['Dojo Nord'] }
+      ],
+      fields: [
+        { key: 'givenName', required: true },
+        { key: 'familyName', required: true },
+        { key: 'club', required: false }
+      ],
+      suggestedMapping: {
+        givenName: 'sheet1#0',
+        familyName: 'sheet1#1',
+        club: 'sheet1#2'
+      },
+      sources: {
+        givenName: 'header',
+        familyName: 'header',
+        club: 'header'
+      },
+      mappingValid: true,
+      missingRequiredFields: [],
+      rowCount: 1
+    }),
+    importParticipantsExecute: async () => ({
+      results: [
+        { index: 0, givenName: 'Yuki', familyName: 'Tanaka', club: 'Dojo Nord', success: true }
+      ],
+      importedCount: 1,
+      failedCount: 0
+    }),
+    onImportParticipantsProgress: () => () => undefined,
     hasPermission: async () => true,
     getOsUsername: async () => 'TestUser',
     ...overrides

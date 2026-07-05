@@ -57,8 +57,12 @@ export interface EnsureLocalSessionResult {
   expiresAt: string
 }
 
+import type { CompetitorRegistrationStatus } from '@shared/domain/competitor-field-limits'
+
 /** Gender code stored in `competitors.gender`. */
 export type CompetitorGender = 'd' | 'f' | 'm'
+
+export type { CompetitorRegistrationStatus }
 
 /** Tournament competitor record stored in SQLite. */
 export interface Competitor {
@@ -73,11 +77,14 @@ export interface Competitor {
   weightClass: string | null
   licenseNumber: string | null
   contactPhone: string | null
-  coach: string | null
+  contactPerson: string | null
   clubId: string
   weightClassId: string | null
   ageClassId: string
   gradeId: string | null
+  startEligible: boolean
+  registrationStatus: CompetitorRegistrationStatus | null
+  remarks: string | null
   createdAt: string
   updatedAt: string | null
 }
@@ -91,7 +98,10 @@ interface CompetitorDetailInput {
   gradeId?: string | null
   licenseNumber?: string | null
   contactPhone?: string | null
-  coach?: string | null
+  contactPerson?: string | null
+  startEligible?: boolean | null
+  registrationStatus?: CompetitorRegistrationStatus | null
+  remarks?: string | null
 }
 
 /** Input for creating a competitor via IPC. */
@@ -114,6 +124,59 @@ export interface UpdateCompetitorInput extends CompetitorDetailInput {
   clubId?: string | null
   weightClassId?: string | null
   ageClassId?: string | null
+}
+
+/** How a target field was mapped to a source column during import. */
+export type ImportColumnMappingSource = 'data' | 'header' | 'manual'
+
+/** A detected import source from an uploaded workbook (table column or form field). */
+export interface ImportPreviewColumn {
+  id: string
+  sheetName: string
+  header: string
+  sampleValues: string[]
+  /** `form` for single-value registration header fields; `column` for table columns. */
+  sourceKind?: 'column' | 'form'
+}
+
+/** A target field an Excel column can be mapped to. */
+export interface ImportTargetFieldInfo {
+  key: string
+  required: boolean
+}
+
+/** Result of previewing an uploaded workbook for import. */
+export interface ImportPreviewResult {
+  columns: ImportPreviewColumn[]
+  fields: ImportTargetFieldInfo[]
+  suggestedMapping: Record<string, string>
+  sources: Record<string, ImportColumnMappingSource>
+  mappingValid: boolean
+  missingRequiredFields: string[]
+  rowCount: number
+}
+
+/** Per-row outcome of executing a participant import. */
+export interface ImportRowResult {
+  index: number
+  givenName: string
+  familyName: string
+  club: string
+  success: boolean
+  errorCode?: string
+}
+
+/** Aggregate result of executing a participant import. */
+export interface ImportExecuteResult {
+  results: ImportRowResult[]
+  importedCount: number
+  failedCount: number
+}
+
+/** Progress event emitted while executing a participant import. */
+export interface ImportProgressEvent {
+  processed: number
+  total: number
 }
 
 /** Input for recording an audit event via IPC. */
@@ -146,6 +209,13 @@ export interface ElectronAPI {
   addCompetitor: (token: string, input: CreateCompetitorInput) => Promise<Competitor>
   updateCompetitor: (token: string, id: string, input: UpdateCompetitorInput) => Promise<Competitor>
   deleteCompetitor: (token: string, id: string) => Promise<void>
+  importParticipantsPreview: (token: string, buffer: ArrayBuffer) => Promise<ImportPreviewResult>
+  importParticipantsExecute: (
+    token: string,
+    buffer: ArrayBuffer,
+    mapping: Record<string, string>
+  ) => Promise<ImportExecuteResult>
+  onImportParticipantsProgress: (listener: (progress: ImportProgressEvent) => void) => () => void
   hasPermission: (token: string, resource: string, action: string) => Promise<boolean>
   getOsUsername: () => Promise<string>
 }
