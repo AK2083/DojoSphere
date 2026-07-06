@@ -1,3 +1,9 @@
+# [1.22.0](https://github.com/AK2083/DojoSphere/compare/v1.21.0...v1.22.0) (2026-07-06)
+
+### Features
+
+- add excel export ([#193](https://github.com/AK2083/DojoSphere/issues/193)) ([653f643](https://github.com/AK2083/DojoSphere/commit/653f643f596e031bf74234a2183d5d5bc94d6a6a))
+
 # [1.21.0](https://github.com/AK2083/DojoSphere/compare/v1.20.0...v1.21.0) (2026-07-03)
 
 ### Features
