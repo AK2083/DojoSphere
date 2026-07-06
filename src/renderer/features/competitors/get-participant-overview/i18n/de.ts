@@ -21,8 +21,15 @@ export default {
       licenseNumber: 'Wettkampflizenznummer',
       clubContactEmail: 'E-Mail Vereinsverantwortlicher',
       contactPhone: 'Telefon für Rückfragen',
-      coach: 'Trainer / Betreuer'
+      contactPerson: 'Kontaktperson',
+      startEligible: 'Startberechtigt',
+      registrationStatus: 'Status',
+      remarks: 'Bemerkung'
     }
+  },
+  startEligible: {
+    yes: 'Startberechtigt',
+    no: 'Nicht startberechtigt'
   },
   gender: {
     female: 'Weiblich',

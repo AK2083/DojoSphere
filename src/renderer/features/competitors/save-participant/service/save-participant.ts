@@ -2,6 +2,7 @@ import { getLocalSessionToken } from '@features/authentication/service/local-ses
 import type {
   Competitor,
   CompetitorGender,
+  CompetitorRegistrationStatus,
   CreateCompetitorInput
 } from '@shared/types/electron-api'
 
@@ -33,7 +34,10 @@ export function mapFormStateToInput(fields: ParticipantFormState): CreateCompeti
     gradeId: toOptional(fields.gradeId),
     licenseNumber: toOptional(fields.licenseNumber),
     contactPhone: toOptional(fields.contactPhone),
-    coach: toOptional(fields.coach)
+    contactPerson: toOptional(fields.contactPerson),
+    startEligible: fields.startEligible,
+    registrationStatus: (fields.registrationStatus || null) as CompetitorRegistrationStatus | null,
+    remarks: toOptional(fields.remarks)
   }
 }
 

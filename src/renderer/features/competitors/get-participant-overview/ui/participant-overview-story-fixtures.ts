@@ -22,11 +22,14 @@ export const storyCompetitors: Competitor[] = [
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer',
+    contactPerson: 'S. Fischer',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: 'a1000000-0000-4000-8000-000000000001',
+    startEligible: true,
+    registrationStatus: 'registered',
+    remarks: null,
     createdAt: '2026-03-01T00:00:00.000Z',
     updatedAt: null
   },
@@ -42,11 +45,14 @@ export const storyCompetitors: Competitor[] = [
     weightClass: '-52',
     licenseNumber: 'WL-2024-014',
     contactPhone: '+49 555 010202',
-    coach: 'M. Keller',
+    contactPerson: 'M. Keller',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: null,
+    startEligible: false,
+    registrationStatus: 'late_registration',
+    remarks: null,
     createdAt: '2026-02-15T00:00:00.000Z',
     updatedAt: null
   },
@@ -62,11 +68,14 @@ export const storyCompetitors: Competitor[] = [
     weightClass: '-73',
     licenseNumber: 'WL-2024-028',
     contactPhone: '+43 555 010203',
-    coach: 'T. Brandt',
+    contactPerson: 'T. Brandt',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: 'a1000000-0000-4000-8000-000000000002',
+    startEligible: true,
+    registrationStatus: null,
+    remarks: null,
     createdAt: '2026-01-10T00:00:00.000Z',
     updatedAt: null
   }
@@ -87,7 +96,10 @@ export const storyFieldHeaders: ParticipantFieldHeader[] = [
   { title: 'Competition licence number', key: 'licenseNumber' },
   { title: 'Club contact email', key: 'clubContactEmail' },
   { title: 'Contact phone', key: 'contactPhone' },
-  { title: 'Coach / guardian', key: 'coach' }
+  { title: 'Contact person', key: 'contactPerson' },
+  { title: 'Status', key: 'registrationStatus' },
+  { title: 'Remarks', key: 'remarks' },
+  { title: 'Eligible to compete', key: 'startEligible' }
 ]
 
 /** Card rows for presentational overview stories (English labels). */
@@ -109,7 +121,10 @@ export const storyParticipants: ParticipantOverviewItem[] = [
     licenseNumber: 'WL-2024-001',
     clubContactEmail: 'kontakt@example-dojo.invalid',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer'
+    contactPerson: 'S. Fischer',
+    startEligible: true,
+    registrationStatus: 'Registered',
+    remarks: ''
   },
   {
     id: 'participant-2',
@@ -128,7 +143,10 @@ export const storyParticipants: ParticipantOverviewItem[] = [
     licenseNumber: 'WL-2024-014',
     clubContactEmail: 'anmeldung@example-jc.invalid',
     contactPhone: '+49 555 010202',
-    coach: 'M. Keller'
+    contactPerson: 'M. Keller',
+    startEligible: false,
+    registrationStatus: 'Late registration',
+    remarks: ''
   },
   {
     id: 'participant-3',
@@ -147,7 +165,10 @@ export const storyParticipants: ParticipantOverviewItem[] = [
     licenseNumber: 'WL-2024-028',
     clubContactEmail: 'sport@example-sv.invalid',
     contactPhone: '+43 555 010203',
-    coach: 'T. Brandt'
+    contactPerson: 'T. Brandt',
+    startEligible: true,
+    registrationStatus: '',
+    remarks: ''
   }
 ]
 

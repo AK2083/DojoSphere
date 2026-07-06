@@ -20,7 +20,7 @@ export const PLAYWRIGHT_PARTICIPANT_INPUTS: CreateCompetitorInput[] = [
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
-    coach: 'S. Fischer',
+    contactPerson: 'S. Fischer',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000001',
     ageClassId: 'c2000000-0000-4000-8000-000000000003'
@@ -36,7 +36,7 @@ export const PLAYWRIGHT_PARTICIPANT_INPUTS: CreateCompetitorInput[] = [
     weightClass: '-52',
     licenseNumber: 'WL-2024-014',
     contactPhone: '+49 555 010202',
-    coach: 'M. Keller',
+    contactPerson: 'M. Keller',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000001',
     ageClassId: 'c2000000-0000-4000-8000-000000000003'
@@ -52,7 +52,7 @@ export const PLAYWRIGHT_PARTICIPANT_INPUTS: CreateCompetitorInput[] = [
     weightClass: '-73',
     licenseNumber: 'WL-2024-028',
     contactPhone: '+43 555 010203',
-    coach: 'T. Brandt',
+    contactPerson: 'T. Brandt',
     clubId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000001',
     ageClassId: 'c2000000-0000-4000-8000-000000000003'

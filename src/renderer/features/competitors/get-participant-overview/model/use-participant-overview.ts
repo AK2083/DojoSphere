@@ -58,7 +58,10 @@ export function useParticipantOverview() {
     { title: t(translationKeys.list.columns.licenseNumber), key: 'licenseNumber' },
     { title: t(translationKeys.list.columns.clubContactEmail), key: 'clubContactEmail' },
     { title: t(translationKeys.list.columns.contactPhone), key: 'contactPhone' },
-    { title: t(translationKeys.list.columns.coach), key: 'coach' }
+    { title: t(translationKeys.list.columns.contactPerson), key: 'contactPerson' },
+    { title: t(translationKeys.list.columns.registrationStatus), key: 'registrationStatus' },
+    { title: t(translationKeys.list.columns.remarks), key: 'remarks' },
+    { title: t(translationKeys.list.columns.startEligible), key: 'startEligible' }
   ])
 
   const overviewItems = computed<ParticipantOverviewItem[]>(() =>

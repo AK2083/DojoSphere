@@ -3,7 +3,7 @@ import { applyPragmas } from './pragmas'
 import { runInTransaction } from './transactions'
 import type { Database } from './types/database'
 
-import { assertUsersTableSchema } from './validate-schema'
+import { assertLegacyUsersTableCompatible, assertUsersTableSchema } from './validate-schema'
 
 function ensureMigrationsTable(db: Database) {
   db.exec(`
@@ -32,6 +32,7 @@ function getAppliedMigrationIds(db: Database) {
 export function runMigrations(db: Database) {
   applyPragmas(db)
   ensureMigrationsTable(db)
+  assertLegacyUsersTableCompatible(db)
 
   const applied = getAppliedMigrationIds(db)
   const insertMigration = db.prepare('INSERT INTO _migrations (id, name) VALUES (?, ?)')

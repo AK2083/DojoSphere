@@ -6,17 +6,31 @@ test.describe('ImportMappingStep', () => {
     await setEnglishLanguage(page)
     await page.goto('/#/participants/import')
     await expect(page.getByRole('heading', { name: 'Import participants' })).toBeVisible()
-    await page.getByRole('button', { name: 'Next step' }).click()
+
+    await page.getByLabel('Select Excel file for import').setInputFiles({
+      name: 'participants.xlsx',
+      mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      buffer: globalThis.Buffer.from('stub')
+    })
   })
 
-  test('renders source and target mapping selects', async ({ page }) => {
+  test('lists participant fields with per-field excel column selects', async ({ page }) => {
     const stepCard = page.locator('.import-step-section')
 
     await expect(stepCard.getByText('Map columns', { exact: true })).toBeVisible()
     await expect(
-      stepCard.getByText('Assign a column from the file to a participant form field.')
+      stepCard.getByText(
+        'Assign the matching column from the Excel file to each participant field.',
+        {
+          exact: false
+        }
+      )
     ).toBeVisible()
-    await expect(page.getByRole('combobox', { name: 'File column' })).toBeVisible()
-    await expect(page.getByRole('combobox', { name: 'Participant field' })).toBeVisible()
+    await expect(page.getByText('Given name').first()).toBeVisible()
+    const givenNameRow = page
+      .locator('.import-mapping-step__list')
+      .getByRole('listitem')
+      .filter({ hasText: 'Given name' })
+    await expect(givenNameRow.getByRole('combobox', { name: 'File column' })).toBeVisible()
   })
 })

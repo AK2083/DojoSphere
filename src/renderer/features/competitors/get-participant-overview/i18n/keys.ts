@@ -21,8 +21,15 @@ export default {
       licenseNumber: 'competitors.getParticipantOverview.list.columns.licenseNumber',
       clubContactEmail: 'competitors.getParticipantOverview.list.columns.clubContactEmail',
       contactPhone: 'competitors.getParticipantOverview.list.columns.contactPhone',
-      coach: 'competitors.getParticipantOverview.list.columns.coach'
+      contactPerson: 'competitors.getParticipantOverview.list.columns.contactPerson',
+      startEligible: 'competitors.getParticipantOverview.list.columns.startEligible',
+      registrationStatus: 'competitors.getParticipantOverview.list.columns.registrationStatus',
+      remarks: 'competitors.getParticipantOverview.list.columns.remarks'
     }
+  },
+  startEligible: {
+    yes: 'competitors.getParticipantOverview.startEligible.yes',
+    no: 'competitors.getParticipantOverview.startEligible.no'
   },
   gender: {
     female: 'competitors.getParticipantOverview.gender.female',

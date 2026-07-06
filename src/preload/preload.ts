@@ -1,6 +1,6 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
-import type { ElectronAPI } from '@shared/types/electron-api'
+import type { ElectronAPI, ImportProgressEvent } from '@shared/types/electron-api'
 
 const api: ElectronAPI = {
   getUsers: () => ipcRenderer.invoke('users:list'),
@@ -21,6 +21,19 @@ const api: ElectronAPI = {
   updateCompetitor: (token, id, input) =>
     ipcRenderer.invoke('competitors:update', { token, id, ...input }),
   deleteCompetitor: (token, id) => ipcRenderer.invoke('competitors:delete', { token, id }),
+  importParticipantsPreview: (token, buffer) =>
+    ipcRenderer.invoke('competitors:import:preview', { token, buffer }),
+  importParticipantsExecute: (token, buffer, mapping) =>
+    ipcRenderer.invoke('competitors:import:execute', { token, buffer, mapping }),
+  onImportParticipantsProgress: (listener) => {
+    const handler = (_event: IpcRendererEvent, progress: ImportProgressEvent) => listener(progress)
+
+    ipcRenderer.on('competitors:import:progress', handler)
+
+    return () => {
+      ipcRenderer.removeListener('competitors:import:progress', handler)
+    }
+  },
   hasPermission: (token, resource, action) =>
     ipcRenderer.invoke('authorization:hasPermission', { token, resource, action }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')

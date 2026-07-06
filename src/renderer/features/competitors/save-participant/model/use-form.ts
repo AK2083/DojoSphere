@@ -1,6 +1,7 @@
 import { computed, type MaybeRefOrGetter, nextTick, ref, toValue, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { VForm } from 'vuetify/components'
+import { COMPETITOR_REMARKS_MAX_LENGTH } from '@shared/domain/competitor-field-limits'
 import { logError, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -86,7 +87,14 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
   const passNumberRules = [mapRule(passNumberRule)]
   const licenseNumberRules = [mapRule(optionalLicenseNumberRule)]
   const contactPhoneRules = [mapRule(optionalPhoneRule)]
-  const coachRules = [mapRule(optionalMaxLengthRule(COMPETITOR_COACH_MAX_LENGTH))]
+  const contactPersonRules = [mapRule(optionalMaxLengthRule(COMPETITOR_COACH_MAX_LENGTH))]
+  const remarksRules = [mapRule(optionalMaxLengthRule(COMPETITOR_REMARKS_MAX_LENGTH))]
+
+  const registrationStatusOptions = computed(() => [
+    { title: t(translationKeys.registrationStatus.none), value: '' },
+    { title: t(translationKeys.registrationStatus.registered), value: 'registered' },
+    { title: t(translationKeys.registrationStatus.lateRegistration), value: 'late_registration' }
+  ])
 
   const weightClassRules = computed(() => [
     mapRule(
@@ -207,7 +215,12 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
 
       await router?.push({ name: 'participants' })
     } catch (error) {
-      saveErrorMessage.value = t(translationKeys.form.saveError)
+      const message = error instanceof Error ? error.message : String(error)
+
+      saveErrorMessage.value =
+        message === 'duplicate_competitor'
+          ? t(translationKeys.form.duplicateError)
+          : t(translationKeys.form.saveError)
       logError(error as Error, 'competitors', 'save-participant')
     } finally {
       isSaving.value = false
@@ -243,6 +256,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     gradingSystemOptions,
     gradeOptions,
     weightClassOptions,
+    registrationStatusOptions,
     givenNameRules,
     familyNameRules,
     genderRules,
@@ -254,7 +268,8 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     passNumberRules,
     licenseNumberRules,
     contactPhoneRules,
-    coachRules,
+    contactPersonRules,
+    remarksRules,
     setFormRef,
     submit,
     reset

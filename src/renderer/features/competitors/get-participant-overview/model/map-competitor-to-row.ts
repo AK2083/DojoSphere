@@ -11,6 +11,21 @@ function resolveReferenceLabelKey(labelKey: string): string {
   return `competitors.saveParticipant.reference.${labelKey}`
 }
 
+function resolveRegistrationStatusLabel(
+  t: Translate,
+  status: Competitor['registrationStatus']
+): string {
+  if (status === 'registered') {
+    return t('competitors.saveParticipant.registrationStatus.registered')
+  }
+
+  if (status === 'late_registration') {
+    return t('competitors.saveParticipant.registrationStatus.lateRegistration')
+  }
+
+  return ''
+}
+
 function resolveAgeClassLabel(t: Translate, ageClassId: string): string {
   const seed = AGE_CLASS_SEEDS.find((ageClass) => ageClass.id === ageClassId)
 
@@ -67,6 +82,9 @@ export function mapCompetitorToRow(competitor: Competitor, t: Translate): Partic
     licenseNumber: competitor.licenseNumber ?? '',
     clubContactEmail: '',
     contactPhone: competitor.contactPhone ?? '',
-    coach: competitor.coach ?? ''
+    contactPerson: competitor.contactPerson ?? '',
+    startEligible: competitor.startEligible,
+    registrationStatus: resolveRegistrationStatusLabel(t, competitor.registrationStatus),
+    remarks: competitor.remarks ?? ''
   }
 }

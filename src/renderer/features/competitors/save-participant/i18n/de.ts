@@ -93,6 +93,8 @@ export default {
       'Für diese Altersklasse gelten flexible Gewichte. Eine Gewichtsklasse muss nicht gewählt werden.',
     requiredFieldsLegend: 'Mit * markierte Felder sind Pflichtfelder.',
     saveError: 'Der Teilnehmer konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    duplicateError:
+      'Ein Teilnehmer mit derselben Passnummer, Lizenznummer oder Identität ist bereits vorhanden.',
     loadError: 'Der Teilnehmer konnte nicht geladen werden.',
     selectAgeClassFirst:
       'Bitte zuerst eine Altersklasse wählen, um die Gewichtsklasse festzulegen.',
@@ -110,13 +112,21 @@ export default {
       grade: 'Graduierung',
       licenseNumber: 'Wettkampflizenznummer',
       contactPhone: 'Telefon für Rückfragen',
-      coach: 'Trainer / Betreuer'
+      contactPerson: 'Kontaktperson',
+      startEligible: 'Startberechtigt',
+      registrationStatus: 'Status',
+      remarks: 'Bemerkung'
     }
   },
   gender: {
     diverse: 'Divers',
     female: 'Weiblich',
     male: 'Männlich'
+  },
+  registrationStatus: {
+    none: 'Keine Angabe',
+    registered: 'Gemeldet',
+    lateRegistration: 'Nachmeldung'
   },
   actions: {
     back: 'Zurück zur Teilnehmerliste',

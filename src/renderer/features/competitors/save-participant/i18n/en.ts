@@ -93,6 +93,8 @@ export default {
       'This age class uses flexible weights. Weight class selection is not required for registration.',
     requiredFieldsLegend: 'Fields marked with * are required.',
     saveError: 'The participant could not be saved. Please try again.',
+    duplicateError:
+      'A participant with the same pass number, license number, or identity already exists.',
     loadError: 'The participant could not be loaded.',
     selectAgeClassFirst: 'Select an age class first to choose a weight class.',
     fields: {
@@ -109,13 +111,21 @@ export default {
       grade: 'Grade (kyu/dan)',
       licenseNumber: 'Competition licence number',
       contactPhone: 'Contact phone',
-      coach: 'Coach / guardian'
+      contactPerson: 'Contact person',
+      startEligible: 'Eligible to compete',
+      registrationStatus: 'Status',
+      remarks: 'Remarks'
     }
   },
   gender: {
     diverse: 'Diverse',
     female: 'Female',
     male: 'Male'
+  },
+  registrationStatus: {
+    none: 'Not specified',
+    registered: 'Registered',
+    lateRegistration: 'Late registration'
   },
   actions: {
     back: 'Back to participant list',

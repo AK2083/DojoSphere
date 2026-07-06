@@ -21,8 +21,15 @@ export default {
       licenseNumber: 'Competition licence number',
       clubContactEmail: 'Club contact email',
       contactPhone: 'Contact phone',
-      coach: 'Coach / guardian'
+      contactPerson: 'Contact person',
+      startEligible: 'Eligible to compete',
+      registrationStatus: 'Status',
+      remarks: 'Remarks'
     }
+  },
+  startEligible: {
+    yes: 'Eligible to compete',
+    no: 'Not eligible to compete'
   },
   gender: {
     female: 'Female',

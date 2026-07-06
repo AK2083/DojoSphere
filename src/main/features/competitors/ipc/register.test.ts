@@ -1,5 +1,11 @@
-import type { AddUserResult, Competitor } from '@shared/types/electron-api'
-import { afterEach, describe, expect, it } from 'vitest'
+import type {
+  AddUserResult,
+  Competitor,
+  ImportExecuteResult,
+  ImportPreviewResult
+} from '@shared/types/electron-api'
+import * as XLSX from 'xlsx'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { closeTestDatabase, initTestDatabase } from '../../../test/database'
 import { getIpcHandler } from '../../../test/electron-mock'
@@ -21,8 +27,17 @@ async function createLocalUserWithSession() {
   return result
 }
 
+function buildWorkbook(rows: unknown[][]): ArrayBuffer {
+  const workbook = XLSX.utils.book_new()
+
+  XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(rows), 'Teilnehmer')
+
+  return XLSX.write(workbook, { type: 'array', bookType: 'xlsx' }) as ArrayBuffer
+}
+
 describe('registerCompetitorsIpc', () => {
   afterEach(async () => {
+    vi.restoreAllMocks()
     await closeTestDatabase()
   })
 
@@ -271,5 +286,156 @@ describe('registerCompetitorsIpc', () => {
       .all(competitor.id) as Array<{ action: string }>
 
     expect(auditActions.map((row) => row.action)).toEqual(['created', 'updated', 'deleted'])
+  })
+
+  it('does not send import progress when the renderer was destroyed', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const executeHandler = getIpcHandler('competitors:import:execute')
+    const { sessionToken } = await createLocalUserWithSession()
+    const buffer = buildWorkbook([
+      ['Vorname', 'Nachname', 'Verein'],
+      ['Yuki', 'Tanaka', 'Dojo Nord']
+    ])
+    const previewHandler = getIpcHandler('competitors:import:preview')
+    const preview = (await previewHandler(
+      {},
+      { token: sessionToken, buffer }
+    )) as ImportPreviewResult
+    const send = vi.fn()
+
+    await executeHandler(
+      {
+        sender: {
+          isDestroyed: () => true,
+          send
+        }
+      },
+      {
+        token: sessionToken,
+        buffer,
+        mapping: preview.suggestedMapping
+      }
+    )
+
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('previews and executes imports through IPC handlers', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+    const { getCompetitors } = await import('../repository/competitors.repository')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const previewHandler = getIpcHandler('competitors:import:preview')
+    const executeHandler = getIpcHandler('competitors:import:execute')
+    const { sessionToken, id: actorUserId } = await createLocalUserWithSession()
+    const buffer = buildWorkbook([
+      ['Vorname', 'Nachname', 'Verein'],
+      ['Yuki', 'Tanaka', 'Dojo Nord']
+    ])
+
+    const preview = (await previewHandler(
+      {},
+      {
+        token: sessionToken,
+        buffer
+      }
+    )) as ImportPreviewResult
+
+    expect(preview.mappingValid).toBe(true)
+
+    const send = vi.fn()
+    const result = (await executeHandler(
+      {
+        sender: {
+          isDestroyed: () => false,
+          send
+        }
+      },
+      {
+        token: sessionToken,
+        buffer,
+        mapping: preview.suggestedMapping
+      }
+    )) as ImportExecuteResult
+
+    expect(result.importedCount).toBe(1)
+    expect(getCompetitors()).toHaveLength(1)
+    expect(send).toHaveBeenCalledWith('competitors:import:progress', {
+      processed: 1,
+      total: 1
+    })
+    void actorUserId
+  })
+
+  it('wraps import preview failures as structured ipc errors', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+    const importService = await import('../import/import-service')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    vi.spyOn(importService, 'previewImport').mockImplementation(() => {
+      throw new Error('invalid file')
+    })
+
+    const previewHandler = getIpcHandler('competitors:import:preview')
+    const { sessionToken } = await createLocalUserWithSession()
+
+    expect(() =>
+      previewHandler(
+        {},
+        {
+          token: sessionToken,
+          buffer: new ArrayBuffer(8)
+        }
+      )
+    ).toThrow(/^IMPORT:parse_failed\|/)
+  })
+
+  it('wraps import execute failures as structured ipc errors', async () => {
+    await initTestDatabase()
+    const { registerUsersIpc } = await import('@main/features/users')
+    const { registerCompetitorsIpc } = await import('./register')
+
+    registerUsersIpc()
+    registerCompetitorsIpc()
+
+    const executeHandler = getIpcHandler('competitors:import:execute')
+    const { sessionToken } = await createLocalUserWithSession()
+    const buffer = buildWorkbook([
+      ['Vorname', 'Nachname'],
+      ['', '']
+    ])
+
+    expect(() =>
+      executeHandler(
+        {
+          sender: {
+            isDestroyed: () => false,
+            send: vi.fn()
+          }
+        },
+        {
+          token: sessionToken,
+          buffer,
+          mapping: {
+            givenName: 'Teilnehmer#0',
+            familyName: 'Teilnehmer#1'
+          }
+        }
+      )
+    ).toThrow(/^IMPORT:empty_workbook\|/)
   })
 })

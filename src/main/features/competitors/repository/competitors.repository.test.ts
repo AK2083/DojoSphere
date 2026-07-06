@@ -326,7 +326,7 @@ describe('competitors.repository', () => {
               gradeId: competitor.gradeId,
               licenseNumber: competitor.licenseNumber,
               contactPhone: competitor.contactPhone,
-              coach: competitor.coach,
+              contactPerson: competitor.contactPerson,
               club: competitor.club,
               maxWeightKg: null,
               minWeightKg: null,
@@ -360,7 +360,7 @@ describe('competitors.repository', () => {
       gradeId: 'a1000000-0000-4000-8000-000000000001',
       licenseNumber: 'WL-1',
       contactPhone: '+49 1',
-      coach: 'Coach'
+      contactPerson: 'Coach'
     })
 
     expect(competitor).toMatchObject({
@@ -371,7 +371,7 @@ describe('competitors.repository', () => {
       gradeId: 'a1000000-0000-4000-8000-000000000001',
       licenseNumber: 'WL-1',
       contactPhone: '+49 1',
-      coach: 'Coach'
+      contactPerson: 'Coach'
     })
   })
 
@@ -394,7 +394,7 @@ describe('competitors.repository', () => {
       gradeId: '   ',
       licenseNumber: '   ',
       contactPhone: '   ',
-      coach: '   '
+      contactPerson: '   '
     })
 
     expect(competitor).toMatchObject({
@@ -405,7 +405,7 @@ describe('competitors.repository', () => {
       gradeId: null,
       licenseNumber: null,
       contactPhone: null,
-      coach: null
+      contactPerson: null
     })
   })
 
@@ -429,7 +429,7 @@ describe('competitors.repository', () => {
       gradeId: 'a1000000-0000-4000-8000-000000000001',
       licenseNumber: 'WL-9',
       contactPhone: '+43 9',
-      coach: 'Coach B'
+      contactPerson: 'Coach B'
     })
 
     expect(updated).toMatchObject({
@@ -440,7 +440,7 @@ describe('competitors.repository', () => {
       gradeId: 'a1000000-0000-4000-8000-000000000001',
       licenseNumber: 'WL-9',
       contactPhone: '+43 9',
-      coach: 'Coach B'
+      contactPerson: 'Coach B'
     })
 
     const auditCount = getDatabase()
@@ -820,6 +820,106 @@ describe('competitors.repository', () => {
     )
   })
 
+  it('imports competitors atomically, skipping only the failing rows', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { importCompetitors, getCompetitors } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Bulk Actor', userType: 'system' })
+
+    const results = importCompetitors(actorUserId, [
+      { givenName: 'Yuki', familyName: 'Tanaka' },
+      { givenName: '   ', familyName: 'Weber' },
+      { givenName: 'Anna', familyName: 'Chen' }
+    ])
+
+    expect(results.map((result) => result.success)).toEqual([true, false, true])
+    expect(results[1]?.errorCode).toBe('import_failed')
+    expect(results[0]?.competitor).toMatchObject({ givenName: 'Yuki' })
+    expect(getCompetitors()).toHaveLength(2)
+  })
+
+  it('maps duplicate import failures to row error codes', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, importCompetitors } = await import('./competitors.repository')
+    const { DUPLICATE_COMPETITOR_ERROR } = await import('./competitor-duplicate')
+
+    const { id: actorUserId } = addUser({ displayName: 'Import Error Actor', userType: 'system' })
+
+    addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      passNumber: 'JP-1'
+    })
+
+    const results = importCompetitors(actorUserId, [
+      { givenName: 'Other', familyName: 'Person', passNumber: 'JP-1' },
+      { givenName: '   ', familyName: 'Weber' }
+    ])
+
+    expect(results).toEqual([
+      { index: 0, success: false, errorCode: DUPLICATE_COMPETITOR_ERROR },
+      { index: 1, success: false, errorCode: 'import_failed' }
+    ])
+  })
+
+  it('resolves a weight class from a raw kilogram value', async () => {
+    await initTestDatabase()
+    const { resolveWeightClassIdFromKg } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+    const { DEFAULT_AGE_CLASS_ID, DEFAULT_WEIGHT_CLASS_ID } =
+      await import('@main/shared/database/reference-seed-ids')
+
+    const db = getDatabase()
+
+    expect(resolveWeightClassIdFromKg(db, 45, DEFAULT_AGE_CLASS_ID)).toEqual(expect.any(String))
+    expect(resolveWeightClassIdFromKg(db, 999, DEFAULT_AGE_CLASS_ID)).toEqual(expect.any(String))
+    expect(resolveWeightClassIdFromKg(db, 0, DEFAULT_AGE_CLASS_ID)).toBe(DEFAULT_WEIGHT_CLASS_ID)
+    expect(resolveWeightClassIdFromKg(db, Number.NaN, DEFAULT_AGE_CLASS_ID)).toBe(
+      DEFAULT_WEIGHT_CLASS_ID
+    )
+  })
+
+  it('falls back to the default class when no open weight class exists', async () => {
+    await initTestDatabase()
+    const { resolveWeightClassIdFromKg } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+    const { DEFAULT_AGE_CLASS_ID, DEFAULT_WEIGHT_CLASS_ID } =
+      await import('@main/shared/database/reference-seed-ids')
+
+    const db = getDatabase()
+    const originalPrepare = db.prepare.bind(db)
+
+    vi.spyOn(db, 'prepare').mockImplementation((sql: string) => {
+      if (sql.includes('max_weight_kg IS NULL AND min_weight_kg IS NOT NULL')) {
+        return { get: () => undefined } as never
+      }
+
+      return originalPrepare(sql)
+    })
+
+    expect(resolveWeightClassIdFromKg(db, 500, DEFAULT_AGE_CLASS_ID)).toBe(DEFAULT_WEIGHT_CLASS_ID)
+  })
+
+  it('resolves a grade id from kyu or dan text', async () => {
+    await initTestDatabase()
+    const { resolveGradeIdFromText } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+
+    const db = getDatabase()
+
+    expect(resolveGradeIdFromText(db, '8. Kyu')).toBe('a1000000-0000-4000-8000-000000000003')
+    expect(resolveGradeIdFromText(db, '2', 'Dan')).toBe('a1000000-0000-4000-8000-00000000000c')
+    expect(resolveGradeIdFromText(db, 'unknown')).toBeNull()
+    expect(resolveGradeIdFromText(db, '')).toBeNull()
+    expect(resolveGradeIdFromText(db, undefined)).toBeNull()
+    expect(
+      resolveGradeIdFromText(db, '5. Kyu', undefined, '00000000-0000-0000-0000-000000000099')
+    ).toBeNull()
+    expect(resolveGradeIdFromText(db, '8. Kyu')).toBe('a1000000-0000-4000-8000-000000000003')
+  })
+
   it('deletes competitors and records a deleted audit row', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
@@ -858,5 +958,163 @@ describe('competitors.repository', () => {
       entityId: competitor.id,
       actorUserId
     })
+  })
+
+  it('updates existing club contact emails and ignores invalid targets', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, upsertClubContactEmail } = await import('./competitors.repository')
+    const { getDatabase } = await import('@main/shared/database')
+    const { UNKNOWN_CLUB_ID } = await import('@main/shared/database/reference-seed-ids')
+    const { COMPETITOR_REMARKS_MAX_LENGTH } = await import('@shared/domain/competitor-field-limits')
+
+    const { id: actorUserId } = addUser({ displayName: 'Club Contact Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Lina',
+      familyName: 'Bauer',
+      club: 'Dojo Nord'
+    })
+    const db = getDatabase()
+
+    upsertClubContactEmail(db, competitor.clubId, 'first@example-dojo.invalid')
+    upsertClubContactEmail(db, competitor.clubId, 'second@example-dojo.invalid')
+    upsertClubContactEmail(db, UNKNOWN_CLUB_ID, 'ignored@example-dojo.invalid')
+    upsertClubContactEmail(db, competitor.clubId, '   ')
+
+    const contact = db
+      .prepare(
+        `SELECT value FROM club_contacts WHERE club_id = ? AND contact_type = 'email' LIMIT 1`
+      )
+      .get(competitor.clubId) as { value: string } | undefined
+
+    expect(contact?.value).toBe('second@example-dojo.invalid')
+
+    const longRemarks = 'x'.repeat(COMPETITOR_REMARKS_MAX_LENGTH + 25)
+    const withRemarks = addCompetitor(actorUserId, {
+      givenName: 'Max',
+      familyName: 'Miller',
+      remarks: longRemarks
+    })
+
+    expect(withRemarks.remarks).toHaveLength(COMPETITOR_REMARKS_MAX_LENGTH)
+
+    const shortRemarks = addCompetitor(actorUserId, {
+      givenName: 'Eva',
+      familyName: 'Klein',
+      remarks: '  Kurze Notiz  '
+    })
+
+    expect(shortRemarks.remarks).toBe('Kurze Notiz')
+  })
+
+  it('keeps optional detail fields when they are omitted from an update', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Partial Update Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      startEligible: true,
+      registrationStatus: 'registered',
+      remarks: 'Keep me'
+    })
+
+    const updated = updateCompetitor(actorUserId, competitor.id, {
+      club: 'Dojo Nord'
+    })
+
+    expect(updated).toMatchObject({
+      startEligible: true,
+      registrationStatus: 'registered',
+      remarks: 'Keep me'
+    })
+  })
+
+  it('persists start eligibility as false when explicitly updated', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Start Eligible Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      startEligible: true
+    })
+
+    const updated = updateCompetitor(actorUserId, competitor.id, {
+      startEligible: false
+    })
+
+    expect(updated.startEligible).toBe(false)
+  })
+
+  it('updates registration status and remarks when provided', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Detail Update Actor', userType: 'system' })
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      registrationStatus: null,
+      remarks: null
+    })
+
+    const updated = updateCompetitor(actorUserId, competitor.id, {
+      registrationStatus: 'late_registration',
+      remarks: '  Späte Anmeldung  '
+    })
+
+    expect(updated).toMatchObject({
+      registrationStatus: 'late_registration',
+      remarks: 'Späte Anmeldung'
+    })
+  })
+
+  it('rejects duplicate participants on create and update', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+    const { DUPLICATE_COMPETITOR_ERROR } = await import('./competitor-duplicate')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Duplicate Guard Actor',
+      userType: 'system'
+    })
+    const existing = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      passNumber: 'JP-1'
+    })
+
+    expect(() =>
+      addCompetitor(actorUserId, {
+        givenName: 'Other',
+        familyName: 'Person',
+        passNumber: 'JP-1'
+      })
+    ).toThrow(DUPLICATE_COMPETITOR_ERROR)
+
+    expect(() =>
+      updateCompetitor(actorUserId, existing.id, {
+        passNumber: 'JP-1'
+      })
+    ).not.toThrow()
+
+    const other = addCompetitor(actorUserId, {
+      givenName: 'Lina',
+      familyName: 'Bauer',
+      passNumber: 'JP-2'
+    })
+
+    expect(() =>
+      updateCompetitor(actorUserId, other.id, {
+        passNumber: 'JP-1'
+      })
+    ).toThrow(DUPLICATE_COMPETITOR_ERROR)
   })
 })

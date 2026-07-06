@@ -2,12 +2,13 @@
 import { computed } from 'vue'
 import { mdiCheck, mdiClose } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
+import type { ImportRowResult } from '@shared/types/electron-api'
 
 import translationKeys from '../i18n/keys'
-import type { ImportPreviewParticipant } from '../model/import-preview-participants'
+import { importRowErrorTranslationKey } from '../model/resolve-import-error'
 
 const props = defineProps<{
-  participant: ImportPreviewParticipant
+  participant: ImportRowResult
 }>()
 
 const { t } = useTranslation()
@@ -23,6 +24,12 @@ const statusLabel = computed(() =>
     ? t(translationKeys.steps.import.statusSuccess, { name: fullName.value })
     : t(translationKeys.steps.import.statusFailure, { name: fullName.value })
 )
+
+const rowErrorHint = computed(() => {
+  const key = importRowErrorTranslationKey(props.participant.errorCode)
+
+  return key ? t(key) : undefined
+})
 </script>
 
 <template>
@@ -38,6 +45,9 @@ const statusLabel = computed(() =>
     <div class="import-result-entry__content">
       <span class="import-result-entry__name">{{ fullName }}</span>
       <span class="import-result-entry__club text-medium-emphasis">{{ participant.club }}</span>
+      <span v-if="rowErrorHint" class="import-result-entry__error text-medium-emphasis">
+        {{ rowErrorHint }}
+      </span>
     </div>
   </div>
 </template>
@@ -68,6 +78,11 @@ const statusLabel = computed(() =>
 }
 
 .import-result-entry__club {
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.import-result-entry__error {
   font-size: 0.75rem;
   line-height: 1.25;
 }
