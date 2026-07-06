@@ -839,6 +839,31 @@ describe('competitors.repository', () => {
     expect(getCompetitors()).toHaveLength(2)
   })
 
+  it('maps duplicate import failures to row error codes', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, importCompetitors } = await import('./competitors.repository')
+    const { DUPLICATE_COMPETITOR_ERROR } = await import('./competitor-duplicate')
+
+    const { id: actorUserId } = addUser({ displayName: 'Import Error Actor', userType: 'system' })
+
+    addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      passNumber: 'JP-1'
+    })
+
+    const results = importCompetitors(actorUserId, [
+      { givenName: 'Other', familyName: 'Person', passNumber: 'JP-1' },
+      { givenName: '   ', familyName: 'Weber' }
+    ])
+
+    expect(results).toEqual([
+      { index: 0, success: false, errorCode: DUPLICATE_COMPETITOR_ERROR },
+      { index: 1, success: false, errorCode: 'import_failed' }
+    ])
+  })
+
   it('resolves a weight class from a raw kilogram value', async () => {
     await initTestDatabase()
     const { resolveWeightClassIdFromKg } = await import('./competitors.repository')
@@ -1048,5 +1073,48 @@ describe('competitors.repository', () => {
       registrationStatus: 'late_registration',
       remarks: 'Späte Anmeldung'
     })
+  })
+
+  it('rejects duplicate participants on create and update', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, updateCompetitor } = await import('./competitors.repository')
+    const { DUPLICATE_COMPETITOR_ERROR } = await import('./competitor-duplicate')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Duplicate Guard Actor',
+      userType: 'system'
+    })
+    const existing = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      passNumber: 'JP-1'
+    })
+
+    expect(() =>
+      addCompetitor(actorUserId, {
+        givenName: 'Other',
+        familyName: 'Person',
+        passNumber: 'JP-1'
+      })
+    ).toThrow(DUPLICATE_COMPETITOR_ERROR)
+
+    expect(() =>
+      updateCompetitor(actorUserId, existing.id, {
+        passNumber: 'JP-1'
+      })
+    ).not.toThrow()
+
+    const other = addCompetitor(actorUserId, {
+      givenName: 'Lina',
+      familyName: 'Bauer',
+      passNumber: 'JP-2'
+    })
+
+    expect(() =>
+      updateCompetitor(actorUserId, other.id, {
+        passNumber: 'JP-1'
+      })
+    ).toThrow(DUPLICATE_COMPETITOR_ERROR)
   })
 })

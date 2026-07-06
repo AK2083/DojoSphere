@@ -11,6 +11,7 @@ const translationKeys = {
     flexibleWeightHint: 'competitors.saveParticipant.form.flexibleWeightHint',
     requiredFieldsLegend: 'competitors.saveParticipant.form.requiredFieldsLegend',
     saveError: 'competitors.saveParticipant.form.saveError',
+    duplicateError: 'competitors.saveParticipant.form.duplicateError',
     loadError: 'competitors.saveParticipant.form.loadError',
     selectAgeClassFirst: 'competitors.saveParticipant.form.selectAgeClassFirst',
     fields: {

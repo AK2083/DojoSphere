@@ -226,6 +226,45 @@ describe('useParticipantForm', () => {
     expect(participantForm.isSaving.value).toBe(false)
   })
 
+  it('shows a duplicate error when the participant already exists', async () => {
+    createParticipantMock.mockRejectedValueOnce(new Error('duplicate_competitor'))
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    await participantForm.submit()
+
+    expect(participantForm.saveErrorMessage.value).toBe(
+      'competitors.saveParticipant.form.duplicateError'
+    )
+  })
+
+  it('handles non-error rejections when persisting fails', async () => {
+    createParticipantMock.mockRejectedValueOnce('duplicate_competitor')
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    await participantForm.submit()
+
+    expect(participantForm.saveErrorMessage.value).toBe(
+      'competitors.saveParticipant.form.duplicateError'
+    )
+  })
+
+  it('shows the generic save error for other non-error rejections', async () => {
+    createParticipantMock.mockRejectedValueOnce('plain failure')
+    const validateMock = vi.fn().mockResolvedValue({ valid: true })
+    const participantForm = useParticipantForm()
+    participantForm.setFormRef({ validate: validateMock })
+
+    await participantForm.submit()
+
+    expect(participantForm.saveErrorMessage.value).toBe(
+      'competitors.saveParticipant.form.saveError'
+    )
+  })
+
   it('ignores concurrent submits while saving', async () => {
     let resolveCreate: (() => void) | undefined
     createParticipantMock.mockImplementationOnce(

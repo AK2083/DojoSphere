@@ -215,7 +215,12 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
 
       await router?.push({ name: 'participants' })
     } catch (error) {
-      saveErrorMessage.value = t(translationKeys.form.saveError)
+      const message = error instanceof Error ? error.message : String(error)
+
+      saveErrorMessage.value =
+        message === 'duplicate_competitor'
+          ? t(translationKeys.form.duplicateError)
+          : t(translationKeys.form.saveError)
       logError(error as Error, 'competitors', 'save-participant')
     } finally {
       isSaving.value = false

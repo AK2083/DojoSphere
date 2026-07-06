@@ -29,6 +29,12 @@ describe('resolve-import-error', () => {
     expect(importRowErrorTranslationKey('import_failed')).toBe(
       'competitors.importParticipants.steps.import.rowErrors.importFailed'
     )
+    expect(importRowErrorTranslationKey('duplicate_competitor')).toBe(
+      'competitors.importParticipants.steps.import.rowErrors.duplicateCompetitor'
+    )
+    expect(importRowErrorTranslationKey('duplicate_in_import')).toBe(
+      'competitors.importParticipants.steps.import.rowErrors.duplicateInImport'
+    )
   })
 
   it('returns undefined for missing row error codes', () => {

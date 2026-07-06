@@ -86,7 +86,11 @@ export default {
         importFailed:
           'Daten unvollständig oder ungültig. Prüfen Sie Pflichtfelder, Verein und Zuordnung für diese Zeile.',
         validationFailed:
-          'Die Zeile erfüllt nicht alle Anforderungen. Bitte Daten in der Excel-Datei korrigieren.'
+          'Die Zeile erfüllt nicht alle Anforderungen. Bitte Daten in der Excel-Datei korrigieren.',
+        duplicateCompetitor:
+          'Ein Teilnehmer mit derselben Passnummer, Lizenznummer oder Identität ist bereits in der Datenbank vorhanden.',
+        duplicateInImport:
+          'Dieser Teilnehmer kommt in der Excel-Datei mehrfach vor. Entfernen Sie die doppelte Zeile und importieren Sie erneut.'
       }
     }
   },

@@ -413,4 +413,72 @@ describe('import-service', () => {
 
     expect(importSpy.mock.calls[0]?.[1]?.[0]?.weightClassId).toBeUndefined()
   })
+
+  it('rejects duplicate rows within the same import file', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { getCompetitors } = await import('../repository/competitors.repository')
+    const { executeImport } = await import('./import-service')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Duplicate Import Actor',
+      userType: 'system'
+    })
+    const buffer = buildWorkbook([
+      ['Vorname', 'Nachname', 'Pass-Nr.'],
+      ['Yuki', 'Tanaka', 'JP-1'],
+      ['Yuki', 'Tanaka', 'JP-1']
+    ])
+
+    const result = executeImport(actorUserId, buffer, {
+      givenName: 'Teilnehmer#0',
+      familyName: 'Teilnehmer#1',
+      passNumber: 'Teilnehmer#2'
+    })
+
+    expect(result.importedCount).toBe(1)
+    expect(result.failedCount).toBe(1)
+    expect(result.results[1]).toMatchObject({
+      success: false,
+      errorCode: 'duplicate_in_import'
+    })
+    expect(getCompetitors()).toHaveLength(1)
+  })
+
+  it('rejects rows that match an existing participant in the database', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor, getCompetitors } = await import('../repository/competitors.repository')
+    const { executeImport } = await import('./import-service')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Existing Duplicate Actor',
+      userType: 'system'
+    })
+
+    addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      passNumber: 'JP-1'
+    })
+
+    const buffer = buildWorkbook([
+      ['Vorname', 'Nachname', 'Pass-Nr.'],
+      ['Other', 'Person', 'JP-1']
+    ])
+
+    const result = executeImport(actorUserId, buffer, {
+      givenName: 'Teilnehmer#0',
+      familyName: 'Teilnehmer#1',
+      passNumber: 'Teilnehmer#2'
+    })
+
+    expect(result.importedCount).toBe(0)
+    expect(result.failedCount).toBe(1)
+    expect(result.results[0]).toMatchObject({
+      success: false,
+      errorCode: 'duplicate_competitor'
+    })
+    expect(getCompetitors()).toHaveLength(1)
+  })
 })

@@ -73,7 +73,10 @@ export default {
       },
       rowErrors: {
         importFailed: 'competitors.importParticipants.steps.import.rowErrors.importFailed',
-        validationFailed: 'competitors.importParticipants.steps.import.rowErrors.validationFailed'
+        validationFailed: 'competitors.importParticipants.steps.import.rowErrors.validationFailed',
+        duplicateCompetitor:
+          'competitors.importParticipants.steps.import.rowErrors.duplicateCompetitor',
+        duplicateInImport: 'competitors.importParticipants.steps.import.rowErrors.duplicateInImport'
       }
     }
   },

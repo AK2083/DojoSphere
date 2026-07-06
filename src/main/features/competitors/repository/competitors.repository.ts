@@ -20,6 +20,8 @@ import { getDatabase, runInTransaction } from '@main/shared/database'
 import { withDbErrorLogging } from '@main/shared/logging'
 
 import { parseGradeFromCell } from '../import/parse-grade'
+import { assertNoDuplicateCompetitor } from './competitor-duplicate'
+import { importRowFailureCode } from './competitor-import-row-error'
 
 /** Gender codes stored in `competitors.gender`. */
 export type CompetitorGender = 'd' | 'f' | 'm'
@@ -549,6 +551,14 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
   const registrationStatus = normalizeRegistrationStatus(input.registrationStatus)
   const remarks = normalizeRemarks(input.remarks)
 
+  assertNoDuplicateCompetitor(db, {
+    givenName,
+    familyName,
+    birthDate: input.birthDate,
+    passNumber: input.passNumber,
+    licenseNumber: input.licenseNumber
+  })
+
   return withDbErrorLogging('competitors', 'create', () => {
     runInTransaction(db, () => {
       db.prepare(
@@ -634,8 +644,8 @@ export function importCompetitors(
       const competitor = addCompetitor(actorUserId, input)
 
       return { index, success: true, competitor }
-    } catch {
-      return { index, success: false, errorCode: 'import_failed' }
+    } catch (error) {
+      return { index, success: false, errorCode: importRowFailureCode(error) }
     }
   })
 }
@@ -735,6 +745,18 @@ export function updateCompetitor(
   }
 
   const db = getDatabase()
+
+  assertNoDuplicateCompetitor(
+    db,
+    {
+      givenName: nextValues.givenName,
+      familyName: nextValues.familyName,
+      birthDate: nextDetails.birthDate,
+      passNumber: nextDetails.passNumber,
+      licenseNumber: nextDetails.licenseNumber
+    },
+    competitorId
+  )
 
   return withDbErrorLogging('competitors', 'update', () => {
     runInTransaction(db, () => {

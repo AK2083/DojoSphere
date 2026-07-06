@@ -15,6 +15,11 @@ import {
   resolveWeightClassIdFromKg,
   upsertClubContactEmail
 } from '../repository/competitors.repository'
+import {
+  buildCompetitorDuplicateKeys,
+  DUPLICATE_IN_IMPORT_ERROR,
+  serializeCompetitorDuplicateKey
+} from '../repository/competitor-duplicate'
 import { type ColumnMapping, matchColumns } from './match-columns'
 import { composeParticipantRemarks } from './compose-remarks'
 import {
@@ -136,8 +141,30 @@ export function executeImport(
   const results: ImportRowResult[] = []
   let importedCount = 0
   let failedCount = 0
+  const seenDuplicateKeys = new Set<string>()
 
   inputs.forEach((input, index) => {
+    const duplicateKeys = buildCompetitorDuplicateKeys(input)
+    const duplicateInImport = duplicateKeys.some((key) =>
+      seenDuplicateKeys.has(serializeCompetitorDuplicateKey(key))
+    )
+
+    if (duplicateInImport) {
+      failedCount += 1
+      results.push({
+        index,
+        givenName: importResultRowLabel(participants[index], 'givenName'),
+        familyName: importResultRowLabel(participants[index], 'familyName'),
+        club: importResultRowLabel(participants[index], 'club'),
+        success: false,
+        errorCode: DUPLICATE_IN_IMPORT_ERROR
+      })
+      onProgress?.(index + 1, total)
+      return
+    }
+
+    duplicateKeys.forEach((key) => seenDuplicateKeys.add(serializeCompetitorDuplicateKey(key)))
+
     const [rowResult] = importCompetitors(actorUserId, [input])
     const success = isImportRowSuccessful(rowResult)
 

@@ -81,7 +81,11 @@ export default {
         importFailed:
           'Data is incomplete or invalid. Check required fields, club, and mapping for this row.',
         validationFailed:
-          'This row does not meet all requirements. Correct the data in the Excel file.'
+          'This row does not meet all requirements. Correct the data in the Excel file.',
+        duplicateCompetitor:
+          'A participant with the same pass number, license number, or identity already exists in the database.',
+        duplicateInImport:
+          'This participant appears more than once in the Excel file. Remove the duplicate row and import again.'
       }
     }
   },

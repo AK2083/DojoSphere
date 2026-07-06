@@ -17,7 +17,9 @@ export const IMPORT_ERROR_TRANSLATION_KEY: Record<ImportErrorCode, string> = {
 /** Maps per-row import failure codes to i18n keys. Extend when row errors gain detail. */
 export const IMPORT_ROW_ERROR_TRANSLATION_KEY: Record<string, string> = {
   import_failed: translationKeys.steps.import.rowErrors.importFailed,
-  validation_failed: translationKeys.steps.import.rowErrors.validationFailed
+  validation_failed: translationKeys.steps.import.rowErrors.validationFailed,
+  duplicate_competitor: translationKeys.steps.import.rowErrors.duplicateCompetitor,
+  duplicate_in_import: translationKeys.steps.import.rowErrors.duplicateInImport
 }
 
 /**
