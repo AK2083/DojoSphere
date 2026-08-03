@@ -25,20 +25,6 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright System Dependencies
-        run: npx playwright install-deps
-
-      - name: Install Playwright Browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
-
       - name: Run ESLint
         run: npm run lint:check
 
@@ -78,8 +64,13 @@ jobs:
       - name: Install Playwright System Dependencies
         run: npx playwright install-deps
 
+      # Chromium (Chrome for Testing) has no CDN fallbacks; cdn.playwright.dev can
+      # return GCS 403 geo-blocks on GitHub-hosted runners. Use a mirror that
+      # serves the same builds/cft/… layout for Chromium only.
       - name: Install Playwright Browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
+        env:
+          PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST: https://cdn.npmmirror.com/binaries/playwright
         run: npx playwright install
 
       - name: Run Playwright tests
