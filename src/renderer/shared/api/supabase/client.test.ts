@@ -31,4 +31,19 @@ describe('supabase client', () => {
 
     expect(supabase).toEqual({ mockClient: true })
   })
+
+  it('uses local-first placeholders when supabase env is unset', async () => {
+    vi.stubEnv('VITE_SUPABASE_URL', '')
+    vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', '')
+
+    const { supabase } = await import('./client')
+
+    expect(createClientMock).toHaveBeenCalledWith('http://127.0.0.1:54321', 'public-anon-key', {
+      auth: {
+        storageKey: 'dojosphere.auth.session',
+        debug: false
+      }
+    })
+    expect(supabase).toEqual({ mockClient: true })
+  })
 })
