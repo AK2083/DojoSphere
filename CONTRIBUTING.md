@@ -6,6 +6,7 @@ Thank you for your interest in contributing. This guide covers the development w
 
 - **Node.js:** 24 or newer (required for `node:sqlite`)
 - **npm:** installed with Node.js
+- **Windows:** [Microsoft Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe) — required to load native Node addons used by Vite, Vitest, and Electron’s install tooling
 - **(Optional) Supabase CLI:** for local Supabase services
 
 ## Getting started
@@ -20,6 +21,36 @@ npm run dev
 For isolated UI work, run `npm run storybook`. For a production build, run `npm run build`.
 
 See the [README](README.md) for a project overview and feature list.
+
+### Windows: Visual C++ Redistributable
+
+On a fresh Windows machine, `npm install` can succeed while `npm test` and `npm run electron:start` still fail. Typical symptoms:
+
+- `Cannot find native binding` / `ERR_DLOPEN_FAILED` for packages such as `oxc-resolver` or `@electron-internal/extract-zip`
+- German Windows: `Das angegebene Modul wurde nicht gefunden` when loading a `.node` file that **does** exist under `node_modules`
+- Electron: `Downloading Electron binary...` then failure; later `Electron failed to install correctly` / missing `node_modules/electron/dist`
+
+**Cause:** Native `.node` addons need `VCRUNTIME140.dll` / `MSVCP140.dll`. Those come from the VC++ Redistributable, not from `npm install`. This is a **developer machine** requirement; a packaged Electron app for end users normally ships its own runtime and does not need a separate VC++ install for this reason.
+
+**Fix:**
+
+1. Install [VC_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe).
+2. Re-open the terminal, then reinstall Electron so the binary download can finish:
+
+```powershell
+Remove-Item -Recurse -Force node_modules\electron
+npm install
+```
+
+If Electron is still incomplete:
+
+```powershell
+node node_modules/electron/install.js
+```
+
+3. Run `npm test` and `npm run electron:start` again.
+
+A full wipe of `node_modules` is only needed if problems remain after the Redistributable is installed.
 
 ## Available scripts
 

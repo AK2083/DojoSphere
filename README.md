@@ -30,7 +30,7 @@ Open-source Electron application for managing Judo tournaments.
 
 ## Quick Start
 
-**Requirements:** Node.js 24+, npm. Optional: Supabase CLI for local cloud services.
+**Requirements:** Node.js 24+, npm. On Windows: [VC++ Redistributable x64](https://aka.ms/vs/17/release/vc_redist.x64.exe) (see [Contributing](CONTRIBUTING.md#windows-visual-c-redistributable)). Optional: Supabase CLI for local cloud services.
 
 ```bash
 npm install
