@@ -9,11 +9,11 @@ Open-source Electron application for organizing **small judo tournaments** in cl
 
 ## Vision and user roles
 
-| Role | Device | Responsibility |
-|------|--------|----------------|
-| **Tournament director** | Host computer (Electron) | Starts the app, registers competitors and mat count, manages the tournament |
-| **Scorekeeper** | Separate computer/browser | Connects via URL to the host; access only after approval |
-| **Audience** | Browser on intranet | Views overview via URL or QR code — **without** approval by the tournament director |
+| Role                    | Device                    | Responsibility                                                                      |
+| ----------------------- | ------------------------- | ----------------------------------------------------------------------------------- |
+| **Tournament director** | Host computer (Electron)  | Starts the app, registers competitors and mat count, manages the tournament         |
+| **Scorekeeper**         | Separate computer/browser | Connects via URL to the host; access only after approval                            |
+| **Audience**            | Browser on intranet       | Views overview via URL or QR code — **without** approval by the tournament director |
 
 ### Planned flow (prospective)
 

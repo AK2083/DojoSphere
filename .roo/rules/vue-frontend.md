@@ -12,7 +12,7 @@ alwaysApply: false
 - **No business logic in templates** — no calculations, API calls, or complex conditions. Templates bind state and events from script/composable.
 - Logic belongs in **composables** (`model/use-*.ts`) or `service/` — UI components in `ui/` stay presentation-focused.
 - Vuetify 3 components for UI (`v-btn`, `v-card`, `v-text-field`, …); icons via `@mdi/js`.
-- Layer assignment per [`architecture-fsd.mdc`](architecture-fsd.mdc).
+- Layer assignment per [`architecture-fsd.md`](architecture-fsd.md).
 
 ```vue
 <!-- ❌ Business logic in template -->
@@ -61,18 +61,20 @@ i18n/
 
 When adding a **new** `.vue` file under any `ui/` folder (`features/`, `pages/`, `widgets/`, `shared/ui/`), add **both** spec files in the **same change** — not as a later follow-up:
 
-| File | Purpose |
-|------|---------|
-| `<Name>.stories.ts` | Storybook — isolated display, variants |
+| File                 | Purpose                                                 |
+| -------------------- | ------------------------------------------------------- |
+| `<Name>.stories.ts`  | Storybook — isolated display, variants                  |
 | `<Name>.e2e.spec.ts` | Playwright — critical interactions and visible behavior |
 
 Every existing UI component in `ui/` must also keep both files when touched.
 
 **Storybook convention:**
+
 - `title` by layer: `Features/<Feature>/<Name>`, `Pages/<Page>/<Name>`, `Shared/UI/<Name>`, `Widgets/<Name>/<Name>`
 - `@storybook/vue3-vite`, `satisfies Meta<typeof Component>`
 
 **Playwright convention:**
+
 - `@playwright/test`, descriptive `test.describe('<ComponentName>')`
 - Prefer meaningful selectors: `getByRole`, `getByLabel`, `getByText` — no fragile CSS chains
 - i18n setup via `@shared/tests/e2e/setup-language` where needed
@@ -80,6 +82,7 @@ Every existing UI component in `ui/` must also keep both files when touched.
 ## Lighthouse
 
 New and changed UI should meet Lighthouse requirements, especially:
+
 - **Accessibility** — ARIA, contrast, semantic HTML
 - **Best Practices** — valid HTML structure, no deprecated APIs
 - **Performance** — no unnecessary re-renders, lazy loading where appropriate
