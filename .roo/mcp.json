@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": ""
+      }
+    },
+    "supabase-local-db": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://postgres:Anymore0-Punctuate4-Animosity7-Acid8-Eclipse2@192.168.10.140:5432/postgres"
+      ],
+      "comment": "Direkter Lese- und Schreibzugriff auf dein lokales Supabase-PostgreSQL auf Unraid"
+    }
+  }
+}

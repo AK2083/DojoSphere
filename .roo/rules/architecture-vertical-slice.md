@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Vertical Slice Architecture (Main & Preload)
 
-The Electron **main process** and **preload bridge** use vertical slices — not FSD. The renderer follows [architecture-fsd.mdc](./architecture-fsd.mdc); main and preload are separate entry points at the same level under `src/`.
+The Electron **main process** and **preload bridge** use vertical slices — not FSD. The renderer follows [architecture-fsd.md](./architecture-fsd.md); main and preload are separate entry points at the same level under `src/`.
 
 ```
 src/
@@ -26,13 +26,13 @@ shared → internal only
 window / preload → Electron shell (outside slices)
 ```
 
-| Layer | Path | Responsibility |
-|-------|------|----------------|
-| **app** | `src/main/app/` | Composition root: bootstrap, IPC aggregation (`register-ipc.ts`) |
-| **features** | `src/main/features/<slice>/` | One use case / bounded context per slice |
-| **shared** | `src/main/shared/` | Infrastructure without business logic (database, security helpers) |
-| **window** | `src/main/window/` | BrowserWindow, renderer loading |
-| **preload** | `src/preload/` | `contextBridge.exposeInMainWorld('api', …)` — no SQL, no auth decisions |
+| Layer        | Path                         | Responsibility                                                          |
+| ------------ | ---------------------------- | ----------------------------------------------------------------------- |
+| **app**      | `src/main/app/`              | Composition root: bootstrap, IPC aggregation (`register-ipc.ts`)        |
+| **features** | `src/main/features/<slice>/` | One use case / bounded context per slice                                |
+| **shared**   | `src/main/shared/`           | Infrastructure without business logic (database, security helpers)      |
+| **window**   | `src/main/window/`           | BrowserWindow, renderer loading                                         |
+| **preload**  | `src/preload/`               | `contextBridge.exposeInMainWorld('api', …)` — no SQL, no auth decisions |
 
 ## app
 
@@ -61,11 +61,11 @@ src/main/features/<slice>/
 
 **Layering within a slice:**
 
-| Folder | Role |
-|--------|------|
+| Folder            | Role                                                                             |
+| ----------------- | -------------------------------------------------------------------------------- |
 | `ipc/register.ts` | Channel names, input validation, session check, delegation to service/repository |
-| `service/` | Coordinate multiple repositories/slices (e.g. create user + session) |
-| `repository/` | SQL via `@main/shared/database` — no `electron`, no `ipcMain` |
+| `service/`        | Coordinate multiple repositories/slices (e.g. create user + session)             |
+| `repository/`     | SQL via `@main/shared/database` — no `electron`, no `ipcMain`                    |
 
 **Existing slices (orientation):** `health`, `system`, `authorization`, `sessions`, `users`.
 
@@ -76,11 +76,11 @@ src/main/features/<slice>/
 
 Infrastructure without feature affiliation. Features import only the public API.
 
-| Segment | Content |
-|---------|---------|
-| `shared/database/` | SQLite port, runtime, migrations — see subdivision below |
+| Segment                     | Content                                                              |
+| --------------------------- | -------------------------------------------------------------------- |
+| `shared/database/`          | SQLite port, runtime, migrations — see subdivision below             |
 | `shared/database/driver.ts` | Sole place with `node:sqlite` — do not import directly from features |
-| `shared/security/` | e.g. `requireActiveSession()` for privileged IPC handlers |
+| `shared/security/`          | e.g. `requireActiveSession()` for privileged IPC handlers            |
 
 ### `shared/database/` — recommended subdivision
 
@@ -101,12 +101,12 @@ shared/database/
   migrations/           # versioned .sql files + registry (index.ts)
 ```
 
-| Segment | Responsibility | Imported by |
-|---------|----------------|-------------|
-| **Types** (`types/`) | Port interfaces | Driver, runtime modules, features (types only) |
-| **Driver** (`driver.ts`) | Concrete SQLite binding | `connection.ts` only |
-| **Runtime** (`connection`, `transactions`, `pragmas`) | Connection, transactions, PRAGMAs | `app/bootstrap`, features via public API |
-| **Migration** (`runner.ts`, `validate-schema.ts`, `migrations/`) | Runner, schema assertions, versioned SQL | `app/bootstrap` |
+| Segment                                                          | Responsibility                           | Imported by                                    |
+| ---------------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------- |
+| **Types** (`types/`)                                             | Port interfaces                          | Driver, runtime modules, features (types only) |
+| **Driver** (`driver.ts`)                                         | Concrete SQLite binding                  | `connection.ts` only                           |
+| **Runtime** (`connection`, `transactions`, `pragmas`)            | Connection, transactions, PRAGMAs        | `app/bootstrap`, features via public API       |
+| **Migration** (`runner.ts`, `validate-schema.ts`, `migrations/`) | Runner, schema assertions, versioned SQL | `app/bootstrap`                                |
 
 **Rules:**
 
@@ -116,12 +116,12 @@ shared/database/
 
 **Slice vs. shared boundary:**
 
-| What | Where |
-|------|-------|
-| `CREATE TABLE users`, columns, indexes | `shared/database/migrations/*.sql` |
-| `SELECT`/`INSERT`/`UPDATE` per use case | `features/<slice>/repository/` |
-| Session check before write access | `shared/security` or slice `ipc/` |
-| Open DB, migrate, close | `app/bootstrap` + `shared/database` public API |
+| What                                    | Where                                          |
+| --------------------------------------- | ---------------------------------------------- |
+| `CREATE TABLE users`, columns, indexes  | `shared/database/migrations/*.sql`             |
+| `SELECT`/`INSERT`/`UPDATE` per use case | `features/<slice>/repository/`                 |
+| Session check before write access       | `shared/security` or slice `ipc/`              |
+| Open DB, migrate, close                 | `app/bootstrap` + `shared/database` public API |
 
 - `shared` imports **no** features and no `electron` except where technically required (database path via `app`).
 - Tests use `@main/shared/database`, not internal driver paths (`driver.ts`).
@@ -154,7 +154,7 @@ Lives at the **same level** as `main/` and `renderer/` (`src/preload/`).
 
 ## Security
 
-- Authorization and session checks only in the main process ([auth-security.mdc](./auth-security.mdc), [security-privacy.mdc](./security-privacy.mdc))
+- Authorization and session checks only in the main process ([auth-security.md](./auth-security.md), [security-privacy.md](./security-privacy.md))
 - Privileged IPC handlers: session (permissions later) via `@main/shared/security` or session slice
 - Store session tokens as hashes only — never plaintext
 - SQLite only in the main process via `@main/shared/database`
@@ -175,13 +175,13 @@ Preload imports types from `@shared/types/electron-api` (renderer shared types �
 
 ## Renderer (FSD) vs. main (VSA)
 
-| Aspect | Renderer (`src/renderer/`) | Main (`src/main/`) |
-|--------|---------------------------|-------------------|
-| Architecture | Feature-Sliced Design | Vertical Slices |
-| UI | `ui/`, Vue components | No UI (except `window/`) |
-| Data access | IPC → `window.api` | SQLite via `shared/database` |
-| Auth decisions | Never alone in renderer | In main process |
-| Public API | `index.ts` per slice | `index.ts` per slice + IPC channels |
+| Aspect         | Renderer (`src/renderer/`) | Main (`src/main/`)                  |
+| -------------- | -------------------------- | ----------------------------------- |
+| Architecture   | Feature-Sliced Design      | Vertical Slices                     |
+| UI             | `ui/`, Vue components      | No UI (except `window/`)            |
+| Data access    | IPC → `window.api`         | SQLite via `shared/database`        |
+| Auth decisions | Never alone in renderer    | In main process                     |
+| Public API     | `index.ts` per slice       | `index.ts` per slice + IPC channels |
 
 ## Checklist for new main slices
 

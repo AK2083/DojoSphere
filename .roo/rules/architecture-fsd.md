@@ -20,14 +20,15 @@ shared → internal only
 
 Classify new dependencies by **role**, not technology:
 
-| Question | → `app` | → `shared` |
-|----------|---------|------------|
-| Part of the **composition root** (start app, register plugins)? | Yes | No |
-| **Swappable/mockable** without rewriting features? | No | Yes |
-| Features should **not import SDKs directly**? | — | Yes |
-| Switching mainly requires **wiring changes** in `main.ts`/`providers/`? | Yes | No |
+| Question                                                                | → `app` | → `shared` |
+| ----------------------------------------------------------------------- | ------- | ---------- |
+| Part of the **composition root** (start app, register plugins)?         | Yes     | No         |
+| **Swappable/mockable** without rewriting features?                      | No      | Yes        |
+| Features should **not import SDKs directly**?                           | —       | Yes        |
+| Switching mainly requires **wiring changes** in `main.ts`/`providers/`? | Yes     | No         |
 
 **Rules of thumb:**
+
 - Render framework and global providers (app shell) → `app/providers/` — configure directly, do not abstract.
 - Vendor/infrastructure clients (backend, storage bridge, …) → `shared/` — wrap behind a public API (e.g. `logError` via `@shared/lib`, main-process logging in `@main/shared/logging/`).
 - Thin helpers **built on** the framework that features use everywhere → `shared/lib/` (setup stays in `app`).
@@ -50,7 +51,7 @@ Route components — one page per route. The router knows only `@pages/*`.
 
 - Pages compose features and optionally widgets; they contain no business logic.
 - Structure per page: `ui/`, `index.ts` (public API).
-- Each file in `ui/` is a page component: ship `<Name>.vue`, `<Name>.stories.ts`, and `<Name>.e2e.spec.ts` together (see [`vue-frontend.mdc`](vue-frontend.mdc)).
+- Each file in `ui/` is a page component: ship `<Name>.vue`, `<Name>.stories.ts`, and `<Name>.e2e.spec.ts` together (see [`vue-frontend.md`](vue-frontend.md)).
 - Example: `Login.vue` binds `@features/authentication/signin-user`.
 
 ## widgets
@@ -91,13 +92,13 @@ features/<feature>/<slice>/
 
 Abstraction of **swappable** dependencies. No feature or page logic. Features/widgets import only the public API — never the SDK directly.
 
-| Segment | Level | Content |
-|---------|-------|---------|
-| `api/` | Low-level | Client implementations (e.g. Supabase) |
-| `lib/browser/`, `lib/validation/`, `lib/pinia/`, `lib/i18n/` | Low-level | Technical helpers, validation, store utilities |
-| `lib/logging/` | High-level | Error logging via `logError` (`@shared/lib` public API) |
-| `ui/` | — | Reusable Vue components without feature affiliation |
-| `model/`, `store/`, `types/`, `errors/` | — | Shared domain types, stores, error classes |
+| Segment                                                      | Level      | Content                                                 |
+| ------------------------------------------------------------ | ---------- | ------------------------------------------------------- |
+| `api/`                                                       | Low-level  | Client implementations (e.g. Supabase)                  |
+| `lib/browser/`, `lib/validation/`, `lib/pinia/`, `lib/i18n/` | Low-level  | Technical helpers, validation, store utilities          |
+| `lib/logging/`                                               | High-level | Error logging via `logError` (`@shared/lib` public API) |
+| `ui/`                                                        | —          | Reusable Vue components without feature affiliation     |
+| `model/`, `store/`, `types/`, `errors/`                      | —          | Shared domain types, stores, error classes              |
 
 - **Low-level**: direct technology abstractions (storage, HTTP client, validators).
 - **High-level**: domain-near abstractions (logging). Features use `@shared/lib` `logError` in `api/` layers instead of direct file or IPC access.
