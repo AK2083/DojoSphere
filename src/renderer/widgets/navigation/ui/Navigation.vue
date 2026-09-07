@@ -2,8 +2,13 @@
 import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import router from '@app/providers/router'
-import { useAuthSession, useParticipantsOverviewAccess, useSignOut } from '@features/authentication'
-import { mdiAccountGroup, mdiAccountPlus, mdiCog, mdiLogout } from '@mdi/js'
+import {
+  useAuthSession,
+  useClubsOverviewAccess,
+  useParticipantsOverviewAccess,
+  useSignOut
+} from '@features/authentication'
+import { mdiAccountGroup, mdiAccountPlus, mdiCog, mdiHomeGroup, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -12,6 +17,7 @@ const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { isCloudLoggedIn } = useAuthSession()
 const { canReadParticipantsOverview } = useParticipantsOverviewAccess()
+const { canReadClubsOverview } = useClubsOverviewAccess()
 const {
   logout,
   loading: isSigningOut,
@@ -24,6 +30,7 @@ const isMobile = computed(() => smAndDown.value)
 const showLogoutError = ref(false)
 
 const participantsLabel = computed(() => t(translationKeys.navigation.participants))
+const clubsLabel = computed(() => t(translationKeys.navigation.clubs))
 const signUpLabel = computed(() => t(translationKeys.navigation.signUp))
 const logoutLabel = computed(() => t(translationKeys.navigation.logout))
 const settingsLabel = computed(() => t(translationKeys.navigation.settings))
@@ -63,6 +70,19 @@ watch(
             :to="{ name: 'participants' }"
           >
             <v-icon :icon="mdiAccountGroup" aria-hidden="true" />
+          </v-btn>
+        </template>
+      </v-tooltip>
+
+      <v-tooltip v-if="canReadClubsOverview" :text="clubsLabel" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            v-bind="tooltipProps"
+            icon
+            :aria-label="t(translationKeys.navigation.ariaClubs)"
+            :to="{ name: 'clubs' }"
+          >
+            <v-icon :icon="mdiHomeGroup" aria-hidden="true" />
           </v-btn>
         </template>
       </v-tooltip>
@@ -123,6 +143,13 @@ watch(
           :to="{ name: 'participants' }"
           :title="participantsLabel"
           :aria-label="participantsLabel"
+        />
+        <v-list-item
+          v-if="canReadClubsOverview"
+          :prepend-icon="mdiHomeGroup"
+          :to="{ name: 'clubs' }"
+          :title="clubsLabel"
+          :aria-label="clubsLabel"
         />
       </v-list>
     </nav>

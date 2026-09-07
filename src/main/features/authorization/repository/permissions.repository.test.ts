@@ -17,6 +17,7 @@ describe('permissions.repository', () => {
     const { id: userId } = addUser({ displayName: 'List Keeper', userType: 'local' })
 
     expect(userHasPermission(userId, 'participants-overview', 'read')).toBe(true)
+    expect(userHasPermission(userId, 'clubs-overview', 'read')).toBe(true)
   })
 
   it('returns false when the user has no role assignment granting the permission', async () => {

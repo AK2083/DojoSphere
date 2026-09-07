@@ -8,6 +8,7 @@ import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
+import { CLUBS_OVERVIEW_PERMISSION } from '@shared/constants/clubs-overview-permission'
 import { PARTICIPANTS_OVERVIEW_PERMISSION } from '@shared/constants/participants-overview-permission'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
 
@@ -104,6 +105,18 @@ const routes = [
       }
     },
     component: () => import('@pages/participant-form')
+  },
+  {
+    path: '/clubs',
+    name: 'clubs',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: CLUBS_OVERVIEW_PERMISSION.resource,
+        action: CLUBS_OVERVIEW_PERMISSION.actions.read
+      }
+    },
+    component: () => import('@pages/clubs')
   }
 ]
 

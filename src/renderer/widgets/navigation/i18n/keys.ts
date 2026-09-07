@@ -12,6 +12,8 @@ const translationKeys = {
     ariaLogout: 'navigation.navigation.ariaLogout',
     participants: 'navigation.navigation.participants',
     ariaParticipants: 'navigation.navigation.ariaParticipants',
+    clubs: 'navigation.navigation.clubs',
+    ariaClubs: 'navigation.navigation.ariaClubs',
     settings: 'navigation.navigation.settings',
     ariaSettings: 'navigation.navigation.ariaSettings'
   }
