@@ -1,0 +1,415 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useDisplay } from 'vuetify'
+import { mdiContentSave, mdiRestore } from '@mdi/js'
+import { useTranslation } from '@shared/lib'
+import RequiredFieldLabel from '@shared/ui/RequiredFieldLabel.vue'
+
+import translationKeys from '../i18n/keys'
+import { CLUB_EMAIL_MAX_LENGTH } from '../lib/club-form-rules'
+import { useClubForm } from '../model/use-form'
+
+const props = defineProps<{
+  clubId?: string
+  title: string
+}>()
+
+const { t } = useTranslation()
+const { smAndDown } = useDisplay()
+const {
+  fields,
+  isFormValid,
+  isSaving,
+  isLoading,
+  saveErrorMessage,
+  loadErrorMessage,
+  isSubmitDisabled,
+  websiteProtocolItems,
+  phoneCountryCodeItems,
+  nameRules,
+  shortNameRules,
+  websiteHostRules,
+  districtRules,
+  clubNumberRules,
+  streetRules,
+  houseNumberRules,
+  postalCodeRules,
+  addressCityRules,
+  emailRules,
+  phoneRules,
+  fieldLimits,
+  setFormRef,
+  submit,
+  reset
+} = useClubForm({ clubId: () => props.clubId })
+
+const isMobile = computed(() => smAndDown.value)
+const saveLabel = computed(() => t(translationKeys.actions.save))
+const resetLabel = computed(() => t(translationKeys.actions.reset))
+
+const addressSections = [
+  {
+    key: 'headquarters' as const,
+    labelKey: translationKeys.form.fields.headquarters,
+    sameAsKey: null
+  },
+  {
+    key: 'trainingVenue' as const,
+    labelKey: translationKeys.form.fields.trainingVenue,
+    sameAsKey: 'trainingVenueSameAsHeadquarters' as const
+  },
+  {
+    key: 'billingAddress' as const,
+    labelKey: translationKeys.form.fields.billingAddress,
+    sameAsKey: 'billingAddressSameAsHeadquarters' as const
+  }
+]
+</script>
+
+<template>
+  <v-form
+    v-model="isFormValid"
+    :ref="setFormRef"
+    :aria-label="t(translationKeys.form.ariaLabel)"
+    class="club-form"
+    @submit.prevent="submit"
+  >
+    <div class="club-form__header mb-6">
+      <h1 class="club-form__title text-h5">{{ title }}</h1>
+      <div class="club-form__active">
+        <v-switch
+          v-model="fields.isActive"
+          color="primary"
+          density="compact"
+          hide-details
+          class="club-form__active-switch"
+          :aria-label="t(translationKeys.form.fields.status)"
+        />
+        <span class="club-form__active-label">
+          {{
+            fields.isActive ? t(translationKeys.status.active) : t(translationKeys.status.inactive)
+          }}
+        </span>
+      </div>
+    </div>
+
+    <v-card class="border px-4 py-4">
+      <v-progress-linear v-if="isLoading" indeterminate color="primary" class="mb-4" />
+
+      <v-card-text class="d-flex flex-column ga-3">
+        <v-alert type="info" variant="tonal" density="comfortable">
+          {{ t(translationKeys.form.hint) }}
+        </v-alert>
+
+        <v-alert
+          v-if="loadErrorMessage"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          role="alert"
+        >
+          {{ loadErrorMessage }}
+        </v-alert>
+
+        <v-alert
+          v-if="saveErrorMessage"
+          type="error"
+          variant="tonal"
+          density="comfortable"
+          role="alert"
+        >
+          {{ saveErrorMessage }}
+        </v-alert>
+
+        <fieldset class="club-form__fields d-flex flex-column ga-3" :disabled="isLoading">
+          <v-text-field
+            v-model="fields.name"
+            :rules="nameRules"
+            :maxlength="fieldLimits.name"
+            :placeholder="t(translationKeys.form.placeholders.name)"
+            autocomplete="organization"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.name)" />
+            </template>
+          </v-text-field>
+
+          <v-text-field
+            v-model="fields.shortName"
+            :label="t(translationKeys.form.fields.shortName)"
+            :rules="shortNameRules"
+            :maxlength="fieldLimits.shortName"
+            :placeholder="t(translationKeys.form.placeholders.shortName)"
+            autocomplete="off"
+          />
+
+          <v-row density="comfortable">
+            <v-col cols="12" sm="3">
+              <v-select
+                v-model="fields.websiteProtocol"
+                :items="websiteProtocolItems"
+                item-title="title"
+                item-value="value"
+                :label="t(translationKeys.form.fields.websiteProtocol)"
+                :aria-label="t(translationKeys.form.fields.websiteProtocol)"
+              />
+            </v-col>
+            <v-col cols="12" sm="9">
+              <v-text-field
+                v-model="fields.websiteHost"
+                :label="t(translationKeys.form.fields.website)"
+                :rules="websiteHostRules"
+                :maxlength="fieldLimits.websiteHost"
+                :placeholder="t(translationKeys.form.placeholders.websiteHost)"
+                autocomplete="url"
+              />
+            </v-col>
+          </v-row>
+
+          <v-text-field
+            v-model="fields.districtName"
+            :rules="districtRules"
+            :maxlength="fieldLimits.district"
+            autocomplete="off"
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.district)" />
+            </template>
+          </v-text-field>
+
+          <v-text-field
+            v-model="fields.clubNumber"
+            :label="t(translationKeys.form.fields.clubNumber)"
+            :rules="clubNumberRules"
+            :maxlength="fieldLimits.clubNumber"
+            :placeholder="t(translationKeys.form.placeholders.clubNumber)"
+            autocomplete="off"
+          />
+
+          <div
+            v-for="section in addressSections"
+            :key="section.key"
+            class="club-form__address d-flex flex-column ga-1"
+          >
+            <div class="d-flex align-center justify-space-between ga-3 flex-wrap mb-1">
+              <p class="text-subtitle-2 mb-0">{{ t(section.labelKey) }}</p>
+              <v-switch
+                v-if="section.sameAsKey"
+                v-model="fields[section.sameAsKey]"
+                color="primary"
+                density="compact"
+                hide-details
+                class="flex-grow-0"
+                :label="t(translationKeys.form.sameAsHeadquarters)"
+                :aria-label="`${t(section.labelKey)}: ${t(translationKeys.form.sameAsHeadquarters)}`"
+              />
+            </div>
+
+            <fieldset
+              class="club-form__address-fields d-flex flex-column ga-1"
+              :disabled="Boolean(section.sameAsKey && fields[section.sameAsKey])"
+            >
+              <v-row density="comfortable">
+                <v-col cols="12" sm="8">
+                  <v-text-field
+                    v-model="fields[section.key].street"
+                    :label="t(translationKeys.form.fields.street)"
+                    :rules="streetRules"
+                    :maxlength="fieldLimits.street"
+                    :placeholder="t(translationKeys.form.placeholders.street)"
+                    autocomplete="address-line1"
+                  />
+                </v-col>
+                <v-col cols="12" sm="4">
+                  <v-text-field
+                    v-model="fields[section.key].houseNumber"
+                    :label="t(translationKeys.form.fields.houseNumber)"
+                    :rules="houseNumberRules"
+                    :maxlength="fieldLimits.houseNumber"
+                    :placeholder="t(translationKeys.form.placeholders.houseNumber)"
+                    autocomplete="off"
+                  />
+                </v-col>
+              </v-row>
+
+              <v-row density="comfortable">
+                <v-col cols="12" sm="3">
+                  <v-text-field
+                    v-model="fields[section.key].postalCode"
+                    :label="t(translationKeys.form.fields.postalCode)"
+                    :rules="postalCodeRules"
+                    :maxlength="fieldLimits.postalCode"
+                    :placeholder="t(translationKeys.form.placeholders.postalCode)"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                  />
+                </v-col>
+                <v-col cols="12" sm="9">
+                  <v-text-field
+                    v-model="fields[section.key].city"
+                    :label="t(translationKeys.form.fields.city)"
+                    :rules="addressCityRules"
+                    :maxlength="fieldLimits.city"
+                    :placeholder="t(translationKeys.form.placeholders.city)"
+                    autocomplete="address-level2"
+                  />
+                </v-col>
+              </v-row>
+            </fieldset>
+          </div>
+
+          <div class="club-form__address d-flex flex-column ga-1">
+            <div class="d-flex align-center justify-space-between ga-3 flex-wrap mb-1">
+              <p class="text-subtitle-2 mb-0">{{ t(translationKeys.form.fields.contact) }}</p>
+            </div>
+
+            <v-text-field
+              v-model="fields.email"
+              :label="t(translationKeys.form.fields.email)"
+              :rules="emailRules"
+              :maxlength="CLUB_EMAIL_MAX_LENGTH"
+              :placeholder="t(translationKeys.form.placeholders.email)"
+              type="email"
+              autocomplete="email"
+            />
+
+            <v-row density="comfortable">
+              <v-col cols="12" sm="3">
+                <v-select
+                  v-model="fields.phoneCountryCode"
+                  :items="phoneCountryCodeItems"
+                  item-title="title"
+                  item-value="value"
+                  :label="t(translationKeys.form.fields.phoneCountryCode)"
+                  :aria-label="t(translationKeys.form.fields.phoneCountryCode)"
+                />
+              </v-col>
+              <v-col cols="12" sm="9">
+                <v-text-field
+                  v-model="fields.phoneNumber"
+                  :label="t(translationKeys.form.fields.phone)"
+                  :rules="phoneRules"
+                  :maxlength="fieldLimits.phone"
+                  :placeholder="t(translationKeys.form.placeholders.phone)"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel-national"
+                />
+              </v-col>
+            </v-row>
+          </div>
+        </fieldset>
+      </v-card-text>
+
+      <v-card-actions class="px-4 pb-4 d-flex ga-2">
+        <v-tooltip :text="saveLabel" :location="isMobile ? 'bottom' : 'top'">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              type="submit"
+              variant="flat"
+              color="primary"
+              density="default"
+              :disabled="isSubmitDisabled"
+              :loading="isSaving"
+              :icon="isMobile"
+              :prepend-icon="isMobile ? undefined : mdiContentSave"
+              :aria-label="isMobile ? saveLabel : undefined"
+            >
+              <v-icon v-if="isMobile" :icon="mdiContentSave" aria-hidden="true" />
+              <span v-if="!isMobile">{{ saveLabel }}</span>
+            </v-btn>
+          </template>
+        </v-tooltip>
+
+        <v-tooltip :text="resetLabel" :location="isMobile ? 'bottom' : 'top'">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn
+              v-bind="tooltipProps"
+              type="button"
+              variant="outlined"
+              density="default"
+              :icon="isMobile"
+              :prepend-icon="isMobile ? undefined : mdiRestore"
+              :aria-label="isMobile ? resetLabel : undefined"
+              @click="reset"
+            >
+              <v-icon v-if="isMobile" :icon="mdiRestore" aria-hidden="true" />
+              <span v-if="!isMobile">{{ resetLabel }}</span>
+            </v-btn>
+          </template>
+        </v-tooltip>
+      </v-card-actions>
+    </v-card>
+  </v-form>
+</template>
+
+<style scoped>
+.club-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  min-height: 2.5rem;
+}
+
+.club-form__title {
+  margin: 0;
+  line-height: 2.5rem;
+}
+
+.club-form__active {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 2.5rem;
+}
+
+.club-form__active-switch {
+  flex: none;
+  margin: 0;
+  width: auto;
+}
+
+.club-form__active-switch :deep(.v-input),
+.club-form__active-switch :deep(.v-input__control),
+.club-form__active-switch :deep(.v-selection-control),
+.club-form__active-switch :deep(.v-selection-control__wrapper) {
+  margin: 0;
+  padding: 0;
+  min-height: 0 !important;
+  height: auto;
+}
+
+.club-form__active-switch :deep(.v-selection-control) {
+  align-items: center;
+  justify-content: center;
+}
+
+.club-form__active-label {
+  line-height: 2.5rem;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.club-form__fields {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.club-form__address-fields {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+:deep(.v-label--required::after) {
+  content: none !important;
+}
+</style>

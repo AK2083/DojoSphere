@@ -1,5 +1,7 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { createPinia, setActivePinia } from 'pinia'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { useClubsStore } from '../../store/use-clubs-store'
 import { loadClubs, resetClubsLoaderForStorybook } from '../service/load-clubs'
 import {
   installStorybookClubsLoader,
@@ -11,6 +13,11 @@ import {
 } from './club-overview-story-fixtures'
 
 describe('club-overview-story-fixtures', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    useClubsStore().resetClubs()
+  })
+
   afterEach(() => {
     vi.useRealTimers()
     resetStorybookClubsLoader()

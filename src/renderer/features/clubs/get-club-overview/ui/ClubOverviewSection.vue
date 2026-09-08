@@ -14,26 +14,16 @@ const { smAndDown } = useDisplay()
 const {
   loading,
   loadErrorMessage,
-  stubMessage,
   overviewItems,
   fieldHeaders,
   handleAdd,
   handleEdit,
-  handleDelete,
-  clearStubMessage
+  handleDelete
 } = useClubOverview()
 
 const isMobile = computed(() => smAndDown.value)
 const addLabel = computed(() => t(translationKeys.actions.add))
 const placeholderCount = computed(() => (isMobile.value ? 2 : 3))
-const showStubSnackbar = computed({
-  get: () => stubMessage.value.length > 0,
-  set: (value: boolean) => {
-    if (!value) {
-      clearStubMessage()
-    }
-  }
-})
 
 const gridClassNames = computed(() => ({
   'club-overview-section__grid--single': !loading.value && overviewItems.value.length === 1,
@@ -87,13 +77,6 @@ const gridClassNames = computed(() => ({
         @edit="handleEdit"
       />
     </div>
-
-    <v-snackbar v-model="showStubSnackbar" color="info" location="top" timeout="4000">
-      {{ stubMessage }}
-      <template #actions>
-        <v-btn variant="text" @click="clearStubMessage">OK</v-btn>
-      </template>
-    </v-snackbar>
   </section>
 </template>
 

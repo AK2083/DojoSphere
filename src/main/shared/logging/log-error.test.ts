@@ -26,7 +26,14 @@ describe('logError', () => {
 
     logError(error, 'database', 'persist')
 
-    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:database]', 'persist', { code: 'db_error' })
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[dojosphere:database]',
+      'persist',
+      expect.objectContaining({
+        code: 'db_error',
+        message: 'persist failed'
+      })
+    )
   })
 
   it('normalizes non-error values with toError', () => {

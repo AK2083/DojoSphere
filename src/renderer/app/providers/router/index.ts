@@ -117,6 +117,30 @@ const routes = [
       }
     },
     component: () => import('@pages/clubs')
+  },
+  {
+    path: '/clubs/new',
+    name: 'club-create',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: CLUBS_OVERVIEW_PERMISSION.resource,
+        action: CLUBS_OVERVIEW_PERMISSION.actions.create
+      }
+    },
+    component: () => import('@pages/club-form')
+  },
+  {
+    path: '/clubs/:id/edit',
+    name: 'club-edit',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: CLUBS_OVERVIEW_PERMISSION.resource,
+        action: CLUBS_OVERVIEW_PERMISSION.actions.update
+      }
+    },
+    component: () => import('@pages/club-form')
   }
 ]
 

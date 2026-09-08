@@ -6,29 +6,13 @@ export default {
   list: {
     ariaLabel: 'Vereinsliste',
     empty: 'Noch keine Vereine erfasst.',
-    loadingPlaceholder: 'Verein wird geladen',
-    columns: {
-      city: 'Stadt',
-      website: 'Website',
-      status: 'Status',
-      district: 'Bezirk',
-      country: 'Land',
-      association: 'Verband',
-      regionalAssociation: 'Landesverband',
-      clubNumber: 'Vereinsnummer',
-      headquarters: 'Hauptsitz',
-      trainingVenue: 'Trainingsort',
-      billingAddress: 'Rechnungsadresse',
-      email: 'E-Mail Adresse',
-      phone: 'Telefonnummer'
-    }
+    loadingPlaceholder: 'Verein wird geladen'
   },
   status: {
     active: 'Aktiv',
     inactive: 'Inaktiv'
   },
   loadError: 'Die Vereine konnten nicht geladen werden.',
-  stubUnavailable: 'Diese Funktion ist noch nicht verfügbar.',
   actions: {
     add: 'Verein hinzufügen',
     edit: 'Verein bearbeiten',

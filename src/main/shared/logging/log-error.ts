@@ -27,10 +27,16 @@ function resolveErrorCode(error: Error): string | undefined {
  */
 export function logError(error: Error, service: string, action: string): void {
   const code = resolveErrorCode(error)
-  const context: Record<string, string> = {}
+  const context: Record<string, string> = {
+    message: error.message
+  }
 
   if (code) {
     context.code = code
+  }
+
+  if (error.stack) {
+    context.stack = error.stack
   }
 
   createLogger(service).error(action, context)

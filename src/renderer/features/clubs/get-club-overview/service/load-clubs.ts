@@ -1,19 +1,34 @@
-import { CLUB_MOCK_DATA } from '../model/club-mock-data'
+import { useClubsStore } from '../../store/use-clubs-store'
 import type { ClubOverviewRow } from '../model/club-row'
 
 type ClubsLoader = () => Promise<ClubOverviewRow[]>
 
-let clubsLoader: ClubsLoader = async () => structuredClone(CLUB_MOCK_DATA)
+let clubsLoaderOverride: ClubsLoader | null = null
 
 /**
- * Loads clubs for the overview.
- *
- * Currently returns mock fixtures. Replace with IPC/SQLite in a later issue.
+ * Loads clubs for the overview from the in-memory clubs store.
  *
  * @returns Club rows for the overview cards.
  */
 export async function loadClubs(): Promise<ClubOverviewRow[]> {
-  return clubsLoader()
+  if (clubsLoaderOverride) {
+    return clubsLoaderOverride()
+  }
+
+  return useClubsStore().listClubs()
+}
+
+/**
+ * Deletes a club from the in-memory clubs store.
+ *
+ * @param id - Club id to remove.
+ */
+export async function deleteClub(id: string): Promise<void> {
+  const removed = useClubsStore().deleteClub(id)
+
+  if (!removed) {
+    throw new Error(`Club not found: ${id}`)
+  }
 }
 
 /**
@@ -22,10 +37,10 @@ export async function loadClubs(): Promise<ClubOverviewRow[]> {
  * @param loader - Async loader used by subsequent `loadClubs` calls.
  */
 export function setClubsLoaderForStorybook(loader: ClubsLoader): void {
-  clubsLoader = loader
+  clubsLoaderOverride = loader
 }
 
-/** Restores the default mock clubs loader after Storybook stories. */
+/** Restores the default store-backed clubs loader after Storybook stories. */
 export function resetClubsLoaderForStorybook(): void {
-  clubsLoader = async () => structuredClone(CLUB_MOCK_DATA)
+  clubsLoaderOverride = null
 }

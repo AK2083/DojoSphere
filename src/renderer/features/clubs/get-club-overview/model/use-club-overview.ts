@@ -1,8 +1,9 @@
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { logError, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { loadClubs } from '../service/load-clubs'
+import { deleteClub, loadClubs } from '../service/load-clubs'
 import type { ClubOverviewRow } from './club-row'
 
 /**
@@ -26,18 +27,15 @@ function sortByNewestFirst(rows: ClubOverviewRow[]): ClubOverviewRow[] {
 }
 
 /**
- * UI state for the club overview loaded from mock fixtures.
- *
- * Add/edit are stubs until forms and SQLite wiring land in later issues.
- * Delete removes the row from in-memory state only.
+ * UI state for the club overview loaded from the in-memory clubs store.
  *
  * @returns Reactive list state and action handlers for the club overview.
  */
 export function useClubOverview() {
   const { t } = useTranslation()
+  const router = useRouter()
   const loading = ref(true)
   const loadErrorMessage = ref('')
-  const stubMessage = ref('')
   const clubs = ref<ClubOverviewRow[]>([])
 
   const fieldHeaders = computed<ClubFieldHeader[]>(() => [
@@ -86,36 +84,35 @@ export function useClubOverview() {
     void refresh()
   })
 
-  function showStubMessage(): void {
-    stubMessage.value = t(translationKeys.stubUnavailable)
-  }
-
-  function clearStubMessage(): void {
-    stubMessage.value = ''
-  }
-
   function handleAdd(): void {
-    showStubMessage()
+    void router.push({ name: 'club-create' })
   }
 
-  function handleEdit(_club: ClubOverviewItem): void {
-    showStubMessage()
+  function handleEdit(club: ClubOverviewItem): void {
+    void router.push({
+      name: 'club-edit',
+      params: { id: club.id }
+    })
   }
 
-  function handleDelete(club: ClubOverviewItem): void {
-    clubs.value = clubs.value.filter((entry) => entry.id !== club.id)
+  async function handleDelete(club: ClubOverviewItem): Promise<void> {
+    try {
+      await deleteClub(club.id)
+      await refresh()
+    } catch (error) {
+      loadErrorMessage.value = t(translationKeys.loadError)
+      logError(error as Error, 'clubs', 'delete-club')
+    }
   }
 
   return {
     loading,
     loadErrorMessage,
-    stubMessage,
     overviewItems,
     fieldHeaders,
     refresh,
     handleAdd,
     handleEdit,
-    handleDelete,
-    clearStubMessage
+    handleDelete
   }
 }

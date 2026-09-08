@@ -1,0 +1,23 @@
+export default {
+  name: 'Name',
+  shortName: 'Short name',
+  city: 'City',
+  street: 'Street',
+  houseNumber: 'House number',
+  postalCode: 'Postal code',
+  website: 'Website',
+  websiteProtocol: 'Protocol',
+  phoneCountryCode: 'Country code',
+  status: 'Status',
+  district: 'District',
+  country: 'Country',
+  association: 'Association',
+  regionalAssociation: 'Regional association',
+  clubNumber: 'Club number',
+  headquarters: 'Headquarters',
+  trainingVenue: 'Training venue',
+  billingAddress: 'Billing address',
+  contact: 'Contact',
+  email: 'Email address',
+  phone: 'Phone number'
+}
