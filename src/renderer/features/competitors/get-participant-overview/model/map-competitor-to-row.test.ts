@@ -14,12 +14,12 @@ function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
     birthDate: '2011-04-12',
     nationality: 'DE',
     passNumber: 'JP-000142',
-    club: 'Dojo Nord',
+    association: 'Dojo Nord',
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
     contactPerson: 'S. Fischer',
-    clubId: '00000000-0000-0000-0000-000000000000',
+    associationId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: 'a1000000-0000-4000-8000-000000000001',
@@ -42,10 +42,10 @@ describe('mapCompetitorToRow', () => {
       givenName: 'Yuki',
       familyName: 'Tanaka',
       gender: 'm',
-      club: 'Dojo Nord',
+      association: 'Dojo Nord',
       weightClass: '-60',
       passNumber: 'JP-000142',
-      clubContactEmail: ''
+      associationContactEmail: ''
     })
     expect(row.ageClass).toContain('competitors.saveParticipant.reference.')
     expect(row.grade).toContain('competitors.saveParticipant.reference.')
@@ -54,7 +54,7 @@ describe('mapCompetitorToRow', () => {
   it('falls back to empty strings for null optional fields', () => {
     const row = mapCompetitorToRow(
       createCompetitor({
-        club: null,
+        association: null,
         weightClass: null,
         licenseNumber: null,
         contactPhone: null,
@@ -64,7 +64,7 @@ describe('mapCompetitorToRow', () => {
       t
     )
 
-    expect(row.club).toBe('')
+    expect(row.association).toBe('')
     expect(row.weightClass).toBe('')
     expect(row.licenseNumber).toBe('')
     expect(row.contactPhone).toBe('')

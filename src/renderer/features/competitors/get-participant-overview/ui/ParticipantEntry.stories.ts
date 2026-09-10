@@ -21,11 +21,11 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
-export const WithoutClub: Story = {
+export const WithoutAssociation: Story = {
   args: {
     participant: {
       ...storyParticipants[0]!,
-      club: ''
+      association: ''
     }
   }
 }

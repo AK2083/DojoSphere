@@ -11,7 +11,7 @@ export interface ParticipantRow {
   familyName: string
   gender: ParticipantGender
   birthDate: string
-  club: string
+  association: string
   nationality: string
   weightClass: string
   ageClass: string
@@ -19,7 +19,7 @@ export interface ParticipantRow {
   grade: string
   gradeBeltColorToken: string | null
   licenseNumber: string
-  clubContactEmail: string
+  associationContactEmail: string
   contactPhone: string
   contactPerson: string
   startEligible: boolean

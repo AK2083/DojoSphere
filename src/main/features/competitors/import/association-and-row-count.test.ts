@@ -12,21 +12,21 @@ function workbook(columns: ParsedColumn[]): ParsedWorkbook {
   return { sheetNames: ['Teilnehmer'], columns, formFields: [] }
 }
 
-describe('club column mapping', () => {
-  it('maps Verein/Club to club instead of Bereich', () => {
+describe('association column mapping', () => {
+  it('maps Verein/Association to association instead of Bereich', () => {
     const result = matchColumns(
       workbook([
         column('Teilnehmer#0', 'Vorname', ['Anna', 'Ben']),
         column('Teilnehmer#1', 'Nachname', ['Weber', 'Schulz']),
-        column('Teilnehmer#2', 'Verein/Club', ['Dojo Nord', 'Dojo Süd']),
+        column('Teilnehmer#2', 'Verein/Association', ['Dojo Nord', 'Dojo Süd']),
         column('Teilnehmer#3', 'Bereich', ['Ost', 'West'])
       ])
     )
 
-    expect(result.mapping.club).toBe('Teilnehmer#2')
+    expect(result.mapping.association).toBe('Teilnehmer#2')
   })
 
-  it('maps Meldender Verein column to club', () => {
+  it('maps Meldender Verein column to association', () => {
     const result = matchColumns(
       workbook([
         column('Teilnehmer#0', 'Vorname', ['Anna']),
@@ -35,7 +35,7 @@ describe('club column mapping', () => {
       ])
     )
 
-    expect(result.mapping.club).toBe('Teilnehmer#2')
+    expect(result.mapping.association).toBe('Teilnehmer#2')
   })
 })
 
@@ -44,7 +44,7 @@ describe('countParticipantRows', () => {
     const wb = workbook([
       column('Teilnehmer#0', 'Vorname', ['Anna', 'Ben', '', '']),
       column('Teilnehmer#1', 'Nachname', ['Weber', 'Schulz', '', '']),
-      column('Teilnehmer#2', 'Verein/Club', ['Dojo Nord', 'Dojo Süd', 'Meta', 'Meta'])
+      column('Teilnehmer#2', 'Verein/Association', ['Dojo Nord', 'Dojo Süd', 'Meta', 'Meta'])
     ])
 
     const mapping = matchColumns(wb).mapping
@@ -64,7 +64,7 @@ describe('countParticipantRows', () => {
           sheetName: 'Vereine',
           columnIndex: 0,
           header: 'Verein',
-          values: Array.from({ length: 13 }, (_, index) => `Club ${index + 1}`)
+          values: Array.from({ length: 13 }, (_, index) => `Association ${index + 1}`)
         }
       ]
     }

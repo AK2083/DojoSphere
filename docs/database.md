@@ -35,7 +35,7 @@ Migrations must not delete user data without an explicit, documented decision.
 | Domain | Doc | Tables |
 | ------ | --- | ------ |
 | Participants | [participants-schema.md](./database/participants-schema.md) | `competitors` |
-| Clubs (federation hierarchy) | [clubs-schema.md](./database/clubs-schema.md) | `countries`, `associations`, `regional_associations`, `districts`, `clubs`, `club_identifiers`, `club_addresses`, `club_contacts` |
+| Associations (federation hierarchy) | [associations-schema.md](./database/associations-schema.md) | `countries`, `federations`, `regional_federations`, `districts`, `associations`, `association_identifiers`, `association_addresses`, `association_contacts` |
 | Grades (Kyu/Dan) | [grades-schema.md](./database/grades-schema.md) | `grades` |
 | Age classes (DJB) | [age-classes-schema.md](./database/age-classes-schema.md) | `age_classes` |
 | Weight classes (DJB) | [weight-classes-schema.md](./database/weight-classes-schema.md) | `weight_classes` |

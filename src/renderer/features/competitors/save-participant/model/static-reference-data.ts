@@ -28,7 +28,7 @@ export type WeightClassSeed = {
   sortOrder: number
 }
 
-export type ClubSeed = {
+export type AssociationSeed = {
   id: string
   nameKey: string
 }
@@ -991,7 +991,7 @@ export const WEIGHT_CLASS_SEEDS: WeightClassSeed[] = [
   }
 ]
 
-export const CLUB_SEEDS: ClubSeed[] = [
+export const ASSOCIATION_SEEDS: AssociationSeed[] = [
   {
     id: '00000000-0000-0000-0000-000000000000',
     nameKey: 'unknown'

@@ -10,8 +10,8 @@
 /** Target fields an Excel column can be mapped to during import. */
 export type ImportTargetFieldKey =
   | 'birthDate'
-  | 'club'
-  | 'clubContactEmail'
+  | 'association'
+  | 'associationContactEmail'
   | 'contactPerson'
   | 'contactPhone'
   | 'familyName'
@@ -52,7 +52,7 @@ export const COMPETITOR_IMPORT_FIELDS: readonly ImportTargetField[] = [
   { key: 'familyName', required: true, dataType: 'text' },
   { key: 'gender', required: false, dataType: 'gender' },
   { key: 'birthDate', required: false, dataType: 'date' },
-  { key: 'club', required: false, dataType: 'text' },
+  { key: 'association', required: false, dataType: 'text' },
   { key: 'nationality', required: false, dataType: 'nationality' },
   { key: 'weightKg', required: false, dataType: 'weightKg' },
   { key: 'passNumber', required: false, dataType: 'text' },
@@ -60,7 +60,7 @@ export const COMPETITOR_IMPORT_FIELDS: readonly ImportTargetField[] = [
   { key: 'licenseNumber', required: false, dataType: 'text' },
   { key: 'contactPhone', required: false, dataType: 'text' },
   { key: 'contactPerson', required: false, dataType: 'text' },
-  { key: 'clubContactEmail', required: false, dataType: 'email' },
+  { key: 'associationContactEmail', required: false, dataType: 'email' },
   { key: 'registrationStatus', required: false, dataType: 'registrationStatus' },
   { key: 'remarks', required: false, dataType: 'text' },
   { key: 'startEligible', required: false, dataType: 'boolean' }
@@ -81,7 +81,7 @@ export const PARTICIPANT_FORM_REQUIRED_IMPORT_FIELD_KEYS: readonly ImportTargetF
   'familyName',
   'gender',
   'birthDate',
-  'club',
+  'association',
   'nationality',
   'passNumber'
 ] as const
@@ -158,11 +158,11 @@ export const COMPETITOR_IMPORT_SYNONYMS_DE: ImportHeaderSynonyms = {
   familyName: ['Nachname', 'Name', 'Familienname', 'Nach-Name', 'Zuname'],
   gender: ['Geschlecht', 'Geschl', 'Sex', 'm/w', 'm/w/d'],
   birthDate: ['Geburtsdatum', 'Geburtstag', 'Geburtsjahr', 'Jahrgang', 'Jg', 'geb', 'geb.'],
-  club: [
+  association: [
     'Verein',
-    'Club',
-    'Verein/Club',
-    'Verein / Club',
+    'Association',
+    'Verein/Association',
+    'Verein / Association',
     'Meldender Verein',
     'Dojo',
     'Vereinsname',
@@ -191,7 +191,7 @@ export const COMPETITOR_IMPORT_SYNONYMS_DE: ImportHeaderSynonyms = {
     'Coach',
     'Ansprechpartner'
   ],
-  clubContactEmail: [
+  associationContactEmail: [
     'E-Mail Vereinsverantwortlicher',
     'Email Vereinsverantwortlicher',
     'Vereinsverantwortlicher E-Mail',
@@ -228,7 +228,7 @@ export const COMPETITOR_IMPORT_SYNONYMS_EN: ImportHeaderSynonyms = {
     'DOB',
     'Born'
   ],
-  club: ['Club', 'Team', 'Dojo', 'Club name', 'Organisation', 'Organization'],
+  association: ['Association', 'Team', 'Dojo', 'Association name', 'Organisation', 'Organization'],
   nationality: ['Nationality', 'Nation', 'Country', 'Citizenship', 'Nat'],
   weightKg: ['Weight', 'Body weight', 'kg', 'Bodyweight'],
   passNumber: [
@@ -250,8 +250,8 @@ export const COMPETITOR_IMPORT_SYNONYMS_EN: ImportHeaderSynonyms = {
     'Guardian',
     'Contact on competition day'
   ],
-  clubContactEmail: [
-    'Club contact email',
+  associationContactEmail: [
+    'Association contact email',
     'Contact email',
     'E-mail',
     'Email',

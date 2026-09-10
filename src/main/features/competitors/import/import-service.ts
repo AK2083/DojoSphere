@@ -13,7 +13,7 @@ import {
   importCompetitors,
   resolveGradeIdFromText,
   resolveWeightClassIdFromKg,
-  upsertClubContactEmail
+  upsertAssociationContactEmail
 } from '../repository/competitors.repository'
 import {
   buildCompetitorDuplicateKeys,
@@ -113,7 +113,7 @@ export function executeImport(
       familyName: participant.familyName,
       gender: toImportNullable(participant.gender),
       birthDate: toImportNullable(participant.birthDate),
-      club: toImportNullable(participant.club),
+      association: toImportNullable(participant.association),
       nationality: toImportNullable(participant.nationality),
       passNumber: toImportNullable(participant.passNumber),
       licenseNumber: toImportNullable(participant.licenseNumber),
@@ -155,7 +155,7 @@ export function executeImport(
         index,
         givenName: importResultRowLabel(participants[index], 'givenName'),
         familyName: importResultRowLabel(participants[index], 'familyName'),
-        club: importResultRowLabel(participants[index], 'club'),
+        association: importResultRowLabel(participants[index], 'association'),
         success: false,
         errorCode: DUPLICATE_IN_IMPORT_ERROR
       })
@@ -171,11 +171,11 @@ export function executeImport(
     if (success) {
       importedCount += 1
 
-      const clubContactEmail = participants[index]?.clubContactEmail
-      const clubId = rowResult?.competitor?.clubId
+      const associationContactEmail = participants[index]?.associationContactEmail
+      const associationId = rowResult?.competitor?.associationId
 
-      if (clubContactEmail && clubId) {
-        upsertClubContactEmail(db, clubId, clubContactEmail)
+      if (associationContactEmail && associationId) {
+        upsertAssociationContactEmail(db, associationId, associationContactEmail)
       }
     } else {
       failedCount += 1
@@ -185,7 +185,7 @@ export function executeImport(
       index,
       givenName: importResultRowLabel(participants[index], 'givenName'),
       familyName: importResultRowLabel(participants[index], 'familyName'),
-      club: importResultRowLabel(participants[index], 'club'),
+      association: importResultRowLabel(participants[index], 'association'),
       success,
       errorCode: rowResult?.errorCode
     })

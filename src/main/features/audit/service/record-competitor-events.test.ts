@@ -39,7 +39,7 @@ describe('record-competitor-events', () => {
       entityId: 'competitor-1',
       actorUserId,
       newValueJson: JSON.stringify({
-        fields: ['given_name', 'family_name', 'club', 'weight_class']
+        fields: ['given_name', 'family_name', 'association', 'weight_class']
       })
     })
     expect(row.newValueJson).not.toContain('Test')
@@ -56,7 +56,7 @@ describe('record-competitor-events', () => {
     recordCompetitorUpdated({
       actorUserId,
       competitorId: 'competitor-1',
-      changedFields: ['club', 'weight_class']
+      changedFields: ['association', 'weight_class']
     })
 
     const row = getDatabase()
@@ -71,7 +71,7 @@ describe('record-competitor-events', () => {
 
     expect(row).toMatchObject({
       action: 'updated',
-      newValueJson: JSON.stringify({ changed_fields: ['club', 'weight_class'] })
+      newValueJson: JSON.stringify({ changed_fields: ['association', 'weight_class'] })
     })
   })
 

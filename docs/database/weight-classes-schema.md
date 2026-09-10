@@ -100,7 +100,7 @@ No `weight_classes` rows.
 | 8 | 90 | — | −90 |
 | 9 | — | 90 | +90 |
 
-### Row 6 — German club team championship U18 team (`djb_row` 6)
+### Row 6 — German association team championship U18 team (`djb_row` 6)
 
 | sort | max | min | DJB |
 | ---- | --- | --- | --- |
@@ -163,7 +163,7 @@ Each of rows 7, 8, 9 gets its own `age_class_id` with an identical weight set (s
 | 8 | 78 | — | −78 |
 | 9 | — | 78 | +78 |
 
-### Row 15 — German club team championship U18 team (`djb_row` 15)
+### Row 15 — German association team championship U18 team (`djb_row` 15)
 
 | sort | max | min | DJB |
 | ---- | --- | --- | --- |

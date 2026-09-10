@@ -16,7 +16,7 @@ test.describe('ImportResultEntry', () => {
     await page.getByRole('button', { name: 'Next step' }).click()
   })
 
-  test('renders imported participant with name, club and status icon', async ({ page }) => {
+  test('renders imported participant with name, association and status icon', async ({ page }) => {
     await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
     await expect(page.getByText('Dojo Nord').first()).toBeVisible()
     await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()

@@ -5,7 +5,7 @@ import { createMemoryDatabase } from '../../test/database'
 import { runMigrations } from './runner'
 
 describe('updated_at triggers', () => {
-  it('sets updated_at on users and clubs when a row is updated', () => {
+  it('sets updated_at on users and associations when a row is updated', () => {
     const db = createMemoryDatabase()
     runMigrations(db)
 
@@ -31,20 +31,23 @@ describe('updated_at triggers', () => {
 
     expect(userAfter.updatedAt).toEqual(expect.any(String))
 
-    const clubId = '00000000-0000-0000-0000-000000000000'
-    const clubBefore = db
-      .prepare('SELECT updated_at AS updatedAt FROM clubs WHERE id = ?')
-      .get(clubId) as { updatedAt: string | null }
+    const associationId = '00000000-0000-0000-0000-000000000000'
+    const associationBefore = db
+      .prepare('SELECT updated_at AS updatedAt FROM associations WHERE id = ?')
+      .get(associationId) as { updatedAt: string | null }
 
-    expect(clubBefore.updatedAt).toBeNull()
+    expect(associationBefore.updatedAt).toBeNull()
 
-    db.prepare('UPDATE clubs SET name = ? WHERE id = ?').run('Unknown Club', clubId)
+    db.prepare('UPDATE associations SET name = ? WHERE id = ?').run(
+      'Unknown Association',
+      associationId
+    )
 
-    const clubAfter = db
-      .prepare('SELECT updated_at AS updatedAt FROM clubs WHERE id = ?')
-      .get(clubId) as { updatedAt: string | null }
+    const associationAfter = db
+      .prepare('SELECT updated_at AS updatedAt FROM associations WHERE id = ?')
+      .get(associationId) as { updatedAt: string | null }
 
-    expect(clubAfter.updatedAt).toEqual(expect.any(String))
+    expect(associationAfter.updatedAt).toEqual(expect.any(String))
   })
 
   it('does not override an explicitly set updated_at value', () => {

@@ -8,7 +8,7 @@ test.describe('ParticipantEntry', () => {
     await page.setViewportSize({ width: 1280, height: 800 })
   })
 
-  test('shows club name below participant name in the card header', async ({ page }) => {
+  test('shows association name below participant name in the card header', async ({ page }) => {
     await gotoParticipantsPage(page, { withParticipants: true })
 
     const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })

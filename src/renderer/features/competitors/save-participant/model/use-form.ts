@@ -55,7 +55,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
 
   const {
     genderOptions,
-    clubOptions,
+    associationOptions,
     nationalityOptions,
     ageClassOptions,
     gradingSystemOptions,
@@ -81,7 +81,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
   ]
   const genderRules = [mapRule(genderRule)]
   const birthDateRules = [mapRule(birthDateRule)]
-  const clubRules = [mapRule(requiredFieldRule)]
+  const associationRules = [mapRule(requiredFieldRule)]
   const nationalityRules = [mapRule(nationalityRule)]
   const ageClassRules = [mapRule(requiredFieldRule)]
   const passNumberRules = [mapRule(passNumberRule)]
@@ -250,7 +250,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     isWeightClassRequired,
     selectedAgeClass,
     genderOptions,
-    clubOptions,
+    associationOptions,
     nationalityOptions,
     ageClassOptions,
     gradingSystemOptions,
@@ -261,7 +261,7 @@ export function useParticipantForm(options: UseParticipantFormOptions = {}) {
     familyNameRules,
     genderRules,
     birthDateRules,
-    clubRules,
+    associationRules,
     nationalityRules,
     ageClassRules,
     weightClassRules,

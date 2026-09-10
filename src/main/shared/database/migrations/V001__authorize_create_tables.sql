@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS user_role_assignments (
   role_id TEXT NOT NULL,
 
   scope_type TEXT NOT NULL
-    CHECK (scope_type IN ('global', 'tournament', 'mat', 'club', 'participant', 'fight_list')),
+    CHECK (scope_type IN ('global', 'tournament', 'mat', 'association', 'participant', 'fight_list')),
 
   scope_id TEXT,
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS join_codes (
   id TEXT PRIMARY KEY,
 
   scope_type TEXT NOT NULL
-    CHECK (scope_type IN ('global', 'tournament', 'mat', 'club', 'participant', 'fight_list')),
+    CHECK (scope_type IN ('global', 'tournament', 'mat', 'association', 'participant', 'fight_list')),
 
   scope_id TEXT,
 
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS access_requests (
   requested_role_id TEXT NOT NULL,
 
   requested_scope_type TEXT NOT NULL DEFAULT 'global'
-    CHECK (requested_scope_type IN ('global', 'tournament', 'mat', 'club', 'participant', 'fight_list')),
+    CHECK (requested_scope_type IN ('global', 'tournament', 'mat', 'association', 'participant', 'fight_list')),
 
   requested_scope_id TEXT,
 

@@ -3,14 +3,14 @@ description: Legal and privacy baseline context for every implementation
 alwaysApply: true
 ---
 
-This project may be published as open-source software under the MIT license and may process personal data in club, judo, and tournament contexts.
+This project may be published as open-source software under the MIT license and may process personal data in association, judo, and tournament contexts.
 
 These rules do not replace legal advice. They serve as technical guardrails so implementations do not ignore legal risks.
 
 For every implementation, check:
 
 - Is personal data processed, stored, synchronized, exported, or displayed?
-- Are children, minors, parents, competitors, referees, tournament directors, club members, or organizers affected?
+- Are children, minors, parents, competitors, referees, tournament directors, association members, or organizers affected?
 - Is data visible publicly or to unauthorized roles?
 - Is the feature implemented with data minimization?
 - Is there a role or permission check at a trusted layer?

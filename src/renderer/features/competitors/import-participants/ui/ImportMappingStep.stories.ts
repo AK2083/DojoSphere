@@ -32,7 +32,7 @@ const STORY_PREVIEW: ImportPreviewResult = {
   fields: [
     { key: 'givenName', required: true },
     { key: 'familyName', required: true },
-    { key: 'club', required: false },
+    { key: 'association', required: false },
     { key: 'weightKg', required: false },
     { key: 'birthDate', required: false },
     { key: 'passNumber', required: false }
@@ -40,7 +40,7 @@ const STORY_PREVIEW: ImportPreviewResult = {
   suggestedMapping: {
     givenName: 'sheet1::0',
     familyName: 'sheet1::1',
-    club: 'sheet1::2',
+    association: 'sheet1::2',
     weightKg: 'sheet1::3',
     birthDate: 'sheet1::4',
     passNumber: 'sheet1::5'
@@ -48,7 +48,7 @@ const STORY_PREVIEW: ImportPreviewResult = {
   sources: {
     givenName: 'header',
     familyName: 'header',
-    club: 'header',
+    association: 'header',
     weightKg: 'header',
     birthDate: 'header',
     passNumber: 'header'

@@ -33,7 +33,7 @@ describe('matchColumns', () => {
 
     expect(result.mapping.givenName).toBe('Sheet1#0')
     expect(result.mapping.familyName).toBe('Sheet1#1')
-    expect(result.mapping.club).toBe('Sheet1#2')
+    expect(result.mapping.association).toBe('Sheet1#2')
     expect(result.sources.givenName).toBe('header')
     expect(result.mappingValid).toBe(true)
     expect(result.missingRequiredFields).toEqual([])
@@ -141,7 +141,7 @@ describe('matchColumns', () => {
             id: 'Sheet1#form#0#0',
             sheetName: 'Sheet1',
             label: 'Ausrichter',
-            value: 'Judo-Club Musterstadt'
+            value: 'Judo-Association Musterstadt'
           },
           {
             id: 'Sheet1#form#0#2',
@@ -252,7 +252,7 @@ describe('matchColumns', () => {
     )
 
     expect(result.mapping.contactPerson).toBe('Sheet1#2')
-    expect(result.mapping.clubContactEmail).toBe('Sheet1#form#0#1')
+    expect(result.mapping.associationContactEmail).toBe('Sheet1#form#0#1')
     expect(result.mapping.remarks).toBeUndefined()
   })
 

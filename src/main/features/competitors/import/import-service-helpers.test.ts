@@ -17,12 +17,15 @@ describe('import-service helpers', () => {
   it('returns stable import result labels', () => {
     expect(importResultRowLabel(undefined, 'givenName')).toBe('')
     expect(
-      importResultRowLabel({ givenName: 'Yuki', familyName: 'Tanaka', startEligible: true }, 'club')
+      importResultRowLabel(
+        { givenName: 'Yuki', familyName: 'Tanaka', startEligible: true },
+        'association'
+      )
     ).toBe('')
     expect(
       importResultRowLabel(
-        { givenName: 'Yuki', familyName: 'Tanaka', club: 'Dojo Nord', startEligible: true },
-        'club'
+        { givenName: 'Yuki', familyName: 'Tanaka', association: 'Dojo Nord', startEligible: true },
+        'association'
       )
     ).toBe('Dojo Nord')
   })

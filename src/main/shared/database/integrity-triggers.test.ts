@@ -13,23 +13,23 @@ function migratedDb() {
 }
 
 describe('integrity triggers', () => {
-  it('rejects competitors linked to inactive clubs on insert', () => {
+  it('rejects competitors linked to inactive associations on insert', () => {
     const db = migratedDb()
-    const inactiveClubId = randomUUID()
+    const inactiveAssociationId = randomUUID()
 
     db.prepare(
       `
-      INSERT INTO clubs (id, district_id, name, is_active, source)
-      VALUES (?, 'd1000000-0000-4000-8000-000000000004', 'Inactive Club', 0, 'test')
+      INSERT INTO associations (id, district_id, name, is_active, source)
+      VALUES (?, 'd1000000-0000-4000-8000-000000000004', 'Inactive Association', 0, 'test')
     `
-    ).run(inactiveClubId)
+    ).run(inactiveAssociationId)
 
     expect(() =>
       db
         .prepare(
           `
         INSERT INTO competitors (
-          id, given_name, family_name, gender, birth_date, club_id, nationality,
+          id, given_name, family_name, gender, birth_date, association_id, nationality,
           weight_class_id, age_class_id, pass_number
         )
         VALUES (?, 'Ada', 'Lovelace', 'f', '2000-01-01', ?, 'de', ?, ?, '123')
@@ -37,11 +37,11 @@ describe('integrity triggers', () => {
         )
         .run(
           randomUUID(),
-          inactiveClubId,
+          inactiveAssociationId,
           'b3000000-0000-4000-8000-000000000001',
           'c2000000-0000-4000-8000-000000000003'
         )
-    ).toThrow(/club is not active/i)
+    ).toThrow(/association is not active/i)
   })
 
   it('rejects non-normalized competitor nationality on insert', () => {
@@ -52,7 +52,7 @@ describe('integrity triggers', () => {
         .prepare(
           `
         INSERT INTO competitors (
-          id, given_name, family_name, gender, birth_date, club_id, nationality,
+          id, given_name, family_name, gender, birth_date, association_id, nationality,
           weight_class_id, age_class_id, pass_number
         )
         VALUES (?, 'Ada', 'Lovelace', 'f', '2000-01-01', ?, ' de ', ?, ?, '123')
@@ -75,7 +75,7 @@ describe('integrity triggers', () => {
         .prepare(
           `
         INSERT INTO competitors (
-          id, given_name, family_name, gender, birth_date, club_id, nationality,
+          id, given_name, family_name, gender, birth_date, association_id, nationality,
           weight_class_id, age_class_id, pass_number
         )
         VALUES (?, 'Ada', 'Lovelace', 'f', '2000-01-01', ?, 'DE', ?, ?, '123')
@@ -90,7 +90,7 @@ describe('integrity triggers', () => {
     ).toThrow(/weight_class_id does not match age_class_id/i)
   })
 
-  it('prevents deleting system roles and seed clubs', () => {
+  it('prevents deleting system roles and seed associations', () => {
     const db = migratedDb()
 
     expect(() => db.prepare(`DELETE FROM roles WHERE name = 'list_keeper'`).run()).toThrow(
@@ -98,8 +98,8 @@ describe('integrity triggers', () => {
     )
 
     expect(() =>
-      db.prepare(`DELETE FROM clubs WHERE id = '00000000-0000-0000-0000-000000000000'`).run()
-    ).toThrow(/seed club cannot be deleted/i)
+      db.prepare(`DELETE FROM associations WHERE id = '00000000-0000-0000-0000-000000000000'`).run()
+    ).toThrow(/seed association cannot be deleted/i)
   })
 
   it('prevents mutating reference tables and audit logs', () => {

@@ -25,7 +25,7 @@ export type TransformedParticipant = {
   familyName: string
   gender?: CompetitorGender
   birthDate?: string
-  club?: string
+  association?: string
   nationality?: string
   weightKg?: number
   passNumber?: string
@@ -33,7 +33,7 @@ export type TransformedParticipant = {
   licenseNumber?: string
   contactPerson?: string
   contactPhone?: string
-  clubContactEmail?: string
+  associationContactEmail?: string
   startEligible: boolean
   registrationStatus?: CompetitorRegistrationStatus | null
   remarks?: string
@@ -48,8 +48,8 @@ const STATUS_LOOKUP = buildValueLookup<CompetitorRegistrationStatus>(
 const BOOLEAN_TRUE = new Set(BOOLEAN_TRUE_SYNONYMS.map(normalizeValue))
 const BOOLEAN_FALSE = new Set(BOOLEAN_FALSE_SYNONYMS.map(normalizeValue))
 
-const CLUB_HEADER_KEYS: ReadonlySet<string> = new Set(
-  [...COMPETITOR_IMPORT_SYNONYMS_DE.club, ...COMPETITOR_IMPORT_SYNONYMS_EN.club].map(
+const ASSOCIATION_HEADER_KEYS: ReadonlySet<string> = new Set(
+  [...COMPETITOR_IMPORT_SYNONYMS_DE.association, ...COMPETITOR_IMPORT_SYNONYMS_EN.association].map(
     normalizeHeader
   )
 )
@@ -209,24 +209,24 @@ function resolvePrimarySheet(columns: ParsedColumn[], mapping: ColumnMapping): s
   return anchor?.sheetName
 }
 
-function findClubColumnInSheet(
+function findAssociationColumnInSheet(
   columns: ParsedColumn[],
   sheetName: string
 ): ParsedColumn | undefined {
   return columns.find(
     (column) =>
-      column.sheetName === sheetName && CLUB_HEADER_KEYS.has(normalizeHeader(column.header))
+      column.sheetName === sheetName && ASSOCIATION_HEADER_KEYS.has(normalizeHeader(column.header))
   )
 }
 
-type ClubContact = { contactPerson?: string; contactPhone?: string }
+type AssociationContact = { contactPerson?: string; contactPhone?: string }
 
-function buildClubEnrichment(
+function buildAssociationEnrichment(
   columns: ParsedColumn[],
   mapping: ColumnMapping,
   primarySheet: string
-): Map<string, ClubContact> {
-  const lookup = new Map<string, ClubContact>()
+): Map<string, AssociationContact> {
+  const lookup = new Map<string, AssociationContact>()
   const contactPersonColumn = findColumn(columns, mapping.contactPerson)
   const phoneColumn = findColumn(columns, mapping.contactPhone)
 
@@ -239,28 +239,28 @@ function buildClubEnrichment(
   }
 
   const externalSheet = externalColumns[0]!.sheetName
-  const clubColumn =
-    findColumn(columns, mapping.club)?.sheetName === externalSheet
-      ? findColumn(columns, mapping.club)
-      : findClubColumnInSheet(columns, externalSheet)
+  const associationColumn =
+    findColumn(columns, mapping.association)?.sheetName === externalSheet
+      ? findColumn(columns, mapping.association)
+      : findAssociationColumnInSheet(columns, externalSheet)
 
-  if (!clubColumn) {
+  if (!associationColumn) {
     return lookup
   }
 
   const sheetContactPerson =
     contactPersonColumn?.sheetName === externalSheet ? contactPersonColumn : undefined
   const sheetPhone = phoneColumn?.sheetName === externalSheet ? phoneColumn : undefined
-  const rowCount = clubColumn.values.length
+  const rowCount = associationColumn.values.length
 
   for (let index = 0; index < rowCount; index += 1) {
-    const clubName = normalizeValue(clubColumn.values[index] ?? '')
+    const associationName = normalizeValue(associationColumn.values[index] ?? '')
 
-    if (!clubName) {
+    if (!associationName) {
       continue
     }
 
-    lookup.set(clubName, {
+    lookup.set(associationName, {
       contactPerson: optionalText(sheetContactPerson?.values[index] ?? ''),
       contactPhone: optionalText(sheetPhone?.values[index] ?? '')
     })
@@ -313,8 +313,8 @@ function readPrimaryCell(
  * Transforms parsed workbook rows into participant candidates using the mapping.
  *
  * Reads participant fields from the primary sheet (the sheet holding the name
- * columns) and enriches contact person/phone from a separate club sheet by
- * matching the normalized club name.
+ * columns) and enriches contact person/phone from a separate association sheet by
+ * matching the normalized association name.
  *
  * @param workbook - Parsed workbook columns.
  * @param mapping - Confirmed field-to-column mapping.
@@ -335,7 +335,7 @@ export function transformRows(
   const bySheet = columnsBySheet(columns)
   const primaryColumns = primarySheetColumns(bySheet, primarySheet)
   const rowCount = primaryColumns.reduce((max, column) => Math.max(max, column.values.length), 0)
-  const clubEnrichment = buildClubEnrichment(columns, mapping, primarySheet)
+  const associationEnrichment = buildAssociationEnrichment(columns, mapping, primarySheet)
 
   const cell = (field: keyof ColumnMapping, rowIndex: number): string =>
     readMappedValue(
@@ -356,15 +356,17 @@ export function transformRows(
       continue
     }
 
-    const club = optionalText(cell('club', rowIndex))
-    const enrichment = club ? clubEnrichment.get(normalizeValue(club)) : undefined
+    const association = optionalText(cell('association', rowIndex))
+    const enrichment = association
+      ? associationEnrichment.get(normalizeValue(association))
+      : undefined
 
     const participant: TransformedParticipant = {
       givenName,
       familyName,
       gender: parseGender(cell('gender', rowIndex)),
       birthDate: parseBirthDate(cell('birthDate', rowIndex)),
-      club,
+      association,
       nationality: optionalText(cell('nationality', rowIndex)),
       weightKg: parseWeightKg(cell('weightKg', rowIndex)),
       passNumber: optionalText(cell('passNumber', rowIndex)),
@@ -372,7 +374,7 @@ export function transformRows(
       licenseNumber: optionalText(cell('licenseNumber', rowIndex)),
       contactPerson: optionalText(cell('contactPerson', rowIndex)) ?? enrichment?.contactPerson,
       contactPhone: optionalText(cell('contactPhone', rowIndex)) ?? enrichment?.contactPhone,
-      clubContactEmail: optionalText(cell('clubContactEmail', rowIndex)),
+      associationContactEmail: optionalText(cell('associationContactEmail', rowIndex)),
       startEligible: mapping.startEligible
         ? parseStartEligible(cell('startEligible', rowIndex))
         : true,

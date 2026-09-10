@@ -23,7 +23,9 @@ describe('isCompatibleFieldMapping', () => {
     expect(isCompatibleFieldMapping('birthDate', 'Lizenz-Nr.', ['WL-1'])).toBe(false)
     expect(isCompatibleFieldMapping('gender', 'Geschlecht', ['m', 'w'])).toBe(true)
     expect(isCompatibleFieldMapping('gender', 'Spalte X', ['2012-01-01'])).toBe(false)
-    expect(isCompatibleFieldMapping('clubContactEmail', 'E-Mail', ['a@b.invalid'])).toBe(true)
+    expect(isCompatibleFieldMapping('associationContactEmail', 'E-Mail', ['a@b.invalid'])).toBe(
+      true
+    )
     expect(isCompatibleFieldMapping('grade', 'Kyu', ['8.', '6.'])).toBe(true)
     expect(isCompatibleFieldMapping('weightKg', 'Gewicht', ['45', '52'])).toBe(true)
     expect(isCompatibleFieldMapping('registrationStatus', 'Status', ['gemeldet'])).toBe(true)

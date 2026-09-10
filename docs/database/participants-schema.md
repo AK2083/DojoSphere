@@ -6,21 +6,21 @@ Personal data is stored locally on the host (`<userData>/database.db`). Operator
 
 ## Entity relationship (target state)
 
-Participant data lives on `competitors`. Club affiliation is a foreign key into the [club hierarchy](./clubs-schema.md) (`countries` → `associations` → `regional_associations` → `districts` → `clubs`).
+Participant data lives on `competitors`. Association affiliation is a foreign key into the [association hierarchy](./associations-schema.md) (`countries` → `federations` → `regional_federations` → `districts` → `associations`).
 
 ```mermaid
 erDiagram
-  districts ||--o{ clubs : "district_id"
-  clubs ||--o{ competitors : "club_id"
+  districts ||--o{ associations : "district_id"
+  associations ||--o{ competitors : "association_id"
   weight_classes ||--o{ competitors : "weight_class_id"
   age_classes ||--o{ competitors : "age_class_id"
   grades ||--o{ competitors : "grade_id"
   age_classes ||--o{ weight_classes : "age_class_id"
-  clubs {
-    UUID id "required · PK — see clubs-schema"
+  associations {
+    UUID id "required · PK — see associations-schema"
   }
   districts {
-    UUID id "required · PK — see clubs-schema"
+    UUID id "required · PK — see associations-schema"
   }
   weight_classes {
     UUID id "required · PK"
@@ -59,7 +59,7 @@ erDiagram
     TEXT family_name "required"
     CHAR gender "required · f | m | d"
     DATE birth_date "required"
-    UUID club_id "required · FK → clubs"
+    UUID association_id "required · FK → associations"
     CHAR nationality "required · country code ISO 3166-1 alpha-2"
     UUID weight_class_id "required · FK → weight_classes"
     UUID age_class_id "required · FK → age_classes"
@@ -78,23 +78,23 @@ erDiagram
 
 **Legend:** `required` = `NOT NULL` · `optional` = nullable · `DATE` / `DATETIME` / `UUID` = semantic type (stored as ISO 8601 or UUID `TEXT` in SQLite).
 
-Club and federation tables (`countries` through `club_contacts`) are defined in [clubs-schema.md](./clubs-schema.md).
+Association and federation tables (`countries` through `association_contacts`) are defined in [associations-schema.md](./associations-schema.md).
 
 ## Relationships
 
 ```mermaid
 flowchart TB
-  subgraph clubs_schema["clubs-schema (federation hierarchy)"]
+  subgraph associations_schema["associations-schema (federation hierarchy)"]
     countries --> associations
-    associations --> regional_associations
-    regional_associations --> districts
-    districts --> clubs
-    clubs --> club_contacts
-    clubs --> club_addresses
-    clubs --> club_identifiers
+    associations --> regional_federations
+    regional_federations --> districts
+    districts --> associations
+    associations --> association_contacts
+    associations --> association_addresses
+    associations --> association_identifiers
   end
   subgraph participants_schema["participants-schema"]
-    clubs -->|club_id| competitors
+    associations -->|association_id| competitors
     age_classes -->|age_class_id| competitors
     weight_classes -->|weight_class_id| competitors
     grades -->|grade_id| competitors
@@ -104,7 +104,7 @@ flowchart TB
 
 | Column | References | ON DELETE | Notes |
 | ------ | ---------- | --------- | ----- |
-| `competitors.club_id` | `clubs.id` | `RESTRICT` | required; club must exist and `clubs.is_active = 1` (SQLite trigger) |
+| `competitors.association_id` | `associations.id` | `RESTRICT` | required; association must exist and `associations.is_active = 1` (SQLite trigger) |
 | `competitors.age_class_id` | `age_classes.id` | `RESTRICT` | required |
 | `competitors.weight_class_id` | `weight_classes.id` | `RESTRICT` | required; must belong to selected age class (see below) |
 | `competitors.grade_id` | `grades.id` | `SET NULL` | optional |
@@ -115,7 +115,7 @@ Reference table definitions:
 
 | Reference table | Doc |
 | --------------- | --- |
-| Clubs (federation hierarchy) | [clubs-schema.md](./clubs-schema.md) |
+| Associations (federation hierarchy) | [associations-schema.md](./associations-schema.md) |
 | Grades (Kyu/Dan) | [grades-schema.md](./grades-schema.md) |
 | Age classes (DJB) | [age-classes-schema.md](./age-classes-schema.md) |
 | Weight classes (DJB) | [weight-classes-schema.md](./weight-classes-schema.md) |
@@ -131,7 +131,7 @@ Participants are managed as a flat list on the host for now. A future `tournamen
 | `familyName`                 | `family_name`       | TEXT     | yes      | |
 | `gender`                     | `gender`            | CHAR(1)  | yes      | UI labels → DB codes: `female`→`f`, `male`→`m`, `diverse`→`d` |
 | `birthDate`                  | `birth_date`        | DATE     | yes      | `YYYY-MM-DD` |
-| `club`                       | `club_id`           | UUID     | yes      | FK → [clubs](./clubs-schema.md) |
+| `association`                       | `association_id`           | UUID     | yes      | FK → [associations](./associations-schema.md) |
 | `nationality`                | `nationality`       | CHAR(2)  | yes      | country code, ISO 3166-1 alpha-2 (e.g. `DE`) |
 | `weightClass`                | `weight_class_id`   | UUID     | yes      | FK → [weight_classes](./weight-classes-schema.md) |
 | `ageClass`                   | `age_class_id`      | UUID     | yes      | FK → [age_classes](./age-classes-schema.md) |
@@ -146,16 +146,16 @@ Participants are managed as a flat list on the host for now. A future `tournamen
 | —                            | `created_at`        | DATETIME | yes      | system, ISO 8601 timestamp |
 | —                            | `updated_at`        | DATETIME | no       | system, set by DB trigger on update |
 
-Club contact email is **not** stored on `competitors`; it belongs to `club_contacts` on the selected club (see [clubs-schema.md](./clubs-schema.md)).
+Association contact email is **not** stored on `competitors`; it belongs to `association_contacts` on the selected association (see [associations-schema.md](./associations-schema.md)).
 
-### Resolving club data for participants
+### Resolving association data for participants
 
 | Display need | Source |
 | ------------ | ------ |
-| Club name in overview / form | `clubs.name` or `clubs.short_name` via `competitors.club_id` |
-| District / regional context | `clubs` → `districts` → `regional_associations` (see [clubs-schema.md](./clubs-schema.md)) |
-| Club email | `club_contacts` where `club_id` matches and `contact_type = 'email'` |
-| Federation club number | `club_identifiers` where `type = 'djb_club_number'` (example) |
+| Association name in overview / form | `associations.name` or `associations.short_name` via `competitors.association_id` |
+| District / regional context | `associations` → `districts` → `regional_federations` (see [associations-schema.md](./associations-schema.md)) |
+| Association email | `association_contacts` where `association_id` matches and `contact_type = 'email'` |
+| Federation association number | `association_identifiers` where `type = 'djb_association_number'` (example) |
 
 Example lookup (reference only):
 
@@ -164,10 +164,10 @@ SELECT
   c.id,
   c.given_name,
   c.family_name,
-  cl.name AS club_name,
+  cl.name AS association_name,
   d.name AS district_name
 FROM competitors c
-JOIN clubs cl ON cl.id = c.club_id
+JOIN associations cl ON cl.id = c.association_id
 JOIN districts d ON d.id = cl.district_id
 WHERE c.id = ?;
 ```
@@ -179,7 +179,7 @@ WHERE c.id = ?;
 | `given_name`, `family_name` | Identity on start lists, mat calls, and results. |
 | `gender` | Category assignment (`f`, `m`, `d`). |
 | `birth_date` | Age-class verification; cannot be inferred reliably. |
-| `club_id` | Club affiliation; name and contacts resolved via [clubs](./clubs-schema.md) (`clubs` → `club_contacts`, etc.). |
+| `association_id` | Association affiliation; name and contacts resolved via [associations](./associations-schema.md) (`associations` → `association_contacts`, etc.). |
 | `nationality` | Federation requirement; country code for pass validation. |
 | `weight_class_id` | Core tournament grouping; every fight is weight-based. |
 | `age_class_id` | Core tournament grouping alongside weight. |
@@ -191,7 +191,7 @@ WHERE c.id = ?;
 | Field | Why optional |
 | ----- | ------------ |
 | `grade_id` | Kyu/Dan grade; not always available or needed at registration. |
-| `license_number` | Not required at every small club event. |
+| `license_number` | Not required at every small association event. |
 | `contact_phone` | Participant contact — collected only when needed (data minimization). |
 | `contact_person` | Useful for mat-side communication; not mandatory for draw/scoring. |
 | `registration_status` | Distinguishes regular vs. late registration; not always tracked at small events. |
@@ -226,7 +226,7 @@ flowchart LR
   subgraph checks["CHECK constraints"]
     G["gender IN ('f', 'm', 'd')"]
     BD["birth_date · DATE YYYY-MM-DD"]
-    CID["club_id · FK → clubs"]
+    CID["association_id · FK → associations"]
     WCID["weight_class_id · FK → weight_classes"]
     ACID["age_class_id · FK → age_classes"]
     GID["grade_id · FK → grades or NULL"]
@@ -239,17 +239,17 @@ flowchart LR
 
 - **`gender`**: `CHECK (gender IN ('f', 'm', 'd'))`
 - **`birth_date`**: calendar date `YYYY-MM-DD` (validated in application layer; SQLite has no native `DATE` type).
-- **`club_id`**: `FOREIGN KEY (club_id) REFERENCES clubs(id) ON DELETE RESTRICT`
+- **`association_id`**: `FOREIGN KEY (association_id) REFERENCES associations(id) ON DELETE RESTRICT`
 - **`age_class_id`**: `FOREIGN KEY (age_class_id) REFERENCES age_classes(id) ON DELETE RESTRICT`
 - **`weight_class_id`**: `FOREIGN KEY (weight_class_id) REFERENCES weight_classes(id) ON DELETE RESTRICT`
 - **`grade_id`**: `FOREIGN KEY (grade_id) REFERENCES grades(id) ON DELETE SET NULL`
 - **`nationality`**: country code, ISO 3166-1 alpha-2 (e.g. `DE`, `AT`); validated in application layer.
 - **`created_at`**, **`updated_at`**: ISO 8601 timestamps (e.g. `2026-06-29T14:30:00.000Z`); `updated_at` nullable.
-- **Indexes** (recommended): `idx_competitors_family_name`, `idx_competitors_club_id`, `idx_competitors_weight_class_id`, `idx_competitors_age_class_id`, `idx_competitors_grade_id`.
+- **Indexes** (recommended): `idx_competitors_family_name`, `idx_competitors_association_id`, `idx_competitors_weight_class_id`, `idx_competitors_age_class_id`, `idx_competitors_grade_id`.
 
 ## Target DDL (reference)
 
-Base table implemented in `V008__competitors_create_table.sql`. Create and seed `grades`, `age_classes`, `weight_classes`, and the [club hierarchy](./clubs-schema.md) **before** creating `competitors` (migration order: V004 → V007, then V008). `V009__competitors_allow_optional_weight_class.sql` makes `weight_class_id` optional, and `V010__competitors_import_fields.sql` adds `start_eligible`, `registration_status`, and `remarks` via `ALTER TABLE` (and repairs the triggers V009 dropped). The consolidated DDL below shows the resulting shape after all migrations.
+Base table implemented in `V008__competitors_create_table.sql`. Create and seed `grades`, `age_classes`, `weight_classes`, and the [association hierarchy](./associations-schema.md) **before** creating `competitors` (migration order: V004 → V007, then V008). `V009__competitors_allow_optional_weight_class.sql` makes `weight_class_id` optional, and `V010__competitors_import_fields.sql` adds `start_eligible`, `registration_status`, and `remarks` via `ALTER TABLE` (and repairs the triggers V009 dropped). The consolidated DDL below shows the resulting shape after all migrations.
 
 ```sql
 CREATE TABLE competitors (
@@ -258,8 +258,8 @@ CREATE TABLE competitors (
   family_name TEXT NOT NULL,
   gender TEXT NOT NULL CHECK (gender IN ('f', 'm', 'd')),
   birth_date TEXT NOT NULL,
-  club_id TEXT NOT NULL
-    REFERENCES clubs(id) ON DELETE RESTRICT,
+  association_id TEXT NOT NULL
+    REFERENCES associations(id) ON DELETE RESTRICT,
   nationality TEXT NOT NULL,
   weight_class_id TEXT
     REFERENCES weight_classes(id) ON DELETE RESTRICT,
@@ -285,7 +285,7 @@ CREATE TABLE competitors (
 );
 
 CREATE INDEX idx_competitors_family_name ON competitors(family_name);
-CREATE INDEX idx_competitors_club_id ON competitors(club_id);
+CREATE INDEX idx_competitors_association_id ON competitors(association_id);
 CREATE INDEX idx_competitors_weight_class_id ON competitors(weight_class_id);
 CREATE INDEX idx_competitors_age_class_id ON competitors(age_class_id);
 CREATE INDEX idx_competitors_grade_id ON competitors(grade_id);
@@ -304,7 +304,7 @@ CREATE INDEX idx_competitors_grade_id ON competitors(grade_id);
 
 | Doc | Relationship |
 | --- | ------------ |
-| [clubs-schema.md](./clubs-schema.md) | `competitors.club_id` → `clubs.id`; club name and contacts |
+| [associations-schema.md](./associations-schema.md) | `competitors.association_id` → `associations.id`; association name and contacts |
 | [grades-schema.md](./grades-schema.md) | `competitors.grade_id` |
 | [age-classes-schema.md](./age-classes-schema.md) | `competitors.age_class_id` |
 | [weight-classes-schema.md](./weight-classes-schema.md) | `competitors.weight_class_id` |

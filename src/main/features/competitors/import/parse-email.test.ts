@@ -22,7 +22,7 @@ function workbook(
 }
 
 describe('email column matching', () => {
-  it('maps table E-Mail Vereinsverantwortlicher column to club contact email', () => {
+  it('maps table E-Mail Vereinsverantwortlicher column to association contact email', () => {
     const result = matchColumns(
       workbook([
         column({ id: 'Sheet1#0', header: 'Vorname', values: ['Yuki'] }),
@@ -35,11 +35,11 @@ describe('email column matching', () => {
       ])
     )
 
-    expect(result.mapping.clubContactEmail).toBe('Sheet1#2')
+    expect(result.mapping.associationContactEmail).toBe('Sheet1#2')
     expect(result.mapping.remarks).toBeUndefined()
   })
 
-  it('maps a form E-Mail field to club contact email instead of remarks', () => {
+  it('maps a form E-Mail field to association contact email instead of remarks', () => {
     const result = matchColumns(
       workbook(
         [
@@ -57,7 +57,7 @@ describe('email column matching', () => {
       )
     )
 
-    expect(result.mapping.clubContactEmail).toBe('Sheet1#form#0#0')
+    expect(result.mapping.associationContactEmail).toBe('Sheet1#form#0#0')
     expect(result.mapping.remarks).toBeUndefined()
   })
 })

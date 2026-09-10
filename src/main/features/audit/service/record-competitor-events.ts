@@ -1,6 +1,6 @@
 import { insertAuditLog } from '../repository/audit.repository'
 
-const COMPETITOR_FIELD_NAMES = ['given_name', 'family_name', 'club', 'weight_class'] as const
+const COMPETITOR_FIELD_NAMES = ['given_name', 'family_name', 'association', 'weight_class'] as const
 
 /**
  * Records an audit entry when a competitor is created.

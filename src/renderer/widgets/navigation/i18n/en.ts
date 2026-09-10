@@ -11,6 +11,8 @@ export default {
     ariaLogout: 'Logout',
     participants: 'Participant list',
     ariaParticipants: 'Open participant list',
+    associations: 'Associations',
+    ariaAssociations: 'Open association list',
     settings: 'Settings',
     ariaSettings: 'Settings'
   }

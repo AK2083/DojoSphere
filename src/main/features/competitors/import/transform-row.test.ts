@@ -33,7 +33,7 @@ describe('transformRows', () => {
       familyName: 'T#1',
       gender: 'T#2',
       birthDate: 'T#3',
-      club: 'T#5',
+      association: 'T#5',
       weightKg: 'T#6'
     }
 
@@ -45,7 +45,7 @@ describe('transformRows', () => {
       familyName: 'Tanaka',
       gender: 'm',
       birthDate: '2012-01-01',
-      club: 'Dojo Nord',
+      association: 'Dojo Nord',
       weightKg: 52.5,
       startEligible: true,
       registrationStatus: null
@@ -78,7 +78,7 @@ describe('transformRows', () => {
     })
   })
 
-  it('maps club contact email from table or form sources', () => {
+  it('maps association contact email from table or form sources', () => {
     const wb = workbook(
       [
         column('T#0', 'T', 'Vorname', ['Lina', 'Emil']),
@@ -101,24 +101,24 @@ describe('transformRows', () => {
     const tableMapping: ColumnMapping = {
       givenName: 'T#0',
       familyName: 'T#1',
-      clubContactEmail: 'T#2'
+      associationContactEmail: 'T#2'
     }
 
     const formMapping: ColumnMapping = {
       givenName: 'T#0',
       familyName: 'T#1',
-      clubContactEmail: 'T#form#0#0'
+      associationContactEmail: 'T#form#0#0'
     }
 
-    expect(transformRows(wb, tableMapping)[0]?.clubContactEmail).toBe(
+    expect(transformRows(wb, tableMapping)[0]?.associationContactEmail).toBe(
       'kontakt@example-dojo.invalid'
     )
-    expect(transformRows(wb, formMapping)[0]?.clubContactEmail).toBe(
+    expect(transformRows(wb, formMapping)[0]?.associationContactEmail).toBe(
       'formular@example-dojo.invalid'
     )
   })
 
-  it('enriches contactPerson and contact phone from a separate club sheet', () => {
+  it('enriches contactPerson and contact phone from a separate association sheet', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -131,7 +131,7 @@ describe('transformRows', () => {
     const mapping: ColumnMapping = {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'T#2',
+      association: 'T#2',
       contactPerson: 'V#1',
       contactPhone: 'V#2'
     }
@@ -140,7 +140,7 @@ describe('transformRows', () => {
 
     expect(participant).toMatchObject({
       givenName: 'Yuki',
-      club: 'Dojo Nord',
+      association: 'Dojo Nord',
       contactPerson: 'S. Fischer',
       contactPhone: '+49 1'
     })
@@ -207,7 +207,7 @@ describe('transformRows', () => {
   it('returns no participants when no name column can anchor the primary sheet', () => {
     const wb = workbook([column('T#0', 'T', 'Verein', ['Dojo Nord'])])
 
-    expect(transformRows(wb, { club: 'T#0' })).toEqual([])
+    expect(transformRows(wb, { association: 'T#0' })).toEqual([])
   })
 
   it('applies Germany as nationality when the field is not mapped', () => {
@@ -242,7 +242,7 @@ describe('transformRows', () => {
     expect(participant?.birthDate).toBe('2012-02-01')
   })
 
-  it('skips club enrichment when the external sheet has no club column', () => {
+  it('skips association enrichment when the external sheet has no association column', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -253,14 +253,14 @@ describe('transformRows', () => {
     const [participant] = transformRows(wb, {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'T#2',
+      association: 'T#2',
       contactPerson: 'V#1'
     })
 
     expect(participant?.contactPerson).toBeUndefined()
   })
 
-  it('ignores empty club names in external enrichment sheets', () => {
+  it('ignores empty association names in external enrichment sheets', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -272,7 +272,7 @@ describe('transformRows', () => {
     const [participant] = transformRows(wb, {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'T#2',
+      association: 'T#2',
       contactPerson: 'V#1'
     })
 
@@ -296,7 +296,7 @@ describe('transformRows', () => {
     expect(participants[1]?.remarks).toBeUndefined()
   })
 
-  it('enriches phone numbers from an external club sheet', () => {
+  it('enriches phone numbers from an external association sheet', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -308,14 +308,14 @@ describe('transformRows', () => {
     const [participant] = transformRows(wb, {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'T#2',
+      association: 'T#2',
       contactPhone: 'V#1'
     })
 
     expect(participant?.contactPhone).toBe('+49 555 010201')
   })
 
-  it('uses an explicitly mapped club column on the external enrichment sheet', () => {
+  it('uses an explicitly mapped association column on the external enrichment sheet', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -326,7 +326,7 @@ describe('transformRows', () => {
     const [participant] = transformRows(wb, {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'V#0',
+      association: 'V#0',
       contactPerson: 'V#1'
     })
 
@@ -355,7 +355,7 @@ describe('transformRows', () => {
     })
   })
 
-  it('keeps mapped pass numbers and skips club enrichment without a club name', () => {
+  it('keeps mapped pass numbers and skips association enrichment without a association name', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki']),
       column('T#1', 'T', 'Nachname', ['Tanaka']),
@@ -372,7 +372,7 @@ describe('transformRows', () => {
       givenName: 'Yuki',
       familyName: 'Tanaka',
       passNumber: 'JP-42',
-      club: undefined
+      association: undefined
     })
   })
 
@@ -424,7 +424,7 @@ describe('transformRows', () => {
     expect(participant?.birthDate).toBe('2012-02-01')
   })
 
-  it('ignores missing club names while building external enrichment', () => {
+  it('ignores missing association names while building external enrichment', () => {
     const wb = workbook([
       column('T#0', 'T', 'Vorname', ['Yuki', 'Anna']),
       column('T#1', 'T', 'Nachname', ['Tanaka', 'Weber']),
@@ -436,7 +436,7 @@ describe('transformRows', () => {
     const participants = transformRows(wb, {
       givenName: 'T#0',
       familyName: 'T#1',
-      club: 'T#2',
+      association: 'T#2',
       contactPerson: 'V#1'
     })
 

@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS competitors (
       length(birth_date) = 10
       AND birth_date GLOB '????-??-??'
     ),
-  club_id TEXT NOT NULL
-    REFERENCES clubs(id) ON DELETE RESTRICT,
+  association_id TEXT NOT NULL
+    REFERENCES associations(id) ON DELETE RESTRICT,
   nationality TEXT NOT NULL
     CHECK (
       length(nationality) = 2
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS competitors (
 );
 
 CREATE INDEX idx_competitors_family_name ON competitors(family_name);
-CREATE INDEX idx_competitors_club_id ON competitors(club_id);
+CREATE INDEX idx_competitors_association_id ON competitors(association_id);
 CREATE INDEX idx_competitors_weight_class_id ON competitors(weight_class_id);
 CREATE INDEX idx_competitors_age_class_id ON competitors(age_class_id);
 CREATE INDEX idx_competitors_grade_id ON competitors(grade_id);
@@ -74,19 +74,19 @@ BEGIN
   SELECT RAISE(ABORT, 'nationality must be uppercase ISO 3166-1 alpha-2');
 END;
 
-CREATE TRIGGER IF NOT EXISTS competitors_require_active_club_insert
+CREATE TRIGGER IF NOT EXISTS competitors_require_active_association_insert
 BEFORE INSERT ON competitors
-WHEN (SELECT is_active FROM clubs WHERE id = NEW.club_id) != 1
+WHEN (SELECT is_active FROM associations WHERE id = NEW.association_id) != 1
 BEGIN
-  SELECT RAISE(ABORT, 'club is not active');
+  SELECT RAISE(ABORT, 'association is not active');
 END;
 
-CREATE TRIGGER IF NOT EXISTS competitors_require_active_club_update
+CREATE TRIGGER IF NOT EXISTS competitors_require_active_association_update
 BEFORE UPDATE ON competitors
-WHEN NEW.club_id != OLD.club_id
-  AND (SELECT is_active FROM clubs WHERE id = NEW.club_id) != 1
+WHEN NEW.association_id != OLD.association_id
+  AND (SELECT is_active FROM associations WHERE id = NEW.association_id) != 1
 BEGIN
-  SELECT RAISE(ABORT, 'club is not active');
+  SELECT RAISE(ABORT, 'association is not active');
 END;
 
 CREATE TRIGGER IF NOT EXISTS competitors_validate_weight_class_insert

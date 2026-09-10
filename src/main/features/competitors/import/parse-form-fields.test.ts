@@ -5,7 +5,7 @@ import { parseFormFields } from './parse-form-fields'
 describe('parseFormFields', () => {
   it('extracts label/value pairs from rows above the table header', () => {
     const rows = [
-      ['Ausrichter', 'Judo-Club Musterstadt', 'Meldeschluss', '05.09.2026'],
+      ['Ausrichter', 'Judo-Association Musterstadt', 'Meldeschluss', '05.09.2026'],
       ['Veranstaltung', 'Musterstadt Nachwuchs', 'Wettkampftag', '19.09.2026'],
       ['Meldender Verein', 'TSV Beispielhausen', 'Kontaktperson', 'Anna Trainerin'],
       ['E-Mail', 'anna@beispielhausen.de', 'Telefon', '+49 170 1234567'],
@@ -18,7 +18,7 @@ describe('parseFormFields', () => {
     expect(fields).toHaveLength(8)
     expect(fields[0]).toMatchObject({
       label: 'Ausrichter',
-      value: 'Judo-Club Musterstadt',
+      value: 'Judo-Association Musterstadt',
       id: 'Meldeformular#form#0#0'
     })
     expect(fields.find((field) => field.label === 'Meldeschluss')?.value).toBe('05.09.2026')

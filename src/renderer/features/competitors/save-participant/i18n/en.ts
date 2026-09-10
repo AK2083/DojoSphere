@@ -102,7 +102,7 @@ export default {
       familyName: 'Family name',
       gender: 'Gender',
       birthDate: 'Date of birth',
-      club: 'Club',
+      association: 'Association',
       nationality: 'Nationality',
       weightClass: 'Weight class',
       ageClass: 'Age class',
@@ -158,7 +158,7 @@ export default {
   },
   reference: {
     gradeNone: 'No grade',
-    clubs: {
+    associations: {
       unknown: 'Unknown'
     },
     nationalities: {

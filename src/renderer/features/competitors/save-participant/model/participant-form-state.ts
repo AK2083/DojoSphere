@@ -12,7 +12,7 @@ export type ParticipantFormState = {
   familyName: string
   gender: ParticipantGender
   birthDate: string
-  clubId: string
+  associationId: string
   nationality: string
   ageClassId: string
   weightClassId: string
@@ -38,7 +38,7 @@ export function createEmptyParticipantForm(): ParticipantFormState {
     familyName: '',
     gender: '',
     birthDate: '',
-    clubId: '',
+    associationId: '',
     nationality: '',
     ageClassId: '',
     weightClassId: '',

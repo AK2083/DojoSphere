@@ -44,7 +44,9 @@ const rowErrorHint = computed(() => {
 
     <div class="import-result-entry__content">
       <span class="import-result-entry__name">{{ fullName }}</span>
-      <span class="import-result-entry__club text-medium-emphasis">{{ participant.club }}</span>
+      <span class="import-result-entry__association text-medium-emphasis">
+        {{ participant.association }}
+      </span>
       <span v-if="rowErrorHint" class="import-result-entry__error text-medium-emphasis">
         {{ rowErrorHint }}
       </span>
@@ -77,7 +79,7 @@ const rowErrorHint = computed(() => {
   line-height: 1.3;
 }
 
-.import-result-entry__club {
+.import-result-entry__association {
   font-size: 0.75rem;
   line-height: 1.25;
 }

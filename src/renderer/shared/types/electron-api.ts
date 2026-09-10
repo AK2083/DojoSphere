@@ -73,12 +73,12 @@ export interface Competitor {
   birthDate: string
   nationality: string
   passNumber: string
-  club: string | null
+  association: string | null
   weightClass: string | null
   licenseNumber: string | null
   contactPhone: string | null
   contactPerson: string | null
-  clubId: string
+  associationId: string
   weightClassId: string | null
   ageClassId: string
   gradeId: string | null
@@ -108,9 +108,9 @@ interface CompetitorDetailInput {
 export interface CreateCompetitorInput extends CompetitorDetailInput {
   givenName: string
   familyName: string
-  club?: string | null
+  association?: string | null
   weightClass?: string | null
-  clubId?: string | null
+  associationId?: string | null
   weightClassId?: string | null
   ageClassId?: string | null
 }
@@ -119,9 +119,9 @@ export interface CreateCompetitorInput extends CompetitorDetailInput {
 export interface UpdateCompetitorInput extends CompetitorDetailInput {
   givenName?: string
   familyName?: string
-  club?: string | null
+  association?: string | null
   weightClass?: string | null
-  clubId?: string | null
+  associationId?: string | null
   weightClassId?: string | null
   ageClassId?: string | null
 }
@@ -161,7 +161,7 @@ export interface ImportRowResult {
   index: number
   givenName: string
   familyName: string
-  club: string
+  association: string
   success: boolean
   errorCode?: string
 }

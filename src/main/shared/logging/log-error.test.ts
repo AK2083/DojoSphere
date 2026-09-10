@@ -26,7 +26,30 @@ describe('logError', () => {
 
     logError(error, 'database', 'persist')
 
-    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:database]', 'persist', { code: 'db_error' })
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[dojosphere:database]',
+      'persist',
+      expect.objectContaining({
+        code: 'db_error',
+        message: 'persist failed'
+      })
+    )
+  })
+
+  it('omits stack when the error has none', () => {
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined)
+    const error = new Error('no stack')
+    error.stack = undefined
+
+    logError(error, 'database', 'persist')
+
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[dojosphere:database]',
+      'persist',
+      expect.not.objectContaining({
+        stack: expect.anything()
+      })
+    )
   })
 
   it('normalizes non-error values with toError', () => {

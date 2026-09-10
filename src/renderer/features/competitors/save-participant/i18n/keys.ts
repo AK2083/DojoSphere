@@ -19,7 +19,7 @@ const translationKeys = {
       familyName: 'competitors.saveParticipant.form.fields.familyName',
       gender: 'competitors.saveParticipant.form.fields.gender',
       birthDate: 'competitors.saveParticipant.form.fields.birthDate',
-      club: 'competitors.saveParticipant.form.fields.club',
+      association: 'competitors.saveParticipant.form.fields.association',
       nationality: 'competitors.saveParticipant.form.fields.nationality',
       weightClass: 'competitors.saveParticipant.form.fields.weightClass',
       ageClass: 'competitors.saveParticipant.form.fields.ageClass',
@@ -74,8 +74,8 @@ const translationKeys = {
   },
   reference: {
     gradeNone: 'competitors.saveParticipant.reference.gradeNone',
-    clubs: {
-      unknown: 'competitors.saveParticipant.reference.clubs.unknown'
+    associations: {
+      unknown: 'competitors.saveParticipant.reference.associations.unknown'
     },
     nationalities: {
       DE: 'competitors.saveParticipant.reference.nationalities.DE',

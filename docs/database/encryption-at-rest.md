@@ -128,7 +128,7 @@ Implications:
 | Situation | Behaviour |
 | --------- | --------- |
 | Developer laptop | Own `database.db` / `database.key` under dev `userData`; fictional test data. |
-| Club PC with installed build | Independent key pair; real tournament data stays on that host. |
+| Association PC with installed build | Independent key pair; real tournament data stays on that host. |
 | CI / Vitest | No Electron `safeStorage` — use `:memory:` DB or fixed test DEK via env (see Testing impact). |
 | Playwright browser-only | No SQLite at all — unrelated to SQLCipher. |
 
@@ -168,7 +168,7 @@ Repositories and migrations **do not** change — they already use `@main/shared
 
 ## Performance
 
-For DojoSphere’s scale (small club tournaments, tens to low hundreds of participants, single host), SQLCipher overhead is **expected to be negligible** for normal UI operations.
+For DojoSphere’s scale (small association tournaments, tens to low hundreds of participants, single host), SQLCipher overhead is **expected to be negligible** for normal UI operations.
 
 | Operation | Typical impact |
 | --------- | ---------------- |
@@ -183,7 +183,7 @@ Why it stays fast enough here:
 - SQLCipher encrypts **pages** (4–16 KB), not every JavaScript property access.
 - Queries already touch few pages for small tables.
 - WAL mode (`pragmas.ts`) should remain enabled.
-- Bottlenecks are unlikely to be crypto before IPC, Vue rendering, or disk I/O on older club hardware.
+- Bottlenecks are unlikely to be crypto before IPC, Vue rendering, or disk I/O on older association hardware.
 
 What would hurt performance (and is out of scope):
 

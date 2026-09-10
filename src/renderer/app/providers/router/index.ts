@@ -8,6 +8,7 @@ import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
+import { ASSOCIATIONS_OVERVIEW_PERMISSION } from '@shared/constants/associations-overview-permission'
 import { PARTICIPANTS_OVERVIEW_PERMISSION } from '@shared/constants/participants-overview-permission'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
 
@@ -104,6 +105,42 @@ const routes = [
       }
     },
     component: () => import('@pages/participant-form')
+  },
+  {
+    path: '/associations',
+    name: 'associations',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.read
+      }
+    },
+    component: () => import('@pages/associations')
+  },
+  {
+    path: '/associations/new',
+    name: 'association-create',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.create
+      }
+    },
+    component: () => import('@pages/association-form')
+  },
+  {
+    path: '/associations/:id/edit',
+    name: 'association-edit',
+    meta: {
+      requiresAuth: true,
+      requiredPermission: {
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.update
+      }
+    },
+    component: () => import('@pages/association-form')
   }
 ]
 

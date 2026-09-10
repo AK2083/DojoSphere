@@ -113,7 +113,7 @@ export function isEventMetadataHeader(header: string): boolean {
 
 /**
  * Returns whether a header label refers to a competition area/region column
- * rather than a club name.
+ * rather than a association name.
  *
  * @param header - Column or form label text.
  * @returns True when the header refers to a competition area or region.
@@ -135,12 +135,12 @@ export function isAreaHeader(header: string): boolean {
 }
 
 /**
- * Returns whether a header label refers to a participant club column.
+ * Returns whether a header label refers to a participant association column.
  *
  * @param header - Column or form label text.
- * @returns True when the header refers to a club column.
+ * @returns True when the header refers to a association column.
  */
-export function isClubHeader(header: string): boolean {
+export function isAssociationHeader(header: string): boolean {
   const normalized = normalizeHeader(header)
 
   if (!normalized || isAreaHeader(header) || isEmailHeader(header)) {
@@ -150,6 +150,7 @@ export function isClubHeader(header: string): boolean {
   if (
     normalized.includes('meldenderverein') ||
     normalized.includes('vereinclub') ||
+    normalized.includes('vereinassociation') ||
     normalized === 'vereinsname'
   ) {
     return true
@@ -157,7 +158,7 @@ export function isClubHeader(header: string): boolean {
 
   return (
     normalized.includes('verein') ||
-    normalized.includes('club') ||
+    normalized.includes('association') ||
     normalized.includes('dojo') ||
     normalized.includes('mannschaft')
   )

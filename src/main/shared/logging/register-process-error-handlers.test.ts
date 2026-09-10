@@ -55,7 +55,13 @@ describe('registerProcessErrorHandlers', () => {
     expect(errorSpy).toHaveBeenCalledWith('[dojosphere:main:process]', 'Uncaught exception', {
       message: 'boom'
     })
-    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:main]', 'uncaughtException', {})
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[dojosphere:main]',
+      'uncaughtException',
+      expect.objectContaining({
+        message: 'boom'
+      })
+    )
   })
 
   it('logs unhandled rejections', () => {
@@ -70,6 +76,12 @@ describe('registerProcessErrorHandlers', () => {
       'Unhandled promise rejection',
       { message: 'rejected' }
     )
-    expect(errorSpy).toHaveBeenCalledWith('[dojosphere:main]', 'unhandledRejection', {})
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[dojosphere:main]',
+      'unhandledRejection',
+      expect.objectContaining({
+        message: 'rejected'
+      })
+    )
   })
 })

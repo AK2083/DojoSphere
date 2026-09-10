@@ -28,7 +28,7 @@ export function mapFormStateToInput(fields: ParticipantFormState): CreateCompeti
     birthDate: fields.birthDate || undefined,
     nationality: fields.nationality || undefined,
     passNumber: fields.passNumber.trim() || undefined,
-    clubId: fields.clubId || undefined,
+    associationId: fields.associationId || undefined,
     ageClassId: fields.ageClassId || undefined,
     weightClassId: fields.weightClassId || undefined,
     gradeId: toOptional(fields.gradeId),

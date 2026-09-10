@@ -1,23 +1,23 @@
-# Clubs — database schema
+# Associations — database schema
 
-Hierarchy for judo organizations and clubs: country → national association → regional association → district → club. Club details (identifiers, addresses, contacts) are normalized into child tables.
+Hierarchy for judo organizations and associations: country → national association → regional association → district → association. Association details (identifiers, addresses, contacts) are normalized into child tables.
 
-Used by `competitors.club_id` — see [participants-schema.md](./participants-schema.md). The UI term is **club**; participant rows reference `clubs.id` only (no denormalized club name on `competitors`).
+Used by `competitors.association_id` — see [participants-schema.md](./participants-schema.md). The UI term is **association**; participant rows reference `associations.id` only (no denormalized association name on `competitors`).
 
-Reference and federation data — no competitor personal data in these tables except where contacts are stored for clubs (operator responsibility for retention and publication via `is_public`).
+Reference and federation data — no competitor personal data in these tables except where contacts are stored for associations (operator responsibility for retention and publication via `is_public`).
 
 ## Entity relationship
 
 ```mermaid
 erDiagram
   countries ||--o{ associations : "country_id"
-  associations ||--o{ regional_associations : "association_id"
-  regional_associations ||--o{ districts : "regional_association_id"
-  districts ||--o{ clubs : "district_id"
-  clubs ||--o{ club_identifiers : "club_id"
-  clubs ||--o{ club_contacts : "club_id"
-  clubs ||--o{ club_addresses : "club_id"
-  clubs ||--o{ competitors : "club_id"
+  associations ||--o{ regional_federations : "federation_id"
+  regional_federations ||--o{ districts : "regional_federation_id"
+  districts ||--o{ associations : "district_id"
+  associations ||--o{ association_identifiers : "association_id"
+  associations ||--o{ association_contacts : "association_id"
+  associations ||--o{ association_addresses : "association_id"
+  associations ||--o{ competitors : "association_id"
 
   countries {
     UUID id "required · PK"
@@ -33,9 +33,9 @@ erDiagram
     TEXT website "optional"
   }
 
-  regional_associations {
+  regional_federations {
     UUID id "required · PK"
-    UUID association_id "required · FK → associations"
+    UUID federation_id "required · FK → associations"
     TEXT name "required"
     TEXT short_name "optional"
     TEXT website "optional"
@@ -43,13 +43,13 @@ erDiagram
 
   districts {
     UUID id "required · PK"
-    UUID regional_association_id "required · FK → regional_associations"
+    UUID regional_federation_id "required · FK → regional_federations"
     TEXT name "required"
     TEXT short_name "optional"
     INTEGER sort_order "required"
   }
 
-  clubs {
+  associations {
     UUID id "required · PK"
     UUID district_id "required · FK → districts"
     TEXT name "required"
@@ -62,17 +62,17 @@ erDiagram
     DATETIME updated_at "optional · system"
   }
 
-  club_identifiers {
+  association_identifiers {
     UUID id "required · PK"
-    UUID club_id "required · FK → clubs"
+    UUID association_id "required · FK → associations"
     TEXT type "required"
     TEXT value "required"
     TEXT authority "optional"
   }
 
-  club_addresses {
+  association_addresses {
     UUID id "required · PK"
-    UUID club_id "required · FK → clubs"
+    UUID association_id "required · FK → associations"
     TEXT street "optional"
     TEXT house_number "optional"
     TEXT postal_code "optional"
@@ -81,9 +81,9 @@ erDiagram
     TEXT address_type "required"
   }
 
-  club_contacts {
+  association_contacts {
     UUID id "required · PK"
-    UUID club_id "required · FK → clubs"
+    UUID association_id "required · FK → associations"
     TEXT contact_type "required"
     TEXT value "required"
     TEXT label "optional"
@@ -92,7 +92,7 @@ erDiagram
 
   competitors {
     UUID id "required · PK"
-    UUID club_id "required · FK → clubs"
+    UUID association_id "required · FK → associations"
     TEXT given_name "required"
     TEXT family_name "required"
     DATE birth_date "required"
@@ -112,13 +112,13 @@ Full `competitors` definition: [participants-schema.md](./participants-schema.md
 ```mermaid
 flowchart TB
   countries --> associations
-  associations --> regional_associations
-  regional_associations --> districts
-  districts --> clubs
-  clubs --> club_identifiers
-  clubs --> club_addresses
-  clubs --> club_contacts
-  clubs --> competitors
+  associations --> regional_federations
+  regional_federations --> districts
+  districts --> associations
+  associations --> association_identifiers
+  associations --> association_addresses
+  associations --> association_contacts
+  associations --> competitors
 ```
 
 ## Tables
@@ -131,7 +131,7 @@ flowchart TB
 | `name` | TEXT | yes | display name |
 | `iso_code` | CHAR(2) | yes | ISO 3166-1 alpha-2, unique |
 
-### `associations`
+### `federations`
 
 National federations (e.g. DJB for Germany).
 
@@ -143,14 +143,14 @@ National federations (e.g. DJB for Germany).
 | `short_name` | TEXT | no | |
 | `website` | TEXT | no | URL |
 
-### `regional_associations`
+### `regional_federations`
 
 State / regional federations under a national association.
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
-| `association_id` | UUID | yes | FK → `associations.id` |
+| `federation_id` | UUID | yes | FK → `associations.id` |
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `website` | TEXT | no | URL |
@@ -162,44 +162,44 @@ Districts (Bezirke) under a regional association.
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
-| `regional_association_id` | UUID | yes | FK → `regional_associations.id` |
+| `regional_federation_id` | UUID | yes | FK → `regional_federations.id` |
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `sort_order` | INTEGER | yes | UI sort within parent |
 
-### `clubs`
+### `associations`
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
-| `id` | UUID | yes (PK) | referenced by `competitors.club_id` |
+| `id` | UUID | yes (PK) | referenced by `competitors.association_id` |
 | `district_id` | UUID | yes | FK → `districts.id` |
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
-| `city` | TEXT | no | primary city label (detail in `club_addresses`) |
+| `city` | TEXT | no | primary city label (detail in `association_addresses`) |
 | `website` | TEXT | no | URL |
 | `is_active` | INTEGER | yes | `1` = active, `0` = inactive |
 | `source` | TEXT | no | import origin, e.g. `djb-registry`, `manual` |
 | `created_at` | DATETIME | yes | system |
 | `updated_at` | DATETIME | no | system, set by DB trigger on update |
 
-### `club_identifiers`
+### `association_identifiers`
 
-External or federation IDs (e.g. club number).
+External or federation IDs (e.g. association number).
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
-| `club_id` | UUID | yes | FK → `clubs.id` |
-| `type` | TEXT | yes | e.g. `djb_club_number` |
+| `association_id` | UUID | yes | FK → `associations.id` |
+| `type` | TEXT | yes | e.g. `djb_association_number` |
 | `value` | TEXT | yes | identifier value |
 | `authority` | TEXT | no | issuing body |
 
-### `club_addresses`
+### `association_addresses`
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
-| `club_id` | UUID | yes | FK → `clubs.id` |
+| `association_id` | UUID | yes | FK → `associations.id` |
 | `street` | TEXT | no | |
 | `house_number` | TEXT | no | |
 | `postal_code` | TEXT | no | |
@@ -207,14 +207,14 @@ External or federation IDs (e.g. club number).
 | `country_code` | CHAR(2) | no | ISO 3166-1 alpha-2 |
 | `address_type` | TEXT | yes | e.g. `primary`, `training` |
 
-### `club_contacts`
+### `association_contacts`
 
-Club contact data (email, phone, etc.). Use `is_public` for data minimization in audience views.
+Association contact data (email, phone, etc.). Use `is_public` for data minimization in audience views.
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
-| `club_id` | UUID | yes | FK → `clubs.id` |
+| `association_id` | UUID | yes | FK → `associations.id` |
 | `contact_type` | TEXT | yes | e.g. `email`, `phone` |
 | `value` | TEXT | yes | contact value |
 | `label` | TEXT | no | e.g. `registration`, `general` |
@@ -224,18 +224,18 @@ Club contact data (email, phone, etc.). Use `is_public` for data minimization in
 
 | Child table | Column | Parent | ON DELETE |
 | ----------- | ------ | ------ | --------- |
-| `associations` | `country_id` | `countries.id` | `RESTRICT` |
-| `regional_associations` | `association_id` | `associations.id` | `RESTRICT` |
-| `districts` | `regional_association_id` | `regional_associations.id` | `RESTRICT` |
-| `clubs` | `district_id` | `districts.id` | `RESTRICT` |
-| `club_identifiers` | `club_id` | `clubs.id` | `CASCADE` |
-| `club_addresses` | `club_id` | `clubs.id` | `CASCADE` |
-| `club_contacts` | `club_id` | `clubs.id` | `CASCADE` |
-| `competitors` | `club_id` | `clubs.id` | `RESTRICT` |
+| `federations` | `country_id` | `countries.id` | `RESTRICT` |
+| `regional_federations` | `federation_id` | `federations.id` | `RESTRICT` |
+| `districts` | `regional_federation_id` | `regional_federations.id` | `RESTRICT` |
+| `associations` | `district_id` | `districts.id` | `RESTRICT` |
+| `association_identifiers` | `association_id` | `associations.id` | `CASCADE` |
+| `association_addresses` | `association_id` | `associations.id` | `CASCADE` |
+| `association_contacts` | `association_id` | `associations.id` | `CASCADE` |
+| `competitors` | `association_id` | `associations.id` | `RESTRICT` |
 
 ## Target DDL (reference)
 
-Migration order: `countries` → `associations` → `regional_associations` → `districts` → `clubs` → child tables → recreate `competitors` with `club_id` FK.
+Migration order: `countries` → `federations` → `regional_federations` → `districts` → `associations` → child tables → recreate `competitors` with `association_id` FK.
 
 ```sql
 CREATE TABLE countries (
@@ -244,7 +244,7 @@ CREATE TABLE countries (
   iso_code TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE associations (
+CREATE TABLE federations (
   id TEXT PRIMARY KEY,
   country_id TEXT NOT NULL REFERENCES countries(id) ON DELETE RESTRICT,
   name TEXT NOT NULL,
@@ -252,9 +252,9 @@ CREATE TABLE associations (
   website TEXT
 );
 
-CREATE TABLE regional_associations (
+CREATE TABLE regional_federations (
   id TEXT PRIMARY KEY,
-  association_id TEXT NOT NULL REFERENCES associations(id) ON DELETE RESTRICT,
+  federation_id TEXT NOT NULL REFERENCES federations(id) ON DELETE RESTRICT,
   name TEXT NOT NULL,
   short_name TEXT,
   website TEXT
@@ -262,14 +262,14 @@ CREATE TABLE regional_associations (
 
 CREATE TABLE districts (
   id TEXT PRIMARY KEY,
-  regional_association_id TEXT NOT NULL
-    REFERENCES regional_associations(id) ON DELETE RESTRICT,
+  regional_federation_id TEXT NOT NULL
+    REFERENCES regional_federations(id) ON DELETE RESTRICT,
   name TEXT NOT NULL,
   short_name TEXT,
   sort_order INTEGER NOT NULL
 );
 
-CREATE TABLE clubs (
+CREATE TABLE associations (
   id TEXT PRIMARY KEY,
   district_id TEXT NOT NULL REFERENCES districts(id) ON DELETE RESTRICT,
   name TEXT NOT NULL,
@@ -282,17 +282,17 @@ CREATE TABLE clubs (
   updated_at TEXT
 );
 
-CREATE TABLE club_identifiers (
+CREATE TABLE association_identifiers (
   id TEXT PRIMARY KEY,
-  club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  association_id TEXT NOT NULL REFERENCES associations(id) ON DELETE CASCADE,
   type TEXT NOT NULL,
   value TEXT NOT NULL,
   authority TEXT
 );
 
-CREATE TABLE club_addresses (
+CREATE TABLE association_addresses (
   id TEXT PRIMARY KEY,
-  club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  association_id TEXT NOT NULL REFERENCES associations(id) ON DELETE CASCADE,
   street TEXT,
   house_number TEXT,
   postal_code TEXT,
@@ -301,30 +301,30 @@ CREATE TABLE club_addresses (
   address_type TEXT NOT NULL
 );
 
-CREATE TABLE club_contacts (
+CREATE TABLE association_contacts (
   id TEXT PRIMARY KEY,
-  club_id TEXT NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  association_id TEXT NOT NULL REFERENCES associations(id) ON DELETE CASCADE,
   contact_type TEXT NOT NULL,
   value TEXT NOT NULL,
   label TEXT,
   is_public INTEGER NOT NULL DEFAULT 0 CHECK (is_public IN (0, 1))
 );
 
-CREATE INDEX idx_associations_country_id ON associations(country_id);
-CREATE INDEX idx_regional_associations_association_id ON regional_associations(association_id);
-CREATE INDEX idx_districts_regional_association_id ON districts(regional_association_id);
-CREATE INDEX idx_clubs_district_id ON clubs(district_id);
-CREATE INDEX idx_clubs_name ON clubs(name);
-CREATE INDEX idx_club_identifiers_club_id ON club_identifiers(club_id);
-CREATE INDEX idx_club_addresses_club_id ON club_addresses(club_id);
-CREATE INDEX idx_club_contacts_club_id ON club_contacts(club_id);
+CREATE INDEX idx_federations_country_id ON federations(country_id);
+CREATE INDEX idx_regional_federations_federation_id ON regional_federations(federation_id);
+CREATE INDEX idx_districts_regional_federation_id ON districts(regional_federation_id);
+CREATE INDEX idx_associations_district_id ON associations(district_id);
+CREATE INDEX idx_associations_name ON associations(name);
+CREATE INDEX idx_association_identifiers_association_id ON association_identifiers(association_id);
+CREATE INDEX idx_association_addresses_association_id ON association_addresses(association_id);
+CREATE INDEX idx_association_contacts_association_id ON association_contacts(association_id);
 ```
 
 ## Related
 
 | Doc | Relationship |
 | --- | ------------ |
-| [participants-schema.md](./participants-schema.md) | `competitors` table — full participant columns, FK on `club_id` |
+| [participants-schema.md](./participants-schema.md) | `competitors` table — full participant columns, FK on `association_id` |
 | [grades-schema.md](./grades-schema.md) | `competitors.grade_id` |
 | [age-classes-schema.md](./age-classes-schema.md) | `competitors.age_class_id` |
 | [weight-classes-schema.md](./weight-classes-schema.md) | `competitors.weight_class_id` |
@@ -332,19 +332,19 @@ CREATE INDEX idx_club_contacts_club_id ON club_contacts(club_id);
 
 ## Participants link
 
-`competitors` is the participants table ([participants-schema.md](./participants-schema.md)). Only `club_id` connects the two domains:
+`competitors` is the participants table ([participants-schema.md](./participants-schema.md)). Only `association_id` connects the two domains:
 
 ```mermaid
 erDiagram
-  clubs ||--o{ competitors : "club_id"
-  clubs {
+  associations ||--o{ competitors : "association_id"
+  associations {
     UUID id PK
     TEXT name
     UUID district_id FK
   }
   competitors {
     UUID id PK
-    UUID club_id FK
+    UUID association_id FK
     TEXT given_name
     TEXT family_name
     DATE birth_date
@@ -357,22 +357,22 @@ erDiagram
 
 | `competitors` column | Defined in |
 | -------------------- | ---------- |
-| `club_id` | this schema (`clubs.id`) |
+| `association_id` | this schema (`associations.id`) |
 | `given_name`, `family_name`, `birth_date`, `gender`, `nationality`, `pass_number`, … | [participants-schema.md](./participants-schema.md) |
 | `age_class_id`, `weight_class_id`, `grade_id` | [age-classes](./age-classes-schema.md), [weight-classes](./weight-classes-schema.md), [grades](./grades-schema.md) |
 
-**Migration order:** create and seed the club hierarchy (`countries` … `club_contacts`), then reference tables (`grades`, `age_classes`, `weight_classes`), then create or recreate `competitors` with all foreign keys.
+**Migration order:** create and seed the association hierarchy (`countries` … `association_contacts`), then reference tables (`grades`, `age_classes`, `weight_classes`), then create or recreate `competitors` with all foreign keys.
 
 ## UI mapping
 
 | UI | Database |
 | -- | -------- |
-| `ParticipantForm.club` (selector) | `competitors.club_id` → `clubs.id` |
-| Club display name | `clubs.name` (or `short_name`) |
-| Club contact email (removed from participant form) | `club_contacts` where `contact_type = 'email'` |
+| `ParticipantForm.association` (selector) | `competitors.association_id` → `associations.id` |
+| Association display name | `associations.name` (or `short_name`) |
+| Association contact email (removed from participant form) | `association_contacts` where `contact_type = 'email'` |
 
-| Club selector label | `clubs.name` joined via `competitors.club_id` |
-| Participant overview column “Club” | same join — not stored on `competitors` |
+| Association selector label | `associations.name` joined via `competitors.association_id` |
+| Participant overview column “Association” | same join — not stored on `competitors` |
 
 ## Related
 

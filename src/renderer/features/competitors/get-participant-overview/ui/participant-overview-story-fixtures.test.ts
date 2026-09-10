@@ -40,7 +40,14 @@ describe('participant-overview-story-fixtures', () => {
     const keys = storyFieldHeaders.map((header) => header.key)
 
     expect(keys).toEqual(
-      expect.arrayContaining(['weightClass', 'ageClass', 'gender', 'grade', 'passNumber', 'club'])
+      expect.arrayContaining([
+        'weightClass',
+        'ageClass',
+        'gender',
+        'grade',
+        'passNumber',
+        'association'
+      ])
     )
   })
 

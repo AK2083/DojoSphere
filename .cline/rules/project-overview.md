@@ -5,7 +5,7 @@ alwaysApply: true
 
 # DojoSphere — Project Overview
 
-Open-source Electron application for organizing **small judo tournaments** in clubs and local competition settings. Target audience: volunteer organizers without commercial tournament software.
+Open-source Electron application for organizing **small judo tournaments** in associations and local competition settings. Target audience: volunteer organizers without commercial tournament software.
 
 ## Vision and user roles
 
@@ -27,7 +27,7 @@ When building new features, consider these roles and the approval flow: scorekee
 
 ## Technical guidelines
 
-- **Frontend:** Vue 3 (open source, suitable for club projects), Vuetify, Vue Router, vue-i18n
+- **Frontend:** Vue 3 (open source, suitable for association projects), Vuetify, Vue Router, vue-i18n
 - **Desktop:** Electron — primary application for the tournament director
 - **Local-first data:** SQLite in the Electron main process; renderer accesses only via IPC/preload
 - **Cloud optional:** Supabase for authentication and cloud storage/sync — configuration and sync in **Settings**
@@ -56,4 +56,4 @@ Tournament competitors are natural persons — protect personal data:
 - Small tournaments: simple operation for volunteers matters more than enterprise features
 - Tournament director workflow (Electron) and browser clients (scorekeepers/audience) are separate access paths — shared domain logic, different UI/permissions
 - i18n for all UI text; no hardcoded strings
-- Open Source (MIT): consider club compatibility for code and dependencies
+- Open Source (MIT): consider association compatibility for code and dependencies
