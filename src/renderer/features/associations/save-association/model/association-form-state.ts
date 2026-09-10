@@ -1,5 +1,5 @@
-/** Address fields matching `club_addresses` columns (except id/club_id/type). */
-export type ClubAddressFormFields = {
+/** Address fields matching `association_addresses` columns (except id/association_id/type). */
+export type AssociationAddressFormFields = {
   street: string
   houseNumber: string
   postalCode: string
@@ -7,26 +7,26 @@ export type ClubAddressFormFields = {
 }
 
 /** Website protocol prefix stored separately from the host path. */
-export type ClubWebsiteProtocol = 'http://' | 'https://'
+export type AssociationWebsiteProtocol = 'http://' | 'https://'
 
-/** Editable club fields for the save form. */
-export type ClubFormState = {
+/** Editable association fields for the save form. */
+export type AssociationFormState = {
   name: string
   shortName: string
-  websiteProtocol: ClubWebsiteProtocol
+  websiteProtocol: AssociationWebsiteProtocol
   websiteHost: string
   isActive: boolean
   districtName: string
   countryName: string
-  associationName: string
-  associationShortName: string
-  regionalAssociationName: string
-  regionalAssociationShortName: string
+  federationName: string
+  federationShortName: string
+  regionalFederationName: string
+  regionalFederationShortName: string
   districtShortName: string
-  clubNumber: string
-  headquarters: ClubAddressFormFields
-  trainingVenue: ClubAddressFormFields
-  billingAddress: ClubAddressFormFields
+  associationNumber: string
+  headquarters: AssociationAddressFormFields
+  trainingVenue: AssociationAddressFormFields
+  billingAddress: AssociationAddressFormFields
   trainingVenueSameAsHeadquarters: boolean
   billingAddressSameAsHeadquarters: boolean
   email: string
@@ -34,13 +34,13 @@ export type ClubFormState = {
   phoneNumber: string
 }
 
-/** Default federation hierarchy used when creating clubs without SQLite wiring. */
-export const DEFAULT_CLUB_HIERARCHY = {
+/** Default federation hierarchy used when creating associations without SQLite wiring. */
+export const DEFAULT_ASSOCIATION_HIERARCHY = {
   countryName: 'Germany',
-  associationName: 'German Judo Federation',
-  associationShortName: 'DJB',
-  regionalAssociationName: 'Placeholder Regional Association',
-  regionalAssociationShortName: '',
+  federationName: 'German Judo Federation',
+  federationShortName: 'DJB',
+  regionalFederationName: 'Placeholder Regional Federation',
+  regionalFederationShortName: '',
   districtName: '',
   districtShortName: ''
 } as const
@@ -50,7 +50,7 @@ export const DEFAULT_CLUB_HIERARCHY = {
  *
  * @returns Blank street/house number/postal code/city values.
  */
-export function createEmptyAddressFields(): ClubAddressFormFields {
+export function createEmptyAddressFields(): AssociationAddressFormFields {
   return {
     street: '',
     houseNumber: '',
@@ -60,25 +60,25 @@ export function createEmptyAddressFields(): ClubAddressFormFields {
 }
 
 /**
- * Creates an empty club form state.
+ * Creates an empty association form state.
  *
- * @returns Initial form values for a new club.
+ * @returns Initial form values for a new association.
  */
-export function createEmptyClubForm(): ClubFormState {
+export function createEmptyAssociationForm(): AssociationFormState {
   return {
     name: '',
     shortName: '',
     websiteProtocol: 'https://',
     websiteHost: '',
     isActive: true,
-    districtName: DEFAULT_CLUB_HIERARCHY.districtName,
-    countryName: DEFAULT_CLUB_HIERARCHY.countryName,
-    associationName: DEFAULT_CLUB_HIERARCHY.associationName,
-    associationShortName: DEFAULT_CLUB_HIERARCHY.associationShortName,
-    regionalAssociationName: DEFAULT_CLUB_HIERARCHY.regionalAssociationName,
-    regionalAssociationShortName: DEFAULT_CLUB_HIERARCHY.regionalAssociationShortName,
-    districtShortName: DEFAULT_CLUB_HIERARCHY.districtShortName,
-    clubNumber: '',
+    districtName: DEFAULT_ASSOCIATION_HIERARCHY.districtName,
+    countryName: DEFAULT_ASSOCIATION_HIERARCHY.countryName,
+    federationName: DEFAULT_ASSOCIATION_HIERARCHY.federationName,
+    federationShortName: DEFAULT_ASSOCIATION_HIERARCHY.federationShortName,
+    regionalFederationName: DEFAULT_ASSOCIATION_HIERARCHY.regionalFederationName,
+    regionalFederationShortName: DEFAULT_ASSOCIATION_HIERARCHY.regionalFederationShortName,
+    districtShortName: DEFAULT_ASSOCIATION_HIERARCHY.districtShortName,
+    associationNumber: '',
     headquarters: createEmptyAddressFields(),
     trainingVenue: createEmptyAddressFields(),
     billingAddress: createEmptyAddressFields(),

@@ -13,8 +13,8 @@ import { judoBeltStripeStyle } from '@shared/lib/judo-belt/judo-belt-color'
 
 import translationKeys from '../i18n/keys'
 import {
+  participantAssociationHeaderBackground,
   participantAvatarColor,
-  participantClubHeaderBackground,
   participantInitials
 } from '../lib/participant-avatar'
 import { participantLabel } from '../lib/participant-label'
@@ -42,7 +42,7 @@ const secondaryFieldKeys = [
   'nationality',
   'licenseNumber',
   'contactPerson',
-  'clubContactEmail',
+  'associationContactEmail',
   'contactPhone',
   'registrationStatus',
   'remarks'
@@ -68,8 +68,10 @@ const startEligibleLabel = computed(() =>
 )
 
 const detailsExpanded = ref(false)
-const clubColor = computed(() => participantAvatarColor(props.participant.club))
-const headerBackground = computed(() => participantClubHeaderBackground(props.participant.club))
+const associationColor = computed(() => participantAvatarColor(props.participant.association))
+const headerBackground = computed(() =>
+  participantAssociationHeaderBackground(props.participant.association)
+)
 const beltStripeStyle = computed(() => judoBeltStripeStyle(props.participant.gradeBeltColorToken))
 const hasBeltStripe = computed(() => Object.keys(beltStripeStyle.value).length > 0)
 
@@ -90,15 +92,15 @@ function detailsPanelId(): string {
       :style="{ backgroundColor: headerBackground }"
     >
       <div class="participant-entry__identity">
-        <v-avatar :color="clubColor" size="40" class="participant-entry__avatar">
+        <v-avatar :color="associationColor" size="40" class="participant-entry__avatar">
           <span aria-hidden="true">{{ participantInitials(participant) }}</span>
         </v-avatar>
         <div class="participant-entry__name-block">
           <p class="participant-entry__title">
             {{ participantLabel(participant) }}
           </p>
-          <p v-if="participant.club" class="participant-entry__club">
-            {{ participant.club }}
+          <p v-if="participant.association" class="participant-entry__association">
+            {{ participant.association }}
           </p>
         </div>
       </div>
@@ -254,7 +256,7 @@ function detailsPanelId(): string {
   line-height: 1.25;
 }
 
-.participant-entry__club {
+.participant-entry__association {
   margin: 0;
   font-size: 0.875rem;
   font-weight: 400;

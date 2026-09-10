@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ClubFormPage from './ClubFormPage.vue'
+import AssociationFormPage from './AssociationFormPage.vue'
 
 const meta = {
-  title: 'Pages/Clubs/ClubFormPage',
-  component: ClubFormPage,
+  title: 'Pages/Associations/AssociationFormPage',
+  component: AssociationFormPage,
   parameters: {
     layout: 'fullscreen'
   }
-} satisfies Meta<typeof ClubFormPage>
+} satisfies Meta<typeof AssociationFormPage>
 
 export default meta
 

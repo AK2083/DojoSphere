@@ -1,1 +1,1 @@
-export { default } from './ui/ClubsPage.vue'
+export { default } from './ui/AssociationsPage.vue'

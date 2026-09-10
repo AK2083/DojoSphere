@@ -1,38 +1,38 @@
 import translationKeys from '../i18n/keys'
 import {
-  ClubFormErrorCode,
-  type ClubFormErrorCode as ClubFormErrorCodeType
-} from './club-form-rules'
+  AssociationFormErrorCode,
+  type AssociationFormErrorCode as AssociationFormErrorCodeType
+} from './association-form-rules'
 
 /**
- * Translates a club form validation error code.
+ * Translates a association form validation error code.
  *
  * @param code - Validation error code.
  * @param t - Translation function.
  * @returns Localized validation message.
  */
-export function translateClubFormError(
-  code: ClubFormErrorCodeType,
+export function translateAssociationFormError(
+  code: AssociationFormErrorCodeType,
   t: (key: string) => string
 ): string {
   switch (code) {
-    case ClubFormErrorCode.REQUIRED:
+    case AssociationFormErrorCode.REQUIRED:
       return t(translationKeys.validation.required)
-    case ClubFormErrorCode.TEXT_TOO_LONG:
+    case AssociationFormErrorCode.TEXT_TOO_LONG:
       return t(translationKeys.validation.textTooLong)
-    case ClubFormErrorCode.INVALID_EMAIL:
+    case AssociationFormErrorCode.INVALID_EMAIL:
       return t(translationKeys.validation.email.invalid)
-    case ClubFormErrorCode.INVALID_WEBSITE:
+    case AssociationFormErrorCode.INVALID_WEBSITE:
       return t(translationKeys.validation.website.invalid)
-    case ClubFormErrorCode.INVALID_POSTAL_CODE:
+    case AssociationFormErrorCode.INVALID_POSTAL_CODE:
       return t(translationKeys.validation.postalCode.invalid)
-    case ClubFormErrorCode.INVALID_HOUSE_NUMBER:
+    case AssociationFormErrorCode.INVALID_HOUSE_NUMBER:
       return t(translationKeys.validation.houseNumber.invalid)
-    case ClubFormErrorCode.INVALID_CLUB_NUMBER:
-      return t(translationKeys.validation.clubNumber.invalid)
-    case ClubFormErrorCode.INVALID_PHONE:
+    case AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER:
+      return t(translationKeys.validation.associationNumber.invalid)
+    case AssociationFormErrorCode.INVALID_PHONE:
       return t(translationKeys.validation.phone.invalid)
-    case ClubFormErrorCode.INVALID_CITY:
+    case AssociationFormErrorCode.INVALID_CITY:
       return t(translationKeys.validation.city.invalid)
     default:
       return t(translationKeys.validation.required)
@@ -40,14 +40,14 @@ export function translateClubFormError(
 }
 
 /**
- * Adapts a club form rule to Vuetify's rule signature.
+ * Adapts a association form rule to Vuetify's rule signature.
  *
  * @param rule - Domain validation rule.
  * @param t - Translation function.
  * @returns Vuetify-compatible validation rule.
  */
-export function mapClubFormRule(
-  rule: (value?: string | null) => true | ClubFormErrorCodeType,
+export function mapAssociationFormRule(
+  rule: (value?: string | null) => true | AssociationFormErrorCodeType,
   t: (key: string) => string
 ): (value: unknown) => boolean | string {
   return (value: unknown) => {
@@ -58,6 +58,6 @@ export function mapClubFormRule(
       return true
     }
 
-    return translateClubFormError(result, t)
+    return translateAssociationFormError(result, t)
   }
 }

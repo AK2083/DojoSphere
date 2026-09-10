@@ -1,40 +1,40 @@
-import type { ClubOverviewRow } from '../../get-club-overview/model/club-row'
-import { useClubsStore } from '../../store/use-clubs-store'
+import type { AssociationOverviewRow } from '../../get-association-overview/model/association-row'
+import { useAssociationsStore } from '../../store/use-associations-store'
 
 /**
- * Loads a single club from the in-memory store.
+ * Loads a single association from the in-memory store.
  *
- * @param id - Club id.
- * @returns Club row when found.
+ * @param id - Association id.
+ * @returns Association row when found.
  */
-export async function loadClub(id: string): Promise<ClubOverviewRow> {
-  const club = useClubsStore().getClubById(id)
+export async function loadAssociation(id: string): Promise<AssociationOverviewRow> {
+  const association = useAssociationsStore().getAssociationById(id)
 
-  if (!club) {
-    throw new Error(`Club not found: ${id}`)
+  if (!association) {
+    throw new Error(`Association not found: ${id}`)
   }
 
-  return club
+  return association
 }
 
 /**
- * Creates a club in the in-memory store.
+ * Creates a association in the in-memory store.
  *
- * @param club - Club row to insert.
+ * @param association - Association row to insert.
  */
-export async function createClub(club: ClubOverviewRow): Promise<void> {
-  useClubsStore().createClub(club)
+export async function createAssociation(association: AssociationOverviewRow): Promise<void> {
+  useAssociationsStore().createAssociation(association)
 }
 
 /**
- * Updates a club in the in-memory store.
+ * Updates a association in the in-memory store.
  *
- * @param club - Club row to replace.
+ * @param association - Association row to replace.
  */
-export async function updateClub(club: ClubOverviewRow): Promise<void> {
-  const updated = useClubsStore().updateClub(club)
+export async function updateAssociation(association: AssociationOverviewRow): Promise<void> {
+  const updated = useAssociationsStore().updateAssociation(association)
 
   if (!updated) {
-    throw new Error(`Club not found: ${club.id}`)
+    throw new Error(`Association not found: ${association.id}`)
   }
 }

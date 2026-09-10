@@ -79,7 +79,7 @@ export default {
       },
       rowErrors: {
         importFailed:
-          'Data is incomplete or invalid. Check required fields, club, and mapping for this row.',
+          'Data is incomplete or invalid. Check required fields, association, and mapping for this row.',
         validationFailed:
           'This row does not meet all requirements. Correct the data in the Excel file.',
         duplicateCompetitor:

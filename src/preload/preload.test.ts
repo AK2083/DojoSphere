@@ -105,7 +105,7 @@ describe('preload', () => {
       id: 'competitor-1',
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: null,
+      association: null,
       weightClass: null,
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: null
@@ -121,16 +121,16 @@ describe('preload', () => {
       id: 'competitor-1',
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Osaka Dojo',
+      association: 'Osaka Dojo',
       weightClass: '-60',
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: '2026-01-02T00:00:00.000Z'
     })
-    await api.updateCompetitor('token-1', 'competitor-1', { club: 'Osaka Dojo' })
+    await api.updateCompetitor('token-1', 'competitor-1', { association: 'Osaka Dojo' })
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('competitors:update', {
       token: 'token-1',
       id: 'competitor-1',
-      club: 'Osaka Dojo'
+      association: 'Osaka Dojo'
     })
 
     ipcRenderer.invoke.mockResolvedValueOnce(undefined)

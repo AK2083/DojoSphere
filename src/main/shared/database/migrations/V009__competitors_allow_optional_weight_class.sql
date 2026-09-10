@@ -13,8 +13,8 @@ CREATE TABLE competitors (
       length(birth_date) = 10
       AND birth_date GLOB '????-??-??'
     ),
-  club_id TEXT NOT NULL
-    REFERENCES clubs(id) ON DELETE RESTRICT,
+  association_id TEXT NOT NULL
+    REFERENCES associations(id) ON DELETE RESTRICT,
   nationality TEXT NOT NULL
     CHECK (
       length(nationality) = 2
@@ -53,7 +53,7 @@ INSERT INTO competitors (
   family_name,
   gender,
   birth_date,
-  club_id,
+  association_id,
   nationality,
   weight_class_id,
   age_class_id,
@@ -71,7 +71,7 @@ SELECT
   c.family_name,
   c.gender,
   c.birth_date,
-  c.club_id,
+  c.association_id,
   c.nationality,
   CASE
     WHEN EXISTS (
@@ -96,7 +96,7 @@ FROM competitors_old c;
 DROP TABLE competitors_old;
 
 CREATE INDEX idx_competitors_family_name ON competitors(family_name);
-CREATE INDEX idx_competitors_club_id ON competitors(club_id);
+CREATE INDEX idx_competitors_association_id ON competitors(association_id);
 CREATE INDEX idx_competitors_weight_class_id ON competitors(weight_class_id);
 CREATE INDEX idx_competitors_age_class_id ON competitors(age_class_id);
 CREATE INDEX idx_competitors_grade_id ON competitors(grade_id);

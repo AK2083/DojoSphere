@@ -14,7 +14,7 @@ import {
   DEFAULT_NATIONALITY,
   DEFAULT_PASS_NUMBER,
   PLACEHOLDER_DISTRICT_ID,
-  UNKNOWN_CLUB_ID
+  UNKNOWN_ASSOCIATION_ID
 } from '@main/shared/database/reference-seed-ids'
 import { getDatabase, runInTransaction } from '@main/shared/database'
 import { withDbErrorLogging } from '@main/shared/logging'
@@ -55,9 +55,9 @@ type CompetitorDetailInput = {
 export type CreateCompetitorInput = CompetitorDetailInput & {
   givenName: string
   familyName: string
-  club?: string | null
+  association?: string | null
   weightClass?: string | null
-  clubId?: string | null
+  associationId?: string | null
   weightClassId?: string | null
   ageClassId?: string | null
 }
@@ -66,9 +66,9 @@ export type CreateCompetitorInput = CompetitorDetailInput & {
 export type UpdateCompetitorInput = CompetitorDetailInput & {
   givenName?: string
   familyName?: string
-  club?: string | null
+  association?: string | null
   weightClass?: string | null
-  clubId?: string | null
+  associationId?: string | null
   weightClassId?: string | null
   ageClassId?: string | null
 }
@@ -82,12 +82,12 @@ export type CompetitorRecord = {
   birthDate: string
   nationality: string
   passNumber: string
-  club: string | null
+  association: string | null
   weightClass: string | null
   licenseNumber: string | null
   contactPhone: string | null
   contactPerson: string | null
-  clubId: string
+  associationId: string
   weightClassId: string | null
   ageClassId: string
   gradeId: string | null
@@ -113,7 +113,7 @@ const COMPETITOR_SELECT = `
     c.birth_date AS birthDate,
     c.nationality AS nationality,
     c.pass_number AS passNumber,
-    c.club_id AS clubId,
+    c.association_id AS associationId,
     c.weight_class_id AS weightClassId,
     c.age_class_id AS ageClassId,
     c.grade_id AS gradeId,
@@ -123,20 +123,20 @@ const COMPETITOR_SELECT = `
     c.start_eligible AS startEligible,
     c.registration_status AS registrationStatus,
     c.remarks AS remarks,
-    cl.name AS club,
+    cl.name AS association,
     wc.max_weight_kg AS maxWeightKg,
     wc.min_weight_kg AS minWeightKg,
     c.created_at AS createdAt,
     c.updated_at AS updatedAt
   FROM competitors c
-  JOIN clubs cl ON cl.id = c.club_id
+  JOIN associations cl ON cl.id = c.association_id
   LEFT JOIN weight_classes wc ON wc.id = c.weight_class_id
 `
 
 const FIELD_NAME_MAP = {
   givenName: 'given_name',
   familyName: 'family_name',
-  clubId: 'club_id',
+  associationId: 'association_id',
   weightClassId: 'weight_class_id',
   ageClassId: 'age_class_id'
 } as const
@@ -144,7 +144,7 @@ const FIELD_NAME_MAP = {
 const AUDIT_FIELD_NAME_MAP: Record<keyof typeof FIELD_NAME_MAP, string> = {
   givenName: 'given_name',
   familyName: 'family_name',
-  clubId: 'club',
+  associationId: 'association',
   weightClassId: 'weight_class',
   ageClassId: 'age_class_id'
 }
@@ -178,18 +178,22 @@ function mapCompetitorRow(row: CompetitorRow): CompetitorRecord {
   }
 }
 
-function resolveClubId(db: Database, club?: string | null, clubId?: string | null): string {
-  if (clubId?.trim()) {
-    return clubId.trim()
+function resolveAssociationId(
+  db: Database,
+  association?: string | null,
+  associationId?: string | null
+): string {
+  if (associationId?.trim()) {
+    return associationId.trim()
   }
 
-  const clubName = club?.trim()
+  const associationName = association?.trim()
 
-  if (!clubName) {
-    return UNKNOWN_CLUB_ID
+  if (!associationName) {
+    return UNKNOWN_ASSOCIATION_ID
   }
 
-  const existing = db.prepare(`SELECT id FROM clubs WHERE name = ?`).get(clubName) as
+  const existing = db.prepare(`SELECT id FROM associations WHERE name = ?`).get(associationName) as
     { id: string } | undefined
 
   if (existing) {
@@ -200,25 +204,29 @@ function resolveClubId(db: Database, club?: string | null, clubId?: string | nul
 
   db.prepare(
     `
-    INSERT INTO clubs (id, district_id, name, is_active, source)
+    INSERT INTO associations (id, district_id, name, is_active, source)
     VALUES (?, ?, ?, 1, 'manual')
   `
-  ).run(id, PLACEHOLDER_DISTRICT_ID, clubName)
+  ).run(id, PLACEHOLDER_DISTRICT_ID, associationName)
 
   return id
 }
 
 /**
- * Stores or updates the email contact for a club.
+ * Stores or updates the email contact for a association.
  *
  * @param db - Database connection.
- * @param clubId - Club to attach the email contact to.
+ * @param associationId - Association to attach the email contact to.
  * @param email - Email address from the import row.
  */
-export function upsertClubContactEmail(db: Database, clubId: string, email: string): void {
+export function upsertAssociationContactEmail(
+  db: Database,
+  associationId: string,
+  email: string
+): void {
   const trimmed = email.trim()
 
-  if (!trimmed || clubId === UNKNOWN_CLUB_ID) {
+  if (!trimmed || associationId === UNKNOWN_ASSOCIATION_ID) {
     return
   }
 
@@ -226,24 +234,24 @@ export function upsertClubContactEmail(db: Database, clubId: string, email: stri
     .prepare(
       `
       SELECT id
-      FROM club_contacts
-      WHERE club_id = ? AND contact_type = 'email'
+      FROM association_contacts
+      WHERE association_id = ? AND contact_type = 'email'
       LIMIT 1
     `
     )
-    .get(clubId) as { id: string } | undefined
+    .get(associationId) as { id: string } | undefined
 
   if (existing) {
-    db.prepare(`UPDATE club_contacts SET value = ? WHERE id = ?`).run(trimmed, existing.id)
+    db.prepare(`UPDATE association_contacts SET value = ? WHERE id = ?`).run(trimmed, existing.id)
     return
   }
 
   db.prepare(
     `
-    INSERT INTO club_contacts (id, club_id, contact_type, value, is_public)
+    INSERT INTO association_contacts (id, association_id, contact_type, value, is_public)
     VALUES (?, ?, 'email', ?, 0)
   `
-  ).run(randomUUID(), clubId, trimmed)
+  ).run(randomUUID(), associationId, trimmed)
 }
 
 function parseWeightLimitKg(weightClass?: string | null): number | null {
@@ -541,7 +549,7 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
   const db = getDatabase()
   const id = randomUUID()
   const ageClassId = input.ageClassId?.trim() || DEFAULT_AGE_CLASS_ID
-  const clubId = resolveClubId(db, input.club, input.clubId)
+  const associationId = resolveAssociationId(db, input.association, input.associationId)
   const weightClassId = resolveWeightClassId(db, input.weightClass, input.weightClassId, ageClassId)
   const gradeId = normalizeOptionalText(input.gradeId)
   const licenseNumber = normalizeOptionalText(input.licenseNumber)
@@ -569,7 +577,7 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
         family_name,
         gender,
         birth_date,
-        club_id,
+        association_id,
         nationality,
         weight_class_id,
         age_class_id,
@@ -590,7 +598,7 @@ export function addCompetitor(actorUserId: string, input: CreateCompetitorInput)
         familyName,
         normalizeGender(input.gender),
         normalizeBirthDate(input.birthDate),
-        clubId,
+        associationId,
         normalizeNationality(input.nationality),
         weightClassId,
         ageClassId,
@@ -674,10 +682,10 @@ export function updateCompetitor(
   const nextValues = {
     givenName: input.givenName !== undefined ? input.givenName.trim() : existing.givenName,
     familyName: input.familyName !== undefined ? input.familyName.trim() : existing.familyName,
-    clubId:
-      input.clubId !== undefined || input.club !== undefined
-        ? resolveClubId(getDatabase(), input.club, input.clubId)
-        : existing.clubId,
+    associationId:
+      input.associationId !== undefined || input.association !== undefined
+        ? resolveAssociationId(getDatabase(), input.association, input.associationId)
+        : existing.associationId,
     weightClassId:
       input.weightClassId !== undefined || input.weightClass !== undefined || ageClassChanged
         ? resolveWeightClassId(
@@ -766,7 +774,7 @@ export function updateCompetitor(
       SET
         given_name = ?,
         family_name = ?,
-        club_id = ?,
+        association_id = ?,
         weight_class_id = ?,
         age_class_id = ?,
         gender = ?,
@@ -785,7 +793,7 @@ export function updateCompetitor(
       ).run(
         nextValues.givenName,
         nextValues.familyName,
-        nextValues.clubId,
+        nextValues.associationId,
         nextValues.weightClassId,
         nextValues.ageClassId,
         nextDetails.gender,

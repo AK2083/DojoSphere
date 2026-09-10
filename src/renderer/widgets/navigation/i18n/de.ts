@@ -11,8 +11,8 @@ export default {
     ariaLogout: 'Abmelden',
     participants: 'Teilnehmerliste',
     ariaParticipants: 'Teilnehmerliste öffnen',
-    clubs: 'Vereine',
-    ariaClubs: 'Vereinsliste öffnen',
+    associations: 'Vereine',
+    ariaAssociations: 'Vereinsliste öffnen',
     settings: 'Einstellungen',
     ariaSettings: 'Einstellungen'
   }

@@ -88,9 +88,9 @@ function stripSensitiveFields(competitor: Competitor): PlaywrightStoredCompetito
     id: competitor.id,
     givenName: competitor.givenName,
     familyName: competitor.familyName,
-    club: competitor.club,
+    association: competitor.association,
     weightClass: competitor.weightClass,
-    clubId: competitor.clubId,
+    associationId: competitor.associationId,
     weightClassId: competitor.weightClassId,
     ageClassId: competitor.ageClassId,
     gradeId: competitor.gradeId,
@@ -191,12 +191,12 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
     birthDate: input.birthDate ?? '2000-01-01',
     nationality: input.nationality ?? 'DE',
     passNumber: input.passNumber ?? '00000000',
-    club: input.club ?? null,
+    association: input.association ?? null,
     weightClass: input.weightClass ?? null,
     licenseNumber: input.licenseNumber ?? null,
     contactPhone: input.contactPhone ?? null,
     contactPerson: input.contactPerson ?? null,
-    clubId: input.clubId ?? 'stub-club-id',
+    associationId: input.associationId ?? 'stub-association-id',
     weightClassId: input.weightClassId ?? 'stub-weight-class-id',
     ageClassId: input.ageClassId ?? 'stub-age-class-id',
     gradeId: input.gradeId ?? null,
@@ -321,12 +321,12 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
         birthDate: input.birthDate ?? base.birthDate,
         nationality: input.nationality ?? base.nationality,
         passNumber: input.passNumber ?? base.passNumber,
-        club: input.club ?? base.club,
+        association: input.association ?? base.association,
         weightClass: input.weightClass ?? base.weightClass,
         licenseNumber: input.licenseNumber ?? base.licenseNumber,
         contactPhone: input.contactPhone ?? base.contactPhone,
         contactPerson: input.contactPerson ?? base.contactPerson,
-        clubId: input.clubId ?? base.clubId,
+        associationId: input.associationId ?? base.associationId,
         weightClassId: input.weightClassId ?? base.weightClassId,
         ageClassId: input.ageClassId ?? base.ageClassId,
         gradeId: input.gradeId ?? base.gradeId,
@@ -357,22 +357,22 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       columns: [
         { id: 'sheet1#0', sheetName: 'Sheet1', header: 'Given name', sampleValues: ['Yuki'] },
         { id: 'sheet1#1', sheetName: 'Sheet1', header: 'Family name', sampleValues: ['Tanaka'] },
-        { id: 'sheet1#2', sheetName: 'Sheet1', header: 'Club', sampleValues: ['Dojo Nord'] }
+        { id: 'sheet1#2', sheetName: 'Sheet1', header: 'Association', sampleValues: ['Dojo Nord'] }
       ],
       fields: [
         { key: 'givenName', required: true },
         { key: 'familyName', required: true },
-        { key: 'club', required: false }
+        { key: 'association', required: false }
       ],
       suggestedMapping: {
         givenName: 'sheet1#0',
         familyName: 'sheet1#1',
-        club: 'sheet1#2'
+        association: 'sheet1#2'
       },
       sources: {
         givenName: 'header',
         familyName: 'header',
-        club: 'header'
+        association: 'header'
       },
       mappingValid: true,
       missingRequiredFields: [],
@@ -380,7 +380,13 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
     }),
     importParticipantsExecute: async () => ({
       results: [
-        { index: 0, givenName: 'Yuki', familyName: 'Tanaka', club: 'Dojo Nord', success: true }
+        {
+          index: 0,
+          givenName: 'Yuki',
+          familyName: 'Tanaka',
+          association: 'Dojo Nord',
+          success: true
+        }
       ],
       importedCount: 1,
       failedCount: 0

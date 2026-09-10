@@ -49,21 +49,21 @@ BEGIN
   SELECT RAISE(ABORT, 'nationality must be uppercase ISO 3166-1 alpha-2');
 END;
 
-DROP TRIGGER IF EXISTS competitors_require_active_club_insert;
-CREATE TRIGGER competitors_require_active_club_insert
+DROP TRIGGER IF EXISTS competitors_require_active_association_insert;
+CREATE TRIGGER competitors_require_active_association_insert
 BEFORE INSERT ON competitors
-WHEN (SELECT is_active FROM clubs WHERE id = NEW.club_id) != 1
+WHEN (SELECT is_active FROM associations WHERE id = NEW.association_id) != 1
 BEGIN
-  SELECT RAISE(ABORT, 'club is not active');
+  SELECT RAISE(ABORT, 'association is not active');
 END;
 
-DROP TRIGGER IF EXISTS competitors_require_active_club_update;
-CREATE TRIGGER competitors_require_active_club_update
+DROP TRIGGER IF EXISTS competitors_require_active_association_update;
+CREATE TRIGGER competitors_require_active_association_update
 BEFORE UPDATE ON competitors
-WHEN NEW.club_id != OLD.club_id
-  AND (SELECT is_active FROM clubs WHERE id = NEW.club_id) != 1
+WHEN NEW.association_id != OLD.association_id
+  AND (SELECT is_active FROM associations WHERE id = NEW.association_id) != 1
 BEGIN
-  SELECT RAISE(ABORT, 'club is not active');
+  SELECT RAISE(ABORT, 'association is not active');
 END;
 
 DROP TRIGGER IF EXISTS competitors_validate_weight_class_insert;

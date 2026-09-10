@@ -1,58 +1,58 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { CLUB_MOCK_DATA } from '../get-club-overview/model/club-mock-data'
-import { useClubsStore } from './use-clubs-store'
+import { ASSOCIATION_MOCK_DATA } from '../get-association-overview/model/association-mock-data'
+import { useAssociationsStore } from './use-associations-store'
 
-describe('useClubsStore', () => {
+describe('useAssociationsStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    useClubsStore().resetClubs()
+    useAssociationsStore().resetAssociations()
   })
 
-  it('seeds clubs from the mock fixtures', () => {
-    const store = useClubsStore()
+  it('seeds associations from the mock fixtures', () => {
+    const store = useAssociationsStore()
 
-    expect(store.listClubs()).toEqual(CLUB_MOCK_DATA)
+    expect(store.listAssociations()).toEqual(ASSOCIATION_MOCK_DATA)
   })
 
-  it('creates, updates, and deletes clubs', () => {
-    const store = useClubsStore()
+  it('creates, updates, and deletes associations', () => {
+    const store = useAssociationsStore()
     const created = {
-      ...CLUB_MOCK_DATA[0]!,
-      id: 'new-club',
-      name: 'New Club'
+      ...ASSOCIATION_MOCK_DATA[0]!,
+      id: 'new-association',
+      name: 'New Association'
     }
 
-    store.createClub(created)
-    expect(store.getClubById('new-club')?.name).toBe('New Club')
+    store.createAssociation(created)
+    expect(store.getAssociationById('new-association')?.name).toBe('New Association')
 
-    store.updateClub({
+    store.updateAssociation({
       ...created,
-      name: 'Updated Club'
+      name: 'Updated Association'
     })
-    expect(store.getClubById('new-club')?.name).toBe('Updated Club')
+    expect(store.getAssociationById('new-association')?.name).toBe('Updated Association')
 
-    expect(store.deleteClub('new-club')).toBe(true)
-    expect(store.getClubById('new-club')).toBeUndefined()
-    expect(store.deleteClub('missing')).toBe(false)
+    expect(store.deleteAssociation('new-association')).toBe(true)
+    expect(store.getAssociationById('new-association')).toBeUndefined()
+    expect(store.deleteAssociation('missing')).toBe(false)
   })
 
-  it('returns false when updating a missing club', () => {
-    const store = useClubsStore()
+  it('returns false when updating a missing association', () => {
+    const store = useAssociationsStore()
 
     expect(
-      store.updateClub({
-        ...CLUB_MOCK_DATA[0]!,
+      store.updateAssociation({
+        ...ASSOCIATION_MOCK_DATA[0]!,
         id: 'missing'
       })
     ).toBe(false)
   })
 
-  it('exposes newest-first clubs through a getter', () => {
-    const store = useClubsStore()
-    const ids = store.clubsNewestFirst.map((club) => club.id)
+  it('exposes newest-first associations through a getter', () => {
+    const store = useAssociationsStore()
+    const ids = store.associationsNewestFirst.map((association) => association.id)
 
-    expect(ids[0]).toBe(CLUB_MOCK_DATA[0]!.id)
+    expect(ids[0]).toBe(ASSOCIATION_MOCK_DATA[0]!.id)
   })
 })

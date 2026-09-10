@@ -1,12 +1,12 @@
-/** External or federation identifier shown on a club card. */
-export type ClubIdentifier = {
+/** External or federation identifier shown on a association card. */
+export type AssociationIdentifier = {
   type: string
   value: string
   authority: string | null
 }
 
-/** Postal address linked to a club. */
-export type ClubAddress = {
+/** Postal address linked to a association. */
+export type AssociationAddress = {
   street: string | null
   houseNumber: string | null
   postalCode: string | null
@@ -15,8 +15,8 @@ export type ClubAddress = {
   addressType: string
 }
 
-/** Contact channel linked to a club. */
-export type ClubContact = {
+/** Contact channel linked to a association. */
+export type AssociationContact = {
   contactType: string
   value: string
   label: string | null
@@ -24,11 +24,11 @@ export type ClubContact = {
 }
 
 /**
- * Club row shaped for the clubs overview cards.
+ * Association row shaped for the associations overview cards.
  *
- * Mirrors the clubs schema hierarchy and child tables without requiring IPC yet.
+ * Mirrors the associations schema hierarchy and child tables without requiring IPC yet.
  */
-export type ClubOverviewRow = {
+export type AssociationOverviewRow = {
   id: string
   name: string
   shortName: string | null
@@ -39,12 +39,12 @@ export type ClubOverviewRow = {
   createdAt: string
   districtName: string
   districtShortName: string | null
-  regionalAssociationName: string
-  regionalAssociationShortName: string | null
-  associationName: string
-  associationShortName: string | null
+  regionalFederationName: string
+  regionalFederationShortName: string | null
+  federationName: string
+  federationShortName: string | null
   countryName: string
-  identifiers: ClubIdentifier[]
-  addresses: ClubAddress[]
-  contacts: ClubContact[]
+  identifiers: AssociationIdentifier[]
+  addresses: AssociationAddress[]
+  contacts: AssociationContact[]
 }

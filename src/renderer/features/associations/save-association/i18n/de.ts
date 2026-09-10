@@ -13,7 +13,7 @@ export default {
       name: 'z. B. Judoclub Nord e.V.',
       shortName: 'z. B. JC Nord',
       websiteHost: 'www.jcnord.example',
-      clubNumber: 'z. B. 020123',
+      associationNumber: 'z. B. 020123',
       street: 'z. B. Dojostraße',
       houseNumber: 'z. B. 12',
       postalCode: 'z. B. 20095',
@@ -42,7 +42,7 @@ export default {
     houseNumber: {
       invalid: 'Bitte gib eine gültige Hausnummer ein.'
     },
-    clubNumber: {
+    associationNumber: {
       invalid: 'Bitte gib eine Vereinsnummer nur mit Ziffern ein.'
     },
     phone: {

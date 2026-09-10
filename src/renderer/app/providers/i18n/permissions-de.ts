@@ -17,7 +17,7 @@ export default {
       description: 'Ermöglicht das Löschen von Teilnehmern.'
     }
   },
-  'clubs-overview': {
+  'associations-overview': {
     read: {
       label: 'Vereine anzeigen',
       description: 'Ermöglicht das Anzeigen der Vereinsübersicht.'

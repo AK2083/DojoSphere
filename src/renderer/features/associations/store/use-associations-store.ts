@@ -1,95 +1,97 @@
 import { newStore } from '@shared/lib/pinia/store-define'
 
-import { CLUB_MOCK_DATA } from '../get-club-overview/model/club-mock-data'
-import type { ClubOverviewRow } from '../get-club-overview/model/club-row'
+import { ASSOCIATION_MOCK_DATA } from '../get-association-overview/model/association-mock-data'
+import type { AssociationOverviewRow } from '../get-association-overview/model/association-row'
 
 function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
-/** Pinia store for clubs until SQLite/IPC persistence is wired. */
-export const useClubsStore = newStore('clubs', {
+/** Pinia store for associations until SQLite/IPC persistence is wired. */
+export const useAssociationsStore = newStore('associations', {
   state: () => ({
-    clubs: cloneValue(CLUB_MOCK_DATA) as ClubOverviewRow[]
+    associations: cloneValue(ASSOCIATION_MOCK_DATA) as AssociationOverviewRow[]
   }),
   getters: {
     /**
-     * Returns clubs sorted newest-first for overview rendering.
+     * Returns associations sorted newest-first for overview rendering.
      *
      * @param state
-     * @returns Club rows ordered by `createdAt` descending.
+     * @returns Association rows ordered by `createdAt` descending.
      */
-    clubsNewestFirst(state): ClubOverviewRow[] {
-      return [...state.clubs].sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    associationsNewestFirst(state): AssociationOverviewRow[] {
+      return [...state.associations].sort((left, right) =>
+        right.createdAt.localeCompare(left.createdAt)
+      )
     }
   },
   actions: {
     /**
-     * Returns a deep clone of all clubs.
+     * Returns a deep clone of all associations.
      *
-     * @returns Club rows currently held in the store.
+     * @returns Association rows currently held in the store.
      */
-    listClubs(): ClubOverviewRow[] {
-      return cloneValue(this.clubs)
+    listAssociations(): AssociationOverviewRow[] {
+      return cloneValue(this.associations)
     },
 
     /**
-     * Finds a club by id.
+     * Finds a association by id.
      *
-     * @param id - Club id.
-     * @returns Matching club clone, or `undefined` when missing.
+     * @param id - Association id.
+     * @returns Matching association clone, or `undefined` when missing.
      */
-    getClubById(id: string): ClubOverviewRow | undefined {
-      const club = this.clubs.find((entry) => entry.id === id)
+    getAssociationById(id: string): AssociationOverviewRow | undefined {
+      const association = this.associations.find((entry) => entry.id === id)
 
-      return club ? cloneValue(club) : undefined
+      return association ? cloneValue(association) : undefined
     },
 
     /**
-     * Inserts a new club at the start of the store list.
+     * Inserts a new association at the start of the store list.
      *
-     * @param club - Club row to persist in memory.
+     * @param association - Association row to persist in memory.
      */
-    createClub(club: ClubOverviewRow): void {
-      this.clubs = [cloneValue(club), ...this.clubs]
+    createAssociation(association: AssociationOverviewRow): void {
+      this.associations = [cloneValue(association), ...this.associations]
     },
 
     /**
-     * Replaces an existing club by id.
+     * Replaces an existing association by id.
      *
-     * @param club - Updated club row.
-     * @returns `true` when a club was updated.
+     * @param association - Updated association row.
+     * @returns `true` when a association was updated.
      */
-    updateClub(club: ClubOverviewRow): boolean {
-      const index = this.clubs.findIndex((entry) => entry.id === club.id)
+    updateAssociation(association: AssociationOverviewRow): boolean {
+      const index = this.associations.findIndex((entry) => entry.id === association.id)
 
       if (index < 0) {
         return false
       }
 
-      const nextClubs = [...this.clubs]
-      nextClubs[index] = cloneValue(club)
-      this.clubs = nextClubs
+      const nextAssociations = [...this.associations]
+      nextAssociations[index] = cloneValue(association)
+      this.associations = nextAssociations
 
       return true
     },
 
     /**
-     * Removes a club by id.
+     * Removes a association by id.
      *
-     * @param id - Club id to remove.
-     * @returns `true` when a club was removed.
+     * @param id - Association id to remove.
+     * @returns `true` when a association was removed.
      */
-    deleteClub(id: string): boolean {
-      const previousLength = this.clubs.length
-      this.clubs = this.clubs.filter((entry) => entry.id !== id)
+    deleteAssociation(id: string): boolean {
+      const previousLength = this.associations.length
+      this.associations = this.associations.filter((entry) => entry.id !== id)
 
-      return this.clubs.length < previousLength
+      return this.associations.length < previousLength
     },
 
-    /** Restores the seeded mock clubs (tests / Storybook helpers). */
-    resetClubs(): void {
-      this.clubs = cloneValue(CLUB_MOCK_DATA)
+    /** Restores the seeded mock associations (tests / Storybook helpers). */
+    resetAssociations(): void {
+      this.associations = cloneValue(ASSOCIATION_MOCK_DATA)
     }
   }
 })

@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ClubForm from './ClubForm.vue'
+import AssociationForm from './AssociationForm.vue'
 
 const meta = {
-  title: 'Features/Clubs/SaveClub/ClubForm',
-  component: ClubForm,
+  title: 'Features/Associations/SaveAssociation/AssociationForm',
+  component: AssociationForm,
   args: {
     title: 'Verein hinzufügen'
   },
   parameters: {
     layout: 'padded'
   }
-} satisfies Meta<typeof ClubForm>
+} satisfies Meta<typeof AssociationForm>
 
 export default meta
 
@@ -22,13 +22,13 @@ export const Create: Story = {
     title: 'Verein hinzufügen'
   },
   render: (args) => ({
-    components: { ClubForm },
+    components: { AssociationForm },
     setup() {
       return { args }
     },
     template: `
       <div style="max-width: 48rem;">
-        <ClubForm v-bind="args" />
+        <AssociationForm v-bind="args" />
       </div>
     `
   })

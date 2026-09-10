@@ -1,19 +1,19 @@
 export default {
   page: {
-    titleCreate: 'Add club',
-    titleEdit: 'Edit club'
+    titleCreate: 'Add association',
+    titleEdit: 'Edit association'
   },
   form: {
-    ariaLabel: 'Club form',
-    hint: 'Please fill in the club details. Fields marked with * are required; you can still edit the data later.',
+    ariaLabel: 'Association form',
+    hint: 'Please fill in the association details. Fields marked with * are required; you can still edit the data later.',
     sameAsHeadquarters: 'Same as headquarters',
-    saveError: 'The club could not be saved.',
-    loadError: 'The club could not be loaded.',
+    saveError: 'The association could not be saved.',
+    loadError: 'The association could not be loaded.',
     placeholders: {
       name: 'e.g. Judoclub Nord e.V.',
       shortName: 'e.g. JC Nord',
       websiteHost: 'www.jcnord.example',
-      clubNumber: 'e.g. 020123',
+      associationNumber: 'e.g. 020123',
       street: 'e.g. Dojo Street',
       houseNumber: 'e.g. 12',
       postalCode: 'e.g. 20095',
@@ -23,7 +23,7 @@ export default {
     }
   },
   actions: {
-    back: 'Back to club list',
+    back: 'Back to association list',
     reset: 'Reset',
     save: 'Save'
   },
@@ -42,8 +42,8 @@ export default {
     houseNumber: {
       invalid: 'Please enter a valid house number.'
     },
-    clubNumber: {
-      invalid: 'Please enter a club number using digits only.'
+    associationNumber: {
+      invalid: 'Please enter an association number using digits only.'
     },
     phone: {
       invalid: 'Please enter a valid phone number.'

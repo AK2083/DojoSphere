@@ -13,7 +13,7 @@ import { isCompatibleFieldMapping } from './match-field-data-type'
 import { isEmailHeader } from './parse-email'
 import {
   isAreaHeader,
-  isClubHeader,
+  isAssociationHeader,
   isContactPersonHeader,
   isEventMetadataHeader,
   isLicenseNumberHeader,
@@ -95,7 +95,7 @@ const EXACT_HEADER_INDEX: Map<string, ImportTargetFieldKey> = buildExactIndex()
 const DATA_TYPE_TO_FIELD: Partial<Record<ImportFieldDataType, ImportTargetFieldKey>> = {
   gender: 'gender',
   date: 'birthDate',
-  email: 'clubContactEmail',
+  email: 'associationContactEmail',
   grade: 'grade',
   weightKg: 'weightKg',
   boolean: 'startEligible',
@@ -276,9 +276,12 @@ function collectDedicatedIdentifierCandidates(columns: ParsedColumn[]): Candidat
       continue
     }
 
-    if (isClubHeader(column.header) && isCompatibleFieldMapping('club', column.header, samples)) {
+    if (
+      isAssociationHeader(column.header) &&
+      isCompatibleFieldMapping('association', column.header, samples)
+    ) {
       candidates.push({
-        field: 'club',
+        field: 'association',
         columnId: column.id,
         similarity: DEDICATED_HEADER_SIMILARITY,
         source: 'header'
@@ -336,7 +339,7 @@ export function isConflictingHeaderMatch(header: string, field: ImportTargetFiel
     return true
   }
 
-  if (field === 'club' && isAreaHeader(header)) {
+  if (field === 'association' && isAreaHeader(header)) {
     return true
   }
 
@@ -344,7 +347,7 @@ export function isConflictingHeaderMatch(header: string, field: ImportTargetFiel
     return true
   }
 
-  if (field === 'clubContactEmail' && isContactPersonHeader(header)) {
+  if (field === 'associationContactEmail' && isContactPersonHeader(header)) {
     return true
   }
 

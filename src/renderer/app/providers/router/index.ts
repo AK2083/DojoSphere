@@ -8,7 +8,7 @@ import { useNetworkStatusStore } from '@features/status'
 import LoginPage from '@pages/login'
 import PasswordResetPage from '@pages/password-reset'
 import SettingsPage from '@pages/settings'
-import { CLUBS_OVERVIEW_PERMISSION } from '@shared/constants/clubs-overview-permission'
+import { ASSOCIATIONS_OVERVIEW_PERMISSION } from '@shared/constants/associations-overview-permission'
 import { PARTICIPANTS_OVERVIEW_PERMISSION } from '@shared/constants/participants-overview-permission'
 import { getActiveStore, getNavigatorOnline } from '@shared/lib'
 
@@ -107,40 +107,40 @@ const routes = [
     component: () => import('@pages/participant-form')
   },
   {
-    path: '/clubs',
-    name: 'clubs',
+    path: '/associations',
+    name: 'associations',
     meta: {
       requiresAuth: true,
       requiredPermission: {
-        resource: CLUBS_OVERVIEW_PERMISSION.resource,
-        action: CLUBS_OVERVIEW_PERMISSION.actions.read
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.read
       }
     },
-    component: () => import('@pages/clubs')
+    component: () => import('@pages/associations')
   },
   {
-    path: '/clubs/new',
-    name: 'club-create',
+    path: '/associations/new',
+    name: 'association-create',
     meta: {
       requiresAuth: true,
       requiredPermission: {
-        resource: CLUBS_OVERVIEW_PERMISSION.resource,
-        action: CLUBS_OVERVIEW_PERMISSION.actions.create
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.create
       }
     },
-    component: () => import('@pages/club-form')
+    component: () => import('@pages/association-form')
   },
   {
-    path: '/clubs/:id/edit',
-    name: 'club-edit',
+    path: '/associations/:id/edit',
+    name: 'association-edit',
     meta: {
       requiresAuth: true,
       requiredPermission: {
-        resource: CLUBS_OVERVIEW_PERMISSION.resource,
-        action: CLUBS_OVERVIEW_PERMISSION.actions.update
+        resource: ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+        action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.update
       }
     },
-    component: () => import('@pages/club-form')
+    component: () => import('@pages/association-form')
   }
 ]
 

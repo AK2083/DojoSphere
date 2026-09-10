@@ -32,8 +32,8 @@ export function importDefaultValueLabel(
       return t(translationKeys.steps.mapping.defaultValues.birthDate)
     case 'passNumber':
       return t(translationKeys.steps.mapping.defaultValues.passNumber)
-    case 'club':
-      return t(saveParticipantTranslationKeys.reference.clubs.unknown)
+    case 'association':
+      return t(saveParticipantTranslationKeys.reference.associations.unknown)
     default:
       return null
   }

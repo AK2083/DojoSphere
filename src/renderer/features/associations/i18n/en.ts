@@ -1,10 +1,10 @@
-import { getClubOverviewEn } from '../get-club-overview/i18n'
-import { saveClubEn } from '../save-club/i18n'
+import { getAssociationOverviewEn } from '../get-association-overview/i18n'
+import { saveAssociationEn } from '../save-association/i18n'
 import fieldsEn from './fields-en'
 
 export default {
-  title: 'Clubs',
+  title: 'Associations',
   fields: fieldsEn,
-  getClubOverview: getClubOverviewEn,
-  saveClub: saveClubEn
+  getAssociationOverview: getAssociationOverviewEn,
+  saveAssociation: saveAssociationEn
 }

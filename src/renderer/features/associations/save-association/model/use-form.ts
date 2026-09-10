@@ -4,20 +4,20 @@ import type { VForm } from 'vuetify/components'
 import { logError, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { mapClubFormRule } from '../lib/club-form-error-manager'
+import { mapAssociationFormRule } from '../lib/association-form-error-manager'
 import {
-  CLUB_CITY_MAX_LENGTH,
-  CLUB_DISTRICT_MAX_LENGTH,
-  CLUB_HOUSE_NUMBER_MAX_LENGTH,
-  CLUB_NAME_MAX_LENGTH,
-  CLUB_NUMBER_MAX_LENGTH,
-  CLUB_PHONE_MAX_LENGTH,
-  CLUB_POSTAL_CODE_LENGTH,
-  CLUB_SHORT_NAME_MAX_LENGTH,
-  CLUB_STREET_MAX_LENGTH,
-  CLUB_WEBSITE_HOST_MAX_LENGTH,
+  ASSOCIATION_CITY_MAX_LENGTH,
+  ASSOCIATION_DISTRICT_MAX_LENGTH,
+  ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
+  ASSOCIATION_NAME_MAX_LENGTH,
+  ASSOCIATION_NUMBER_MAX_LENGTH,
+  ASSOCIATION_PHONE_MAX_LENGTH,
+  ASSOCIATION_POSTAL_CODE_LENGTH,
+  ASSOCIATION_SHORT_NAME_MAX_LENGTH,
+  ASSOCIATION_STREET_MAX_LENGTH,
+  ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
+  optionalAssociationNumberRule,
   optionalCityRule,
-  optionalClubNumberRule,
   optionalEmailRule,
   optionalGermanPostalCodeRule,
   optionalHouseNumberRule,
@@ -25,38 +25,38 @@ import {
   optionalPhoneNumberRule,
   optionalWebsiteHostRule,
   requiredMaxLengthRule
-} from '../lib/club-form-rules'
+} from '../lib/association-form-rules'
 import { PHONE_COUNTRY_CODES } from '../lib/phone-country-codes'
-import { createClub, loadClub, updateClub } from '../service/save-club'
+import { createAssociation, loadAssociation, updateAssociation } from '../service/save-association'
 import {
-  type ClubFormState,
-  type ClubWebsiteProtocol,
-  createEmptyClubForm
-} from './club-form-state'
+  type AssociationFormState,
+  type AssociationWebsiteProtocol,
+  createEmptyAssociationForm
+} from './association-form-state'
 import {
-  cloneClubFormState,
+  cloneAssociationFormState,
   copyHeadquartersAddress,
-  mapClubToFormState,
-  mapFormStateToClub
-} from './map-club-form-state'
+  mapAssociationToFormState,
+  mapFormStateToAssociation
+} from './map-association-form-state'
 
-type UseClubFormOptions = {
-  clubId?: MaybeRefOrGetter<string | undefined>
+type UseAssociationFormOptions = {
+  associationId?: MaybeRefOrGetter<string | undefined>
 }
 
 /** Protocol options for the website prefix select. */
-export const WEBSITE_PROTOCOL_ITEMS: { title: string; value: ClubWebsiteProtocol }[] = [
+export const WEBSITE_PROTOCOL_ITEMS: { title: string; value: AssociationWebsiteProtocol }[] = [
   { title: 'https://', value: 'https://' },
   { title: 'http://', value: 'http://' }
 ]
 
 /**
- * Composable for club form state, validation, and store persistence.
+ * Composable for association form state, validation, and store persistence.
  *
- * @param options - Optional club id for edit mode.
+ * @param options - Optional association id for edit mode.
  * @returns Form fields, translated validation rules, and submit/reset handlers.
  */
-export function useClubForm(options: UseClubFormOptions = {}) {
+export function useAssociationForm(options: UseAssociationFormOptions = {}) {
   const { t } = useTranslation()
   const router = useRouter()
 
@@ -66,21 +66,22 @@ export function useClubForm(options: UseClubFormOptions = {}) {
   const isLoading = ref(false)
   const saveErrorMessage = ref('')
   const loadErrorMessage = ref('')
-  const fields = ref(createEmptyClubForm())
-  const initialFields = ref<ClubFormState | null>(null)
+  const fields = ref(createEmptyAssociationForm())
+  const initialFields = ref<AssociationFormState | null>(null)
   const existingMeta = ref<{ source: string | null; createdAt: string } | null>(null)
 
-  const clubId = computed(() => toValue(options.clubId))
-  const isEditMode = computed(() => Boolean(clubId.value))
+  const associationId = computed(() => toValue(options.associationId))
+  const isEditMode = computed(() => Boolean(associationId.value))
 
-  const mapRule = (rule: Parameters<typeof mapClubFormRule>[0]) => mapClubFormRule(rule, t)
+  const mapRule = (rule: Parameters<typeof mapAssociationFormRule>[0]) =>
+    mapAssociationFormRule(rule, t)
 
-  const nameRules = [mapRule(requiredMaxLengthRule(CLUB_NAME_MAX_LENGTH))]
-  const shortNameRules = [mapRule(optionalMaxLengthRule(CLUB_SHORT_NAME_MAX_LENGTH))]
+  const nameRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_NAME_MAX_LENGTH))]
+  const shortNameRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_SHORT_NAME_MAX_LENGTH))]
   const websiteHostRules = [mapRule(optionalWebsiteHostRule)]
-  const districtRules = [mapRule(requiredMaxLengthRule(CLUB_DISTRICT_MAX_LENGTH))]
-  const clubNumberRules = [mapRule(optionalClubNumberRule)]
-  const streetRules = [mapRule(optionalMaxLengthRule(CLUB_STREET_MAX_LENGTH))]
+  const districtRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_DISTRICT_MAX_LENGTH))]
+  const associationNumberRules = [mapRule(optionalAssociationNumberRule)]
+  const streetRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_STREET_MAX_LENGTH))]
   const houseNumberRules = [mapRule(optionalHouseNumberRule)]
   const postalCodeRules = [mapRule(optionalGermanPostalCodeRule)]
   const addressCityRules = [mapRule(optionalCityRule)]
@@ -114,8 +115,8 @@ export function useClubForm(options: UseClubFormOptions = {}) {
     formRef.value = value as VForm | null
   }
 
-  async function loadExistingClub(): Promise<void> {
-    const id = clubId.value
+  async function loadExistingAssociation(): Promise<void> {
+    const id = associationId.value
 
     if (!id) {
       return
@@ -125,24 +126,24 @@ export function useClubForm(options: UseClubFormOptions = {}) {
     loadErrorMessage.value = ''
 
     try {
-      const club = await loadClub(id)
-      const mapped = mapClubToFormState(club)
-      fields.value = cloneClubFormState(mapped)
-      initialFields.value = cloneClubFormState(mapped)
+      const association = await loadAssociation(id)
+      const mapped = mapAssociationToFormState(association)
+      fields.value = cloneAssociationFormState(mapped)
+      initialFields.value = cloneAssociationFormState(mapped)
       existingMeta.value = {
-        source: club.source,
-        createdAt: club.createdAt
+        source: association.source,
+        createdAt: association.createdAt
       }
     } catch (error) {
       loadErrorMessage.value = t(translationKeys.form.loadError)
-      logError(error as Error, 'clubs', 'load-club')
+      logError(error as Error, 'associations', 'load-association')
     } finally {
       isLoading.value = false
     }
   }
 
   onMounted(() => {
-    void loadExistingClub()
+    void loadExistingAssociation()
   })
 
   async function submit(): Promise<void> {
@@ -156,21 +157,21 @@ export function useClubForm(options: UseClubFormOptions = {}) {
     saveErrorMessage.value = ''
 
     try {
-      const id = clubId.value ?? crypto.randomUUID()
+      const id = associationId.value ?? crypto.randomUUID()
       const createdAt = existingMeta.value?.createdAt ?? new Date().toISOString()
       const source = existingMeta.value?.source ?? 'manual'
-      const club = mapFormStateToClub(fields.value, { id, source, createdAt })
+      const association = mapFormStateToAssociation(fields.value, { id, source, createdAt })
 
       if (isEditMode.value) {
-        await updateClub(club)
+        await updateAssociation(association)
       } else {
-        await createClub(club)
+        await createAssociation(association)
       }
 
-      await router.push({ name: 'clubs' })
+      await router.push({ name: 'associations' })
     } catch (error) {
       saveErrorMessage.value = t(translationKeys.form.saveError)
-      logError(error as Error, 'clubs', 'save-club')
+      logError(error as Error, 'associations', 'save-association')
     } finally {
       isSaving.value = false
     }
@@ -178,9 +179,9 @@ export function useClubForm(options: UseClubFormOptions = {}) {
 
   async function reset(): Promise<void> {
     if (initialFields.value) {
-      fields.value = cloneClubFormState(initialFields.value)
+      fields.value = cloneAssociationFormState(initialFields.value)
     } else {
-      fields.value = createEmptyClubForm()
+      fields.value = createEmptyAssociationForm()
     }
 
     saveErrorMessage.value = ''
@@ -201,7 +202,7 @@ export function useClubForm(options: UseClubFormOptions = {}) {
     shortNameRules,
     websiteHostRules,
     districtRules,
-    clubNumberRules,
+    associationNumberRules,
     streetRules,
     houseNumberRules,
     postalCodeRules,
@@ -209,16 +210,16 @@ export function useClubForm(options: UseClubFormOptions = {}) {
     emailRules,
     phoneRules,
     fieldLimits: {
-      name: CLUB_NAME_MAX_LENGTH,
-      shortName: CLUB_SHORT_NAME_MAX_LENGTH,
-      websiteHost: CLUB_WEBSITE_HOST_MAX_LENGTH,
-      district: CLUB_DISTRICT_MAX_LENGTH,
-      clubNumber: CLUB_NUMBER_MAX_LENGTH,
-      street: CLUB_STREET_MAX_LENGTH,
-      houseNumber: CLUB_HOUSE_NUMBER_MAX_LENGTH,
-      postalCode: CLUB_POSTAL_CODE_LENGTH,
-      city: CLUB_CITY_MAX_LENGTH,
-      phone: CLUB_PHONE_MAX_LENGTH
+      name: ASSOCIATION_NAME_MAX_LENGTH,
+      shortName: ASSOCIATION_SHORT_NAME_MAX_LENGTH,
+      websiteHost: ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
+      district: ASSOCIATION_DISTRICT_MAX_LENGTH,
+      associationNumber: ASSOCIATION_NUMBER_MAX_LENGTH,
+      street: ASSOCIATION_STREET_MAX_LENGTH,
+      houseNumber: ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
+      postalCode: ASSOCIATION_POSTAL_CODE_LENGTH,
+      city: ASSOCIATION_CITY_MAX_LENGTH,
+      phone: ASSOCIATION_PHONE_MAX_LENGTH
     },
     setFormRef,
     submit,

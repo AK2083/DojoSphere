@@ -1,63 +1,63 @@
 import fieldKeys from '../../i18n/fields-keys'
 
-/** i18n keys for the save-club slice. */
+/** i18n keys for the save-association slice. */
 const translationKeys = {
   page: {
-    titleCreate: 'clubs.saveClub.page.titleCreate',
-    titleEdit: 'clubs.saveClub.page.titleEdit'
+    titleCreate: 'associations.saveAssociation.page.titleCreate',
+    titleEdit: 'associations.saveAssociation.page.titleEdit'
   },
   form: {
-    ariaLabel: 'clubs.saveClub.form.ariaLabel',
-    hint: 'clubs.saveClub.form.hint',
-    sameAsHeadquarters: 'clubs.saveClub.form.sameAsHeadquarters',
-    saveError: 'clubs.saveClub.form.saveError',
-    loadError: 'clubs.saveClub.form.loadError',
+    ariaLabel: 'associations.saveAssociation.form.ariaLabel',
+    hint: 'associations.saveAssociation.form.hint',
+    sameAsHeadquarters: 'associations.saveAssociation.form.sameAsHeadquarters',
+    saveError: 'associations.saveAssociation.form.saveError',
+    loadError: 'associations.saveAssociation.form.loadError',
     fields: fieldKeys,
     placeholders: {
-      name: 'clubs.saveClub.form.placeholders.name',
-      shortName: 'clubs.saveClub.form.placeholders.shortName',
-      websiteHost: 'clubs.saveClub.form.placeholders.websiteHost',
-      clubNumber: 'clubs.saveClub.form.placeholders.clubNumber',
-      street: 'clubs.saveClub.form.placeholders.street',
-      houseNumber: 'clubs.saveClub.form.placeholders.houseNumber',
-      postalCode: 'clubs.saveClub.form.placeholders.postalCode',
-      city: 'clubs.saveClub.form.placeholders.city',
-      email: 'clubs.saveClub.form.placeholders.email',
-      phone: 'clubs.saveClub.form.placeholders.phone'
+      name: 'associations.saveAssociation.form.placeholders.name',
+      shortName: 'associations.saveAssociation.form.placeholders.shortName',
+      websiteHost: 'associations.saveAssociation.form.placeholders.websiteHost',
+      associationNumber: 'associations.saveAssociation.form.placeholders.associationNumber',
+      street: 'associations.saveAssociation.form.placeholders.street',
+      houseNumber: 'associations.saveAssociation.form.placeholders.houseNumber',
+      postalCode: 'associations.saveAssociation.form.placeholders.postalCode',
+      city: 'associations.saveAssociation.form.placeholders.city',
+      email: 'associations.saveAssociation.form.placeholders.email',
+      phone: 'associations.saveAssociation.form.placeholders.phone'
     }
   },
   status: {
-    active: 'clubs.getClubOverview.status.active',
-    inactive: 'clubs.getClubOverview.status.inactive'
+    active: 'associations.getAssociationOverview.status.active',
+    inactive: 'associations.getAssociationOverview.status.inactive'
   },
   actions: {
-    back: 'clubs.saveClub.actions.back',
-    reset: 'clubs.saveClub.actions.reset',
-    save: 'clubs.saveClub.actions.save'
+    back: 'associations.saveAssociation.actions.back',
+    reset: 'associations.saveAssociation.actions.reset',
+    save: 'associations.saveAssociation.actions.save'
   },
   validation: {
-    required: 'clubs.saveClub.validation.required',
-    textTooLong: 'clubs.saveClub.validation.textTooLong',
+    required: 'associations.saveAssociation.validation.required',
+    textTooLong: 'associations.saveAssociation.validation.textTooLong',
     email: {
-      invalid: 'clubs.saveClub.validation.email.invalid'
+      invalid: 'associations.saveAssociation.validation.email.invalid'
     },
     website: {
-      invalid: 'clubs.saveClub.validation.website.invalid'
+      invalid: 'associations.saveAssociation.validation.website.invalid'
     },
     postalCode: {
-      invalid: 'clubs.saveClub.validation.postalCode.invalid'
+      invalid: 'associations.saveAssociation.validation.postalCode.invalid'
     },
     houseNumber: {
-      invalid: 'clubs.saveClub.validation.houseNumber.invalid'
+      invalid: 'associations.saveAssociation.validation.houseNumber.invalid'
     },
-    clubNumber: {
-      invalid: 'clubs.saveClub.validation.clubNumber.invalid'
+    associationNumber: {
+      invalid: 'associations.saveAssociation.validation.associationNumber.invalid'
     },
     phone: {
-      invalid: 'clubs.saveClub.validation.phone.invalid'
+      invalid: 'associations.saveAssociation.validation.phone.invalid'
     },
     city: {
-      invalid: 'clubs.saveClub.validation.city.invalid'
+      invalid: 'associations.saveAssociation.validation.city.invalid'
     }
   }
 }

@@ -1,21 +1,21 @@
 import {
-  CLUB_ADDRESS_TYPES,
-  CLUB_CONTACT_TYPES,
-  CLUB_NUMBER_IDENTIFIER_TYPE
-} from '../../get-club-overview/lib/resolve-club-detail-fields'
+  ASSOCIATION_ADDRESS_TYPES,
+  ASSOCIATION_CONTACT_TYPES,
+  ASSOCIATION_NUMBER_IDENTIFIER_TYPE
+} from '../../get-association-overview/lib/resolve-association-detail-fields'
 import type {
-  ClubAddress,
-  ClubContact,
-  ClubOverviewRow
-} from '../../get-club-overview/model/club-row'
+  AssociationAddress,
+  AssociationContact,
+  AssociationOverviewRow
+} from '../../get-association-overview/model/association-row'
 import { joinPhoneCountryCode, splitPhoneCountryCode } from '../lib/phone-country-codes'
 import {
-  type ClubAddressFormFields,
-  type ClubFormState,
-  type ClubWebsiteProtocol,
+  type AssociationAddressFormFields,
+  type AssociationFormState,
+  type AssociationWebsiteProtocol,
   createEmptyAddressFields,
-  createEmptyClubForm
-} from './club-form-state'
+  createEmptyAssociationForm
+} from './association-form-state'
 
 function optionalText(value: string): string | null {
   const trimmed = value.trim()
@@ -23,7 +23,7 @@ function optionalText(value: string): string | null {
   return trimmed.length > 0 ? trimmed : null
 }
 
-function cloneAddressFields(fields: ClubAddressFormFields): ClubAddressFormFields {
+function cloneAddressFields(fields: AssociationAddressFormFields): AssociationAddressFormFields {
   return {
     street: fields.street,
     houseNumber: fields.houseNumber,
@@ -32,7 +32,7 @@ function cloneAddressFields(fields: ClubAddressFormFields): ClubAddressFormField
   }
 }
 
-function addressHasValues(fields: ClubAddressFormFields): boolean {
+function addressHasValues(fields: AssociationAddressFormFields): boolean {
   return Boolean(
     optionalText(fields.street) ||
     optionalText(fields.houseNumber) ||
@@ -43,8 +43,8 @@ function addressHasValues(fields: ClubAddressFormFields): boolean {
 
 function addressFromFormFields(
   addressType: string,
-  fields: ClubAddressFormFields
-): ClubAddress | null {
+  fields: AssociationAddressFormFields
+): AssociationAddress | null {
   if (!addressHasValues(fields)) {
     return null
   }
@@ -59,7 +59,9 @@ function addressFromFormFields(
   }
 }
 
-function addressToFormFields(address: ClubAddress | undefined): ClubAddressFormFields {
+function addressToFormFields(
+  address: AssociationAddress | undefined
+): AssociationAddressFormFields {
   if (!address) {
     return createEmptyAddressFields()
   }
@@ -72,7 +74,10 @@ function addressToFormFields(address: ClubAddress | undefined): ClubAddressFormF
   }
 }
 
-function addressFieldsEqual(left: ClubAddressFormFields, right: ClubAddressFormFields): boolean {
+function addressFieldsEqual(
+  left: AssociationAddressFormFields,
+  right: AssociationAddressFormFields
+): boolean {
   return (
     left.street.trim() === right.street.trim() &&
     left.houseNumber.trim() === right.houseNumber.trim() &&
@@ -88,12 +93,15 @@ function addressFieldsEqual(left: ClubAddressFormFields, right: ClubAddressFormF
  * @returns Independent address copy.
  */
 export function copyHeadquartersAddress(
-  headquarters: ClubAddressFormFields
-): ClubAddressFormFields {
+  headquarters: AssociationAddressFormFields
+): AssociationAddressFormFields {
   return cloneAddressFields(headquarters)
 }
 
-function findAddress(addresses: ClubAddress[], addressType: string): ClubAddress | undefined {
+function findAddress(
+  addresses: AssociationAddress[],
+  addressType: string
+): AssociationAddress | undefined {
   return addresses.find((entry) => entry.addressType === addressType)
 }
 
@@ -104,7 +112,7 @@ function findAddress(addresses: ClubAddress[], addressType: string): ClubAddress
  * @returns Protocol and host/path for the form controls.
  */
 export function splitWebsite(website: string | null): {
-  websiteProtocol: ClubWebsiteProtocol
+  websiteProtocol: AssociationWebsiteProtocol
   websiteHost: string
 } {
   const trimmed = website?.trim() ?? ''
@@ -136,7 +144,7 @@ export function splitWebsite(website: string | null): {
  * @param host - Host and optional path without protocol.
  * @returns Full URL, or `null` when host is blank.
  */
-export function joinWebsite(protocol: ClubWebsiteProtocol, host: string): string | null {
+export function joinWebsite(protocol: AssociationWebsiteProtocol, host: string): string | null {
   const trimmedHost = host.trim().replace(/^\/+/, '')
 
   if (!trimmedHost) {
@@ -147,27 +155,31 @@ export function joinWebsite(protocol: ClubWebsiteProtocol, host: string): string
 }
 
 /**
- * Maps a stored club row into editable form fields.
+ * Maps a stored association row into editable form fields.
  *
- * @param club - Club overview row from the store.
- * @returns Form state for the club editor.
+ * @param association - Association overview row from the store.
+ * @returns Form state for the association editor.
  */
-export function mapClubToFormState(club: ClubOverviewRow): ClubFormState {
-  const website = splitWebsite(club.website)
+export function mapAssociationToFormState(
+  association: AssociationOverviewRow
+): AssociationFormState {
+  const website = splitWebsite(association.website)
   const phoneValue =
-    club.contacts.find((contact) => contact.contactType === CLUB_CONTACT_TYPES.phone)?.value ?? ''
+    association.contacts.find((contact) => contact.contactType === ASSOCIATION_CONTACT_TYPES.phone)
+      ?.value ?? ''
   const phone = splitPhoneCountryCode(phoneValue)
-  const clubNumber =
-    club.identifiers.find((identifier) => identifier.type === CLUB_NUMBER_IDENTIFIER_TYPE)?.value ??
-    ''
+  const associationNumber =
+    association.identifiers.find(
+      (identifier) => identifier.type === ASSOCIATION_NUMBER_IDENTIFIER_TYPE
+    )?.value ?? ''
   const headquarters = addressToFormFields(
-    findAddress(club.addresses, CLUB_ADDRESS_TYPES.headquarters)
+    findAddress(association.addresses, ASSOCIATION_ADDRESS_TYPES.headquarters)
   )
   const trainingVenue = addressToFormFields(
-    findAddress(club.addresses, CLUB_ADDRESS_TYPES.trainingVenue)
+    findAddress(association.addresses, ASSOCIATION_ADDRESS_TYPES.trainingVenue)
   )
   const billingAddress = addressToFormFields(
-    findAddress(club.addresses, CLUB_ADDRESS_TYPES.billing)
+    findAddress(association.addresses, ASSOCIATION_ADDRESS_TYPES.billing)
   )
   const trainingVenueSameAsHeadquarters =
     addressHasValues(headquarters) && addressFieldsEqual(headquarters, trainingVenue)
@@ -175,50 +187,51 @@ export function mapClubToFormState(club: ClubOverviewRow): ClubFormState {
     addressHasValues(headquarters) && addressFieldsEqual(headquarters, billingAddress)
 
   return {
-    name: club.name,
-    shortName: club.shortName ?? '',
+    name: association.name,
+    shortName: association.shortName ?? '',
     websiteProtocol: website.websiteProtocol,
     websiteHost: website.websiteHost,
-    isActive: club.isActive,
-    districtName: club.districtName,
-    countryName: club.countryName,
-    associationName: club.associationName,
-    associationShortName: club.associationShortName ?? '',
-    regionalAssociationName: club.regionalAssociationName,
-    regionalAssociationShortName: club.regionalAssociationShortName ?? '',
-    districtShortName: club.districtShortName ?? '',
-    clubNumber,
+    isActive: association.isActive,
+    districtName: association.districtName,
+    countryName: association.countryName,
+    federationName: association.federationName,
+    federationShortName: association.federationShortName ?? '',
+    regionalFederationName: association.regionalFederationName,
+    regionalFederationShortName: association.regionalFederationShortName ?? '',
+    districtShortName: association.districtShortName ?? '',
+    associationNumber,
     headquarters,
     trainingVenue,
     billingAddress,
     trainingVenueSameAsHeadquarters,
     billingAddressSameAsHeadquarters,
     email:
-      club.contacts.find((contact) => contact.contactType === CLUB_CONTACT_TYPES.email)?.value ??
-      '',
+      association.contacts.find(
+        (contact) => contact.contactType === ASSOCIATION_CONTACT_TYPES.email
+      )?.value ?? '',
     phoneCountryCode: phone.phoneCountryCode,
     phoneNumber: phone.phoneNumber
   }
 }
 
 /**
- * Maps form fields into a club overview row for store persistence.
+ * Maps form fields into a association overview row for store persistence.
  *
  * @param fields - Current form values.
  * @param options - Existing id/source/createdAt when editing.
  * @param options.id
  * @param options.source
  * @param options.createdAt
- * @returns Club row ready for the in-memory store.
+ * @returns Association row ready for the in-memory store.
  */
-export function mapFormStateToClub(
-  fields: ClubFormState,
+export function mapFormStateToAssociation(
+  fields: AssociationFormState,
   options: {
     id: string
     source: string | null
     createdAt: string
   }
-): ClubOverviewRow {
+): AssociationOverviewRow {
   const trainingVenueFields = fields.trainingVenueSameAsHeadquarters
     ? fields.headquarters
     : fields.trainingVenue
@@ -227,18 +240,18 @@ export function mapFormStateToClub(
     : fields.billingAddress
 
   const addresses = [
-    addressFromFormFields(CLUB_ADDRESS_TYPES.headquarters, fields.headquarters),
-    addressFromFormFields(CLUB_ADDRESS_TYPES.trainingVenue, trainingVenueFields),
-    addressFromFormFields(CLUB_ADDRESS_TYPES.billing, billingAddressFields)
-  ].filter((address): address is ClubAddress => address != null)
+    addressFromFormFields(ASSOCIATION_ADDRESS_TYPES.headquarters, fields.headquarters),
+    addressFromFormFields(ASSOCIATION_ADDRESS_TYPES.trainingVenue, trainingVenueFields),
+    addressFromFormFields(ASSOCIATION_ADDRESS_TYPES.billing, billingAddressFields)
+  ].filter((address): address is AssociationAddress => address != null)
 
-  const contacts: ClubContact[] = []
+  const contacts: AssociationContact[] = []
   const email = optionalText(fields.email)
   const phone = joinPhoneCountryCode(fields.phoneCountryCode, fields.phoneNumber)
 
   if (email) {
     contacts.push({
-      contactType: CLUB_CONTACT_TYPES.email,
+      contactType: ASSOCIATION_CONTACT_TYPES.email,
       value: email,
       label: null,
       isPublic: true
@@ -247,14 +260,14 @@ export function mapFormStateToClub(
 
   if (phone) {
     contacts.push({
-      contactType: CLUB_CONTACT_TYPES.phone,
+      contactType: ASSOCIATION_CONTACT_TYPES.phone,
       value: phone,
       label: null,
       isPublic: false
     })
   }
 
-  const clubNumber = optionalText(fields.clubNumber)
+  const associationNumber = optionalText(fields.associationNumber)
   const headquartersCity = optionalText(fields.headquarters.city)
 
   return {
@@ -268,17 +281,17 @@ export function mapFormStateToClub(
     createdAt: options.createdAt,
     districtName: fields.districtName.trim(),
     districtShortName: optionalText(fields.districtShortName),
-    regionalAssociationName:
-      fields.regionalAssociationName.trim() || createEmptyClubForm().regionalAssociationName,
-    regionalAssociationShortName: optionalText(fields.regionalAssociationShortName),
-    associationName: fields.associationName.trim() || createEmptyClubForm().associationName,
-    associationShortName: optionalText(fields.associationShortName),
-    countryName: fields.countryName.trim() || createEmptyClubForm().countryName,
-    identifiers: clubNumber
+    regionalFederationName:
+      fields.regionalFederationName.trim() || createEmptyAssociationForm().regionalFederationName,
+    regionalFederationShortName: optionalText(fields.regionalFederationShortName),
+    federationName: fields.federationName.trim() || createEmptyAssociationForm().federationName,
+    federationShortName: optionalText(fields.federationShortName),
+    countryName: fields.countryName.trim() || createEmptyAssociationForm().countryName,
+    identifiers: associationNumber
       ? [
           {
-            type: CLUB_NUMBER_IDENTIFIER_TYPE,
-            value: clubNumber,
+            type: ASSOCIATION_NUMBER_IDENTIFIER_TYPE,
+            value: associationNumber,
             authority: 'DJB'
           }
         ]
@@ -289,12 +302,12 @@ export function mapFormStateToClub(
 }
 
 /**
- * Deep-clones club form state including nested address objects.
+ * Deep-clones association form state including nested address objects.
  *
  * @param fields - Form state to clone.
  * @returns Independent copy safe for reset snapshots.
  */
-export function cloneClubFormState(fields: ClubFormState): ClubFormState {
+export function cloneAssociationFormState(fields: AssociationFormState): AssociationFormState {
   return {
     ...fields,
     headquarters: cloneAddressFields(fields.headquarters),

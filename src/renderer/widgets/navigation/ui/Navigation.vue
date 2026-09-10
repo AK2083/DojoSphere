@@ -3,8 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import router from '@app/providers/router'
 import {
+  useAssociationsOverviewAccess,
   useAuthSession,
-  useClubsOverviewAccess,
   useParticipantsOverviewAccess,
   useSignOut
 } from '@features/authentication'
@@ -17,7 +17,7 @@ const drawer = ref(false)
 const { smAndDown } = useDisplay()
 const { isCloudLoggedIn } = useAuthSession()
 const { canReadParticipantsOverview } = useParticipantsOverviewAccess()
-const { canReadClubsOverview } = useClubsOverviewAccess()
+const { canReadAssociationsOverview } = useAssociationsOverviewAccess()
 const {
   logout,
   loading: isSigningOut,
@@ -30,7 +30,7 @@ const isMobile = computed(() => smAndDown.value)
 const showLogoutError = ref(false)
 
 const participantsLabel = computed(() => t(translationKeys.navigation.participants))
-const clubsLabel = computed(() => t(translationKeys.navigation.clubs))
+const associationsLabel = computed(() => t(translationKeys.navigation.associations))
 const signUpLabel = computed(() => t(translationKeys.navigation.signUp))
 const logoutLabel = computed(() => t(translationKeys.navigation.logout))
 const settingsLabel = computed(() => t(translationKeys.navigation.settings))
@@ -74,13 +74,13 @@ watch(
         </template>
       </v-tooltip>
 
-      <v-tooltip v-if="canReadClubsOverview" :text="clubsLabel" location="bottom">
+      <v-tooltip v-if="canReadAssociationsOverview" :text="associationsLabel" location="bottom">
         <template #activator="{ props: tooltipProps }">
           <v-btn
             v-bind="tooltipProps"
             icon
-            :aria-label="t(translationKeys.navigation.ariaClubs)"
-            :to="{ name: 'clubs' }"
+            :aria-label="t(translationKeys.navigation.ariaAssociations)"
+            :to="{ name: 'associations' }"
           >
             <v-icon :icon="mdiHomeGroup" aria-hidden="true" />
           </v-btn>
@@ -145,11 +145,11 @@ watch(
           :aria-label="participantsLabel"
         />
         <v-list-item
-          v-if="canReadClubsOverview"
+          v-if="canReadAssociationsOverview"
           :prepend-icon="mdiHomeGroup"
-          :to="{ name: 'clubs' }"
-          :title="clubsLabel"
-          :aria-label="clubsLabel"
+          :to="{ name: 'associations' }"
+          :title="associationsLabel"
+          :aria-label="associationsLabel"
         />
       </v-list>
     </nav>

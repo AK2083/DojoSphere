@@ -78,7 +78,7 @@ const ageByRow = Object.fromEntries(ageClasses.map((ageClass) => [ageClass.djbRo
 const grades = parseGrades()
 const weightClasses = parseWeightClasses(ageByRow)
 
-const clubs = [{ id: '00000000-0000-0000-0000-000000000000', nameKey: 'unknown' }]
+const associations = [{ id: '00000000-0000-0000-0000-000000000000', nameKey: 'unknown' }]
 const nationalities = ['DE', 'AT', 'CH']
 
 const header = `/** Static reference data aligned with SQLite seed migrations (V004–V007). */
@@ -110,7 +110,7 @@ export type WeightClassSeed = {
   sortOrder: number
 }
 
-export type ClubSeed = {
+export type AssociationSeed = {
   id: string
   nameKey: string
 }
@@ -123,7 +123,7 @@ export const GRADE_SEEDS: GradeSeed[] = ${JSON.stringify(grades, null, 2)}
 
 export const WEIGHT_CLASS_SEEDS: WeightClassSeed[] = ${JSON.stringify(weightClasses, null, 2)}
 
-export const CLUB_SEEDS: ClubSeed[] = ${JSON.stringify(clubs, null, 2)}
+export const ASSOCIATION_SEEDS: AssociationSeed[] = ${JSON.stringify(associations, null, 2)}
 
 export const NATIONALITY_CODES = ${JSON.stringify(nationalities)} as const
 `

@@ -1,29 +1,29 @@
 import { onMounted, onUnmounted, ref } from 'vue'
-import { CLUBS_OVERVIEW_PERMISSION } from '@shared/constants/clubs-overview-permission'
+import { ASSOCIATIONS_OVERVIEW_PERMISSION } from '@shared/constants/associations-overview-permission'
 
 import { getCurrentSession } from '../service/get-current-session'
 import { hasUserPermission } from '../service/has-user-permission'
 import { onLocalAuthStateChanged } from '../service/local-auth-state'
 
 /**
- * Reactive access flag for the clubs overview navigation and routes.
+ * Reactive access flag for the associations overview navigation and routes.
  *
- * @returns Ref indicating whether the current session may read the clubs overview.
+ * @returns Ref indicating whether the current session may read the associations overview.
  */
-export function useClubsOverviewAccess() {
-  const canReadClubsOverview = ref(false)
+export function useAssociationsOverviewAccess() {
+  const canReadAssociationsOverview = ref(false)
 
   async function refreshAccess() {
     const session = await getCurrentSession()
 
     if (!session) {
-      canReadClubsOverview.value = false
+      canReadAssociationsOverview.value = false
       return
     }
 
-    canReadClubsOverview.value = await hasUserPermission(
-      CLUBS_OVERVIEW_PERMISSION.resource,
-      CLUBS_OVERVIEW_PERMISSION.actions.read
+    canReadAssociationsOverview.value = await hasUserPermission(
+      ASSOCIATIONS_OVERVIEW_PERMISSION.resource,
+      ASSOCIATIONS_OVERVIEW_PERMISSION.actions.read
     )
   }
 
@@ -40,5 +40,5 @@ export function useClubsOverviewAccess() {
     unsubscribeLocalAuth?.()
   })
 
-  return { canReadClubsOverview }
+  return { canReadAssociationsOverview }
 }

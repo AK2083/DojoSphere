@@ -1,2 +1,2 @@
-export { default as getClubOverviewDe } from './de'
-export { default as getClubOverviewEn } from './en'
+export { default as getAssociationOverviewDe } from './de'
+export { default as getAssociationOverviewEn } from './en'

@@ -59,7 +59,7 @@ describe('registerCompetitorsIpc', () => {
         token: sessionToken,
         givenName: 'Yuki',
         familyName: 'Tanaka',
-        club: 'Tokyo Dojo',
+        association: 'Tokyo Dojo',
         weightClass: '-60'
       }
     )) as Competitor
@@ -67,7 +67,7 @@ describe('registerCompetitorsIpc', () => {
     expect(competitor).toMatchObject({
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo',
+      association: 'Tokyo Dojo',
       weightClass: '-60'
     })
 
@@ -247,7 +247,7 @@ describe('registerCompetitorsIpc', () => {
         token: sessionToken,
         givenName: 'Yuki',
         familyName: 'Tanaka',
-        club: 'Tokyo Dojo'
+        association: 'Tokyo Dojo'
       }
     )) as Competitor
 
@@ -256,12 +256,12 @@ describe('registerCompetitorsIpc', () => {
       {
         token: sessionToken,
         id: competitor.id,
-        club: 'Osaka Dojo'
+        association: 'Osaka Dojo'
       }
     )
 
     expect(updated).toMatchObject({
-      club: 'Osaka Dojo'
+      association: 'Osaka Dojo'
     })
 
     await deleteHandler(

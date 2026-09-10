@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getCurrentSession } from '../service/get-current-session'
 import { hasUserPermission } from '../service/has-user-permission'
 import { onLocalAuthStateChanged } from '../service/local-auth-state'
-import { useClubsOverviewAccess } from './use-clubs-overview-access'
+import { useAssociationsOverviewAccess } from './use-associations-overview-access'
 
 let onMountedHandler: (() => void) | undefined
 let onUnmountedHandler: (() => void) | undefined
@@ -34,7 +34,7 @@ vi.mock('../service/local-auth-state', () => ({
   onLocalAuthStateChanged: vi.fn(() => () => undefined)
 }))
 
-describe('useClubsOverviewAccess', () => {
+describe('useAssociationsOverviewAccess', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     onMountedHandler = undefined
@@ -54,23 +54,23 @@ describe('useClubsOverviewAccess', () => {
       return unsubscribe
     })
 
-    const { canReadClubsOverview } = useClubsOverviewAccess()
+    const { canReadAssociationsOverview } = useAssociationsOverviewAccess()
 
-    expect(canReadClubsOverview.value).toBe(false)
+    expect(canReadAssociationsOverview.value).toBe(false)
     expect(onMountedHandler).toBeDefined()
 
     onMountedHandler?.()
     await vi.waitFor(() => {
-      expect(hasUserPermission).toHaveBeenCalledWith('clubs-overview', 'read')
+      expect(hasUserPermission).toHaveBeenCalledWith('associations-overview', 'read')
     })
-    expect(canReadClubsOverview.value).toBe(true)
+    expect(canReadAssociationsOverview.value).toBe(true)
 
     vi.mocked(hasUserPermission).mockResolvedValue(false)
     localAuthCallback?.(null)
     await vi.waitFor(() => {
       expect(hasUserPermission).toHaveBeenCalledTimes(2)
     })
-    expect(canReadClubsOverview.value).toBe(false)
+    expect(canReadAssociationsOverview.value).toBe(false)
 
     expect(onUnmountedHandler).toBeDefined()
     onUnmountedHandler?.()
@@ -81,17 +81,17 @@ describe('useClubsOverviewAccess', () => {
   it('skips permission checks when no session is active', async () => {
     vi.mocked(getCurrentSession).mockResolvedValue(null)
 
-    const { canReadClubsOverview } = useClubsOverviewAccess()
+    const { canReadAssociationsOverview } = useAssociationsOverviewAccess()
 
     onMountedHandler?.()
     await Promise.resolve()
 
     expect(hasUserPermission).not.toHaveBeenCalled()
-    expect(canReadClubsOverview.value).toBe(false)
+    expect(canReadAssociationsOverview.value).toBe(false)
   })
 
   it('does not fail on unmount when no local auth subscription exists yet', () => {
-    useClubsOverviewAccess()
+    useAssociationsOverviewAccess()
 
     expect(onUnmountedHandler).toBeDefined()
     onUnmountedHandler?.()

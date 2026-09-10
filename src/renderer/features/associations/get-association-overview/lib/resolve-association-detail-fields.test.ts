@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { resolveClubDetailFields } from './resolve-club-detail-fields'
+import { resolveAssociationDetailFields } from './resolve-association-detail-fields'
 
-describe('resolveClubDetailFields', () => {
-  it('maps club number, typed addresses, and typed contacts', () => {
+describe('resolveAssociationDetailFields', () => {
+  it('maps association number, typed addresses, and typed contacts', () => {
     expect(
-      resolveClubDetailFields({
+      resolveAssociationDetailFields({
         identifiers: [
-          { type: 'djb_club_number', value: '020123', authority: 'DJB' },
+          { type: 'djb_association_number', value: '020123', authority: 'DJB' },
           { type: 'other', value: 'ignored', authority: null }
         ],
         addresses: [
@@ -52,7 +52,7 @@ describe('resolveClubDetailFields', () => {
         ]
       })
     ).toEqual({
-      clubNumber: '020123',
+      associationNumber: '020123',
       headquarters: 'Dojostraße 12, 20095 Hamburg, DE',
       trainingVenue: 'Trainingweg 4, 20099 Hamburg, DE',
       billingAddress: 'Rechnungsweg 1, 20095 Hamburg, DE',
@@ -63,13 +63,13 @@ describe('resolveClubDetailFields', () => {
 
   it('returns null for missing typed fields', () => {
     expect(
-      resolveClubDetailFields({
+      resolveAssociationDetailFields({
         identifiers: [],
         addresses: [],
         contacts: []
       })
     ).toEqual({
-      clubNumber: null,
+      associationNumber: null,
       headquarters: null,
       trainingVenue: null,
       billingAddress: null,
@@ -78,10 +78,10 @@ describe('resolveClubDetailFields', () => {
     })
   })
 
-  it('returns null for blank club number and contact values', () => {
+  it('returns null for blank association number and contact values', () => {
     expect(
-      resolveClubDetailFields({
-        identifiers: [{ type: 'djb_club_number', value: '   ', authority: null }],
+      resolveAssociationDetailFields({
+        identifiers: [{ type: 'djb_association_number', value: '   ', authority: null }],
         addresses: [],
         contacts: [
           {
@@ -99,7 +99,7 @@ describe('resolveClubDetailFields', () => {
         ]
       })
     ).toEqual({
-      clubNumber: null,
+      associationNumber: null,
       headquarters: null,
       trainingVenue: null,
       billingAddress: null,
@@ -110,7 +110,7 @@ describe('resolveClubDetailFields', () => {
 
   it('returns null when an address of the type exists but has no displayable parts', () => {
     expect(
-      resolveClubDetailFields({
+      resolveAssociationDetailFields({
         identifiers: [],
         addresses: [
           {
@@ -125,7 +125,7 @@ describe('resolveClubDetailFields', () => {
         contacts: []
       })
     ).toEqual({
-      clubNumber: null,
+      associationNumber: null,
       headquarters: null,
       trainingVenue: null,
       billingAddress: null,

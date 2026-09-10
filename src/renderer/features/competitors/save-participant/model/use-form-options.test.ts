@@ -23,7 +23,7 @@ describe('useParticipantFormOptions', () => {
     const options = createFormOptions('c2000000-0000-4000-8000-000000000003')
 
     expect(options.genderOptions.value).toHaveLength(3)
-    expect(options.clubOptions.value[0]?.value).toBe('00000000-0000-0000-0000-000000000000')
+    expect(options.associationOptions.value[0]?.value).toBe('00000000-0000-0000-0000-000000000000')
     expect(options.nationalityOptions.value.map((entry) => entry.value)).toEqual(['DE', 'AT', 'CH'])
     expect(options.ageClassOptions.value).toHaveLength(18)
     expect(options.gradingSystemOptions.value).toHaveLength(3)

@@ -31,7 +31,7 @@ describe('matchColumns conflict handling', () => {
     expect(isConflictingHeaderMatch('Pass-Nr.', 'licenseNumber')).toBe(true)
     expect(isConflictingHeaderMatch('Lizenz-Nr.', 'passNumber')).toBe(true)
     expect(isConflictingHeaderMatch('E-Mail Ansprechpartner', 'contactPerson')).toBe(true)
-    expect(isConflictingHeaderMatch('Kontaktperson', 'clubContactEmail')).toBe(true)
+    expect(isConflictingHeaderMatch('Kontaktperson', 'associationContactEmail')).toBe(true)
     expect(isConflictingHeaderMatch('Ausrichter', 'givenName')).toBe(true)
     expect(headerFieldSpecificity('---', 'givenName')).toBe(0)
   })
@@ -68,7 +68,7 @@ describe('matchColumns conflict handling', () => {
     )
 
     expect(result.mapping.remarks).toBeUndefined()
-    expect(result.mapping.clubContactEmail).toBe('Sheet1#form#0#0')
+    expect(result.mapping.associationContactEmail).toBe('Sheet1#form#0#0')
   })
 
   it('does not map email headers to contact person', () => {
@@ -160,7 +160,7 @@ describe('matchColumns conflict handling', () => {
     )
 
     expect(result.mapping.remarks).toBe('Sheet1#form#0#0')
-    expect(result.mapping.clubContactEmail).toBe('Sheet1#2')
+    expect(result.mapping.associationContactEmail).toBe('Sheet1#2')
   })
 
   it('skips event metadata form labels during candidate collection', () => {

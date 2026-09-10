@@ -23,9 +23,9 @@ describe('importDefaultValueLabel', () => {
     )
   })
 
-  it('does not return the unknown-club label for nationality', () => {
+  it('does not return the unknown-association label for nationality', () => {
     expect(importDefaultValueLabel('nationality', t)).not.toBe(
-      saveParticipantTranslationKeys.reference.clubs.unknown
+      saveParticipantTranslationKeys.reference.associations.unknown
     )
   })
 
@@ -45,8 +45,8 @@ describe('importDefaultValueLabel', () => {
     expect(importDefaultValueLabel('passNumber', t)).toBe(
       'competitors.importParticipants.steps.mapping.defaultValues.passNumber'
     )
-    expect(importDefaultValueLabel('club', t)).toBe(
-      saveParticipantTranslationKeys.reference.clubs.unknown
+    expect(importDefaultValueLabel('association', t)).toBe(
+      saveParticipantTranslationKeys.reference.associations.unknown
     )
   })
 

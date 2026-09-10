@@ -15,7 +15,7 @@ Used by `competitors.age_class_id`. Weight classes per row: [weight-classes-sche
 | 3 | Male youth U15 individual | 12–14 | −34 −37 −40 −43 −46 −50 −55 −60 −66 +66 | 3 min | 11/12/13 |
 | 4 | German youth cup U15 team | 12–14 | −40 −46 −55 −66 +66 (≥64) | 3 min | 11/12/13 |
 | 5 | Men U18 individual | 15–17 | −46 −50 −55 −60 −66 −73 −81 −90 +90 | 4 min | 08/09/10 |
-| 6 | German club team championship U18 team | 14–17 | −50 −55 −60 −66 −73 +73 (≥73) | 4 min | 08/09/10/11 |
+| 6 | German association team championship U18 team | 14–17 | −50 −55 −60 −66 −73 +73 (≥73) | 4 min | 08/09/10/11 |
 | 7 | Men U21 individual | 17–20 | −60 −66 −73 −81 −90 −100 +100 | 4 min | 05/06/07/08 |
 | 8 | Men individual from 17 | from 17 | −60 −66 −73 −81 −90 −100 +100 | 4 min | 08 and older |
 | 9 | Bundesliga team from 16 | from 16 | −60 −66 −73 −81 −90 −100 +100 | 4 min | 09 and older |
@@ -24,7 +24,7 @@ Used by `competitors.age_class_id`. Weight classes per row: [weight-classes-sche
 | 12 | Female youth U15 individual | 12–14 | −33 −36 −40 −44 −48 −52 −57 −63 +63 | 3 min | 11/12/13 |
 | 13 | German youth cup U15 team | 12–14 | −40 −48 −57 −63 +63 (≥61) | 3 min | 11/12/13 |
 | 14 | Women U18 individual | 15–17 | −40 −44 −48 −52 −57 −63 −70 −78 +78 | 4 min | 08/09/10 |
-| 15 | German club team championship U18 team | 14–17 | −44 −48 −52 −57 −63 +63 (≥63) | 4 min | 08/09/10/11 |
+| 15 | German association team championship U18 team | 14–17 | −44 −48 −52 −57 −63 +63 (≥63) | 4 min | 08/09/10/11 |
 | 16 | Women U21 individual | 17–20 | −48 −52 −57 −63 −70 −78 +78 | 4 min | 05/06/07/08 |
 | 17 | Women individual from 17 | from 17 | −48 −52 −57 −63 −70 −78 +78 | 4 min | 08 and older |
 | 18 | Bundesliga team from 16 | from 16 | −48 −52 −57 −63 −70 −78 +78 | 4 min | 08 and older |
@@ -151,7 +151,7 @@ CREATE INDEX idx_age_classes_ruleset ON age_classes(ruleset_version);
 | Display label | `t(age_classes.label_key)` |
 | Weight class selector | `weight_classes` filtered by `age_class_id`; disabled when `weight_mode = 'flexible'` |
 
-For club **individual** tournaments, filter selectors to `competition_form = 'individual'` unless the event is a team competition.
+For association **individual** tournaments, filter selectors to `competition_form = 'individual'` unless the event is a team competition.
 
 ## Ruleset updates
 

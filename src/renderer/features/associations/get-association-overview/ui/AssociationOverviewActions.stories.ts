@@ -1,19 +1,19 @@
 import { onMounted } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ClubOverviewActions from './ClubOverviewActions.vue'
+import AssociationOverviewActions from './AssociationOverviewActions.vue'
 
 const meta = {
-  title: 'Features/Clubs/GetClubOverview/ClubOverviewActions',
-  component: ClubOverviewActions,
+  title: 'Features/Associations/GetAssociationOverview/AssociationOverviewActions',
+  component: AssociationOverviewActions,
   parameters: {
     layout: 'padded'
   },
   args: {
-    addLabel: 'Add club',
+    addLabel: 'Add association',
     isMobile: false
   }
-} satisfies Meta<typeof ClubOverviewActions>
+} satisfies Meta<typeof AssociationOverviewActions>
 
 export default meta
 
@@ -21,13 +21,13 @@ type Story = StoryObj<typeof meta>
 
 export const Desktop: Story = {
   render: (args) => ({
-    components: { ClubOverviewActions },
+    components: { AssociationOverviewActions },
     setup() {
       return { args }
     },
     template: `
       <div style="max-width: 48rem;">
-        <ClubOverviewActions v-bind="args" />
+        <AssociationOverviewActions v-bind="args" />
       </div>
     `
   })
@@ -38,7 +38,7 @@ export const Mobile: Story = {
     isMobile: true
   },
   render: (args) => ({
-    components: { ClubOverviewActions },
+    components: { AssociationOverviewActions },
     setup() {
       onMounted(() => {
         Object.defineProperty(window, 'innerWidth', {
@@ -52,7 +52,7 @@ export const Mobile: Story = {
     },
     template: `
       <div style="max-width: 390px;">
-        <ClubOverviewActions v-bind="args" />
+        <AssociationOverviewActions v-bind="args" />
       </div>
     `
   })

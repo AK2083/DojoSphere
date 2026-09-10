@@ -1,38 +1,38 @@
 export default {
-  'participants-overview': {
+  competitors: {
     read: {
-      label: 'View participant list',
-      description: 'Allows viewing the participants overview.'
+      label: 'View competitors',
+      description: 'Allows viewing the competitors overview.'
     },
     create: {
-      label: 'Create participants',
-      description: 'Allows creating and importing participants.'
+      label: 'Create competitors',
+      description: 'Allows creating new competitors.'
     },
     update: {
-      label: 'Update participants',
-      description: 'Allows editing existing participants.'
+      label: 'Update competitors',
+      description: 'Allows editing existing competitors.'
     },
     delete: {
-      label: 'Delete participants',
-      description: 'Allows deleting participants.'
+      label: 'Delete competitors',
+      description: 'Allows deleting competitors.'
     }
   },
-  'clubs-overview': {
+  'associations-overview': {
     read: {
-      label: 'View clubs',
-      description: 'Allows viewing the clubs overview.'
+      label: 'View associations',
+      description: 'Allows viewing the associations overview.'
     },
     create: {
-      label: 'Create clubs',
-      description: 'Allows creating new clubs.'
+      label: 'Create associations',
+      description: 'Allows creating new associations.'
     },
     update: {
-      label: 'Update clubs',
-      description: 'Allows editing existing clubs.'
+      label: 'Update associations',
+      description: 'Allows editing existing associations.'
     },
     delete: {
-      label: 'Delete clubs',
-      description: 'Allows deleting clubs.'
+      label: 'Delete associations',
+      description: 'Allows deleting associations.'
     }
   }
 }

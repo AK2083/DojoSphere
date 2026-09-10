@@ -1,32 +1,34 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useClubsStore } from '../../store/use-clubs-store'
-import { loadClubs, resetClubsLoaderForStorybook } from '../service/load-clubs'
+import { useAssociationsStore } from '../../store/use-associations-store'
+import { loadAssociations, resetAssociationsLoaderForStorybook } from '../service/load-associations'
 import {
-  installStorybookClubsLoader,
-  installStorybookClubsLoaderError,
-  installStorybookClubsLoaderLoading,
-  resetStorybookClubsLoader,
-  storyClubs,
+  installStorybookAssociationsLoader,
+  installStorybookAssociationsLoaderError,
+  installStorybookAssociationsLoaderLoading,
+  resetStorybookAssociationsLoader,
+  storyAssociations,
   storyFieldHeaders
-} from './club-overview-story-fixtures'
+} from './association-overview-story-fixtures'
 
-describe('club-overview-story-fixtures', () => {
+describe('association-overview-story-fixtures', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    useClubsStore().resetClubs()
+    useAssociationsStore().resetAssociations()
   })
 
   afterEach(() => {
     vi.useRealTimers()
-    resetStorybookClubsLoader()
+    resetStorybookAssociationsLoader()
   })
 
-  it('provides story clubs with status labels', () => {
-    expect(storyClubs.length).toBeGreaterThan(0)
-    expect(storyClubs[0]?.statusLabel).toBe('Active')
-    expect(storyClubs.some((club) => club.statusLabel === 'Inactive')).toBe(true)
+  it('provides story associations with status labels', () => {
+    expect(storyAssociations.length).toBeGreaterThan(0)
+    expect(storyAssociations[0]?.statusLabel).toBe('Active')
+    expect(storyAssociations.some((association) => association.statusLabel === 'Inactive')).toBe(
+      true
+    )
   })
 
   it('includes the core summary and detail field headers', () => {
@@ -38,7 +40,7 @@ describe('club-overview-story-fixtures', () => {
         'website',
         'status',
         'district',
-        'clubNumber',
+        'associationNumber',
         'headquarters',
         'trainingVenue',
         'billingAddress',
@@ -48,55 +50,57 @@ describe('club-overview-story-fixtures', () => {
     )
   })
 
-  it('installs a storybook clubs loader with default fixtures', async () => {
-    installStorybookClubsLoader()
+  it('installs a storybook associations loader with default fixtures', async () => {
+    installStorybookAssociationsLoader()
 
-    const clubs = await loadClubs()
+    const associations = await loadAssociations()
 
-    expect(clubs.map((club) => club.id)).toEqual(storyClubs.map((club) => club.id))
+    expect(associations.map((association) => association.id)).toEqual(
+      storyAssociations.map((association) => association.id)
+    )
   })
 
-  it('installs a custom clubs list in the storybook loader', async () => {
-    const customClubs = [
+  it('installs a custom associations list in the storybook loader', async () => {
+    const customAssociations = [
       {
-        ...storyClubs[0]!,
-        id: 'custom-club'
+        ...storyAssociations[0]!,
+        id: 'custom-association'
       }
     ]
 
-    installStorybookClubsLoader(customClubs)
+    installStorybookAssociationsLoader(customAssociations)
 
-    await expect(loadClubs()).resolves.toEqual([
+    await expect(loadAssociations()).resolves.toEqual([
       expect.objectContaining({
-        id: 'custom-club'
+        id: 'custom-association'
       })
     ])
   })
 
-  it('installs a storybook clubs loader that rejects', async () => {
-    installStorybookClubsLoaderError()
+  it('installs a storybook associations loader that rejects', async () => {
+    installStorybookAssociationsLoaderError()
 
-    await expect(loadClubs()).rejects.toThrow('Clubs could not be loaded.')
+    await expect(loadAssociations()).rejects.toThrow('Associations could not be loaded.')
   })
 
-  it('installs a storybook clubs loader that stays pending until the delay elapses', async () => {
+  it('installs a storybook associations loader that stays pending until the delay elapses', async () => {
     vi.useFakeTimers()
-    installStorybookClubsLoaderLoading(25)
+    installStorybookAssociationsLoaderLoading(25)
 
-    const pending = loadClubs()
+    const pending = loadAssociations()
 
     vi.advanceTimersByTime(25)
 
     await expect(pending).resolves.toEqual([])
   })
 
-  it('restores the default clubs loader', async () => {
-    installStorybookClubsLoader([])
-    resetStorybookClubsLoader()
+  it('restores the default associations loader', async () => {
+    installStorybookAssociationsLoader([])
+    resetStorybookAssociationsLoader()
 
-    const clubs = await loadClubs()
+    const associations = await loadAssociations()
 
-    expect(clubs.length).toBeGreaterThan(0)
-    resetClubsLoaderForStorybook()
+    expect(associations.length).toBeGreaterThan(0)
+    resetAssociationsLoaderForStorybook()
   })
 })

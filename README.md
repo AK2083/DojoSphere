@@ -12,7 +12,7 @@ Open-source Electron application for managing Judo tournaments.
 ## Features
 
 - Tournament administration
-- Competitor and club management
+- Competitor and association management
 - Match and schedule overview
 - Offline/local-first capable setup
 

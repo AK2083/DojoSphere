@@ -54,7 +54,7 @@ describe('import-service', () => {
     const mapping = {
       givenName: 'Teilnehmer#0',
       familyName: 'Teilnehmer#1',
-      club: 'Teilnehmer#2'
+      association: 'Teilnehmer#2'
     }
 
     const progress: Array<[number, number]> = []
@@ -72,7 +72,7 @@ describe('import-service', () => {
     expect(getCompetitors()).toHaveLength(2)
   })
 
-  it('stores club contact email on the club record when mapped', async () => {
+  it('stores association contact email on the association record when mapped', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
     const { getCompetitors } = await import('../repository/competitors.repository')
@@ -89,17 +89,17 @@ describe('import-service', () => {
     executeImport(actorUserId, buffer, {
       givenName: 'Teilnehmer#0',
       familyName: 'Teilnehmer#1',
-      club: 'Teilnehmer#2',
-      clubContactEmail: 'Teilnehmer#3'
+      association: 'Teilnehmer#2',
+      associationContactEmail: 'Teilnehmer#3'
     })
 
     const [competitor] = getCompetitors()
     const db = getDatabase()
     const contact = db
       .prepare(
-        `SELECT value FROM club_contacts WHERE club_id = ? AND contact_type = 'email' LIMIT 1`
+        `SELECT value FROM association_contacts WHERE association_id = ? AND contact_type = 'email' LIMIT 1`
       )
-      .get(competitor?.clubId) as { value: string } | undefined
+      .get(competitor?.associationId) as { value: string } | undefined
 
     expect(contact?.value).toBe('kontakt@example-dojo.invalid')
     expect(competitor?.remarks).toBeNull()
@@ -258,13 +258,13 @@ describe('import-service', () => {
     expect(result.results[0]?.success).toBe(false)
   })
 
-  it('imports successfully without persisting club contact email when it is not mapped', async () => {
+  it('imports successfully without persisting association contact email when it is not mapped', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
     const repository = await import('../repository/competitors.repository')
     const { executeImport } = await import('./import-service')
 
-    const upsertSpy = vi.spyOn(repository, 'upsertClubContactEmail')
+    const upsertSpy = vi.spyOn(repository, 'upsertAssociationContactEmail')
 
     const { id: actorUserId } = addUser({ displayName: 'No Email Actor', userType: 'system' })
     const buffer = buildWorkbook([
@@ -281,25 +281,25 @@ describe('import-service', () => {
     expect(upsertSpy).not.toHaveBeenCalled()
   })
 
-  it('skips club contact email persistence when the imported competitor has no club', async () => {
+  it('skips association contact email persistence when the imported competitor has no association', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
     const repository = await import('../repository/competitors.repository')
     const { executeImport } = await import('./import-service')
 
-    const upsertSpy = vi.spyOn(repository, 'upsertClubContactEmail')
+    const upsertSpy = vi.spyOn(repository, 'upsertAssociationContactEmail')
     vi.spyOn(repository, 'importCompetitors').mockReturnValue([
       {
         index: 0,
         success: true,
         competitor: {
-          id: 'competitor-without-club',
-          clubId: null
+          id: 'competitor-without-association',
+          associationId: null
         } as never
       }
     ])
 
-    const { id: actorUserId } = addUser({ displayName: 'No Club Actor', userType: 'system' })
+    const { id: actorUserId } = addUser({ displayName: 'No Association Actor', userType: 'system' })
     const buffer = buildWorkbook([
       ['Vorname', 'Nachname', 'E-Mail Vereinsverantwortlicher'],
       ['Yuki', 'Tanaka', 'kontakt@example-dojo.invalid']
@@ -308,7 +308,7 @@ describe('import-service', () => {
     executeImport(actorUserId, buffer, {
       givenName: 'Teilnehmer#0',
       familyName: 'Teilnehmer#1',
-      clubContactEmail: 'Teilnehmer#2'
+      associationContactEmail: 'Teilnehmer#2'
     })
 
     expect(upsertSpy).not.toHaveBeenCalled()
@@ -372,7 +372,7 @@ describe('import-service', () => {
       gender: 'Teilnehmer#4',
       nationality: 'Teilnehmer#5',
       birthDate: 'Teilnehmer#6',
-      club: 'Teilnehmer#7',
+      association: 'Teilnehmer#7',
       weightKg: 'Teilnehmer#8'
     })
 
@@ -383,7 +383,7 @@ describe('import-service', () => {
       gender: 'm',
       nationality: 'DE',
       birthDate: '2012-01-01',
-      club: 'Dojo Nord'
+      association: 'Dojo Nord'
     })
   })
 

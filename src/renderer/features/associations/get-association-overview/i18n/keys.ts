@@ -1,43 +1,43 @@
 export default {
   toolbar: {
-    ariaLabel: 'clubs.getClubOverview.toolbar.ariaLabel',
-    placeholderAction: 'clubs.getClubOverview.toolbar.placeholderAction'
+    ariaLabel: 'associations.getAssociationOverview.toolbar.ariaLabel',
+    placeholderAction: 'associations.getAssociationOverview.toolbar.placeholderAction'
   },
   list: {
-    ariaLabel: 'clubs.getClubOverview.list.ariaLabel',
-    empty: 'clubs.getClubOverview.list.empty',
-    loadingPlaceholder: 'clubs.getClubOverview.list.loadingPlaceholder',
+    ariaLabel: 'associations.getAssociationOverview.list.ariaLabel',
+    empty: 'associations.getAssociationOverview.list.empty',
+    loadingPlaceholder: 'associations.getAssociationOverview.list.loadingPlaceholder',
     columns: {
-      city: 'clubs.fields.city',
-      website: 'clubs.fields.website',
-      status: 'clubs.fields.status',
-      district: 'clubs.fields.district',
-      country: 'clubs.fields.country',
-      association: 'clubs.fields.association',
-      regionalAssociation: 'clubs.fields.regionalAssociation',
-      clubNumber: 'clubs.fields.clubNumber',
-      headquarters: 'clubs.fields.headquarters',
-      trainingVenue: 'clubs.fields.trainingVenue',
-      billingAddress: 'clubs.fields.billingAddress',
-      email: 'clubs.fields.email',
-      phone: 'clubs.fields.phone'
+      city: 'associations.fields.city',
+      website: 'associations.fields.website',
+      status: 'associations.fields.status',
+      district: 'associations.fields.district',
+      country: 'associations.fields.country',
+      federation: 'associations.fields.federation',
+      regionalFederation: 'associations.fields.regionalFederation',
+      associationNumber: 'associations.fields.associationNumber',
+      headquarters: 'associations.fields.headquarters',
+      trainingVenue: 'associations.fields.trainingVenue',
+      billingAddress: 'associations.fields.billingAddress',
+      email: 'associations.fields.email',
+      phone: 'associations.fields.phone'
     }
   },
   status: {
-    active: 'clubs.getClubOverview.status.active',
-    inactive: 'clubs.getClubOverview.status.inactive'
+    active: 'associations.getAssociationOverview.status.active',
+    inactive: 'associations.getAssociationOverview.status.inactive'
   },
-  loadError: 'clubs.getClubOverview.loadError',
+  loadError: 'associations.getAssociationOverview.loadError',
   actions: {
-    add: 'clubs.getClubOverview.actions.add',
-    edit: 'clubs.getClubOverview.actions.edit',
-    ariaEdit: 'clubs.getClubOverview.actions.ariaEdit',
-    delete: 'clubs.getClubOverview.actions.delete',
-    ariaDelete: 'clubs.getClubOverview.actions.ariaDelete'
+    add: 'associations.getAssociationOverview.actions.add',
+    edit: 'associations.getAssociationOverview.actions.edit',
+    ariaEdit: 'associations.getAssociationOverview.actions.ariaEdit',
+    delete: 'associations.getAssociationOverview.actions.delete',
+    ariaDelete: 'associations.getAssociationOverview.actions.ariaDelete'
   },
   entry: {
-    showDetails: 'clubs.getClubOverview.entry.showDetails',
-    hideDetails: 'clubs.getClubOverview.entry.hideDetails',
-    emptyValue: 'clubs.getClubOverview.entry.emptyValue'
+    showDetails: 'associations.getAssociationOverview.entry.showDetails',
+    hideDetails: 'associations.getAssociationOverview.entry.hideDetails',
+    emptyValue: 'associations.getAssociationOverview.entry.emptyValue'
   }
 }

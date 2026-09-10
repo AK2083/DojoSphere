@@ -33,7 +33,7 @@ function isPlausibleFormValue(value: string): boolean {
  * Extracts label/value pairs from rows above the participant table header.
  *
  * German registration forms typically lay out pairs as label | value | label | value
- * on each row (e.g. Ausrichter / Judo-Club … / Meldeschluss / 05.09.2026).
+ * on each row (e.g. Ausrichter / Judo-Association … / Meldeschluss / 05.09.2026).
  *
  * @param rows - Normalized sheet rows.
  * @param headerRowIndex - Detected index of the participant table header row.

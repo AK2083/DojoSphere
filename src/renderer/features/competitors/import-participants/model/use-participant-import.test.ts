@@ -58,7 +58,7 @@ function buildPreview(): ImportPreviewResult {
     fields: [
       { key: 'givenName', required: true },
       { key: 'familyName', required: true },
-      { key: 'club', required: false }
+      { key: 'association', required: false }
     ],
     suggestedMapping: { givenName: 'sheet1::0', familyName: 'sheet1::1' },
     sources: { givenName: 'header', familyName: 'header' },
@@ -146,11 +146,11 @@ describe('provideParticipantImport', () => {
     await controller.selectFile(buildFile())
     await flushPromises()
 
-    controller.setMapping('club', 'sheet1::0')
+    controller.setMapping('association', 'sheet1::0')
 
-    expect(controller.mapping.value.club).toBe('sheet1::0')
+    expect(controller.mapping.value.association).toBe('sheet1::0')
     expect(controller.mapping.value.givenName).toBeUndefined()
-    expect(controller.columnToField.value['sheet1::0']).toBe('club')
+    expect(controller.columnToField.value['sheet1::0']).toBe('association')
   })
 
   it('assigns and reassigns a target field to a column', async () => {
@@ -160,12 +160,12 @@ describe('provideParticipantImport', () => {
     await controller.selectFile(buildFile())
     await flushPromises()
 
-    controller.setColumnField('sheet1::0', 'club')
+    controller.setColumnField('sheet1::0', 'association')
 
-    expect(controller.mapping.value.club).toBe('sheet1::0')
+    expect(controller.mapping.value.association).toBe('sheet1::0')
     expect(controller.mapping.value.givenName).toBeUndefined()
-    expect(controller.sources.value.club).toBe('manual')
-    expect(controller.columnToField.value['sheet1::0']).toBe('club')
+    expect(controller.sources.value.association).toBe('manual')
+    expect(controller.columnToField.value['sheet1::0']).toBe('association')
   })
 
   it('clears a column assignment when the empty field is chosen', async () => {
@@ -210,12 +210,12 @@ describe('provideParticipantImport', () => {
     previewImport.mockResolvedValue(buildPreview())
     const executeResult: ImportExecuteResult = {
       results: [
-        { index: 0, givenName: 'Yuki', familyName: 'Tanaka', club: 'Dojo', success: true },
+        { index: 0, givenName: 'Yuki', familyName: 'Tanaka', association: 'Dojo', success: true },
         {
           index: 1,
           givenName: 'Max',
           familyName: 'Miller',
-          club: 'JC',
+          association: 'JC',
           success: false,
           errorCode: 'validation_failed'
         }
@@ -355,8 +355,8 @@ describe('provideParticipantImport', () => {
 
       return {
         results: [
-          { index: 0, givenName: 'Yuki', familyName: 'Tanaka', club: 'Dojo', success: true },
-          { index: 1, givenName: 'Anna', familyName: 'Weber', club: 'JC', success: true }
+          { index: 0, givenName: 'Yuki', familyName: 'Tanaka', association: 'Dojo', success: true },
+          { index: 1, givenName: 'Anna', familyName: 'Weber', association: 'JC', success: true }
         ],
         importedCount: 2,
         failedCount: 0

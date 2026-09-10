@@ -30,19 +30,19 @@ describe('parseWorkbook', () => {
     expect(workbook.columns).toHaveLength(3)
     expect(workbook.formFields).toEqual([])
 
-    const [given, family, club] = workbook.columns
+    const [given, family, association] = workbook.columns
 
     expect(given?.header).toBe('Vorname')
     expect(given?.values).toEqual(['Yuki', 'Anna'])
     expect(family?.header).toBe('Nachname')
-    expect(club?.values).toEqual(['Dojo Nord', 'Dojo Süd'])
+    expect(association?.values).toEqual(['Dojo Nord', 'Dojo Süd'])
     expect(given?.id).toBe('Teilnehmer#0')
   })
 
   it('extracts registration form fields above the participant table', () => {
     const buffer = buildWorkbook({
       Meldeformular: [
-        ['Ausrichter', 'Judo-Club Musterstadt', 'Meldeschluss', '05.09.2026'],
+        ['Ausrichter', 'Judo-Association Musterstadt', 'Meldeschluss', '05.09.2026'],
         ['Veranstaltung', 'Musterstadt Nachwuchs', 'Wettkampftag', '19.09.2026'],
         ['Nr.', 'Nachname', 'Vorname', 'Geburtsjahr'],
         ['1', 'Bauer', 'Lina', '2012']
@@ -57,7 +57,7 @@ describe('parseWorkbook', () => {
       'Veranstaltung',
       'Wettkampftag'
     ])
-    expect(workbook.formFields[0]?.value).toBe('Judo-Club Musterstadt')
+    expect(workbook.formFields[0]?.value).toBe('Judo-Association Musterstadt')
   })
 
   it('normalizes dates, numbers and booleans to strings', () => {

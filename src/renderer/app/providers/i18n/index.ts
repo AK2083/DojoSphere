@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
+import { associationsDe, associationsEn } from '@features/associations'
 import { authDe, authEn } from '@features/authentication'
-import { clubsDe, clubsEn } from '@features/clubs'
 import { competitorsDe, competitorsEn } from '@features/competitors'
 import { getInitialLanguage, settingsDe, settingsEn } from '@features/settings'
 import { statusDe, statusEn } from '@features/status'
@@ -23,7 +23,7 @@ export const i18n = createI18n({
       navigation: navigationDe,
       status: statusDe,
       auth: authDe,
-      clubs: clubsDe,
+      associations: associationsDe,
       competitors: competitorsDe,
       settings: settingsDe,
       shared: sharedDe,
@@ -34,7 +34,7 @@ export const i18n = createI18n({
       navigation: navigationEn,
       status: statusEn,
       auth: authEn,
-      clubs: clubsEn,
+      associations: associationsEn,
       competitors: competitorsEn,
       settings: settingsEn,
       shared: sharedEn,

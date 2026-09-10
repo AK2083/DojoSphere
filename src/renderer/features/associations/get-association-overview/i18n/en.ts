@@ -1,23 +1,23 @@
 export default {
   toolbar: {
-    ariaLabel: 'Club list toolbar',
+    ariaLabel: 'Association list toolbar',
     placeholderAction: 'Filter (not available yet)'
   },
   list: {
-    ariaLabel: 'Clubs list',
-    empty: 'No clubs registered yet.',
-    loadingPlaceholder: 'Loading club'
+    ariaLabel: 'Associations list',
+    empty: 'No associations registered yet.',
+    loadingPlaceholder: 'Loading association'
   },
   status: {
     active: 'Active',
     inactive: 'Inactive'
   },
-  loadError: 'Clubs could not be loaded.',
+  loadError: 'Associations could not be loaded.',
   actions: {
-    add: 'Add club',
-    edit: 'Edit club',
+    add: 'Add association',
+    edit: 'Edit association',
     ariaEdit: 'Edit {name}',
-    delete: 'Delete club',
+    delete: 'Delete association',
     ariaDelete: 'Delete {name}'
   },
   entry: {

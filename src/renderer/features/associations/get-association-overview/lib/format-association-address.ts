@@ -1,12 +1,12 @@
-import type { ClubAddress } from '../model/club-row'
+import type { AssociationAddress } from '../model/association-row'
 
 /**
- * Formats a club address into a single display line.
+ * Formats a association address into a single display line.
  *
- * @param address - Address fields from the club row.
+ * @param address - Address fields from the association row.
  * @returns Human-readable address, or an empty string when all fields are blank.
  */
-export function formatClubAddress(address: ClubAddress): string {
+export function formatAssociationAddress(address: AssociationAddress): string {
   const streetLine = [address.street, address.houseNumber]
     .filter((part): part is string => Boolean(part?.trim()))
     .join(' ')

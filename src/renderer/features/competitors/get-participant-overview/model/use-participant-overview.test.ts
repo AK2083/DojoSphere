@@ -46,12 +46,12 @@ function createCompetitor(overrides: Partial<Competitor> = {}): Competitor {
     birthDate: '2011-04-12',
     nationality: 'DE',
     passNumber: 'JP-000142',
-    club: 'Dojo Nord',
+    association: 'Dojo Nord',
     weightClass: '-60',
     licenseNumber: 'WL-2024-001',
     contactPhone: '+49 555 010201',
     contactPerson: 'S. Fischer',
-    clubId: '00000000-0000-0000-0000-000000000000',
+    associationId: '00000000-0000-0000-0000-000000000000',
     weightClassId: 'b3000000-0000-4000-8000-000000000008',
     ageClassId: 'c2000000-0000-4000-8000-000000000003',
     gradeId: null,
@@ -80,7 +80,7 @@ describe('useParticipantOverview', () => {
 
     expect(loading.value).toBe(true)
     expect(overviewItems.value).toEqual([])
-    expect(fieldHeaders.value.some((header) => header.key === 'club')).toBe(true)
+    expect(fieldHeaders.value.some((header) => header.key === 'association')).toBe(true)
   })
 
   it('loads participants from the database on mount', async () => {

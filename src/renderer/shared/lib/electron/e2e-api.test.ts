@@ -31,7 +31,7 @@ describe('installPlaywrightBrowserElectronApi', () => {
       birthDate: '2011-04-12',
       nationality: 'DE',
       passNumber: 'JP-000142',
-      club: 'Dojo Nord',
+      association: 'Dojo Nord',
       weightClass: '-60'
     })
 

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  participantAssociationHeaderBackground,
   participantAvatarColor,
-  participantClubHeaderBackground,
   participantInitials
 } from './participant-avatar'
 
@@ -45,7 +45,7 @@ describe('participantInitials', () => {
 })
 
 describe('participantAvatarColor', () => {
-  it('returns a stable color for the same club', () => {
+  it('returns a stable color for the same association', () => {
     const firstColor = participantAvatarColor('Dojo Nord')
     const secondColor = participantAvatarColor('Dojo Nord')
 
@@ -53,14 +53,14 @@ describe('participantAvatarColor', () => {
     expect(firstColor.length).toBeGreaterThan(0)
   })
 
-  it('returns a color for an empty club name', () => {
+  it('returns a color for an empty association name', () => {
     expect(participantAvatarColor('')).toBe('teal')
   })
 })
 
-describe('participantClubHeaderBackground', () => {
-  it('returns a subtle color-mix background for the club header', () => {
-    const background = participantClubHeaderBackground('Dojo Nord')
+describe('participantAssociationHeaderBackground', () => {
+  it('returns a subtle color-mix background for the association header', () => {
+    const background = participantAssociationHeaderBackground('Dojo Nord')
 
     expect(background).toContain('color-mix')
     expect(background).toContain('8%')

@@ -1,7 +1,7 @@
 export { default as authDe } from './i18n/authDe'
 export { default as authEn } from './i18n/authEn'
+export { useAssociationsOverviewAccess } from './model/use-associations-overview-access'
 export { useAuthSession } from './model/use-auth-session'
-export { useClubsOverviewAccess } from './model/use-clubs-overview-access'
 export { useParticipantsOverviewAccess } from './model/use-participants-overview-access'
 export { useAuthNavigation } from './service/use-auth-navigation'
 export { useSignOut } from './sign-out'

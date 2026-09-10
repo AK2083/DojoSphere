@@ -5,13 +5,13 @@ import sqlV002 from './V002__authorize_seed_roles_permissions.sql?raw'
 import sqlV004 from './V004__grades_create_table.sql?raw'
 import sqlV005 from './V005__age_classes_create_table.sql?raw'
 import sqlV006 from './V006__weight_classes_create_table.sql?raw'
-import sqlV007 from './V007__clubs_create_tables.sql?raw'
+import sqlV007 from './V007__associations_create_tables.sql?raw'
 import sqlV008 from './V008__competitors_create_table.sql?raw'
 import sqlV009 from './V009__competitors_allow_optional_weight_class.sql?raw'
 import sqlV010 from './V010__competitors_import_fields.sql?raw'
 import sqlV011 from './V011__competitors_rename_coach_to_contact_person.sql?raw'
 import sqlV012 from './V012__competitors_unique_participants.sql?raw'
-import sqlV013 from './V013__authorize_seed_clubs_overview_permissions.sql?raw'
+import sqlV013 from './V013__authorize_seed_associations_overview_permissions.sql?raw'
 
 function migration(name: string, id: string, sql: string): Migration {
   return { id, name, sql }
@@ -32,7 +32,11 @@ const migrations: Migration[] = [
     'e8f9a0b1-2345-6789-abcd-ef0123456806',
     sqlV006
   ),
-  migration('V007__clubs_create_tables.sql', 'f9a0b1c2-3456-7890-abcd-ef0123456807', sqlV007),
+  migration(
+    'V007__associations_create_tables.sql',
+    'f9a0b1c2-3456-7890-abcd-ef0123456807',
+    sqlV007
+  ),
   migration('V008__competitors_create_table.sql', 'b5e6f7a8-9012-3456-abcd-ef0123456803', sqlV008),
   migration(
     'V009__competitors_allow_optional_weight_class.sql',
@@ -51,7 +55,7 @@ const migrations: Migration[] = [
     sqlV012
   ),
   migration(
-    'V013__authorize_seed_clubs_overview_permissions.sql',
+    'V013__authorize_seed_associations_overview_permissions.sql',
     'a1b2c3d4-5678-4901-abcd-ef0123456813',
     sqlV013
   )

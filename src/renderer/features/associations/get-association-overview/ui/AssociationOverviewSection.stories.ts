@@ -2,50 +2,50 @@ import { onMounted } from 'vue'
 import type { Decorator, Meta, StoryObj } from '@storybook/vue3-vite'
 
 import {
-  installStorybookClubsLoader,
-  installStorybookClubsLoaderError,
-  installStorybookClubsLoaderLoading,
-  resetStorybookClubsLoader
-} from './club-overview-story-fixtures'
-import ClubOverviewSection from './ClubOverviewSection.vue'
+  installStorybookAssociationsLoader,
+  installStorybookAssociationsLoaderError,
+  installStorybookAssociationsLoaderLoading,
+  resetStorybookAssociationsLoader
+} from './association-overview-story-fixtures'
+import AssociationOverviewSection from './AssociationOverviewSection.vue'
 
-type ClubsLoaderMode = 'populated' | 'empty' | 'loading' | 'error'
+type AssociationsLoaderMode = 'populated' | 'empty' | 'loading' | 'error'
 
-const withClubsLoader: Decorator = (story, { parameters }) => {
-  resetStorybookClubsLoader()
+const withAssociationsLoader: Decorator = (story, { parameters }) => {
+  resetStorybookAssociationsLoader()
 
-  const mode = (parameters.clubsLoader as ClubsLoaderMode | undefined) ?? 'populated'
+  const mode = (parameters.associationsLoader as AssociationsLoaderMode | undefined) ?? 'populated'
 
   if (mode === 'error') {
-    installStorybookClubsLoaderError()
+    installStorybookAssociationsLoaderError()
   } else if (mode === 'loading') {
-    installStorybookClubsLoaderLoading()
+    installStorybookAssociationsLoaderLoading()
   } else if (mode === 'empty') {
-    installStorybookClubsLoader([])
+    installStorybookAssociationsLoader([])
   } else {
-    installStorybookClubsLoader()
+    installStorybookAssociationsLoader()
   }
 
   return story()
 }
 
 const meta = {
-  title: 'Features/Clubs/GetClubOverview/ClubOverviewSection',
-  component: ClubOverviewSection,
-  decorators: [withClubsLoader],
+  title: 'Features/Associations/GetAssociationOverview/AssociationOverviewSection',
+  component: AssociationOverviewSection,
+  decorators: [withAssociationsLoader],
   parameters: {
     layout: 'padded',
-    clubsLoader: 'populated'
+    associationsLoader: 'populated'
   },
   render: () => ({
-    components: { ClubOverviewSection },
+    components: { AssociationOverviewSection },
     template: `
       <div style="width: min(100%, 64rem);">
-        <ClubOverviewSection />
+        <AssociationOverviewSection />
       </div>
     `
   })
-} satisfies Meta<typeof ClubOverviewSection>
+} satisfies Meta<typeof AssociationOverviewSection>
 
 export default meta
 
@@ -53,34 +53,34 @@ type Story = StoryObj<typeof meta>
 
 export const Populated: Story = {
   parameters: {
-    clubsLoader: 'populated'
+    associationsLoader: 'populated'
   }
 }
 
 export const Empty: Story = {
   parameters: {
-    clubsLoader: 'empty'
+    associationsLoader: 'empty'
   }
 }
 
 export const Loading: Story = {
   parameters: {
-    clubsLoader: 'loading'
+    associationsLoader: 'loading'
   }
 }
 
 export const LoadError: Story = {
   parameters: {
-    clubsLoader: 'error'
+    associationsLoader: 'error'
   }
 }
 
 export const Mobile: Story = {
   parameters: {
-    clubsLoader: 'populated'
+    associationsLoader: 'populated'
   },
   render: () => ({
-    components: { ClubOverviewSection },
+    components: { AssociationOverviewSection },
     setup() {
       onMounted(() => {
         Object.defineProperty(window, 'innerWidth', {
@@ -92,7 +92,7 @@ export const Mobile: Story = {
     },
     template: `
       <div style="max-width: 390px;">
-        <ClubOverviewSection />
+        <AssociationOverviewSection />
       </div>
     `
   })

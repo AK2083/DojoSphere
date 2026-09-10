@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatClubAddress } from './format-club-address'
+import { formatAssociationAddress } from './format-association-address'
 
-describe('formatClubAddress', () => {
+describe('formatAssociationAddress', () => {
   it('formats a complete address', () => {
     expect(
-      formatClubAddress({
+      formatAssociationAddress({
         street: 'Dojostraße',
         houseNumber: '12',
         postalCode: '20095',
@@ -18,7 +18,7 @@ describe('formatClubAddress', () => {
 
   it('omits blank parts', () => {
     expect(
-      formatClubAddress({
+      formatAssociationAddress({
         street: null,
         houseNumber: null,
         postalCode: null,
@@ -31,7 +31,7 @@ describe('formatClubAddress', () => {
 
   it('returns an empty string when all fields are blank', () => {
     expect(
-      formatClubAddress({
+      formatAssociationAddress({
         street: null,
         houseNumber: null,
         postalCode: null,

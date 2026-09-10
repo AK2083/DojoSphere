@@ -31,13 +31,13 @@ describe('runMigrations', () => {
       'V004__grades_create_table.sql',
       'V005__age_classes_create_table.sql',
       'V006__weight_classes_create_table.sql',
-      'V007__clubs_create_tables.sql',
+      'V007__associations_create_tables.sql',
       'V008__competitors_create_table.sql',
       'V009__competitors_allow_optional_weight_class.sql',
       'V010__competitors_import_fields.sql',
       'V011__competitors_rename_coach_to_contact_person.sql',
       'V012__competitors_unique_participants.sql',
-      'V013__authorize_seed_clubs_overview_permissions.sql'
+      'V013__authorize_seed_associations_overview_permissions.sql'
     ])
   })
 

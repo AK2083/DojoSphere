@@ -23,7 +23,7 @@ export function toImportNullable<T>(value: T | null | undefined): T | null {
  */
 export function importResultRowLabel(
   participant: TransformedParticipant | undefined,
-  field: 'givenName' | 'familyName' | 'club'
+  field: 'givenName' | 'familyName' | 'association'
 ): string {
   if (!participant) {
     return ''

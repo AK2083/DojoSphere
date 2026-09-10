@@ -1,46 +1,46 @@
-import { useClubsStore } from '../../store/use-clubs-store'
-import type { ClubOverviewRow } from '../model/club-row'
+import { useAssociationsStore } from '../../store/use-associations-store'
+import type { AssociationOverviewRow } from '../model/association-row'
 
-type ClubsLoader = () => Promise<ClubOverviewRow[]>
+type AssociationsLoader = () => Promise<AssociationOverviewRow[]>
 
-let clubsLoaderOverride: ClubsLoader | null = null
+let associationsLoaderOverride: AssociationsLoader | null = null
 
 /**
- * Loads clubs for the overview from the in-memory clubs store.
+ * Loads associations for the overview from the in-memory associations store.
  *
- * @returns Club rows for the overview cards.
+ * @returns Association rows for the overview cards.
  */
-export async function loadClubs(): Promise<ClubOverviewRow[]> {
-  if (clubsLoaderOverride) {
-    return clubsLoaderOverride()
+export async function loadAssociations(): Promise<AssociationOverviewRow[]> {
+  if (associationsLoaderOverride) {
+    return associationsLoaderOverride()
   }
 
-  return useClubsStore().listClubs()
+  return useAssociationsStore().listAssociations()
 }
 
 /**
- * Deletes a club from the in-memory clubs store.
+ * Deletes a association from the in-memory associations store.
  *
- * @param id - Club id to remove.
+ * @param id - Association id to remove.
  */
-export async function deleteClub(id: string): Promise<void> {
-  const removed = useClubsStore().deleteClub(id)
+export async function deleteAssociation(id: string): Promise<void> {
+  const removed = useAssociationsStore().deleteAssociation(id)
 
   if (!removed) {
-    throw new Error(`Club not found: ${id}`)
+    throw new Error(`Association not found: ${id}`)
   }
 }
 
 /**
- * Overrides the clubs loader for Storybook section stories.
+ * Overrides the associations loader for Storybook section stories.
  *
- * @param loader - Async loader used by subsequent `loadClubs` calls.
+ * @param loader - Async loader used by subsequent `loadAssociations` calls.
  */
-export function setClubsLoaderForStorybook(loader: ClubsLoader): void {
-  clubsLoaderOverride = loader
+export function setAssociationsLoaderForStorybook(loader: AssociationsLoader): void {
+  associationsLoaderOverride = loader
 }
 
-/** Restores the default store-backed clubs loader after Storybook stories. */
-export function resetClubsLoaderForStorybook(): void {
-  clubsLoaderOverride = null
+/** Restores the default store-backed associations loader after Storybook stories. */
+export function resetAssociationsLoaderForStorybook(): void {
+  associationsLoaderOverride = null
 }

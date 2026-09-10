@@ -1,41 +1,45 @@
 import { describe, expect, it } from 'vitest'
 
-import { clubAvatarColor, clubHeaderBackground, clubInitials } from './club-avatar'
+import {
+  associationAvatarColor,
+  associationHeaderBackground,
+  associationInitials
+} from './association-avatar'
 
-describe('clubInitials', () => {
+describe('associationInitials', () => {
   it('returns uppercase initials from the first two words', () => {
-    expect(clubInitials('Judoclub Nord e.V.')).toBe('JN')
+    expect(associationInitials('Judoclub Nord e.V.')).toBe('JN')
   })
 
   it('returns the first two letters for a single word', () => {
-    expect(clubInitials('Unknown')).toBe('UN')
+    expect(associationInitials('Unknown')).toBe('UN')
   })
 
   it('returns ? when the name is empty', () => {
-    expect(clubInitials('   ')).toBe('?')
+    expect(associationInitials('   ')).toBe('?')
   })
 })
 
-describe('clubAvatarColor', () => {
-  it('returns a stable color for the same club name', () => {
-    const firstColor = clubAvatarColor('Judoclub Nord e.V.')
-    const secondColor = clubAvatarColor('Judoclub Nord e.V.')
+describe('associationAvatarColor', () => {
+  it('returns a stable color for the same association name', () => {
+    const firstColor = associationAvatarColor('Judoclub Nord e.V.')
+    const secondColor = associationAvatarColor('Judoclub Nord e.V.')
 
     expect(firstColor).toBe(secondColor)
     expect(firstColor.length).toBeGreaterThan(0)
   })
 
-  it('returns a color for an empty club name', () => {
-    expect(clubAvatarColor('')).toBe('teal')
+  it('returns a color for an empty association name', () => {
+    expect(associationAvatarColor('')).toBe('teal')
   })
 })
 
-describe('clubHeaderBackground', () => {
-  it('returns a subtle color-mix background for the club header', () => {
-    const background = clubHeaderBackground('Judoclub Nord e.V.')
+describe('associationHeaderBackground', () => {
+  it('returns a subtle color-mix background for the association header', () => {
+    const background = associationHeaderBackground('Judoclub Nord e.V.')
 
     expect(background).toContain('color-mix')
     expect(background).toContain('8%')
-    expect(background).toContain(clubAvatarColor('Judoclub Nord e.V.'))
+    expect(background).toContain(associationAvatarColor('Judoclub Nord e.V.'))
   })
 })

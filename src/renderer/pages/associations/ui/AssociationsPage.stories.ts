@@ -1,7 +1,7 @@
 import { onMounted } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ClubsPage from './ClubsPage.vue'
+import AssociationsPage from './AssociationsPage.vue'
 
 function setMobileViewport(): void {
   Object.defineProperty(window, 'innerWidth', {
@@ -12,12 +12,12 @@ function setMobileViewport(): void {
 }
 
 const meta = {
-  title: 'Pages/Clubs/ClubsPage',
-  component: ClubsPage,
+  title: 'Pages/Associations/AssociationsPage',
+  component: AssociationsPage,
   parameters: {
     layout: 'fullscreen'
   }
-} satisfies Meta<typeof ClubsPage>
+} satisfies Meta<typeof AssociationsPage>
 
 export default meta
 
@@ -27,12 +27,12 @@ export const Desktop: Story = {}
 
 export const Mobile: Story = {
   render: () => ({
-    components: { ClubsPage },
+    components: { AssociationsPage },
     setup() {
       onMounted(() => {
         setMobileViewport()
       })
     },
-    template: '<ClubsPage />'
+    template: '<AssociationsPage />'
   })
 }

@@ -15,7 +15,7 @@ export function mapCompetitorToFormState(competitor: Competitor): ParticipantFor
     familyName: competitor.familyName,
     gender: competitor.gender,
     birthDate: competitor.birthDate,
-    clubId: competitor.clubId,
+    associationId: competitor.associationId,
     nationality: competitor.nationality,
     ageClassId: competitor.ageClassId,
     weightClassId: competitor.weightClassId ?? '',

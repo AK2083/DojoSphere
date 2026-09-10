@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import ClubEntryPlaceholder from './ClubEntryPlaceholder.vue'
+import AssociationEntryPlaceholder from './AssociationEntryPlaceholder.vue'
 
 const meta = {
-  title: 'Features/Clubs/GetClubOverview/ClubEntryPlaceholder',
-  component: ClubEntryPlaceholder,
+  title: 'Features/Associations/GetAssociationOverview/AssociationEntryPlaceholder',
+  component: AssociationEntryPlaceholder,
   parameters: {
     layout: 'padded'
   }
-} satisfies Meta<typeof ClubEntryPlaceholder>
+} satisfies Meta<typeof AssociationEntryPlaceholder>
 
 export default meta
 

@@ -35,7 +35,7 @@ const {
   isSubmitDisabled,
   isWeightClassRequired,
   genderOptions,
-  clubOptions,
+  associationOptions,
   nationalityOptions,
   ageClassOptions,
   gradingSystemOptions,
@@ -46,7 +46,7 @@ const {
   familyNameRules,
   genderRules,
   birthDateRules,
-  clubRules,
+  associationRules,
   nationalityRules,
   ageClassRules,
   weightClassRules,
@@ -194,15 +194,15 @@ function openBirthDatePicker(): void {
           </v-text-field>
 
           <v-select
-            v-model="fields.clubId"
-            :items="clubOptions"
+            v-model="fields.associationId"
+            :items="associationOptions"
             item-title="title"
             item-value="value"
-            :rules="clubRules"
+            :rules="associationRules"
             required
           >
             <template #label>
-              <RequiredFieldLabel :text="t(translationKeys.form.fields.club)" />
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.association)" />
             </template>
           </v-select>
 

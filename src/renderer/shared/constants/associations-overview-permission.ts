@@ -1,6 +1,6 @@
-/** Permission resource and actions for the clubs overview feature. */
-export const CLUBS_OVERVIEW_PERMISSION = {
-  resource: 'clubs-overview',
+/** Permission resource and actions for the associations overview feature. */
+export const ASSOCIATIONS_OVERVIEW_PERMISSION = {
+  resource: 'associations-overview',
   actions: {
     read: 'read',
     create: 'create',

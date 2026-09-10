@@ -23,11 +23,11 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
   <v-toolbar
     density="comfortable"
     flat
-    class="club-overview-actions"
+    class="association-overview-actions"
     :aria-label="t(translationKeys.toolbar.ariaLabel)"
   >
-    <div class="club-overview-actions__inner">
-      <div class="club-overview-actions__start">
+    <div class="association-overview-actions__inner">
+      <div class="association-overview-actions__start">
         <v-tooltip :text="addLabel" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-icon-btn
@@ -43,10 +43,10 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
               v-bind="tooltipProps"
               variant="text"
               rounded
-              class="club-overview-actions__add"
+              class="association-overview-actions__add"
               @click="emit('add')"
             >
-              <span class="club-overview-actions__add-content">
+              <span class="association-overview-actions__add-content">
                 <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
                 <span>{{ addLabel }}</span>
               </span>
@@ -57,7 +57,7 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
 
       <v-spacer />
 
-      <div class="club-overview-actions__end">
+      <div class="association-overview-actions__end">
         <v-tooltip :text="filterLabel" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-icon-btn
@@ -65,7 +65,7 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
               :icon="mdiTune"
               variant="text"
               :aria-label="filterLabel"
-              class="club-overview-actions__placeholder-action"
+              class="association-overview-actions__placeholder-action"
             />
           </template>
         </v-tooltip>
@@ -75,45 +75,45 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
 </template>
 
 <style scoped>
-.club-overview-actions {
+.association-overview-actions {
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 12px;
   background: rgb(var(--v-theme-surface));
   overflow: hidden;
 }
 
-.club-overview-actions :deep(.v-toolbar__content) {
+.association-overview-actions :deep(.v-toolbar__content) {
   padding: 0;
 }
 
-.club-overview-actions__inner {
+.association-overview-actions__inner {
   display: flex;
   align-items: center;
   width: 100%;
   padding: 0.375rem 1.25rem;
 }
 
-.club-overview-actions__start,
-.club-overview-actions__end {
+.association-overview-actions__start,
+.association-overview-actions__end {
   display: flex;
   align-items: center;
   gap: 0.25rem;
 }
 
-.club-overview-actions__add {
+.association-overview-actions__add {
   min-width: 0;
   padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
 }
 
-.club-overview-actions__add-content {
+.association-overview-actions__add-content {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.club-overview-actions__placeholder-action {
+.association-overview-actions__placeholder-action {
   pointer-events: none;
 }
 </style>

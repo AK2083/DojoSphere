@@ -1,2 +1,2 @@
-export { default as saveClubDe } from './de'
-export { default as saveClubEn } from './en'
+export { default as saveAssociationDe } from './de'
+export { default as saveAssociationEn } from './en'

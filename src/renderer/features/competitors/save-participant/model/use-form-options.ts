@@ -4,7 +4,7 @@ import { useTranslation } from '@shared/lib'
 import translationKeys from '../i18n/keys'
 import {
   AGE_CLASS_SEEDS,
-  CLUB_SEEDS,
+  ASSOCIATION_SEEDS,
   GRADE_SEEDS,
   GRADING_SYSTEM_SEEDS,
   NATIONALITY_CODES,
@@ -38,14 +38,14 @@ export function useParticipantFormOptions(
     { title: t(translationKeys.gender.diverse), value: 'd' as const }
   ])
 
-  const clubOptions = computed(() =>
-    CLUB_SEEDS.map((club) => ({
+  const associationOptions = computed(() =>
+    ASSOCIATION_SEEDS.map((association) => ({
       title: t(
-        translationKeys.reference.clubs[
-          club.nameKey as keyof typeof translationKeys.reference.clubs
+        translationKeys.reference.associations[
+          association.nameKey as keyof typeof translationKeys.reference.associations
         ]
       ),
-      value: club.id
+      value: association.id
     }))
   )
 
@@ -114,7 +114,7 @@ export function useParticipantFormOptions(
 
   return {
     genderOptions,
-    clubOptions,
+    associationOptions,
     nationalityOptions,
     ageClassOptions,
     gradingSystemOptions,

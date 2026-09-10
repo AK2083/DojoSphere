@@ -1,5 +1,5 @@
-/** Placeholder palette until club-specific avatar colors are configured. */
-const CLUB_AVATAR_COLORS = [
+/** Placeholder palette until association-specific avatar colors are configured. */
+const ASSOCIATION_AVATAR_COLORS = [
   'teal',
   'indigo',
   'deep-orange',
@@ -33,37 +33,37 @@ export function participantInitials(participant: {
 }
 
 /**
- * Resolves a Vuetify color token from the participant's club name.
+ * Resolves a Vuetify color token from the participant's association name.
  *
- * Used for avatar accents and subtle club header tints.
+ * Used for avatar accents and subtle association header tints.
  *
- * @param club - Club name used as the color lookup key.
- * @returns Vuetify color token for club-based surfaces.
+ * @param association - Association name used as the color lookup key.
+ * @returns Vuetify color token for association-based surfaces.
  */
-export function participantAvatarColor(club: string): string {
+export function participantAvatarColor(association: string): string {
   let hash = 0
 
-  for (let index = 0; index < club.length; index += 1) {
-    hash = club.charCodeAt(index) + ((hash << 5) - hash)
+  for (let index = 0; index < association.length; index += 1) {
+    hash = association.charCodeAt(index) + ((hash << 5) - hash)
   }
 
-  const colorIndex = Math.abs(hash) % CLUB_AVATAR_COLORS.length
+  const colorIndex = Math.abs(hash) % ASSOCIATION_AVATAR_COLORS.length
 
-  return CLUB_AVATAR_COLORS[colorIndex]
+  return ASSOCIATION_AVATAR_COLORS[colorIndex]
 }
 
-const CLUB_HEADER_TINT_PERCENT = 8
+const ASSOCIATION_HEADER_TINT_PERCENT = 8
 
 /**
- * Returns a subtle club-tinted background for card headers.
+ * Returns a subtle association-tinted background for card headers.
  *
  * Keeps body text on the default surface color for accessible contrast.
  *
- * @param club - Club name used as the color lookup key.
- * @returns CSS `background-color` value with a low club-color mix ratio.
+ * @param association - Association name used as the color lookup key.
+ * @returns CSS `background-color` value with a low association-color mix ratio.
  */
-export function participantClubHeaderBackground(club: string): string {
-  const colorToken = participantAvatarColor(club)
+export function participantAssociationHeaderBackground(association: string): string {
+  const colorToken = participantAvatarColor(association)
 
-  return `color-mix(in srgb, rgb(var(--v-theme-${colorToken})) ${CLUB_HEADER_TINT_PERCENT}%, rgb(var(--v-theme-surface)))`
+  return `color-mix(in srgb, rgb(var(--v-theme-${colorToken})) ${ASSOCIATION_HEADER_TINT_PERCENT}%, rgb(var(--v-theme-surface)))`
 }

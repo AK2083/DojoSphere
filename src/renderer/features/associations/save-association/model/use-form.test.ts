@@ -1,14 +1,14 @@
 import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { CLUB_MOCK_DATA } from '../../get-club-overview/model/club-mock-data'
-import { createEmptyClubForm } from './club-form-state'
-import { useClubForm } from './use-form'
+import { ASSOCIATION_MOCK_DATA } from '../../get-association-overview/model/association-mock-data'
+import { createEmptyAssociationForm } from './association-form-state'
+import { useAssociationForm } from './use-form'
 
 const pushMock = vi.fn()
-const createClubMock = vi.fn()
-const updateClubMock = vi.fn()
-const loadClubMock = vi.fn()
+const createAssociationMock = vi.fn()
+const updateAssociationMock = vi.fn()
+const loadAssociationMock = vi.fn()
 const logErrorMock = vi.fn()
 let routerValue: { push: typeof pushMock } | undefined
 let onMountedHandler: (() => void | Promise<void>) | undefined
@@ -33,58 +33,109 @@ vi.mock('@shared/lib', () => ({
   logError: (...args: unknown[]) => logErrorMock(...args)
 }))
 
-vi.mock('../service/save-club', () => ({
-  createClub: (...args: unknown[]) => createClubMock(...args),
-  updateClub: (...args: unknown[]) => updateClubMock(...args),
-  loadClub: (...args: unknown[]) => loadClubMock(...args)
+vi.mock('../service/save-association', () => ({
+  createAssociation: (...args: unknown[]) => createAssociationMock(...args),
+  updateAssociation: (...args: unknown[]) => updateAssociationMock(...args),
+  loadAssociation: (...args: unknown[]) => loadAssociationMock(...args)
 }))
 
 beforeEach(() => {
   onMountedHandler = undefined
   pushMock.mockReset()
   routerValue = { push: pushMock }
-  createClubMock.mockReset()
-  createClubMock.mockResolvedValue(undefined)
-  updateClubMock.mockReset()
-  updateClubMock.mockResolvedValue(undefined)
-  loadClubMock.mockReset()
-  loadClubMock.mockResolvedValue(CLUB_MOCK_DATA[0])
+  createAssociationMock.mockReset()
+  createAssociationMock.mockResolvedValue(undefined)
+  updateAssociationMock.mockReset()
+  updateAssociationMock.mockResolvedValue(undefined)
+  loadAssociationMock.mockReset()
+  loadAssociationMock.mockResolvedValue(ASSOCIATION_MOCK_DATA[0])
   logErrorMock.mockReset()
 })
 
-describe('useClubForm', () => {
+describe('useAssociationForm', () => {
   it('starts with empty fields for create mode', () => {
-    const { fields } = useClubForm()
+    const { fields } = useAssociationForm()
 
-    expect(fields.value).toEqual(createEmptyClubForm())
+    expect(fields.value).toEqual(createEmptyAssociationForm())
   })
 
-  it('loads club fields in edit mode', async () => {
-    const form = useClubForm({ clubId: () => CLUB_MOCK_DATA[0]!.id })
+  it('skips loading when create mode has no association id', async () => {
+    const form = useAssociationForm()
 
     await onMountedHandler?.()
     await flushPromises()
 
-    expect(loadClubMock).toHaveBeenCalledWith(CLUB_MOCK_DATA[0]!.id)
+    expect(loadAssociationMock).not.toHaveBeenCalled()
+    expect(form.fields.value).toEqual(createEmptyAssociationForm())
+  })
+
+  it('copies headquarters into linked address blocks', async () => {
+    const form = useAssociationForm()
+
+    form.fields.value.headquarters = {
+      street: 'Dojostraße',
+      houseNumber: '12',
+      postalCode: '20095',
+      city: 'Hamburg'
+    }
+    form.fields.value.trainingVenueSameAsHeadquarters = true
+    form.fields.value.billingAddressSameAsHeadquarters = true
+    await flushPromises()
+
+    expect(form.fields.value.trainingVenue).toEqual(form.fields.value.headquarters)
+    expect(form.fields.value.billingAddress).toEqual(form.fields.value.headquarters)
+
+    form.fields.value.headquarters.street = 'Neue Straße'
+    await flushPromises()
+
+    expect(form.fields.value.trainingVenue.street).toBe('Neue Straße')
+    expect(form.fields.value.billingAddress.street).toBe('Neue Straße')
+  })
+
+  it('disables submit while saving or loading', async () => {
+    const form = useAssociationForm({ associationId: () => ASSOCIATION_MOCK_DATA[0]!.id })
+
+    form.isFormValid.value = true
+    expect(form.isSubmitDisabled.value).toBe(false)
+
+    form.isSaving.value = true
+    expect(form.isSubmitDisabled.value).toBe(true)
+
+    form.isSaving.value = false
+    form.isLoading.value = true
+    expect(form.isSubmitDisabled.value).toBe(true)
+
+    form.isLoading.value = false
+    form.isFormValid.value = false
+    expect(form.isSubmitDisabled.value).toBe(true)
+  })
+
+  it('loads association fields in edit mode', async () => {
+    const form = useAssociationForm({ associationId: () => ASSOCIATION_MOCK_DATA[0]!.id })
+
+    await onMountedHandler?.()
+    await flushPromises()
+
+    expect(loadAssociationMock).toHaveBeenCalledWith(ASSOCIATION_MOCK_DATA[0]!.id)
     expect(form.fields.value.name).toBe('Judoclub Nord e.V.')
     expect(form.isLoading.value).toBe(false)
   })
 
   it('shows a load error when edit data cannot be fetched', async () => {
-    loadClubMock.mockRejectedValueOnce(new Error('boom'))
-    const form = useClubForm({ clubId: () => 'missing' })
+    loadAssociationMock.mockRejectedValueOnce(new Error('boom'))
+    const form = useAssociationForm({ associationId: () => 'missing' })
 
     await onMountedHandler?.()
     await flushPromises()
 
-    expect(form.loadErrorMessage.value).toBe('clubs.saveClub.form.loadError')
+    expect(form.loadErrorMessage.value).toBe('associations.saveAssociation.form.loadError')
     expect(form.isSubmitDisabled.value).toBe(true)
     expect(logErrorMock).toHaveBeenCalled()
   })
 
-  it('creates a club and navigates to the overview', async () => {
-    const form = useClubForm()
-    form.fields.value.name = 'New Club'
+  it('creates a association and navigates to the overview', async () => {
+    const form = useAssociationForm()
+    form.fields.value.name = 'New Association'
     form.fields.value.districtName = 'Berlin'
     form.isFormValid.value = true
     form.setFormRef({
@@ -94,12 +145,12 @@ describe('useClubForm', () => {
 
     await form.submit()
 
-    expect(createClubMock).toHaveBeenCalled()
-    expect(pushMock).toHaveBeenCalledWith({ name: 'clubs' })
+    expect(createAssociationMock).toHaveBeenCalled()
+    expect(pushMock).toHaveBeenCalledWith({ name: 'associations' })
   })
 
-  it('updates a club in edit mode', async () => {
-    const form = useClubForm({ clubId: () => CLUB_MOCK_DATA[0]!.id })
+  it('updates a association in edit mode', async () => {
+    const form = useAssociationForm({ associationId: () => ASSOCIATION_MOCK_DATA[0]!.id })
 
     await onMountedHandler?.()
     await flushPromises()
@@ -109,22 +160,22 @@ describe('useClubForm', () => {
       validate: vi.fn().mockResolvedValue({ valid: true }),
       resetValidation: vi.fn()
     })
-    form.fields.value.name = 'Renamed Club'
+    form.fields.value.name = 'Renamed Association'
 
     await form.submit()
 
-    expect(updateClubMock).toHaveBeenCalledWith(
+    expect(updateAssociationMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: CLUB_MOCK_DATA[0]!.id,
-        name: 'Renamed Club'
+        id: ASSOCIATION_MOCK_DATA[0]!.id,
+        name: 'Renamed Association'
       })
     )
-    expect(pushMock).toHaveBeenCalledWith({ name: 'clubs' })
+    expect(pushMock).toHaveBeenCalledWith({ name: 'associations' })
   })
 
   it('records a save error when persistence fails', async () => {
-    createClubMock.mockRejectedValueOnce(new Error('boom'))
-    const form = useClubForm()
+    createAssociationMock.mockRejectedValueOnce(new Error('boom'))
+    const form = useAssociationForm()
     form.isFormValid.value = true
     form.setFormRef({
       validate: vi.fn().mockResolvedValue({ valid: true }),
@@ -133,12 +184,12 @@ describe('useClubForm', () => {
 
     await form.submit()
 
-    expect(form.saveErrorMessage.value).toBe('clubs.saveClub.form.saveError')
+    expect(form.saveErrorMessage.value).toBe('associations.saveAssociation.form.saveError')
     expect(pushMock).not.toHaveBeenCalled()
   })
 
   it('does not save when validation fails', async () => {
-    const form = useClubForm()
+    const form = useAssociationForm()
     form.setFormRef({
       validate: vi.fn().mockResolvedValue({ valid: false }),
       resetValidation: vi.fn()
@@ -146,11 +197,11 @@ describe('useClubForm', () => {
 
     await form.submit()
 
-    expect(createClubMock).not.toHaveBeenCalled()
+    expect(createAssociationMock).not.toHaveBeenCalled()
   })
 
   it('resets to initial fields in edit mode', async () => {
-    const form = useClubForm({ clubId: () => CLUB_MOCK_DATA[0]!.id })
+    const form = useAssociationForm({ associationId: () => ASSOCIATION_MOCK_DATA[0]!.id })
 
     await onMountedHandler?.()
     await flushPromises()
@@ -162,7 +213,7 @@ describe('useClubForm', () => {
   })
 
   it('resets to an empty form in create mode', async () => {
-    const form = useClubForm()
+    const form = useAssociationForm()
     form.fields.value.name = 'Draft'
     form.setFormRef({
       validate: vi.fn(),
@@ -171,6 +222,6 @@ describe('useClubForm', () => {
 
     await form.reset()
 
-    expect(form.fields.value).toEqual(createEmptyClubForm())
+    expect(form.fields.value).toEqual(createEmptyAssociationForm())
   })
 })

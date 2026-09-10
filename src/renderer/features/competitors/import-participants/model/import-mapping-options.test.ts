@@ -45,7 +45,7 @@ describe('import-mapping-options', () => {
       'familyName',
       'gender',
       'birthDate',
-      'club',
+      'association',
       'nationality',
       'passNumber'
     ])

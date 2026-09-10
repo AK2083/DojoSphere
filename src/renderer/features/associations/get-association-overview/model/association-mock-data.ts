@@ -1,11 +1,11 @@
-import type { ClubOverviewRow } from './club-row'
+import type { AssociationOverviewRow } from './association-row'
 
 /**
- * Temporary club fixtures until the overview loads from SQLite via IPC.
+ * Temporary association fixtures until the overview loads from SQLite via IPC.
  *
- * Includes the seeded Unknown club plus two fictional German clubs.
+ * Includes the seeded Unknown association plus two fictional German associations.
  */
-export const CLUB_MOCK_DATA: ClubOverviewRow[] = [
+export const ASSOCIATION_MOCK_DATA: AssociationOverviewRow[] = [
   {
     id: 'c1000000-0000-4000-8000-000000000001',
     name: 'Judoclub Nord e.V.',
@@ -17,14 +17,14 @@ export const CLUB_MOCK_DATA: ClubOverviewRow[] = [
     createdAt: '2026-03-01T10:00:00.000Z',
     districtName: 'Bezirk Hamburg',
     districtShortName: 'HH',
-    regionalAssociationName: 'Hamburger Judo-Verband',
-    regionalAssociationShortName: 'HJV',
-    associationName: 'Deutscher Judo-Bund',
-    associationShortName: 'DJB',
+    regionalFederationName: 'Hamburger Judo-Verband',
+    regionalFederationShortName: 'HJV',
+    federationName: 'Deutscher Judo-Bund',
+    federationShortName: 'DJB',
     countryName: 'Germany',
     identifiers: [
       {
-        type: 'djb_club_number',
+        type: 'djb_association_number',
         value: '020123',
         authority: 'DJB'
       }
@@ -81,14 +81,14 @@ export const CLUB_MOCK_DATA: ClubOverviewRow[] = [
     createdAt: '2026-02-15T09:30:00.000Z',
     districtName: 'Bezirk Oberbayern',
     districtShortName: 'OB',
-    regionalAssociationName: 'Bayerischer Judo-Verband',
-    regionalAssociationShortName: 'BJV',
-    associationName: 'Deutscher Judo-Bund',
-    associationShortName: 'DJB',
+    regionalFederationName: 'Bayerischer Judo-Verband',
+    regionalFederationShortName: 'BJV',
+    federationName: 'Deutscher Judo-Bund',
+    federationShortName: 'DJB',
     countryName: 'Germany',
     identifiers: [
       {
-        type: 'djb_club_number',
+        type: 'djb_association_number',
         value: '090456',
         authority: 'DJB'
       }
@@ -123,10 +123,10 @@ export const CLUB_MOCK_DATA: ClubOverviewRow[] = [
     createdAt: '2026-01-01T00:00:00.000Z',
     districtName: 'Placeholder District',
     districtShortName: null,
-    regionalAssociationName: 'Placeholder Regional Association',
-    regionalAssociationShortName: null,
-    associationName: 'German Judo Federation',
-    associationShortName: 'DJB',
+    regionalFederationName: 'Placeholder Regional Federation',
+    regionalFederationShortName: null,
+    federationName: 'German Judo Federation',
+    federationShortName: 'DJB',
     countryName: 'Germany',
     identifiers: [],
     addresses: [],

@@ -6,11 +6,11 @@ import { useTranslation } from '@shared/lib'
 import RequiredFieldLabel from '@shared/ui/RequiredFieldLabel.vue'
 
 import translationKeys from '../i18n/keys'
-import { CLUB_EMAIL_MAX_LENGTH } from '../lib/club-form-rules'
-import { useClubForm } from '../model/use-form'
+import { ASSOCIATION_EMAIL_MAX_LENGTH } from '../lib/association-form-rules'
+import { useAssociationForm } from '../model/use-form'
 
 const props = defineProps<{
-  clubId?: string
+  associationId?: string
   title: string
 }>()
 
@@ -30,7 +30,7 @@ const {
   shortNameRules,
   websiteHostRules,
   districtRules,
-  clubNumberRules,
+  associationNumberRules,
   streetRules,
   houseNumberRules,
   postalCodeRules,
@@ -41,7 +41,7 @@ const {
   setFormRef,
   submit,
   reset
-} = useClubForm({ clubId: () => props.clubId })
+} = useAssociationForm({ associationId: () => props.associationId })
 
 const isMobile = computed(() => smAndDown.value)
 const saveLabel = computed(() => t(translationKeys.actions.save))
@@ -71,21 +71,21 @@ const addressSections = [
     v-model="isFormValid"
     :ref="setFormRef"
     :aria-label="t(translationKeys.form.ariaLabel)"
-    class="club-form"
+    class="association-form"
     @submit.prevent="submit"
   >
-    <div class="club-form__header mb-6">
-      <h1 class="club-form__title text-h5">{{ title }}</h1>
-      <div class="club-form__active">
+    <div class="association-form__header mb-6">
+      <h1 class="association-form__title text-h5">{{ title }}</h1>
+      <div class="association-form__active">
         <v-switch
           v-model="fields.isActive"
           color="primary"
           density="compact"
           hide-details
-          class="club-form__active-switch"
+          class="association-form__active-switch"
           :aria-label="t(translationKeys.form.fields.status)"
         />
-        <span class="club-form__active-label">
+        <span class="association-form__active-label">
           {{
             fields.isActive ? t(translationKeys.status.active) : t(translationKeys.status.inactive)
           }}
@@ -121,7 +121,7 @@ const addressSections = [
           {{ saveErrorMessage }}
         </v-alert>
 
-        <fieldset class="club-form__fields d-flex flex-column ga-3" :disabled="isLoading">
+        <fieldset class="association-form__fields d-flex flex-column ga-3" :disabled="isLoading">
           <v-text-field
             v-model="fields.name"
             :rules="nameRules"
@@ -180,18 +180,18 @@ const addressSections = [
           </v-text-field>
 
           <v-text-field
-            v-model="fields.clubNumber"
-            :label="t(translationKeys.form.fields.clubNumber)"
-            :rules="clubNumberRules"
-            :maxlength="fieldLimits.clubNumber"
-            :placeholder="t(translationKeys.form.placeholders.clubNumber)"
+            v-model="fields.associationNumber"
+            :label="t(translationKeys.form.fields.associationNumber)"
+            :rules="associationNumberRules"
+            :maxlength="fieldLimits.associationNumber"
+            :placeholder="t(translationKeys.form.placeholders.associationNumber)"
             autocomplete="off"
           />
 
           <div
             v-for="section in addressSections"
             :key="section.key"
-            class="club-form__address d-flex flex-column ga-1"
+            class="association-form__address d-flex flex-column ga-1"
           >
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap mb-1">
               <p class="text-subtitle-2 mb-0">{{ t(section.labelKey) }}</p>
@@ -208,7 +208,7 @@ const addressSections = [
             </div>
 
             <fieldset
-              class="club-form__address-fields d-flex flex-column ga-1"
+              class="association-form__address-fields d-flex flex-column ga-1"
               :disabled="Boolean(section.sameAsKey && fields[section.sameAsKey])"
             >
               <v-row density="comfortable">
@@ -260,7 +260,7 @@ const addressSections = [
             </fieldset>
           </div>
 
-          <div class="club-form__address d-flex flex-column ga-1">
+          <div class="association-form__address d-flex flex-column ga-1">
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap mb-1">
               <p class="text-subtitle-2 mb-0">{{ t(translationKeys.form.fields.contact) }}</p>
             </div>
@@ -269,7 +269,7 @@ const addressSections = [
               v-model="fields.email"
               :label="t(translationKeys.form.fields.email)"
               :rules="emailRules"
-              :maxlength="CLUB_EMAIL_MAX_LENGTH"
+              :maxlength="ASSOCIATION_EMAIL_MAX_LENGTH"
               :placeholder="t(translationKeys.form.placeholders.email)"
               type="email"
               autocomplete="email"
@@ -347,7 +347,7 @@ const addressSections = [
 </template>
 
 <style scoped>
-.club-form__header {
+.association-form__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -356,53 +356,53 @@ const addressSections = [
   min-height: 2.5rem;
 }
 
-.club-form__title {
+.association-form__title {
   margin: 0;
   line-height: 2.5rem;
 }
 
-.club-form__active {
+.association-form__active {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   min-height: 2.5rem;
 }
 
-.club-form__active-switch {
+.association-form__active-switch {
   flex: none;
   margin: 0;
   width: auto;
 }
 
-.club-form__active-switch :deep(.v-input),
-.club-form__active-switch :deep(.v-input__control),
-.club-form__active-switch :deep(.v-selection-control),
-.club-form__active-switch :deep(.v-selection-control__wrapper) {
+.association-form__active-switch :deep(.v-input),
+.association-form__active-switch :deep(.v-input__control),
+.association-form__active-switch :deep(.v-selection-control),
+.association-form__active-switch :deep(.v-selection-control__wrapper) {
   margin: 0;
   padding: 0;
   min-height: 0 !important;
   height: auto;
 }
 
-.club-form__active-switch :deep(.v-selection-control) {
+.association-form__active-switch :deep(.v-selection-control) {
   align-items: center;
   justify-content: center;
 }
 
-.club-form__active-label {
+.association-form__active-label {
   line-height: 2.5rem;
   font-size: 1rem;
   white-space: nowrap;
 }
 
-.club-form__fields {
+.association-form__fields {
   border: 0;
   margin: 0;
   min-width: 0;
   padding: 0;
 }
 
-.club-form__address-fields {
+.association-form__address-fields {
   border: 0;
   margin: 0;
   min-width: 0;

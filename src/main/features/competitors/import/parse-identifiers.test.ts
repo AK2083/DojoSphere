@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   isAreaHeader,
-  isClubHeader,
+  isAssociationHeader,
   isContactPersonHeader,
   isLicenseNumberHeader,
   isNationalityHeader,
@@ -58,15 +58,15 @@ describe('parse-identifiers', () => {
     expect(isRegistrationStatusHeader('Nationalität')).toBe(false)
   })
 
-  it('does not treat club supervisor email headers as club columns', () => {
-    expect(isClubHeader('E-Mail Vereinsverantwortlicher')).toBe(false)
+  it('does not treat association supervisor email headers as association columns', () => {
+    expect(isAssociationHeader('E-Mail Vereinsverantwortlicher')).toBe(false)
   })
 
-  it('detects club headers and excludes area columns', () => {
-    expect(isClubHeader('Verein/Club')).toBe(true)
-    expect(isClubHeader('Meldender Verein')).toBe(true)
+  it('detects association headers and excludes area columns', () => {
+    expect(isAssociationHeader('Verein/Association')).toBe(true)
+    expect(isAssociationHeader('Meldender Verein')).toBe(true)
     expect(isAreaHeader('Bereich')).toBe(true)
-    expect(isClubHeader('Bereich')).toBe(false)
+    expect(isAssociationHeader('Bereich')).toBe(false)
   })
 
   it('returns false for empty header labels', () => {
@@ -75,7 +75,7 @@ describe('parse-identifiers', () => {
     expect(isRegistrationStatusHeader('')).toBe(false)
     expect(isNationalityHeader('')).toBe(false)
     expect(isAreaHeader('')).toBe(false)
-    expect(isClubHeader('')).toBe(false)
+    expect(isAssociationHeader('')).toBe(false)
     expect(isContactPersonHeader('')).toBe(false)
   })
 

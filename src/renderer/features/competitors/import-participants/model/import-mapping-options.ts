@@ -10,7 +10,7 @@ export const TARGET_FIELD_TRANSLATION_KEY: Record<ImportTargetFieldKey, string> 
   familyName: saveParticipantTranslationKeys.form.fields.familyName,
   gender: saveParticipantTranslationKeys.form.fields.gender,
   birthDate: saveParticipantTranslationKeys.form.fields.birthDate,
-  club: saveParticipantTranslationKeys.form.fields.club,
+  association: saveParticipantTranslationKeys.form.fields.association,
   nationality: saveParticipantTranslationKeys.form.fields.nationality,
   weightKg: translationKeys.mapping.targetFields.weightKg,
   passNumber: saveParticipantTranslationKeys.form.fields.passNumber,
@@ -18,7 +18,7 @@ export const TARGET_FIELD_TRANSLATION_KEY: Record<ImportTargetFieldKey, string> 
   licenseNumber: saveParticipantTranslationKeys.form.fields.licenseNumber,
   contactPhone: saveParticipantTranslationKeys.form.fields.contactPhone,
   contactPerson: saveParticipantTranslationKeys.form.fields.contactPerson,
-  clubContactEmail: overviewTranslationKeys.list.columns.clubContactEmail,
+  associationContactEmail: overviewTranslationKeys.list.columns.associationContactEmail,
   startEligible: saveParticipantTranslationKeys.form.fields.startEligible,
   registrationStatus: saveParticipantTranslationKeys.form.fields.registrationStatus,
   remarks: saveParticipantTranslationKeys.form.fields.remarks

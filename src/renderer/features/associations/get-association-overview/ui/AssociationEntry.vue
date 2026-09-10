@@ -11,32 +11,39 @@ import {
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { clubAvatarColor, clubHeaderBackground, clubInitials } from '../lib/club-avatar'
-import { clubLabel } from '../lib/club-label'
-import { resolveClubDetailFields } from '../lib/resolve-club-detail-fields'
-import type { ClubFieldHeader, ClubOverviewItem } from '../model/use-club-overview'
+import {
+  associationAvatarColor,
+  associationHeaderBackground,
+  associationInitials
+} from '../lib/association-avatar'
+import { associationLabel } from '../lib/association-label'
+import { resolveAssociationDetailFields } from '../lib/resolve-association-detail-fields'
+import type {
+  AssociationFieldHeader,
+  AssociationOverviewItem
+} from '../model/use-association-overview'
 
 const props = defineProps<{
-  club: ClubOverviewItem
-  fieldHeaders: ClubFieldHeader[]
+  association: AssociationOverviewItem
+  fieldHeaders: AssociationFieldHeader[]
 }>()
 
 const emit = defineEmits<{
-  edit: [club: ClubOverviewItem]
-  delete: [club: ClubOverviewItem]
+  edit: [association: AssociationOverviewItem]
+  delete: [association: AssociationOverviewItem]
 }>()
 
 const { t } = useTranslation()
 
 const detailsExpanded = ref(false)
-const avatarColor = computed(() => clubAvatarColor(props.club.name))
-const headerBackground = computed(() => clubHeaderBackground(props.club.name))
-const displayLabel = computed(() => clubLabel(props.club))
+const avatarColor = computed(() => associationAvatarColor(props.association.name))
+const headerBackground = computed(() => associationHeaderBackground(props.association.name))
+const displayLabel = computed(() => associationLabel(props.association))
 const emptyValue = computed(() => t(translationKeys.entry.emptyValue))
-const detailFields = computed(() => resolveClubDetailFields(props.club))
+const detailFields = computed(() => resolveAssociationDetailFields(props.association))
 
-const statusIcon = computed(() => (props.club.isActive ? mdiCheckCircle : mdiCloseCircle))
-const statusColor = computed(() => (props.club.isActive ? 'success' : 'error'))
+const statusIcon = computed(() => (props.association.isActive ? mdiCheckCircle : mdiCloseCircle))
+const statusColor = computed(() => (props.association.isActive ? 'success' : 'error'))
 
 function headerTitle(key: string): string {
   return props.fieldHeaders.find((header) => header.key === key)?.title ?? key
@@ -57,36 +64,36 @@ function hierarchyLabel(name: string, shortName: string | null): string {
 }
 
 function detailsPanelId(): string {
-  return `club-details-${props.club.id}`
+  return `association-details-${props.association.id}`
 }
 </script>
 
 <template>
-  <v-card variant="outlined" class="club-entry" :aria-label="displayLabel">
-    <div class="club-entry__header" :style="{ backgroundColor: headerBackground }">
-      <div class="club-entry__identity">
-        <v-avatar :color="avatarColor" size="40" class="club-entry__avatar">
-          <span aria-hidden="true">{{ clubInitials(club.name) }}</span>
+  <v-card variant="outlined" class="association-entry" :aria-label="displayLabel">
+    <div class="association-entry__header" :style="{ backgroundColor: headerBackground }">
+      <div class="association-entry__identity">
+        <v-avatar :color="avatarColor" size="40" class="association-entry__avatar">
+          <span aria-hidden="true">{{ associationInitials(association.name) }}</span>
         </v-avatar>
-        <div class="club-entry__name-block">
-          <p class="club-entry__title">
-            {{ club.name }}
+        <div class="association-entry__name-block">
+          <p class="association-entry__title">
+            {{ association.name }}
           </p>
-          <p v-if="club.shortName" class="club-entry__short-name">
-            {{ club.shortName }}
+          <p v-if="association.shortName" class="association-entry__short-name">
+            {{ association.shortName }}
           </p>
         </div>
       </div>
 
-      <div class="club-entry__actions">
-        <v-tooltip :text="club.statusLabel" location="bottom">
+      <div class="association-entry__actions">
+        <v-tooltip :text="association.statusLabel" location="bottom">
           <template #activator="{ props: tooltipProps }">
             <v-icon
               v-bind="tooltipProps"
               :icon="statusIcon"
               :color="statusColor"
-              :aria-label="club.statusLabel"
-              class="club-entry__status"
+              :aria-label="association.statusLabel"
+              class="association-entry__status"
               role="img"
             />
           </template>
@@ -99,7 +106,7 @@ function detailsPanelId(): string {
               :icon="mdiPencil"
               variant="text"
               :aria-label="t(translationKeys.actions.ariaEdit, { name: displayLabel })"
-              @click="emit('edit', club)"
+              @click="emit('edit', association)"
             />
           </template>
         </v-tooltip>
@@ -112,29 +119,29 @@ function detailsPanelId(): string {
               variant="text"
               color="error"
               :aria-label="t(translationKeys.actions.ariaDelete, { name: displayLabel })"
-              @click="emit('delete', club)"
+              @click="emit('delete', association)"
             />
           </template>
         </v-tooltip>
       </div>
     </div>
 
-    <dl class="club-entry__summary">
+    <dl class="association-entry__summary">
       <dt>{{ headerTitle('city') }}</dt>
-      <dd>{{ displayOrEmpty(club.city) }}</dd>
+      <dd>{{ displayOrEmpty(association.city) }}</dd>
       <dt>{{ headerTitle('website') }}</dt>
-      <dd>{{ displayOrEmpty(club.website) }}</dd>
+      <dd>{{ displayOrEmpty(association.website) }}</dd>
       <dt>{{ headerTitle('status') }}</dt>
-      <dd>{{ club.statusLabel }}</dd>
+      <dd>{{ association.statusLabel }}</dd>
       <dt>{{ headerTitle('district') }}</dt>
-      <dd>{{ hierarchyLabel(club.districtName, club.districtShortName) }}</dd>
+      <dd>{{ hierarchyLabel(association.districtName, association.districtShortName) }}</dd>
     </dl>
 
-    <div class="club-entry__details-toggle">
+    <div class="association-entry__details-toggle">
       <v-btn
         variant="text"
         block
-        class="club-entry__details-toggle-btn"
+        class="association-entry__details-toggle-btn"
         :aria-expanded="detailsExpanded"
         :aria-controls="detailsPanelId()"
         @click="detailsExpanded = !detailsExpanded"
@@ -149,21 +156,26 @@ function detailsPanelId(): string {
     </div>
 
     <v-expand-transition>
-      <div v-if="detailsExpanded" :id="detailsPanelId()" class="club-entry__details-panel">
-        <dl class="club-entry__details">
+      <div v-if="detailsExpanded" :id="detailsPanelId()" class="association-entry__details-panel">
+        <dl class="association-entry__details">
           <dt>{{ headerTitle('country') }}</dt>
-          <dd>{{ displayOrEmpty(club.countryName) }}</dd>
+          <dd>{{ displayOrEmpty(association.countryName) }}</dd>
           <dt>{{ headerTitle('association') }}</dt>
-          <dd>{{ hierarchyLabel(club.associationName, club.associationShortName) }}</dd>
-          <dt>{{ headerTitle('regionalAssociation') }}</dt>
+          <dd>{{ hierarchyLabel(association.federationName, association.federationShortName) }}</dd>
+          <dt>{{ headerTitle('regionalFederation') }}</dt>
           <dd>
-            {{ hierarchyLabel(club.regionalAssociationName, club.regionalAssociationShortName) }}
+            {{
+              hierarchyLabel(
+                association.regionalFederationName,
+                association.regionalFederationShortName
+              )
+            }}
           </dd>
           <dt>{{ headerTitle('district') }}</dt>
-          <dd>{{ hierarchyLabel(club.districtName, club.districtShortName) }}</dd>
+          <dd>{{ hierarchyLabel(association.districtName, association.districtShortName) }}</dd>
 
-          <dt>{{ headerTitle('clubNumber') }}</dt>
-          <dd>{{ displayOrEmpty(detailFields.clubNumber) }}</dd>
+          <dt>{{ headerTitle('associationNumber') }}</dt>
+          <dd>{{ displayOrEmpty(detailFields.associationNumber) }}</dd>
 
           <dt>{{ headerTitle('headquarters') }}</dt>
           <dd>{{ displayOrEmpty(detailFields.headquarters) }}</dd>
@@ -183,12 +195,12 @@ function detailsPanelId(): string {
 </template>
 
 <style scoped>
-.club-entry {
+.association-entry {
   overflow: hidden;
   background: rgb(var(--v-theme-surface));
 }
 
-.club-entry__header {
+.association-entry__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -198,7 +210,7 @@ function detailsPanelId(): string {
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
 }
 
-.club-entry__identity {
+.association-entry__identity {
   display: flex;
   flex: 1;
   align-items: center;
@@ -206,18 +218,18 @@ function detailsPanelId(): string {
   min-width: 0;
 }
 
-.club-entry__avatar {
+.association-entry__avatar {
   flex-shrink: 0;
 }
 
-.club-entry__avatar :deep(.v-avatar__underlay),
-.club-entry__avatar :deep(.v-avatar__content) {
+.association-entry__avatar :deep(.v-avatar__underlay),
+.association-entry__avatar :deep(.v-avatar__content) {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.club-entry__name-block {
+.association-entry__name-block {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -226,14 +238,14 @@ function detailsPanelId(): string {
   min-width: 0;
 }
 
-.club-entry__title {
+.association-entry__title {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.25;
 }
 
-.club-entry__short-name {
+.association-entry__short-name {
   margin: 0;
   font-size: 0.875rem;
   font-weight: 400;
@@ -241,19 +253,19 @@ function detailsPanelId(): string {
   color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
 
-.club-entry__actions {
+.association-entry__actions {
   display: flex;
   flex-shrink: 0;
   align-items: center;
   gap: 0.25rem;
 }
 
-.club-entry__status {
+.association-entry__status {
   margin-right: 0.25rem;
 }
 
-.club-entry__summary,
-.club-entry__details {
+.association-entry__summary,
+.association-entry__details {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   column-gap: 1.25rem;
@@ -262,30 +274,30 @@ function detailsPanelId(): string {
   padding: 1.25rem;
 }
 
-.club-entry__summary {
+.association-entry__summary {
   padding-bottom: 1rem;
 }
 
-.club-entry__summary dt,
-.club-entry__details dt {
+.association-entry__summary dt,
+.association-entry__details dt {
   margin: 0;
   font-weight: 600;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
 }
 
-.club-entry__summary dd,
-.club-entry__details dd {
+.association-entry__summary dd,
+.association-entry__details dd {
   margin: 0;
   text-align: left;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
   overflow-wrap: anywhere;
 }
 
-.club-entry__details-toggle {
+.association-entry__details-toggle {
   border-top: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
-.club-entry__details-toggle-btn.v-btn {
+.association-entry__details-toggle-btn.v-btn {
   justify-content: flex-start;
   height: auto;
   min-height: unset;
@@ -295,22 +307,22 @@ function detailsPanelId(): string {
   font-weight: 500;
 }
 
-.club-entry__details-panel {
+.association-entry__details-panel {
   overflow: hidden;
 }
 
-.club-entry__details {
+.association-entry__details {
   padding-top: 0;
   padding-bottom: 1rem;
 }
 
-.club-entry__details dt,
-.club-entry__details dd {
+.association-entry__details dt,
+.association-entry__details dd {
   font-size: 0.875rem;
   color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
 
-.club-entry__details dt {
+.association-entry__details dt {
   font-weight: 500;
 }
 </style>

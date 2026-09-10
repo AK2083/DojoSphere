@@ -1,8 +1,15 @@
-export { ClubOverview, getClubOverviewTranslationKeys } from './get-club-overview'
-export { default as clubsDe } from './i18n/de'
-export { default as clubsEn } from './i18n/en'
+export {
+  AssociationOverview,
+  getAssociationOverviewTranslationKeys
+} from './get-association-overview'
+export { default as associationsDe } from './i18n/de'
+export { default as associationsEn } from './i18n/en'
 export { default as fieldsTranslationKeys } from './i18n/fields-keys'
 export { default as translationKeys } from './i18n/keys'
-export type { ClubFormState } from './save-club'
-export { ClubForm, createEmptyClubForm, saveClubTranslationKeys } from './save-club'
-export { useClubsStore } from './store/use-clubs-store'
+export type { AssociationFormState } from './save-association'
+export {
+  AssociationForm,
+  createEmptyAssociationForm,
+  saveAssociationTranslationKeys
+} from './save-association'
+export { useAssociationsStore } from './store/use-associations-store'

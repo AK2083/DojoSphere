@@ -25,14 +25,14 @@ describe('competitors.repository', () => {
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo',
+      association: 'Tokyo Dojo',
       weightClass: '-60'
     })
 
     expect(competitor).toMatchObject({
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo',
+      association: 'Tokyo Dojo',
       weightClass: '-60'
     })
     expect(competitor.id).toEqual(expect.any(String))
@@ -72,7 +72,7 @@ describe('competitors.repository', () => {
     expect(competitor).toMatchObject({
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Unknown',
+      association: 'Unknown',
       weightClass: '-34'
     })
   })
@@ -113,11 +113,11 @@ describe('competitors.repository', () => {
     expect(competitor.weightClass).toBe('+66')
   })
 
-  it('accepts explicit club and weight class ids', async () => {
+  it('accepts explicit association and weight class ids', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
     const { addCompetitor } = await import('./competitors.repository')
-    const { UNKNOWN_CLUB_ID, DEFAULT_WEIGHT_CLASS_ID } =
+    const { UNKNOWN_ASSOCIATION_ID, DEFAULT_WEIGHT_CLASS_ID } =
       await import('@main/shared/database/reference-seed-ids')
 
     const { id: actorUserId } = addUser({ displayName: 'Id Actor', userType: 'system' })
@@ -125,11 +125,11 @@ describe('competitors.repository', () => {
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      clubId: UNKNOWN_CLUB_ID,
+      associationId: UNKNOWN_ASSOCIATION_ID,
       weightClassId: DEFAULT_WEIGHT_CLASS_ID
     })
 
-    expect(competitor.clubId).toBe(UNKNOWN_CLUB_ID)
+    expect(competitor.associationId).toBe(UNKNOWN_ASSOCIATION_ID)
     expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
   })
 
@@ -155,25 +155,25 @@ describe('competitors.repository', () => {
     })
   })
 
-  it('reuses an existing club when the name already exists', async () => {
+  it('reuses an existing association when the name already exists', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
     const { addCompetitor } = await import('./competitors.repository')
 
-    const { id: actorUserId } = addUser({ displayName: 'Club Actor', userType: 'system' })
+    const { id: actorUserId } = addUser({ displayName: 'Association Actor', userType: 'system' })
 
     const first = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo'
+      association: 'Tokyo Dojo'
     })
     const second = addCompetitor(actorUserId, {
       givenName: 'Hana',
       familyName: 'Sato',
-      club: 'Tokyo Dojo'
+      association: 'Tokyo Dojo'
     })
 
-    expect(second.clubId).toBe(first.clubId)
+    expect(second.associationId).toBe(first.associationId)
   })
 
   it('falls back to the default weight class for unparseable values', async () => {
@@ -320,14 +320,14 @@ describe('competitors.repository', () => {
               birthDate: competitor.birthDate,
               nationality: competitor.nationality,
               passNumber: competitor.passNumber,
-              clubId: competitor.clubId,
+              associationId: competitor.associationId,
               weightClassId: competitor.weightClassId,
               ageClassId: competitor.ageClassId,
               gradeId: competitor.gradeId,
               licenseNumber: competitor.licenseNumber,
               contactPhone: competitor.contactPhone,
               contactPerson: competitor.contactPerson,
-              club: competitor.club,
+              association: competitor.association,
               maxWeightKg: null,
               minWeightKg: null,
               createdAt: competitor.createdAt,
@@ -541,7 +541,7 @@ describe('competitors.repository', () => {
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo',
+      association: 'Tokyo Dojo',
       weightClass: '-60'
     })
 
@@ -567,7 +567,7 @@ describe('competitors.repository', () => {
       entityId: competitor.id,
       actorUserId,
       newValueJson: JSON.stringify({
-        fields: ['given_name', 'family_name', 'club', 'weight_class']
+        fields: ['given_name', 'family_name', 'association', 'weight_class']
       })
     })
     expect(auditRow.newValueJson).not.toContain('Yuki')
@@ -585,17 +585,17 @@ describe('competitors.repository', () => {
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Yuki',
       familyName: 'Tanaka',
-      club: 'Tokyo Dojo',
+      association: 'Tokyo Dojo',
       weightClass: '-60'
     })
 
     const updated = updateCompetitor(actorUserId, competitor.id, {
-      club: 'Osaka Dojo',
+      association: 'Osaka Dojo',
       weightClass: '-66'
     })
 
     expect(updated).toMatchObject({
-      club: 'Osaka Dojo',
+      association: 'Osaka Dojo',
       weightClass: '-66',
       givenName: 'Yuki',
       familyName: 'Tanaka'
@@ -613,7 +613,7 @@ describe('competitors.repository', () => {
 
     expect(auditRow).toMatchObject({
       action: 'updated',
-      newValueJson: JSON.stringify({ changed_fields: ['club', 'weight_class'] })
+      newValueJson: JSON.stringify({ changed_fields: ['association', 'weight_class'] })
     })
     expect(auditRow.newValueJson).not.toContain('Osaka Dojo')
   })
@@ -690,7 +690,7 @@ describe('competitors.repository', () => {
 
     expect(() =>
       updateCompetitor(actorUserId, 'missing-competitor-id', {
-        club: 'Osaka Dojo'
+        association: 'Osaka Dojo'
       })
     ).toThrow('Competitor not found')
   })
@@ -773,7 +773,7 @@ describe('competitors.repository', () => {
 
     expect(() =>
       updateCompetitor(actorUserId, competitor.id, {
-        club: 'Osaka Dojo'
+        association: 'Osaka Dojo'
       })
     ).toThrow('Competitor not found')
   })
@@ -960,32 +960,36 @@ describe('competitors.repository', () => {
     })
   })
 
-  it('updates existing club contact emails and ignores invalid targets', async () => {
+  it('updates existing association contact emails and ignores invalid targets', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')
-    const { addCompetitor, upsertClubContactEmail } = await import('./competitors.repository')
+    const { addCompetitor, upsertAssociationContactEmail } =
+      await import('./competitors.repository')
     const { getDatabase } = await import('@main/shared/database')
-    const { UNKNOWN_CLUB_ID } = await import('@main/shared/database/reference-seed-ids')
+    const { UNKNOWN_ASSOCIATION_ID } = await import('@main/shared/database/reference-seed-ids')
     const { COMPETITOR_REMARKS_MAX_LENGTH } = await import('@shared/domain/competitor-field-limits')
 
-    const { id: actorUserId } = addUser({ displayName: 'Club Contact Actor', userType: 'system' })
+    const { id: actorUserId } = addUser({
+      displayName: 'Association Contact Actor',
+      userType: 'system'
+    })
     const competitor = addCompetitor(actorUserId, {
       givenName: 'Lina',
       familyName: 'Bauer',
-      club: 'Dojo Nord'
+      association: 'Dojo Nord'
     })
     const db = getDatabase()
 
-    upsertClubContactEmail(db, competitor.clubId, 'first@example-dojo.invalid')
-    upsertClubContactEmail(db, competitor.clubId, 'second@example-dojo.invalid')
-    upsertClubContactEmail(db, UNKNOWN_CLUB_ID, 'ignored@example-dojo.invalid')
-    upsertClubContactEmail(db, competitor.clubId, '   ')
+    upsertAssociationContactEmail(db, competitor.associationId, 'first@example-dojo.invalid')
+    upsertAssociationContactEmail(db, competitor.associationId, 'second@example-dojo.invalid')
+    upsertAssociationContactEmail(db, UNKNOWN_ASSOCIATION_ID, 'ignored@example-dojo.invalid')
+    upsertAssociationContactEmail(db, competitor.associationId, '   ')
 
     const contact = db
       .prepare(
-        `SELECT value FROM club_contacts WHERE club_id = ? AND contact_type = 'email' LIMIT 1`
+        `SELECT value FROM association_contacts WHERE association_id = ? AND contact_type = 'email' LIMIT 1`
       )
-      .get(competitor.clubId) as { value: string } | undefined
+      .get(competitor.associationId) as { value: string } | undefined
 
     expect(contact?.value).toBe('second@example-dojo.invalid')
 
@@ -1022,7 +1026,7 @@ describe('competitors.repository', () => {
     })
 
     const updated = updateCompetitor(actorUserId, competitor.id, {
-      club: 'Dojo Nord'
+      association: 'Dojo Nord'
     })
 
     expect(updated).toMatchObject({

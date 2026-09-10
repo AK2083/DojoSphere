@@ -1,5 +1,5 @@
 /** Stable seed UUIDs from reference migrations — do not change without a new migration. */
-export const UNKNOWN_CLUB_ID = '00000000-0000-0000-0000-000000000000'
+export const UNKNOWN_ASSOCIATION_ID = '00000000-0000-0000-0000-000000000000'
 export /**
  *
  */

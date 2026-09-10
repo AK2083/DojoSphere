@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
-import { CLUB_MOCK_DATA } from '../../get-club-overview/model/club-mock-data'
-import { createEmptyClubForm } from './club-form-state'
+import { ASSOCIATION_MOCK_DATA } from '../../get-association-overview/model/association-mock-data'
+import type { AssociationOverviewRow } from '../../get-association-overview/model/association-row'
+import { createEmptyAddressFields, createEmptyAssociationForm } from './association-form-state'
 import {
-  cloneClubFormState,
+  cloneAssociationFormState,
+  copyHeadquartersAddress,
   joinWebsite,
-  mapClubToFormState,
-  mapFormStateToClub,
+  mapAssociationToFormState,
+  mapFormStateToAssociation,
   splitWebsite
-} from './map-club-form-state'
+} from './map-association-form-state'
 
-describe('map-club-form-state', () => {
+describe('map-association-form-state', () => {
   it('splits and joins website protocol and host', () => {
     expect(splitWebsite('https://www.jcnord.example')).toEqual({
       websiteProtocol: 'https://',
@@ -24,16 +26,24 @@ describe('map-club-form-state', () => {
       websiteProtocol: 'https://',
       websiteHost: 'www.example.com'
     })
+    expect(splitWebsite(null)).toEqual({
+      websiteProtocol: 'https://',
+      websiteHost: ''
+    })
+    expect(splitWebsite('   ')).toEqual({
+      websiteProtocol: 'https://',
+      websiteHost: ''
+    })
     expect(joinWebsite('https://', 'www.example.com')).toBe('https://www.example.com')
     expect(joinWebsite('http://', '  /example.com  ')).toBe('http://example.com')
     expect(joinWebsite('https://', '   ')).toBeNull()
   })
 
-  it('maps a club row into structured form fields', () => {
-    const form = mapClubToFormState(CLUB_MOCK_DATA[0]!)
+  it('maps a association row into structured form fields', () => {
+    const form = mapAssociationToFormState(ASSOCIATION_MOCK_DATA[0]!)
 
     expect(form.name).toBe('Judoclub Nord e.V.')
-    expect(form.clubNumber).toBe('020123')
+    expect(form.associationNumber).toBe('020123')
     expect(form.email).toBe('info@jcnord.example')
     expect(form.phoneCountryCode).toBe('+49')
     expect(form.phoneNumber).toBe('40 555 0100')
@@ -51,10 +61,93 @@ describe('map-club-form-state', () => {
     expect(form.billingAddressSameAsHeadquarters).toBe(false)
   })
 
+  it('uses empty address blocks when a association has no addresses', () => {
+    const form = mapAssociationToFormState(ASSOCIATION_MOCK_DATA[2]!)
+
+    expect(form.headquarters).toEqual(createEmptyAddressFields())
+    expect(form.trainingVenue).toEqual(createEmptyAddressFields())
+    expect(form.billingAddress).toEqual(createEmptyAddressFields())
+    expect(form.websiteHost).toBe('')
+    expect(form.associationNumber).toBe('')
+    expect(form.email).toBe('')
+    expect(form.phoneNumber).toBe('')
+    expect(form.trainingVenueSameAsHeadquarters).toBe(false)
+    expect(form.billingAddressSameAsHeadquarters).toBe(false)
+  })
+
+  it('maps null address fields to empty strings', () => {
+    const association: AssociationOverviewRow = {
+      ...ASSOCIATION_MOCK_DATA[2]!,
+      id: 'null-address-fields',
+      shortName: null,
+      website: 'http://same.example',
+      districtShortName: null,
+      regionalFederationShortName: null,
+      federationShortName: null,
+      addresses: [
+        {
+          street: null,
+          houseNumber: null,
+          postalCode: null,
+          city: null,
+          countryCode: null,
+          addressType: 'primary'
+        }
+      ],
+      contacts: [],
+      identifiers: []
+    }
+
+    const form = mapAssociationToFormState(association)
+
+    expect(form.websiteProtocol).toBe('http://')
+    expect(form.websiteHost).toBe('same.example')
+    expect(form.headquarters).toEqual(createEmptyAddressFields())
+    expect(form.trainingVenueSameAsHeadquarters).toBe(false)
+    expect(form.billingAddressSameAsHeadquarters).toBe(false)
+  })
+
+  it('flags training and billing as same as headquarters when values match', () => {
+    const sharedAddress = {
+      street: 'Dojostraße',
+      houseNumber: '12',
+      postalCode: '20095',
+      city: 'Hamburg',
+      countryCode: 'DE' as string | null
+    }
+    const association: AssociationOverviewRow = {
+      ...ASSOCIATION_MOCK_DATA[0]!,
+      id: 'same-hq',
+      addresses: [
+        { ...sharedAddress, addressType: 'primary' },
+        { ...sharedAddress, addressType: 'training' },
+        { ...sharedAddress, addressType: 'billing' }
+      ]
+    }
+
+    const form = mapAssociationToFormState(association)
+
+    expect(form.trainingVenueSameAsHeadquarters).toBe(true)
+    expect(form.billingAddressSameAsHeadquarters).toBe(true)
+  })
+
+  it('copies headquarters address fields independently', () => {
+    const headquarters = {
+      street: 'Dojostraße',
+      houseNumber: '12',
+      postalCode: '20095',
+      city: 'Hamburg'
+    }
+    const copied = copyHeadquartersAddress(headquarters)
+
+    expect(copied).toEqual(headquarters)
+    expect(copied).not.toBe(headquarters)
+  })
+
   it('uses headquarters when same-as switches are enabled', () => {
     const fields = {
-      ...createEmptyClubForm(),
-      name: 'Shared Address Club',
+      ...createEmptyAssociationForm(),
+      name: 'Shared Address Association',
       districtName: 'Hamburg',
       headquarters: {
         street: 'Dojostraße',
@@ -78,13 +171,13 @@ describe('map-club-form-state', () => {
       billingAddressSameAsHeadquarters: true
     }
 
-    const club = mapFormStateToClub(fields, {
+    const association = mapFormStateToAssociation(fields, {
       id: 'shared',
       source: 'manual',
       createdAt: '2026-04-01T00:00:00.000Z'
     })
 
-    expect(club.addresses).toEqual([
+    expect(association.addresses).toEqual([
       {
         street: 'Dojostraße',
         houseNumber: '12',
@@ -112,15 +205,15 @@ describe('map-club-form-state', () => {
     ])
   })
 
-  it('maps form fields back into a club row', () => {
+  it('maps form fields back into a association row', () => {
     const fields = {
-      ...createEmptyClubForm(),
-      name: 'Test Club',
+      ...createEmptyAssociationForm(),
+      name: 'Test Association',
       shortName: 'TC',
       websiteProtocol: 'https://' as const,
       websiteHost: 'test.example',
       districtName: 'Berlin',
-      clubNumber: '110011',
+      associationNumber: '110011',
       headquarters: {
         street: 'Hauptstr.',
         houseNumber: '1',
@@ -139,29 +232,29 @@ describe('map-club-form-state', () => {
         postalCode: '10115',
         city: 'Berlin'
       },
-      email: 'club@test.example',
+      email: 'association@test.example',
       phoneCountryCode: '+49',
       phoneNumber: '30 123'
     }
 
-    const club = mapFormStateToClub(fields, {
-      id: 'club-x',
+    const association = mapFormStateToAssociation(fields, {
+      id: 'association-x',
       source: 'manual',
       createdAt: '2026-04-01T00:00:00.000Z'
     })
 
-    expect(club.id).toBe('club-x')
-    expect(club.name).toBe('Test Club')
-    expect(club.city).toBe('Berlin')
-    expect(club.website).toBe('https://test.example')
-    expect(club.identifiers).toEqual([
+    expect(association.id).toBe('association-x')
+    expect(association.name).toBe('Test Association')
+    expect(association.city).toBe('Berlin')
+    expect(association.website).toBe('https://test.example')
+    expect(association.identifiers).toEqual([
       {
-        type: 'djb_club_number',
+        type: 'djb_association_number',
         value: '110011',
         authority: 'DJB'
       }
     ])
-    expect(club.addresses).toEqual([
+    expect(association.addresses).toEqual([
       {
         street: 'Hauptstr.',
         houseNumber: '1',
@@ -187,10 +280,10 @@ describe('map-club-form-state', () => {
         addressType: 'billing'
       }
     ])
-    expect(club.contacts).toEqual([
+    expect(association.contacts).toEqual([
       {
         contactType: 'email',
-        value: 'club@test.example',
+        value: 'association@test.example',
         label: null,
         isPublic: true
       },
@@ -203,23 +296,53 @@ describe('map-club-form-state', () => {
     ])
   })
 
+  it('falls back to default hierarchy names when blank', () => {
+    const association = mapFormStateToAssociation(
+      {
+        ...createEmptyAssociationForm(),
+        name: 'Blank Hierarchy',
+        districtName: 'Berlin',
+        federationName: '   ',
+        regionalFederationName: '   ',
+        countryName: '   ',
+        federationShortName: '  ',
+        regionalFederationShortName: '  ',
+        districtShortName: '  '
+      },
+      {
+        id: 'blank-hierarchy',
+        source: 'manual',
+        createdAt: '2026-04-01T00:00:00.000Z'
+      }
+    )
+
+    expect(association.federationName).toBe(createEmptyAssociationForm().federationName)
+    expect(association.regionalFederationName).toBe(
+      createEmptyAssociationForm().regionalFederationName
+    )
+    expect(association.countryName).toBe(createEmptyAssociationForm().countryName)
+    expect(association.federationShortName).toBeNull()
+    expect(association.regionalFederationShortName).toBeNull()
+    expect(association.districtShortName).toBeNull()
+  })
+
   it('omits empty optional child collections', () => {
-    const club = mapFormStateToClub(createEmptyClubForm(), {
+    const association = mapFormStateToAssociation(createEmptyAssociationForm(), {
       id: 'empty',
       source: 'manual',
       createdAt: '2026-04-01T00:00:00.000Z'
     })
 
-    expect(club.identifiers).toEqual([])
-    expect(club.addresses).toEqual([])
-    expect(club.contacts).toEqual([])
-    expect(club.city).toBeNull()
-    expect(club.website).toBeNull()
+    expect(association.identifiers).toEqual([])
+    expect(association.addresses).toEqual([])
+    expect(association.contacts).toEqual([])
+    expect(association.city).toBeNull()
+    expect(association.website).toBeNull()
   })
 
   it('deep-clones nested address fields', () => {
-    const original = mapClubToFormState(CLUB_MOCK_DATA[0]!)
-    const cloned = cloneClubFormState(original)
+    const original = mapAssociationToFormState(ASSOCIATION_MOCK_DATA[0]!)
+    const cloned = cloneAssociationFormState(original)
 
     cloned.headquarters.street = 'Changed'
     expect(original.headquarters.street).toBe('Dojostraße')

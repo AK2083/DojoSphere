@@ -4,10 +4,10 @@ import { useDisplay } from 'vuetify'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import { useClubOverview } from '../model/use-club-overview'
-import ClubEntry from './ClubEntry.vue'
-import ClubEntryPlaceholder from './ClubEntryPlaceholder.vue'
-import ClubOverviewActions from './ClubOverviewActions.vue'
+import { useAssociationOverview } from '../model/use-association-overview'
+import AssociationEntry from './AssociationEntry.vue'
+import AssociationEntryPlaceholder from './AssociationEntryPlaceholder.vue'
+import AssociationOverviewActions from './AssociationOverviewActions.vue'
 
 const { t } = useTranslation()
 const { smAndDown } = useDisplay()
@@ -19,21 +19,21 @@ const {
   handleAdd,
   handleEdit,
   handleDelete
-} = useClubOverview()
+} = useAssociationOverview()
 
 const isMobile = computed(() => smAndDown.value)
 const addLabel = computed(() => t(translationKeys.actions.add))
 const placeholderCount = computed(() => (isMobile.value ? 2 : 3))
 
 const gridClassNames = computed(() => ({
-  'club-overview-section__grid--single': !loading.value && overviewItems.value.length === 1,
-  'club-overview-section__grid--mobile': isMobile.value
+  'association-overview-section__grid--single': !loading.value && overviewItems.value.length === 1,
+  'association-overview-section__grid--mobile': isMobile.value
 }))
 </script>
 
 <template>
   <section
-    class="club-overview-section"
+    class="association-overview-section"
     role="region"
     :aria-label="t(translationKeys.list.ariaLabel)"
     :aria-busy="loading"
@@ -49,29 +49,32 @@ const gridClassNames = computed(() => ({
       {{ loadErrorMessage }}
     </v-alert>
 
-    <ClubOverviewActions
+    <AssociationOverviewActions
       class="mb-4"
       :add-label="addLabel"
       :is-mobile="isMobile"
       @add="handleAdd"
     />
 
-    <div v-if="loading" class="club-overview-section__grid" :class="gridClassNames">
-      <ClubEntryPlaceholder v-for="index in placeholderCount" :key="`club-placeholder-${index}`" />
+    <div v-if="loading" class="association-overview-section__grid" :class="gridClassNames">
+      <AssociationEntryPlaceholder
+        v-for="index in placeholderCount"
+        :key="`association-placeholder-${index}`"
+      />
     </div>
 
     <p
       v-else-if="overviewItems.length === 0"
-      class="club-overview-section__empty text-medium-emphasis"
+      class="association-overview-section__empty text-medium-emphasis"
     >
       {{ t(translationKeys.list.empty) }}
     </p>
 
-    <div v-else class="club-overview-section__grid" :class="gridClassNames">
-      <ClubEntry
-        v-for="club in overviewItems"
-        :key="club.id"
-        :club="club"
+    <div v-else class="association-overview-section__grid" :class="gridClassNames">
+      <AssociationEntry
+        v-for="association in overviewItems"
+        :key="association.id"
+        :association="association"
         :field-headers="fieldHeaders"
         @delete="handleDelete"
         @edit="handleEdit"
@@ -81,11 +84,11 @@ const gridClassNames = computed(() => ({
 </template>
 
 <style scoped>
-.club-overview-section {
+.association-overview-section {
   width: 100%;
 }
 
-.club-overview-section__grid {
+.association-overview-section__grid {
   display: grid;
   align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
@@ -93,15 +96,15 @@ const gridClassNames = computed(() => ({
   width: 100%;
 }
 
-.club-overview-section__grid--mobile {
+.association-overview-section__grid--mobile {
   grid-template-columns: 1fr;
 }
 
-.club-overview-section__grid--single:not(.club-overview-section__grid--mobile) {
+.association-overview-section__grid--single:not(.association-overview-section__grid--mobile) {
   max-width: 28rem;
 }
 
-.club-overview-section__empty {
+.association-overview-section__empty {
   margin: 0;
   padding: 2rem 0;
   text-align: center;

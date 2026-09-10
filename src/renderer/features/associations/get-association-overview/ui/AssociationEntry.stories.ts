@@ -1,19 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
-import { storyClubs, storyFieldHeaders } from './club-overview-story-fixtures'
-import ClubEntry from './ClubEntry.vue'
+import { storyAssociations, storyFieldHeaders } from './association-overview-story-fixtures'
+import AssociationEntry from './AssociationEntry.vue'
 
 const meta = {
-  title: 'Features/Clubs/GetClubOverview/ClubEntry',
-  component: ClubEntry,
+  title: 'Features/Associations/GetAssociationOverview/AssociationEntry',
+  component: AssociationEntry,
   parameters: {
     layout: 'padded'
   },
   args: {
-    club: storyClubs[0],
+    association: storyAssociations[0],
     fieldHeaders: storyFieldHeaders
   }
-} satisfies Meta<typeof ClubEntry>
+} satisfies Meta<typeof AssociationEntry>
 
 export default meta
 
@@ -23,28 +23,28 @@ export const Default: Story = {}
 
 export const Inactive: Story = {
   args: {
-    club: storyClubs[1]
+    association: storyAssociations[1]
   }
 }
 
 export const Minimal: Story = {
   args: {
-    club: storyClubs[2]
+    association: storyAssociations[2]
   }
 }
 
 export const Grid: Story = {
   render: (args) => ({
-    components: { ClubEntry },
+    components: { AssociationEntry },
     setup() {
-      return { args, clubs: storyClubs }
+      return { args, associations: storyAssociations }
     },
     template: `
       <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));">
-        <ClubEntry
-          v-for="club in clubs"
-          :key="club.id"
-          :club="club"
+        <AssociationEntry
+          v-for="association in associations"
+          :key="association.id"
+          :association="association"
           :field-headers="args.fieldHeaders"
         />
       </div>
