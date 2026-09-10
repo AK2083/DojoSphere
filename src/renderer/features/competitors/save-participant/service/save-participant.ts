@@ -17,6 +17,8 @@ function toOptional(value: string): string | null {
 /**
  * Maps participant form state to the IPC create/update input shape.
  *
+ * Association is always sent as `associationId` referencing `associations.id`.
+ *
  * @param fields - Current participant form values.
  * @returns Competitor input payload for the main process.
  */
@@ -28,7 +30,7 @@ export function mapFormStateToInput(fields: ParticipantFormState): CreateCompeti
     birthDate: fields.birthDate || undefined,
     nationality: fields.nationality || undefined,
     passNumber: fields.passNumber.trim() || undefined,
-    associationId: fields.associationId || undefined,
+    associationId: fields.associationId.trim() || undefined,
     ageClassId: fields.ageClassId || undefined,
     weightClassId: fields.weightClassId || undefined,
     gradeId: toOptional(fields.gradeId),

@@ -184,7 +184,15 @@ function resolveAssociationId(
   associationId?: string | null
 ): string {
   if (associationId?.trim()) {
-    return associationId.trim()
+    const candidateId = associationId.trim()
+    const existingById = db.prepare(`SELECT id FROM associations WHERE id = ?`).get(candidateId) as
+      { id: string } | undefined
+
+    if (!existingById) {
+      throw new Error('Association not found')
+    }
+
+    return existingById.id
   }
 
   const associationName = association?.trim()

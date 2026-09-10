@@ -12,7 +12,7 @@ export default {
       familyName: 'Nachname',
       gender: 'Geschlecht',
       birthDate: 'Geburtsdatum',
-      association: 'Verein / Association',
+      association: 'Verein',
       nationality: 'Nationalität',
       weightClass: 'Gewichtsklasse',
       ageClass: 'Altersklasse',

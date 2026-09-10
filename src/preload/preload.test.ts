@@ -140,6 +140,100 @@ describe('preload', () => {
       id: 'competitor-1'
     })
 
+    ipcRenderer.invoke.mockResolvedValueOnce([])
+    await api.getAssociations('token-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:list', 'token-1')
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'association-1',
+      name: 'Judoclub Nord e.V.',
+      shortName: 'JC Nord',
+      city: 'Hamburg',
+      website: null,
+      isActive: true,
+      source: 'manual',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      districtName: 'Bezirk Hamburg',
+      districtShortName: null,
+      regionalFederationName: 'Placeholder Regional Federation',
+      regionalFederationShortName: null,
+      federationName: 'German Judo Federation',
+      federationShortName: 'DJB',
+      countryName: 'Germany',
+      identifiers: [],
+      addresses: [],
+      contacts: []
+    })
+    await api.getAssociation('token-1', 'association-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:get', {
+      token: 'token-1',
+      id: 'association-1'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'association-1',
+      name: 'Judoclub Nord e.V.',
+      shortName: 'JC Nord',
+      city: 'Hamburg',
+      website: null,
+      isActive: true,
+      source: 'manual',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      districtName: 'Bezirk Hamburg',
+      districtShortName: null,
+      regionalFederationName: 'Placeholder Regional Federation',
+      regionalFederationShortName: null,
+      federationName: 'German Judo Federation',
+      federationShortName: 'DJB',
+      countryName: 'Germany',
+      identifiers: [],
+      addresses: [],
+      contacts: []
+    })
+    await api.addAssociation('token-1', {
+      name: 'Judoclub Nord e.V.',
+      districtName: 'Bezirk Hamburg'
+    })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:add', {
+      token: 'token-1',
+      name: 'Judoclub Nord e.V.',
+      districtName: 'Bezirk Hamburg'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce({
+      id: 'association-1',
+      name: 'Judoclub Nord e.V.',
+      shortName: 'JC Nord',
+      city: 'Hamburg',
+      website: null,
+      isActive: true,
+      source: 'manual',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      districtName: 'Bezirk Hamburg',
+      districtShortName: null,
+      regionalFederationName: 'Placeholder Regional Federation',
+      regionalFederationShortName: null,
+      federationName: 'German Judo Federation',
+      federationShortName: 'DJB',
+      countryName: 'Germany',
+      identifiers: [],
+      addresses: [],
+      contacts: []
+    })
+    await api.updateAssociation('token-1', 'association-1', { name: 'Judoclub Nord e.V.' })
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:update', {
+      token: 'token-1',
+      id: 'association-1',
+      name: 'Judoclub Nord e.V.'
+    })
+
+    ipcRenderer.invoke.mockResolvedValueOnce(undefined)
+    await api.deleteAssociation('token-1', 'association-1')
+    expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:delete', {
+      token: 'token-1',
+      id: 'association-1'
+    })
+
     ipcRenderer.invoke.mockResolvedValueOnce(true)
     await api.hasPermission('token-1', 'participants-overview', 'read')
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('authorization:hasPermission', {

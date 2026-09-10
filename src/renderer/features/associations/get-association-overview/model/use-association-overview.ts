@@ -27,7 +27,7 @@ function sortByNewestFirst(rows: AssociationOverviewRow[]): AssociationOverviewR
 }
 
 /**
- * UI state for the association overview loaded from the in-memory associations store.
+ * UI state for the association overview loaded from the local database.
  *
  * @returns Reactive list state and action handlers for the association overview.
  */

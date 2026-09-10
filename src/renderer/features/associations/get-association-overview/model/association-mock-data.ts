@@ -1,7 +1,7 @@
 import type { AssociationOverviewRow } from './association-row'
 
 /**
- * Temporary association fixtures until the overview loads from SQLite via IPC.
+ * Temporary association fixtures for Storybook and form mapping unit tests.
  *
  * Includes the seeded Unknown association plus two fictional German associations.
  */

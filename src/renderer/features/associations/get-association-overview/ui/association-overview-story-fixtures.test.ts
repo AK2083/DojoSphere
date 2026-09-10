@@ -1,7 +1,6 @@
-import { createPinia, setActivePinia } from 'pinia'
+import { getLocalSessionToken } from '@features/authentication/service/local-session-storage'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useAssociationsStore } from '../../store/use-associations-store'
 import { loadAssociations, resetAssociationsLoaderForStorybook } from '../service/load-associations'
 import {
   installStorybookAssociationsLoader,
@@ -12,10 +11,17 @@ import {
   storyFieldHeaders
 } from './association-overview-story-fixtures'
 
+vi.mock('@features/authentication/service/local-session-storage', () => ({
+  getLocalSessionToken: vi.fn()
+}))
+
 describe('association-overview-story-fixtures', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
-    useAssociationsStore().resetAssociations()
+    resetAssociationsLoaderForStorybook()
+    vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+    globalThis.window.api = {
+      getAssociations: vi.fn().mockResolvedValue([{ id: 'ipc-association' }])
+    } as never
   })
 
   afterEach(() => {
@@ -100,7 +106,7 @@ describe('association-overview-story-fixtures', () => {
 
     const associations = await loadAssociations()
 
-    expect(associations.length).toBeGreaterThan(0)
-    resetAssociationsLoaderForStorybook()
+    expect(associations).toEqual([{ id: 'ipc-association' }])
+    expect(globalThis.window.api.getAssociations).toHaveBeenCalledWith('token-1')
   })
 })

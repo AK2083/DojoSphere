@@ -179,6 +179,98 @@ export interface ImportProgressEvent {
   total: number
 }
 
+/** External or federation identifier stored for an association. */
+export type AssociationIdentifier = {
+  type: string
+  value: string
+  authority: string | null
+}
+
+/** Postal address linked to an association. */
+export type AssociationAddress = {
+  street: string | null
+  houseNumber: string | null
+  postalCode: string | null
+  city: string | null
+  countryCode: string | null
+  addressType: string
+}
+
+/** Contact channel linked to an association. */
+export type AssociationContact = {
+  contactType: string
+  value: string
+  label: string | null
+  isPublic: boolean
+}
+
+/** Association record stored in SQLite and shown in the associations overview. */
+export interface Association {
+  id: string
+  name: string
+  shortName: string | null
+  city: string | null
+  website: string | null
+  isActive: boolean
+  source: string | null
+  createdAt: string
+  districtName: string
+  districtShortName: string | null
+  regionalFederationName: string
+  regionalFederationShortName: string | null
+  federationName: string
+  federationShortName: string | null
+  countryName: string
+  identifiers: AssociationIdentifier[]
+  addresses: AssociationAddress[]
+  contacts: AssociationContact[]
+}
+
+/** Input for creating an association via IPC. */
+export interface CreateAssociationInput {
+  name: string
+  shortName?: string | null
+  city?: string | null
+  website?: string | null
+  isActive?: boolean
+  source?: string | null
+  districtName: string
+  districtShortName?: string | null
+  identifiers?: Array<{
+    type: string
+    value: string
+    authority?: string | null
+  }>
+  addresses?: Array<{
+    street?: string | null
+    houseNumber?: string | null
+    postalCode?: string | null
+    city?: string | null
+    countryCode?: string | null
+    addressType: string
+  }>
+  contacts?: Array<{
+    contactType: string
+    value: string
+    label?: string | null
+    isPublic?: boolean
+  }>
+}
+
+/** Input for updating an association via IPC. */
+export interface UpdateAssociationInput {
+  name?: string
+  shortName?: string | null
+  city?: string | null
+  website?: string | null
+  isActive?: boolean
+  districtName?: string
+  districtShortName?: string | null
+  identifiers?: CreateAssociationInput['identifiers']
+  addresses?: CreateAssociationInput['addresses']
+  contacts?: CreateAssociationInput['contacts']
+}
+
 /** Input for recording an audit event via IPC. */
 export interface AuditRecordInput {
   token: string
@@ -216,6 +308,15 @@ export interface ElectronAPI {
     mapping: Record<string, string>
   ) => Promise<ImportExecuteResult>
   onImportParticipantsProgress: (listener: (progress: ImportProgressEvent) => void) => () => void
+  getAssociations: (token: string) => Promise<Association[]>
+  getAssociation: (token: string, id: string) => Promise<Association>
+  addAssociation: (token: string, input: CreateAssociationInput) => Promise<Association>
+  updateAssociation: (
+    token: string,
+    id: string,
+    input: UpdateAssociationInput
+  ) => Promise<Association>
+  deleteAssociation: (token: string, id: string) => Promise<void>
   hasPermission: (token: string, resource: string, action: string) => Promise<boolean>
   getOsUsername: () => Promise<string>
 }

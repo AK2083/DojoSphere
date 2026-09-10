@@ -165,8 +165,8 @@ describe('useAssociationForm', () => {
     await form.submit()
 
     expect(updateAssociationMock).toHaveBeenCalledWith(
+      ASSOCIATION_MOCK_DATA[0]!.id,
       expect.objectContaining({
-        id: ASSOCIATION_MOCK_DATA[0]!.id,
         name: 'Renamed Association'
       })
     )

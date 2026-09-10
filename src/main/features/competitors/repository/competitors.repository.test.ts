@@ -133,6 +133,50 @@ describe('competitors.repository', () => {
     expect(competitor.weightClassId).toBe(DEFAULT_WEIGHT_CLASS_ID)
   })
 
+  it('rejects unknown association ids', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Missing Association Actor',
+      userType: 'system'
+    })
+
+    expect(() =>
+      addCompetitor(actorUserId, {
+        givenName: 'Yuki',
+        familyName: 'Tanaka',
+        associationId: 'missing-association-id'
+      })
+    ).toThrow('Association not found')
+  })
+
+  it('stores competitors against a persisted association id and returns its name', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addAssociation } = await import('@main/features/associations')
+    const { addCompetitor } = await import('./competitors.repository')
+
+    const { id: actorUserId } = addUser({
+      displayName: 'Linked Association Actor',
+      userType: 'system'
+    })
+    const association = addAssociation(actorUserId, {
+      name: 'Judoclub Nord e.V.',
+      districtName: 'Bezirk Hamburg'
+    })
+
+    const competitor = addCompetitor(actorUserId, {
+      givenName: 'Yuki',
+      familyName: 'Tanaka',
+      associationId: association.id
+    })
+
+    expect(competitor.associationId).toBe(association.id)
+    expect(competitor.association).toBe('Judoclub Nord e.V.')
+  })
+
   it('falls back to the selected age class when an explicit weight class id mismatches', async () => {
     await initTestDatabase()
     const { addUser } = await import('@main/features/users')

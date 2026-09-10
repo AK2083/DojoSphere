@@ -28,7 +28,7 @@ test.describe('ParticipantForm', () => {
     await expect(form.getByLabel('Family name')).toBeVisible()
     await expect(form.getByLabel('Gender')).toBeVisible()
     await expect(form.getByLabel('Date of birth')).toBeVisible()
-    await expect(form.getByRole('combobox', { name: /Association/ })).toBeVisible()
+    await expect(form.getByRole('combobox', { name: /Verein|Association/ })).toBeVisible()
     await expect(form.getByLabel('Nationality')).toBeVisible()
     await expect(form.getByLabel('Age class')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Save' })).toContainText('Save')

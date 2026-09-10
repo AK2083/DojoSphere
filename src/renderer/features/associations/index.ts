@@ -12,4 +12,3 @@ export {
   createEmptyAssociationForm,
   saveAssociationTranslationKeys
 } from './save-association'
-export { useAssociationsStore } from './store/use-associations-store'

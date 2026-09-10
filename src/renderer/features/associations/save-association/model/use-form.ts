@@ -36,8 +36,7 @@ import {
 import {
   cloneAssociationFormState,
   copyHeadquartersAddress,
-  mapAssociationToFormState,
-  mapFormStateToAssociation
+  mapAssociationToFormState
 } from './map-association-form-state'
 
 type UseAssociationFormOptions = {
@@ -51,7 +50,7 @@ export const WEBSITE_PROTOCOL_ITEMS: { title: string; value: AssociationWebsiteP
 ]
 
 /**
- * Composable for association form state, validation, and store persistence.
+ * Composable for association form state, validation, and SQLite persistence via IPC.
  *
  * @param options - Optional association id for edit mode.
  * @returns Form fields, translated validation rules, and submit/reset handlers.
@@ -68,7 +67,6 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
   const loadErrorMessage = ref('')
   const fields = ref(createEmptyAssociationForm())
   const initialFields = ref<AssociationFormState | null>(null)
-  const existingMeta = ref<{ source: string | null; createdAt: string } | null>(null)
 
   const associationId = computed(() => toValue(options.associationId))
   const isEditMode = computed(() => Boolean(associationId.value))
@@ -130,10 +128,6 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
       const mapped = mapAssociationToFormState(association)
       fields.value = cloneAssociationFormState(mapped)
       initialFields.value = cloneAssociationFormState(mapped)
-      existingMeta.value = {
-        source: association.source,
-        createdAt: association.createdAt
-      }
     } catch (error) {
       loadErrorMessage.value = t(translationKeys.form.loadError)
       logError(error as Error, 'associations', 'load-association')
@@ -157,15 +151,10 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
     saveErrorMessage.value = ''
 
     try {
-      const id = associationId.value ?? crypto.randomUUID()
-      const createdAt = existingMeta.value?.createdAt ?? new Date().toISOString()
-      const source = existingMeta.value?.source ?? 'manual'
-      const association = mapFormStateToAssociation(fields.value, { id, source, createdAt })
-
       if (isEditMode.value) {
-        await updateAssociation(association)
+        await updateAssociation(associationId.value!, fields.value)
       } else {
-        await createAssociation(association)
+        await createAssociation(fields.value)
       }
 
       await router.push({ name: 'associations' })

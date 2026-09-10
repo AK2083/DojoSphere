@@ -34,6 +34,12 @@ const api: ElectronAPI = {
       ipcRenderer.removeListener('competitors:import:progress', handler)
     }
   },
+  getAssociations: (token) => ipcRenderer.invoke('associations:list', token),
+  getAssociation: (token, id) => ipcRenderer.invoke('associations:get', { token, id }),
+  addAssociation: (token, input) => ipcRenderer.invoke('associations:add', { token, ...input }),
+  updateAssociation: (token, id, input) =>
+    ipcRenderer.invoke('associations:update', { token, id, ...input }),
+  deleteAssociation: (token, id) => ipcRenderer.invoke('associations:delete', { token, id }),
   hasPermission: (token, resource, action) =>
     ipcRenderer.invoke('authorization:hasPermission', { token, resource, action }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')

@@ -318,7 +318,11 @@ CREATE INDEX idx_associations_name ON associations(name);
 CREATE INDEX idx_association_identifiers_association_id ON association_identifiers(association_id);
 CREATE INDEX idx_association_addresses_association_id ON association_addresses(association_id);
 CREATE INDEX idx_association_contacts_association_id ON association_contacts(association_id);
+CREATE UNIQUE INDEX idx_districts_regional_federation_name
+  ON districts (regional_federation_id, name);
 ```
+
+District names are unique within a regional federation (`V014__associations_district_name_unique.sql`) so free-text district fields on the association form resolve to a single district row.
 
 ## Related
 

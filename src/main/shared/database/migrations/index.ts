@@ -12,6 +12,7 @@ import sqlV010 from './V010__competitors_import_fields.sql?raw'
 import sqlV011 from './V011__competitors_rename_coach_to_contact_person.sql?raw'
 import sqlV012 from './V012__competitors_unique_participants.sql?raw'
 import sqlV013 from './V013__authorize_seed_associations_overview_permissions.sql?raw'
+import sqlV014 from './V014__associations_district_name_unique.sql?raw'
 
 function migration(name: string, id: string, sql: string): Migration {
   return { id, name, sql }
@@ -58,6 +59,11 @@ const migrations: Migration[] = [
     'V013__authorize_seed_associations_overview_permissions.sql',
     'a1b2c3d4-5678-4901-abcd-ef0123456813',
     sqlV013
+  ),
+  migration(
+    'V014__associations_district_name_unique.sql',
+    'b2c3d4e5-6789-4a12-abcd-ef0123456814',
+    sqlV014
   )
 ]
 
