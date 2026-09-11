@@ -1,3 +1,9 @@
+# [1.24.0](https://github.com/AK2083/DojoSphere/compare/v1.23.0...v1.24.0) (2026-09-11)
+
+### Features
+
+- save association ([#201](https://github.com/AK2083/DojoSphere/issues/201)) ([4d07d23](https://github.com/AK2083/DojoSphere/commit/4d07d23abf0f92fb09c979c13a2b0583c4580cfe))
+
 # [1.23.0](https://github.com/AK2083/DojoSphere/compare/v1.22.0...v1.23.0) (2026-09-10)
 
 ### Features
