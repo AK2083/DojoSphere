@@ -1,17 +1,21 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('PasswordStepper', () => {
+test.describe('PasswordStepper', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
-  test('renders stepper with three steps and disabled next action initially', async ({ page }) => {
-    await page.goto('/#/passwordreset')
+  test(
+    'renders stepper with three steps and disabled next action initially',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await page.goto('/#/passwordreset')
 
-    await expect(page.locator('.v-stepper')).toBeVisible()
-    await expect(page.locator('.v-stepper-header .v-stepper-item')).toHaveCount(3)
-    await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeDisabled()
-  })
+      await expect(page.locator('.v-stepper')).toBeVisible()
+      await expect(page.locator('.v-stepper-header .v-stepper-item')).toHaveCount(3)
+      await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeDisabled()
+    }
+  )
 })

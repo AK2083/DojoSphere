@@ -26,6 +26,7 @@ Target component file: `src/renderer/features/<feature>/<slice>/ui/<ComponentNam
 2. **Generate Playwright E2E Spec (`<ComponentName>.e2e.spec.ts`):**
    - Create interaction and DOM assertions using Playwright.
    - Cover component visibility, user interactions (clicks, form inputs), and error states.
+   - Tag every test with `@regression`; add `@smoke` and/or `@critical` per [`.cline/rules/vue-frontend.md`](../../rules/vue-frontend.md#playwright-tags).
 
 3. **Execution & Verification (Roo Code Test Mode):**
    - Run the newly generated test or Storybook verification command via CLI tool execution to confirm all tests pass.

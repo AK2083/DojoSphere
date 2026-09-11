@@ -69,6 +69,9 @@ A full wipe of `node_modules` is only needed if problems remain after the Redist
 - `npm run test:coverage` — tests with coverage report.
 - `npm run test:e2e` — end-to-end tests with Playwright.
 - `npm run test:e2e:ui` — Playwright in UI mode.
+- `npm run test:e2e:smoke` — Playwright tests tagged `@smoke` (fast mount/route checks).
+- `npm run test:e2e:critical` — Playwright tests tagged `@critical` (must-not-break flows).
+- `npm run test:e2e:regression` — Playwright tests tagged `@regression` (full behavioral suite).
 - `npm run storybook` — Storybook on the port from [`config/dev.json`](config/dev.json) (default `6006`).
 - `npm run build-storybook` — static Storybook build.
 - `npm run supabase:start` — start local Supabase services.
@@ -81,6 +84,7 @@ A full wipe of `node_modules` is only needed if problems remain after the Redist
 - Keep changes small and focused by feature or fix.
 - Run `lint:check`, `type:check`, and relevant tests before every commit.
 - Cover new business logic with unit tests and critical flows with E2E tests.
+- Tag Playwright E2E specs with `@smoke`, `@critical`, and/or `@regression` — see [`.cline/rules/vue-frontend.md`](.cline/rules/vue-frontend.md#playwright-tags).
 - Avoid hardcoded UI strings and use i18n keys consistently.
 - Handle errors and edge cases explicitly (auth, API failures, offline behavior).
 - Keep formatting and import ordering consistent across the codebase.

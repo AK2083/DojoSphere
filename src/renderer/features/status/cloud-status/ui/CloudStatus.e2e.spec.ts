@@ -5,8 +5,8 @@ import { mockSupabaseCloudAuthForE2e } from '@shared/tests/e2e/setup-login-avail
 
 const AUTH_SESSION_KEY = getAuthSessionStorageKey()
 
-test.describe('CloudStatus', () => {
-  test('displays cloud mode from supabase auth storage', async ({ page }) => {
+test.describe('CloudStatus', { tag: '@regression' }, () => {
+  test('displays cloud mode from supabase auth storage', { tag: '@smoke' }, async ({ page }) => {
     await setEnglishLanguage(page)
     await mockSupabaseCloudAuthForE2e(page)
 
@@ -15,7 +15,7 @@ test.describe('CloudStatus', () => {
     await expect(page.getByTestId('cloud-status-chip')).toHaveAttribute('aria-label', 'Cloud')
   })
 
-  test('displays local mode without supabase auth storage', async ({ page }) => {
+  test('displays local mode without supabase auth storage', { tag: '@smoke' }, async ({ page }) => {
     await setEnglishLanguage(page)
     await page.addInitScript(
       ([authSessionKey]) => {

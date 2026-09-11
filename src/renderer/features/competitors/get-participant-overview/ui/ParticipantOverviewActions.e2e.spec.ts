@@ -2,26 +2,32 @@ import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ParticipantOverviewActions', () => {
+test.describe('ParticipantOverviewActions', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
-  test('renders desktop toolbar with text add button and filter placeholder', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+  test(
+    'renders desktop toolbar with text add button and filter placeholder',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await gotoParticipantsPage(page)
 
-    const section = page.getByRole('region', { name: 'Participants list' })
-    const addButton = section.getByRole('button', { name: 'Add participant' })
+      const section = page.getByRole('region', { name: 'Participants list' })
+      const addButton = section.getByRole('button', { name: 'Add participant' })
 
-    await expect(addButton).toBeVisible()
-    await expect(addButton).toContainText('Add participant')
-    await expect(section.getByRole('button', { name: 'Import participants' })).toBeVisible()
-    await expect(section.getByRole('button', { name: 'Import participants' })).toContainText(
-      'Import participants'
-    )
-    await expect(section.getByRole('button', { name: 'Filter (not available yet)' })).toBeVisible()
-  })
+      await expect(addButton).toBeVisible()
+      await expect(addButton).toContainText('Add participant')
+      await expect(section.getByRole('button', { name: 'Import participants' })).toBeVisible()
+      await expect(section.getByRole('button', { name: 'Import participants' })).toContainText(
+        'Import participants'
+      )
+      await expect(
+        section.getByRole('button', { name: 'Filter (not available yet)' })
+      ).toBeVisible()
+    }
+  )
 
   test('renders mobile toolbar with icon-only add button', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
@@ -35,27 +41,35 @@ test.describe('ParticipantOverviewActions', () => {
     await expect(addButton).not.toContainText('Add participant')
   })
 
-  test('navigates to the create form when add is clicked', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+  test(
+    'navigates to the create form when add is clicked',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await gotoParticipantsPage(page)
 
-    const section = page.getByRole('region', { name: 'Participants list' })
-    const addButton = section.getByRole('button', { name: 'Add participant' })
+      const section = page.getByRole('region', { name: 'Participants list' })
+      const addButton = section.getByRole('button', { name: 'Add participant' })
 
-    await expect(addButton).toBeVisible()
-    await addButton.click()
-    await expect(page).toHaveURL(/#\/participants\/new$/, { timeout: 10_000 })
-  })
+      await expect(addButton).toBeVisible()
+      await addButton.click()
+      await expect(page).toHaveURL(/#\/participants\/new$/, { timeout: 10_000 })
+    }
+  )
 
-  test('navigates to the import page when import is clicked', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page)
+  test(
+    'navigates to the import page when import is clicked',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await gotoParticipantsPage(page)
 
-    const section = page.getByRole('region', { name: 'Participants list' })
-    const importButton = section.getByRole('button', { name: 'Import participants' })
+      const section = page.getByRole('region', { name: 'Participants list' })
+      const importButton = section.getByRole('button', { name: 'Import participants' })
 
-    await expect(importButton).toBeVisible()
-    await importButton.click()
-    await expect(page).toHaveURL(/#\/participants\/import$/, { timeout: 10_000 })
-  })
+      await expect(importButton).toBeVisible()
+      await importButton.click()
+      await expect(page).toHaveURL(/#\/participants\/import$/, { timeout: 10_000 })
+    }
+  )
 })

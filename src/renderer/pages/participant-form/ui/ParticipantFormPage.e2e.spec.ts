@@ -3,36 +3,48 @@ import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview
 import { getPlaywrightParticipantId } from '@shared/tests/e2e/playwright-competitor-fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ParticipantFormPage', () => {
+test.describe('ParticipantFormPage', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 1280, height: 800 })
   })
 
-  test('renders create page shell with back link and form', async ({ page }) => {
-    await page.goto('/#/participants/new')
+  test(
+    'renders create page shell with back link and form',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await page.goto('/#/participants/new')
 
-    await expect(page).toHaveURL(/#\/participants\/new$/)
-    await expect(page.getByRole('heading', { name: 'Add participant', exact: true })).toBeVisible()
-    await expect(
-      page.getByRole('link', { name: 'Back to participant list', exact: true })
-    ).toBeVisible()
-    await expect(page.getByRole('form', { name: 'Participant form' })).toBeVisible()
-  })
+      await expect(page).toHaveURL(/#\/participants\/new$/)
+      await expect(
+        page.getByRole('heading', { name: 'Add participant', exact: true })
+      ).toBeVisible()
+      await expect(
+        page.getByRole('link', { name: 'Back to participant list', exact: true })
+      ).toBeVisible()
+      await expect(page.getByRole('form', { name: 'Participant form' })).toBeVisible()
+    }
+  )
 
-  test('renders edit page shell with back link and form', async ({ page }) => {
-    await gotoParticipantsPage(page, { withParticipants: true })
-    const participantId = await getPlaywrightParticipantId(page, 'Yuki')
+  test(
+    'renders edit page shell with back link and form',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await gotoParticipantsPage(page, { withParticipants: true })
+      const participantId = await getPlaywrightParticipantId(page, 'Yuki')
 
-    await page.goto(`/#/participants/${participantId}/edit`)
+      await page.goto(`/#/participants/${participantId}/edit`)
 
-    await expect(page).toHaveURL(new RegExp(`#/participants/${participantId}/edit$`))
-    await expect(page.getByRole('heading', { name: 'Edit participant', exact: true })).toBeVisible()
-    await expect(
-      page.getByRole('link', { name: 'Back to participant list', exact: true })
-    ).toBeVisible()
-    await expect(page.getByRole('form', { name: 'Participant form' })).toBeVisible()
-    await expect(page.getByLabel('Given name')).toHaveValue('Yuki')
-    await expect(page.getByLabel('Family name')).toHaveValue('Tanaka')
-  })
+      await expect(page).toHaveURL(new RegExp(`#/participants/${participantId}/edit$`))
+      await expect(
+        page.getByRole('heading', { name: 'Edit participant', exact: true })
+      ).toBeVisible()
+      await expect(
+        page.getByRole('link', { name: 'Back to participant list', exact: true })
+      ).toBeVisible()
+      await expect(page.getByRole('form', { name: 'Participant form' })).toBeVisible()
+      await expect(page.getByLabel('Given name')).toHaveValue('Yuki')
+      await expect(page.getByLabel('Family name')).toHaveValue('Tanaka')
+    }
+  )
 })

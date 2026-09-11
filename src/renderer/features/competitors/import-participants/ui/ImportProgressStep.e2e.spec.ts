@@ -1,7 +1,7 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ImportProgressStep', () => {
+test.describe('ImportProgressStep', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.goto('/#/participants/import')
@@ -16,18 +16,26 @@ test.describe('ImportProgressStep', () => {
     await page.getByRole('button', { name: 'Next step' }).click()
   })
 
-  test('renders imported participant results and a completion message', async ({ page }) => {
-    await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
-    await expect(page.getByText('Import complete.')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible()
-  })
+  test(
+    'renders imported participant results and a completion message',
+    { tag: '@smoke' },
+    async ({ page }) => {
+      await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
+      await expect(page.getByText('Import complete.')).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible()
+    }
+  )
 
-  test('returns to participant list when finish is clicked', async ({ page }) => {
-    await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible({
-      timeout: 10_000
-    })
-    await page.getByRole('button', { name: 'Finish import' }).click()
-    await expect(page).toHaveURL(/#\/participants$/, { timeout: 10_000 })
-  })
+  test(
+    'returns to participant list when finish is clicked',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible({
+        timeout: 10_000
+      })
+      await page.getByRole('button', { name: 'Finish import' }).click()
+      await expect(page).toHaveURL(/#\/participants$/, { timeout: 10_000 })
+    }
+  )
 })

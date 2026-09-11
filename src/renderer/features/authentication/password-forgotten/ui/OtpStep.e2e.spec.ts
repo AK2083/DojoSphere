@@ -6,7 +6,7 @@ import {
 } from '@shared/tests/e2e/password-recovery'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('OtpStep', () => {
+test.describe('OtpStep', { tag: '@regression' }, () => {
   test.describe.configure({ timeout: 60_000 })
 
   test.beforeEach(async ({ page }) => {
@@ -14,7 +14,7 @@ test.describe('OtpStep', () => {
     await mockRecoveryRequest(page)
   })
 
-  test('renders otp fields after successful email step', async ({ page }) => {
+  test('renders otp fields after successful email step', { tag: '@smoke' }, async ({ page }) => {
     await goToPasswordResetOtpStep(page)
 
     await waitForPasswordResetOtpStep(page)

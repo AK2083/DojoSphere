@@ -1,12 +1,12 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('settings page', () => {
+test.describe('settings page', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
-  test('renders settings sections', async ({ page }) => {
+  test('renders settings sections', { tag: ['@smoke', '@critical'] }, async ({ page }) => {
     await page.goto('/#/settings')
 
     await expect(page).toHaveURL(/#\/settings$/)
