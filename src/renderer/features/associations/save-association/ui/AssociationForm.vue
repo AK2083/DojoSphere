@@ -29,12 +29,15 @@ const {
   nameRules,
   shortNameRules,
   websiteHostRules,
-  districtRules,
   associationNumberRules,
   streetRules,
   houseNumberRules,
   postalCodeRules,
   addressCityRules,
+  headquartersStreetRules,
+  headquartersHouseNumberRules,
+  headquartersPostalCodeRules,
+  headquartersCityRules,
   emailRules,
   phoneRules,
   fieldLimits,
@@ -51,17 +54,20 @@ const addressSections = [
   {
     key: 'headquarters' as const,
     labelKey: translationKeys.form.fields.headquarters,
-    sameAsKey: null
+    sameAsKey: null,
+    required: true
   },
   {
     key: 'trainingVenue' as const,
     labelKey: translationKeys.form.fields.trainingVenue,
-    sameAsKey: 'trainingVenueSameAsHeadquarters' as const
+    sameAsKey: 'trainingVenueSameAsHeadquarters' as const,
+    required: false
   },
   {
     key: 'billingAddress' as const,
     labelKey: translationKeys.form.fields.billingAddress,
-    sameAsKey: 'billingAddressSameAsHeadquarters' as const
+    sameAsKey: 'billingAddressSameAsHeadquarters' as const,
+    required: false
   }
 ]
 </script>
@@ -168,25 +174,17 @@ const addressSections = [
           </v-row>
 
           <v-text-field
-            v-model="fields.districtName"
-            :rules="districtRules"
-            :maxlength="fieldLimits.district"
-            autocomplete="off"
-            required
-          >
-            <template #label>
-              <RequiredFieldLabel :text="t(translationKeys.form.fields.district)" />
-            </template>
-          </v-text-field>
-
-          <v-text-field
             v-model="fields.associationNumber"
-            :label="t(translationKeys.form.fields.associationNumber)"
             :rules="associationNumberRules"
             :maxlength="fieldLimits.associationNumber"
             :placeholder="t(translationKeys.form.placeholders.associationNumber)"
             autocomplete="off"
-          />
+            required
+          >
+            <template #label>
+              <RequiredFieldLabel :text="t(translationKeys.form.fields.associationNumber)" />
+            </template>
+          </v-text-field>
 
           <div
             v-for="section in addressSections"
@@ -215,22 +213,36 @@ const addressSections = [
                 <v-col cols="12" sm="8">
                   <v-text-field
                     v-model="fields[section.key].street"
-                    :label="t(translationKeys.form.fields.street)"
-                    :rules="streetRules"
+                    :rules="section.required ? headquartersStreetRules : streetRules"
                     :maxlength="fieldLimits.street"
                     :placeholder="t(translationKeys.form.placeholders.street)"
                     autocomplete="address-line1"
-                  />
+                    :required="section.required"
+                  >
+                    <template v-if="section.required" #label>
+                      <RequiredFieldLabel :text="t(translationKeys.form.fields.street)" />
+                    </template>
+                    <template v-else #label>
+                      {{ t(translationKeys.form.fields.street) }}
+                    </template>
+                  </v-text-field>
                 </v-col>
                 <v-col cols="12" sm="4">
                   <v-text-field
                     v-model="fields[section.key].houseNumber"
-                    :label="t(translationKeys.form.fields.houseNumber)"
-                    :rules="houseNumberRules"
+                    :rules="section.required ? headquartersHouseNumberRules : houseNumberRules"
                     :maxlength="fieldLimits.houseNumber"
                     :placeholder="t(translationKeys.form.placeholders.houseNumber)"
                     autocomplete="off"
-                  />
+                    :required="section.required"
+                  >
+                    <template v-if="section.required" #label>
+                      <RequiredFieldLabel :text="t(translationKeys.form.fields.houseNumber)" />
+                    </template>
+                    <template v-else #label>
+                      {{ t(translationKeys.form.fields.houseNumber) }}
+                    </template>
+                  </v-text-field>
                 </v-col>
               </v-row>
 
@@ -238,23 +250,37 @@ const addressSections = [
                 <v-col cols="12" sm="3">
                   <v-text-field
                     v-model="fields[section.key].postalCode"
-                    :label="t(translationKeys.form.fields.postalCode)"
-                    :rules="postalCodeRules"
+                    :rules="section.required ? headquartersPostalCodeRules : postalCodeRules"
                     :maxlength="fieldLimits.postalCode"
                     :placeholder="t(translationKeys.form.placeholders.postalCode)"
                     inputmode="numeric"
                     autocomplete="postal-code"
-                  />
+                    :required="section.required"
+                  >
+                    <template v-if="section.required" #label>
+                      <RequiredFieldLabel :text="t(translationKeys.form.fields.postalCode)" />
+                    </template>
+                    <template v-else #label>
+                      {{ t(translationKeys.form.fields.postalCode) }}
+                    </template>
+                  </v-text-field>
                 </v-col>
                 <v-col cols="12" sm="9">
                   <v-text-field
                     v-model="fields[section.key].city"
-                    :label="t(translationKeys.form.fields.city)"
-                    :rules="addressCityRules"
+                    :rules="section.required ? headquartersCityRules : addressCityRules"
                     :maxlength="fieldLimits.city"
                     :placeholder="t(translationKeys.form.placeholders.city)"
                     autocomplete="address-level2"
-                  />
+                    :required="section.required"
+                  >
+                    <template v-if="section.required" #label>
+                      <RequiredFieldLabel :text="t(translationKeys.form.fields.city)" />
+                    </template>
+                    <template v-else #label>
+                      {{ t(translationKeys.form.fields.city) }}
+                    </template>
+                  </v-text-field>
                 </v-col>
               </v-row>
             </fieldset>
@@ -267,13 +293,17 @@ const addressSections = [
 
             <v-text-field
               v-model="fields.email"
-              :label="t(translationKeys.form.fields.email)"
               :rules="emailRules"
               :maxlength="ASSOCIATION_EMAIL_MAX_LENGTH"
               :placeholder="t(translationKeys.form.placeholders.email)"
               type="email"
               autocomplete="email"
-            />
+              required
+            >
+              <template #label>
+                <RequiredFieldLabel :text="t(translationKeys.form.fields.email)" />
+              </template>
+            </v-text-field>
 
             <v-row density="comfortable">
               <v-col cols="12" sm="3">

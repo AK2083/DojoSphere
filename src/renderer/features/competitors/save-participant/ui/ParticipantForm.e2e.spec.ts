@@ -7,48 +7,56 @@ import {
 } from '@shared/tests/e2e/participant-form'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ParticipantForm', () => {
+test.describe('ParticipantForm', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 1280, height: 800 })
     await gotoParticipantCreateForm(page)
   })
 
-  test('renders form fields and desktop action labels', async ({ page }) => {
-    const form = getParticipantForm(page)
+  test(
+    'renders form fields and desktop action labels',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      const form = getParticipantForm(page)
 
-    await expect(form).toBeVisible()
-    await expect(
-      page.getByText(
-        'Please complete all required tournament registration details. You can still edit the data later.'
-      )
-    ).toBeVisible()
-    await expect(page.getByText('Fields marked with * are required.')).toBeVisible()
-    await expect(form.getByLabel('Given name')).toBeVisible()
-    await expect(form.getByLabel('Family name')).toBeVisible()
-    await expect(form.getByLabel('Gender')).toBeVisible()
-    await expect(form.getByLabel('Date of birth')).toBeVisible()
-    await expect(form.getByRole('combobox', { name: /Association/ })).toBeVisible()
-    await expect(form.getByLabel('Nationality')).toBeVisible()
-    await expect(form.getByLabel('Age class')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Save' })).toContainText('Save')
-    await expect(page.getByRole('button', { name: 'Reset' })).toContainText('Reset')
-    await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled()
-  })
+      await expect(form).toBeVisible()
+      await expect(
+        page.getByText(
+          'Please complete all required tournament registration details. You can still edit the data later.'
+        )
+      ).toBeVisible()
+      await expect(page.getByText('Fields marked with * are required.')).toBeVisible()
+      await expect(form.getByLabel('Given name')).toBeVisible()
+      await expect(form.getByLabel('Family name')).toBeVisible()
+      await expect(form.getByLabel('Gender')).toBeVisible()
+      await expect(form.getByLabel('Date of birth')).toBeVisible()
+      await expect(form.getByRole('combobox', { name: /Verein|Association/ })).toBeVisible()
+      await expect(form.getByLabel('Nationality')).toBeVisible()
+      await expect(form.getByLabel('Age class')).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Save' })).toContainText('Save')
+      await expect(page.getByRole('button', { name: 'Reset' })).toContainText('Reset')
+      await expect(page.getByRole('button', { name: 'Save' })).toBeDisabled()
+    }
+  )
 
   test('includes diverse as a gender option', async ({ page }) => {
     await openParticipantSelect(page, 'Gender')
     await expect(page.getByRole('option', { name: 'Diverse' })).toBeVisible()
   })
 
-  test('shows weight classes after selecting a fixed age class', async ({ page }) => {
-    await openParticipantSelect(page, 'Age class')
-    await chooseParticipantSelectOption(page, 'Boys U15')
+  test(
+    'shows weight classes after selecting a fixed age class',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await openParticipantSelect(page, 'Age class')
+      await chooseParticipantSelectOption(page, 'Boys U15')
 
-    await expect(page.getByLabel('Weight class')).toBeVisible()
-    await openParticipantSelect(page, 'Weight class')
-    await expect(page.getByRole('option', { name: 'Up to 60 kg' })).toBeVisible()
-  })
+      await expect(page.getByLabel('Weight class')).toBeVisible()
+      await openParticipantSelect(page, 'Weight class')
+      await expect(page.getByRole('option', { name: 'Up to 60 kg' })).toBeVisible()
+    }
+  )
 
   test('shows flexible weight hint for flexible age classes', async ({ page }) => {
     await openParticipantSelect(page, 'Age class')

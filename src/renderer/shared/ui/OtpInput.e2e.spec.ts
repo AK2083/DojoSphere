@@ -7,17 +7,21 @@ async function enteredOtp(page: Page): Promise<string> {
   return getOtpInput(page).inputValue()
 }
 
-test.describe('shared/ui OtpInput', () => {
+test.describe('shared/ui OtpInput', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
     await expect(getOtpFields(page)).toHaveCount(6)
   })
 
-  test('renders six otp fields and keeps submit disabled on load', async ({ page }) => {
-    const submitButton = page.locator('button[type="submit"]').first()
+  test(
+    'renders six otp fields and keeps submit disabled on load',
+    { tag: '@smoke' },
+    async ({ page }) => {
+      const submitButton = page.locator('button[type="submit"]').first()
 
-    await expect(submitButton).toBeDisabled()
-  })
+      await expect(submitButton).toBeDisabled()
+    }
+  )
 
   test('enables submit only after entering six digits', async ({ page }) => {
     const submitButton = page.locator('button[type="submit"]').first()

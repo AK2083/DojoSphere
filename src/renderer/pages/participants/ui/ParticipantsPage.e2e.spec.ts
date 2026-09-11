@@ -3,23 +3,29 @@ import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview
 import { getPlaywrightParticipantId } from '@shared/tests/e2e/playwright-competitor-fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ParticipantsPage', () => {
+test.describe('ParticipantsPage', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
-  test('renders page heading and participant card list', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await gotoParticipantsPage(page, { withParticipants: true })
+  test(
+    'renders page heading and participant card list',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await gotoParticipantsPage(page, { withParticipants: true })
 
-    await expect(page).toHaveURL(/#\/participants$/)
-    await expect(page.getByRole('heading', { name: 'Participant list', exact: true })).toBeVisible()
-    await expect(page.getByRole('region', { name: 'Participants list' })).toBeVisible()
-    await expect(page.getByText('Yuki Tanaka')).toBeVisible()
-    await expect(
-      page.getByRole('button', { name: 'Show additional details' }).first()
-    ).toBeVisible()
-  })
+      await expect(page).toHaveURL(/#\/participants$/)
+      await expect(
+        page.getByRole('heading', { name: 'Participant list', exact: true })
+      ).toBeVisible()
+      await expect(page.getByRole('region', { name: 'Participants list' })).toBeVisible()
+      await expect(page.getByText('Yuki Tanaka')).toBeVisible()
+      await expect(
+        page.getByRole('button', { name: 'Show additional details' }).first()
+      ).toBeVisible()
+    }
+  )
 
   test('renders participant cards on narrow viewports', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
@@ -30,7 +36,7 @@ test.describe('ParticipantsPage', () => {
     await expect(page.getByRole('button', { name: 'Add participant' })).toBeVisible()
   })
 
-  test('navigates to create and edit form pages', async ({ page }) => {
+  test('navigates to create and edit form pages', { tag: '@critical' }, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await gotoParticipantsPage(page, { withParticipants: true })
 

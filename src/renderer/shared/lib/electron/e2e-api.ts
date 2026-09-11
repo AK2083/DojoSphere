@@ -1,4 +1,10 @@
-import type { Competitor, CreateCompetitorInput, ElectronAPI } from '@shared/types/electron-api'
+import type {
+  Association,
+  Competitor,
+  CreateAssociationInput,
+  CreateCompetitorInput,
+  ElectronAPI
+} from '@shared/types/electron-api'
 
 const PLAYWRIGHT_LOCAL_SESSIONS_KEY = 'dojosphere.e2e.localSessions'
 const PLAYWRIGHT_COMPETITORS_KEY = 'dojosphere.e2e.competitors'
@@ -209,6 +215,52 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
 }
 
 /**
+ * Builds a stub association record for Playwright browser-only stubs.
+ *
+ * @param id - Generated association identifier.
+ * @param input - Association create/update input from the form.
+ * @returns A fully populated association record.
+ */
+function buildStubAssociation(id: string, input: CreateAssociationInput): Association {
+  return {
+    id,
+    name: input.name,
+    shortName: input.shortName ?? null,
+    city: input.city ?? null,
+    website: input.website ?? null,
+    isActive: input.isActive ?? true,
+    source: input.source ?? 'manual',
+    createdAt: new Date().toISOString(),
+    districtName: 'Placeholder District',
+    districtShortName: null,
+    regionalFederationName: 'Placeholder Regional Federation',
+    regionalFederationShortName: null,
+    federationName: 'Deutscher Judo-Bund',
+    federationShortName: 'DJB',
+    countryName: 'Germany',
+    identifiers: (input.identifiers ?? []).map((identifier) => ({
+      type: identifier.type,
+      value: identifier.value,
+      authority: identifier.authority ?? null
+    })),
+    addresses: (input.addresses ?? []).map((address) => ({
+      street: address.street ?? null,
+      houseNumber: address.houseNumber ?? null,
+      postalCode: address.postalCode ?? null,
+      city: address.city ?? null,
+      countryCode: address.countryCode ?? null,
+      addressType: address.addressType
+    })),
+    contacts: (input.contacts ?? []).map((contact) => ({
+      contactType: contact.contactType,
+      value: contact.value,
+      label: contact.label ?? null,
+      isPublic: contact.isPublic ?? false
+    }))
+  }
+}
+
+/**
  * Installs a stub `window.api` when Playwright runs the renderer in a browser
  * without Electron (see `VITE_PLAYWRIGHT_BROWSER_ONLY` in `.env.e2e`).
  *
@@ -216,6 +268,8 @@ function buildStubCompetitor(id: string, input: CreateCompetitorInput): Competit
  */
 export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronAPI> = {}) {
   competitorsMemory = null
+
+  const associations: Association[] = []
 
   const api: ElectronAPI = {
     getUsers: async () => [],
@@ -351,6 +405,81 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       if (index >= 0) {
         competitors.splice(index, 1)
         saveCompetitors(competitors)
+      }
+    },
+    getAssociations: async () => [...associations],
+    getAssociation: async (_token, id) => {
+      const association = associations.find((entry) => entry.id === id)
+
+      if (!association) {
+        throw new Error('Association not found')
+      }
+
+      return association
+    },
+    addAssociation: async (_token, input) => {
+      const association = buildStubAssociation(`association-${associations.length + 1}`, input)
+
+      associations.push(association)
+
+      return association
+    },
+    updateAssociation: async (_token, id, input) => {
+      const index = associations.findIndex((association) => association.id === id)
+      const base =
+        index >= 0
+          ? associations[index]!
+          : buildStubAssociation(id, { name: input.name ?? 'Association' })
+      const updated: Association = {
+        ...base,
+        name: input.name ?? base.name,
+        shortName: input.shortName === undefined ? base.shortName : input.shortName,
+        city: input.city === undefined ? base.city : input.city,
+        website: input.website === undefined ? base.website : input.website,
+        isActive: input.isActive ?? base.isActive,
+        identifiers:
+          input.identifiers === undefined
+            ? base.identifiers
+            : input.identifiers.map((identifier) => ({
+                type: identifier.type,
+                value: identifier.value,
+                authority: identifier.authority ?? null
+              })),
+        addresses:
+          input.addresses === undefined
+            ? base.addresses
+            : input.addresses.map((address) => ({
+                street: address.street ?? null,
+                houseNumber: address.houseNumber ?? null,
+                postalCode: address.postalCode ?? null,
+                city: address.city ?? null,
+                countryCode: address.countryCode ?? null,
+                addressType: address.addressType
+              })),
+        contacts:
+          input.contacts === undefined
+            ? base.contacts
+            : input.contacts.map((contact) => ({
+                contactType: contact.contactType,
+                value: contact.value,
+                label: contact.label ?? null,
+                isPublic: contact.isPublic ?? false
+              }))
+      }
+
+      if (index >= 0) {
+        associations[index] = updated
+      } else {
+        associations.push(updated)
+      }
+
+      return updated
+    },
+    deleteAssociation: async (_token, id) => {
+      const index = associations.findIndex((association) => association.id === id)
+
+      if (index >= 0) {
+        associations.splice(index, 1)
       }
     },
     importParticipantsPreview: async () => ({

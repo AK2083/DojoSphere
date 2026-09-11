@@ -1,5 +1,5 @@
-import { computed, type MaybeRef, unref } from 'vue'
-import { useTranslation } from '@shared/lib'
+import { computed, type MaybeRef, ref, unref } from 'vue'
+import { logError, useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 import {
@@ -10,6 +10,10 @@ import {
   NATIONALITY_CODES,
   WEIGHT_CLASS_SEEDS
 } from '../model/static-reference-data'
+import {
+  type AssociationSelectOption,
+  loadAssociationSelectOptions
+} from '../service/load-association-options'
 
 function formatWeightKg(value: number): string {
   return String(value)
@@ -22,6 +26,9 @@ function resolveReferenceLabelKey(labelKey: string): string {
 /**
  * Builds select options and labels for the participant form.
  *
+ * Association options are loaded from the local SQLite associations table via IPC
+ * and always include the seeded Unknown association.
+ *
  * @param ageClassId - Currently selected age class id.
  * @param gradingSystemId - Currently selected grading system id.
  * @returns Localized select options and derived form state.
@@ -31,6 +38,15 @@ export function useParticipantFormOptions(
   gradingSystemId: MaybeRef<string>
 ) {
   const { t } = useTranslation()
+  const loadedAssociations = ref<AssociationSelectOption[]>([])
+
+  void loadAssociationSelectOptions()
+    .then((associations) => {
+      loadedAssociations.value = associations
+    })
+    .catch((error: unknown) => {
+      logError(error as Error, 'competitors', 'load-association-options')
+    })
 
   const genderOptions = computed(() => [
     { title: t(translationKeys.gender.female), value: 'f' as const },
@@ -38,8 +54,8 @@ export function useParticipantFormOptions(
     { title: t(translationKeys.gender.diverse), value: 'd' as const }
   ])
 
-  const associationOptions = computed(() =>
-    ASSOCIATION_SEEDS.map((association) => ({
+  const associationOptions = computed(() => {
+    const unknownOptions = ASSOCIATION_SEEDS.map((association) => ({
       title: t(
         translationKeys.reference.associations[
           association.nameKey as keyof typeof translationKeys.reference.associations
@@ -47,7 +63,14 @@ export function useParticipantFormOptions(
       ),
       value: association.id
     }))
-  )
+
+    const persistedOptions = loadedAssociations.value.map((association) => ({
+      title: association.name,
+      value: association.id
+    }))
+
+    return [...unknownOptions, ...persistedOptions]
+  })
 
   const nationalityOptions = computed(() =>
     NATIONALITY_CODES.map((code) => ({

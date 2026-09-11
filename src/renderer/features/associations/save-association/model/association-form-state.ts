@@ -34,7 +34,7 @@ export type AssociationFormState = {
   phoneNumber: string
 }
 
-/** Default federation hierarchy used when creating associations without SQLite wiring. */
+/** Default federation hierarchy used when creating associations. */
 export const DEFAULT_ASSOCIATION_HIERARCHY = {
   countryName: 'Germany',
   federationName: 'German Judo Federation',

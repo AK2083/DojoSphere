@@ -2,20 +2,24 @@ import { expect, test } from '@shared/tests/e2e/fixtures'
 import { gotoParticipantsPage } from '@shared/tests/e2e/get-participant-overview'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ParticipantEntry', () => {
+test.describe('ParticipantEntry', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.setViewportSize({ width: 1280, height: 800 })
   })
 
-  test('shows association name below participant name in the card header', async ({ page }) => {
-    await gotoParticipantsPage(page, { withParticipants: true })
+  test(
+    'shows association name below participant name in the card header',
+    { tag: '@smoke' },
+    async ({ page }) => {
+      await gotoParticipantsPage(page, { withParticipants: true })
 
-    const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
+      const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
 
-    await expect(yukiCard).toBeVisible()
-    await expect(yukiCard.getByText('Dojo Nord')).toBeVisible()
-  })
+      await expect(yukiCard).toBeVisible()
+      await expect(yukiCard.getByText('Dojo Nord')).toBeVisible()
+    }
+  )
 
   test('shows summary fields and expandable details', async ({ page }) => {
     await gotoParticipantsPage(page, { withParticipants: true })
@@ -31,10 +35,14 @@ test.describe('ParticipantEntry', () => {
     await expect(yukiCard.getByText('S. Fischer')).toBeVisible()
   })
 
-  test('exposes edit and delete actions with accessible names', async ({ page }) => {
-    await gotoParticipantsPage(page, { withParticipants: true })
+  test(
+    'exposes edit and delete actions with accessible names',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await gotoParticipantsPage(page, { withParticipants: true })
 
-    await expect(page.getByRole('button', { name: 'Edit Yuki Tanaka' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Delete Anna Weber' })).toBeVisible()
-  })
+      await expect(page.getByRole('button', { name: 'Edit Yuki Tanaka' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Delete Anna Weber' })).toBeVisible()
+    }
+  )
 })

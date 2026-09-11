@@ -7,7 +7,6 @@ import translationKeys from '../i18n/keys'
 import { mapAssociationFormRule } from '../lib/association-form-error-manager'
 import {
   ASSOCIATION_CITY_MAX_LENGTH,
-  ASSOCIATION_DISTRICT_MAX_LENGTH,
   ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
   ASSOCIATION_NAME_MAX_LENGTH,
   ASSOCIATION_NUMBER_MAX_LENGTH,
@@ -16,14 +15,17 @@ import {
   ASSOCIATION_SHORT_NAME_MAX_LENGTH,
   ASSOCIATION_STREET_MAX_LENGTH,
   ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
-  optionalAssociationNumberRule,
   optionalCityRule,
-  optionalEmailRule,
   optionalGermanPostalCodeRule,
   optionalHouseNumberRule,
   optionalMaxLengthRule,
   optionalPhoneNumberRule,
   optionalWebsiteHostRule,
+  requiredAssociationNumberRule,
+  requiredCityRule,
+  requiredEmailRule,
+  requiredGermanPostalCodeRule,
+  requiredHouseNumberRule,
   requiredMaxLengthRule
 } from '../lib/association-form-rules'
 import { PHONE_COUNTRY_CODES } from '../lib/phone-country-codes'
@@ -36,8 +38,7 @@ import {
 import {
   cloneAssociationFormState,
   copyHeadquartersAddress,
-  mapAssociationToFormState,
-  mapFormStateToAssociation
+  mapAssociationToFormState
 } from './map-association-form-state'
 
 type UseAssociationFormOptions = {
@@ -51,7 +52,7 @@ export const WEBSITE_PROTOCOL_ITEMS: { title: string; value: AssociationWebsiteP
 ]
 
 /**
- * Composable for association form state, validation, and store persistence.
+ * Composable for association form state, validation, and SQLite persistence via IPC.
  *
  * @param options - Optional association id for edit mode.
  * @returns Form fields, translated validation rules, and submit/reset handlers.
@@ -68,7 +69,6 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
   const loadErrorMessage = ref('')
   const fields = ref(createEmptyAssociationForm())
   const initialFields = ref<AssociationFormState | null>(null)
-  const existingMeta = ref<{ source: string | null; createdAt: string } | null>(null)
 
   const associationId = computed(() => toValue(options.associationId))
   const isEditMode = computed(() => Boolean(associationId.value))
@@ -79,13 +79,16 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
   const nameRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_NAME_MAX_LENGTH))]
   const shortNameRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_SHORT_NAME_MAX_LENGTH))]
   const websiteHostRules = [mapRule(optionalWebsiteHostRule)]
-  const districtRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_DISTRICT_MAX_LENGTH))]
-  const associationNumberRules = [mapRule(optionalAssociationNumberRule)]
+  const associationNumberRules = [mapRule(requiredAssociationNumberRule)]
   const streetRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_STREET_MAX_LENGTH))]
   const houseNumberRules = [mapRule(optionalHouseNumberRule)]
   const postalCodeRules = [mapRule(optionalGermanPostalCodeRule)]
   const addressCityRules = [mapRule(optionalCityRule)]
-  const emailRules = [mapRule(optionalEmailRule)]
+  const headquartersStreetRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_STREET_MAX_LENGTH))]
+  const headquartersHouseNumberRules = [mapRule(requiredHouseNumberRule)]
+  const headquartersPostalCodeRules = [mapRule(requiredGermanPostalCodeRule)]
+  const headquartersCityRules = [mapRule(requiredCityRule)]
+  const emailRules = [mapRule(requiredEmailRule)]
   const phoneRules = [mapRule(optionalPhoneNumberRule)]
 
   const isSubmitDisabled = computed(
@@ -130,10 +133,6 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
       const mapped = mapAssociationToFormState(association)
       fields.value = cloneAssociationFormState(mapped)
       initialFields.value = cloneAssociationFormState(mapped)
-      existingMeta.value = {
-        source: association.source,
-        createdAt: association.createdAt
-      }
     } catch (error) {
       loadErrorMessage.value = t(translationKeys.form.loadError)
       logError(error as Error, 'associations', 'load-association')
@@ -157,15 +156,10 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
     saveErrorMessage.value = ''
 
     try {
-      const id = associationId.value ?? crypto.randomUUID()
-      const createdAt = existingMeta.value?.createdAt ?? new Date().toISOString()
-      const source = existingMeta.value?.source ?? 'manual'
-      const association = mapFormStateToAssociation(fields.value, { id, source, createdAt })
-
       if (isEditMode.value) {
-        await updateAssociation(association)
+        await updateAssociation(associationId.value!, fields.value)
       } else {
-        await createAssociation(association)
+        await createAssociation(fields.value)
       }
 
       await router.push({ name: 'associations' })
@@ -201,19 +195,21 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
     nameRules,
     shortNameRules,
     websiteHostRules,
-    districtRules,
     associationNumberRules,
     streetRules,
     houseNumberRules,
     postalCodeRules,
     addressCityRules,
+    headquartersStreetRules,
+    headquartersHouseNumberRules,
+    headquartersPostalCodeRules,
+    headquartersCityRules,
     emailRules,
     phoneRules,
     fieldLimits: {
       name: ASSOCIATION_NAME_MAX_LENGTH,
       shortName: ASSOCIATION_SHORT_NAME_MAX_LENGTH,
       websiteHost: ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
-      district: ASSOCIATION_DISTRICT_MAX_LENGTH,
       associationNumber: ASSOCIATION_NUMBER_MAX_LENGTH,
       street: ASSOCIATION_STREET_MAX_LENGTH,
       houseNumber: ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,

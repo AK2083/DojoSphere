@@ -133,8 +133,8 @@ function detailsPanelId(): string {
       <dd>{{ displayOrEmpty(association.website) }}</dd>
       <dt>{{ headerTitle('status') }}</dt>
       <dd>{{ association.statusLabel }}</dd>
-      <dt>{{ headerTitle('district') }}</dt>
-      <dd>{{ hierarchyLabel(association.districtName, association.districtShortName) }}</dd>
+      <dt>{{ headerTitle('associationNumber') }}</dt>
+      <dd>{{ displayOrEmpty(detailFields.associationNumber) }}</dd>
     </dl>
 
     <div class="association-entry__details-toggle">
@@ -171,8 +171,6 @@ function detailsPanelId(): string {
               )
             }}
           </dd>
-          <dt>{{ headerTitle('district') }}</dt>
-          <dd>{{ hierarchyLabel(association.districtName, association.districtShortName) }}</dd>
 
           <dt>{{ headerTitle('associationNumber') }}</dt>
           <dd>{{ displayOrEmpty(detailFields.associationNumber) }}</dd>

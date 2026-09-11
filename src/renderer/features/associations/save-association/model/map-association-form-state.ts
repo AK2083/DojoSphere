@@ -215,14 +215,14 @@ export function mapAssociationToFormState(
 }
 
 /**
- * Maps form fields into a association overview row for store persistence.
+ * Maps form fields into an association overview row for IPC persistence.
  *
  * @param fields - Current form values.
  * @param options - Existing id/source/createdAt when editing.
  * @param options.id
  * @param options.source
  * @param options.createdAt
- * @returns Association row ready for the in-memory store.
+ * @returns Association row ready for mapping to the IPC create/update payload.
  */
 export function mapFormStateToAssociation(
   fields: AssociationFormState,

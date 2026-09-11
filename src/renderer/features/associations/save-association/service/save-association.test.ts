@@ -1,42 +1,132 @@
-import { createPinia, setActivePinia } from 'pinia'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { getLocalSessionToken } from '@features/authentication/service/local-session-storage'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { ASSOCIATION_MOCK_DATA } from '../../get-association-overview/model/association-mock-data'
-import { useAssociationsStore } from '../../store/use-associations-store'
-import { createAssociation, loadAssociation, updateAssociation } from './save-association'
+import { createEmptyAssociationForm } from '../model/association-form-state'
+import {
+  createAssociation,
+  loadAssociation,
+  mapFormStateToInput,
+  updateAssociation
+} from './save-association'
+
+vi.mock('@features/authentication/service/local-session-storage', () => ({
+  getLocalSessionToken: vi.fn()
+}))
+
+function filledForm() {
+  return {
+    ...createEmptyAssociationForm(),
+    name: '  Judoclub Nord e.V.  ',
+    shortName: '  JC Nord  ',
+    websiteHost: 'www.jcnord.example',
+    associationNumber: '020123',
+    headquarters: {
+      street: 'Dojostraße',
+      houseNumber: '12',
+      postalCode: '20095',
+      city: 'Hamburg'
+    },
+    email: 'info@jcnord.example',
+    phoneCountryCode: '+49',
+    phoneNumber: '40 555 0100'
+  }
+}
 
 describe('save-association service', () => {
   beforeEach(() => {
-    setActivePinia(createPinia())
-    useAssociationsStore().resetAssociations()
+    vi.clearAllMocks()
+    globalThis.window.api = {
+      addAssociation: vi.fn().mockResolvedValue({ id: 'association-1' }),
+      updateAssociation: vi.fn().mockResolvedValue({ id: 'association-1' }),
+      getAssociation: vi.fn().mockResolvedValue({ id: 'association-1' })
+    } as never
   })
 
-  it('loads, creates, and updates associations through the store', async () => {
-    const existing = await loadAssociation(ASSOCIATION_MOCK_DATA[0]!.id)
-    expect(existing.name).toBe('Judoclub Nord e.V.')
+  describe('mapFormStateToInput', () => {
+    it('maps form fields into the IPC create input shape', () => {
+      const input = mapFormStateToInput(filledForm())
 
-    await createAssociation({
-      ...ASSOCIATION_MOCK_DATA[0]!,
-      id: 'created-association',
-      name: 'Created Association'
-    })
-    expect((await loadAssociation('created-association')).name).toBe('Created Association')
-
-    await updateAssociation({
-      ...ASSOCIATION_MOCK_DATA[0]!,
-      id: 'created-association',
-      name: 'Updated Association'
-    })
-    expect((await loadAssociation('created-association')).name).toBe('Updated Association')
-  })
-
-  it('throws when loading or updating a missing association', async () => {
-    await expect(loadAssociation('missing')).rejects.toThrow('Association not found: missing')
-    await expect(
-      updateAssociation({
-        ...ASSOCIATION_MOCK_DATA[0]!,
-        id: 'missing'
+      expect(input).toMatchObject({
+        name: 'Judoclub Nord e.V.',
+        shortName: 'JC Nord',
+        city: 'Hamburg',
+        website: 'https://www.jcnord.example',
+        isActive: true,
+        source: 'manual'
       })
-    ).rejects.toThrow('Association not found: missing')
+      expect(input).not.toHaveProperty('districtName')
+      expect(input.identifiers).toEqual([
+        expect.objectContaining({
+          type: 'djb_association_number',
+          value: '020123'
+        })
+      ])
+      expect(input.contacts).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ contactType: 'email', value: 'info@jcnord.example' }),
+          expect.objectContaining({ contactType: 'phone', value: '+49 40 555 0100' })
+        ])
+      )
+    })
+  })
+
+  describe('loadAssociation', () => {
+    it('loads an association via the electron api', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+
+      await loadAssociation('association-1')
+
+      expect(globalThis.window.api.getAssociation).toHaveBeenCalledWith('token-1', 'association-1')
+    })
+
+    it('throws when no local session token exists', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue(null)
+
+      await expect(loadAssociation('association-1')).rejects.toThrow('No local session')
+    })
+
+    it('throws when the electron api is unavailable', async () => {
+      globalThis.window.api = undefined as never
+      vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+
+      await expect(loadAssociation('association-1')).rejects.toThrow(
+        'Electron API is not available'
+      )
+    })
+  })
+
+  describe('createAssociation', () => {
+    it('sends the mapped input via the electron api', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+
+      await createAssociation(filledForm())
+
+      expect(globalThis.window.api.addAssociation).toHaveBeenCalledWith(
+        'token-1',
+        expect.objectContaining({
+          name: 'Judoclub Nord e.V.',
+          identifiers: expect.arrayContaining([expect.objectContaining({ value: '020123' })])
+        })
+      )
+    })
+  })
+
+  describe('updateAssociation', () => {
+    it('sends the mapped input via the electron api', async () => {
+      vi.mocked(getLocalSessionToken).mockReturnValue('token-1')
+
+      await updateAssociation('association-1', filledForm())
+
+      expect(globalThis.window.api.updateAssociation).toHaveBeenCalledWith(
+        'token-1',
+        'association-1',
+        expect.objectContaining({
+          name: 'Judoclub Nord e.V.',
+          contacts: expect.arrayContaining([
+            expect.objectContaining({ contactType: 'email', value: 'info@jcnord.example' })
+          ])
+        })
+      )
+    })
   })
 })

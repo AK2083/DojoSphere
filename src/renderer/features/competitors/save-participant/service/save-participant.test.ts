@@ -50,10 +50,12 @@ describe('save-participant service', () => {
         familyName: 'Tanaka',
         gender: 'm',
         passNumber: 'JP-000142',
+        associationId: '00000000-0000-0000-0000-000000000000',
         licenseNumber: 'WL-1',
         contactPhone: '+49 1',
         contactPerson: 'Coach'
       })
+      expect(input).not.toHaveProperty('association')
     })
 
     it('maps blank fields to undefined or null', () => {
@@ -62,6 +64,7 @@ describe('save-participant service', () => {
       expect(input.gender).toBeUndefined()
       expect(input.birthDate).toBeUndefined()
       expect(input.passNumber).toBeUndefined()
+      expect(input.associationId).toBeUndefined()
       expect(input.gradeId).toBeNull()
       expect(input.licenseNumber).toBeNull()
       expect(input.contactPhone).toBeNull()

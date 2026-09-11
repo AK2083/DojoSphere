@@ -1,7 +1,7 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ImportResultEntry', () => {
+test.describe('ImportResultEntry', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await page.goto('/#/participants/import')
@@ -16,9 +16,13 @@ test.describe('ImportResultEntry', () => {
     await page.getByRole('button', { name: 'Next step' }).click()
   })
 
-  test('renders imported participant with name, association and status icon', async ({ page }) => {
-    await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByText('Dojo Nord').first()).toBeVisible()
-    await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
-  })
+  test(
+    'renders imported participant with name, association and status icon',
+    { tag: '@smoke' },
+    async ({ page }) => {
+      await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByText('Dojo Nord').first()).toBeVisible()
+      await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
+    }
+  )
 })

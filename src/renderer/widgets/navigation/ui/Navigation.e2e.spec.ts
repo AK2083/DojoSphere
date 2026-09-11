@@ -1,21 +1,29 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 
-test.describe('Navigation widget', () => {
-  test('shows at least one settings action on app start', async ({ page }) => {
-    await page.goto('/')
+test.describe('Navigation widget', { tag: '@regression' }, () => {
+  test(
+    'shows at least one settings action on app start',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await page.goto('/')
 
-    const settingsActions = page.locator('a[href$="#/settings"]')
-    await expect(settingsActions.first()).toBeVisible()
-  })
+      const settingsActions = page.locator('a[href$="#/settings"]')
+      await expect(settingsActions.first()).toBeVisible()
+    }
+  )
 
-  test('desktop view exposes settings link with settings route', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await page.goto('/')
+  test(
+    'desktop view exposes settings link with settings route',
+    { tag: '@smoke' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await page.goto('/')
 
-    const desktopSettingsLink = page.locator('a[href$="#/settings"]').first()
-    await expect(desktopSettingsLink).toBeVisible()
-    await expect(desktopSettingsLink).toHaveAttribute('href', /#\/settings$/)
-  })
+      const desktopSettingsLink = page.locator('a[href$="#/settings"]').first()
+      await expect(desktopSettingsLink).toBeVisible()
+      await expect(desktopSettingsLink).toHaveAttribute('href', /#\/settings$/)
+    }
+  )
 
   test('mobile view exposes a settings action', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
@@ -32,18 +40,22 @@ test.describe('Navigation widget', () => {
     await expect(settingsActions.first()).toBeVisible()
   })
 
-  test('navigates to register from navigation when not cloud signed in', async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 800 })
-    await page.goto('/')
+  test(
+    'navigates to register from navigation when not cloud signed in',
+    { tag: '@critical' },
+    async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 800 })
+      await page.goto('/')
 
-    await page
-      .getByRole('navigation', { name: 'Authentication' })
-      .getByRole('listitem', { name: 'Register' })
-      .click()
-    await expect(page).toHaveURL(/#\/register$/)
-  })
+      await page
+        .getByRole('navigation', { name: 'Authentication' })
+        .getByRole('listitem', { name: 'Register' })
+        .click()
+      await expect(page).toHaveURL(/#\/register$/)
+    }
+  )
 
-  test('navigates to participants from navigation', async ({ page }) => {
+  test('navigates to participants from navigation', { tag: '@critical' }, async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
 
@@ -54,7 +66,7 @@ test.describe('Navigation widget', () => {
     await expect(page).toHaveURL(/#\/participants$/)
   })
 
-  test('mobile view exposes participants action', async ({ page }) => {
+  test('mobile view exposes participants action', { tag: '@critical' }, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
 

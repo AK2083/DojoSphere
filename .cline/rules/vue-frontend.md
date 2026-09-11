@@ -75,9 +75,57 @@ Every existing UI component in `ui/` must also keep both files when touched.
 
 **Playwright convention:**
 
-- `@playwright/test`, descriptive `test.describe('<ComponentName>')`
+- Import fixtures from `@shared/tests/e2e/fixtures` (preferred) or `@playwright/test`
+- Descriptive `test.describe('<ComponentName>')`
 - Prefer meaningful selectors: `getByRole`, `getByLabel`, `getByText` — no fragile CSS chains
 - i18n setup via `@shared/tests/e2e/setup-language` where needed
+- Tag every test with one or more of `@smoke`, `@critical`, and `@regression` (see below)
+
+### Playwright tags
+
+Use Playwright’s `tag` option on `test` / `test.describe`. Tags are additive (a test may carry several). Filter with `--grep` / package scripts.
+
+| Tag           | Purpose                                                          | When to use                                                                                                                   |
+| ------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `@smoke`      | Fast sanity checks that primary routes and UI shells still mount | Route renders, main form/list visible, footer/nav present — keep cheap and stable                                             |
+| `@critical`   | Must-not-break product flows                                     | Auth bootstrap, participant list ↔ create/edit/import navigation, core form presence, essential settings (language, username) |
+| `@regression` | Full behavioral coverage                                         | **Every** E2E test — edge cases, responsive variants, secondary steps, OTP details, theme/diagnostics                         |
+
+**Rules:**
+
+1. Every E2E test **must** include `@regression`.
+2. Add `@smoke` only for quick “still up” checks (not deep multi-step flows).
+3. Add `@critical` for flows that block tournament day operations if broken.
+4. Prefer tags on the individual `test(...)` when cases in one file differ; put shared tags on `test.describe` only when they apply to all children.
+
+**Examples:**
+
+```ts
+test.describe('ParticipantsPage', { tag: '@regression' }, () => {
+  test(
+    'renders page heading and participant card list',
+    {
+      tag: ['@smoke', '@critical']
+    },
+    async ({ page }) => {
+      /* ... */
+    }
+  )
+
+  test('renders participant cards on narrow viewports', async ({ page }) => {
+    // inherits @regression from describe only
+  })
+})
+```
+
+**Run by tag:**
+
+```bash
+npm run test:e2e:smoke        # @smoke
+npm run test:e2e:critical     # @critical
+npm run test:e2e:regression   # @regression (full suite)
+npm run test:e2e              # all E2E tests (same as regression while every test is tagged)
+```
 
 ## Lighthouse
 

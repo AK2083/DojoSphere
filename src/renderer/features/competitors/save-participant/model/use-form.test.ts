@@ -56,6 +56,10 @@ vi.mock('../service/save-participant', () => ({
   loadParticipant: (...args: unknown[]) => loadParticipantMock(...args)
 }))
 
+vi.mock('../service/load-association-options', () => ({
+  loadAssociationSelectOptions: vi.fn().mockResolvedValue([])
+}))
+
 beforeEach(() => {
   pushMock.mockReset()
   routerValue = { push: pushMock }

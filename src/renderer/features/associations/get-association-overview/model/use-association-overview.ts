@@ -27,7 +27,7 @@ function sortByNewestFirst(rows: AssociationOverviewRow[]): AssociationOverviewR
 }
 
 /**
- * UI state for the association overview loaded from the in-memory associations store.
+ * UI state for the association overview loaded from the local database.
  *
  * @returns Reactive list state and action handlers for the association overview.
  */
@@ -42,7 +42,6 @@ export function useAssociationOverview() {
     { title: t(translationKeys.list.columns.city), key: 'city' },
     { title: t(translationKeys.list.columns.website), key: 'website' },
     { title: t(translationKeys.list.columns.status), key: 'status' },
-    { title: t(translationKeys.list.columns.district), key: 'district' },
     { title: t(translationKeys.list.columns.country), key: 'country' },
     { title: t(translationKeys.list.columns.federation), key: 'association' },
     {

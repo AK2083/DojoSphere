@@ -1,5 +1,7 @@
 /** Stable seed UUIDs from reference migrations — do not change without a new migration. */
 export const UNKNOWN_ASSOCIATION_ID = '00000000-0000-0000-0000-000000000000'
+/** Regional federation seed used when creating districts from free-text names. */
+export const PLACEHOLDER_REGIONAL_FEDERATION_ID = 'd1000000-0000-4000-8000-000000000003'
 export /**
  *
  */

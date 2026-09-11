@@ -3,7 +3,7 @@ import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
 const DIAGNOSTICS_STORAGE_KEY = 'dojosphere.settings.diagnostics.autoUploadDiagnostics'
 
-test.describe('DiagnosticsUploadSettings', () => {
+test.describe('DiagnosticsUploadSettings', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
