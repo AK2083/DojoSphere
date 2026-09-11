@@ -153,9 +153,9 @@ Association contact email is **not** stored on `competitors`; it belongs to `ass
 | Display need | Source |
 | ------------ | ------ |
 | Association name in overview / form | `associations.name` or `associations.short_name` via `competitors.association_id` |
-| District / regional context | `associations` → `districts` → `regional_federations` (see [associations-schema.md](./associations-schema.md)) |
-| Association email | `association_contacts` where `association_id` matches and `contact_type = 'email'` |
-| Federation association number | `association_identifiers` where `type = 'djb_association_number'` (example) |
+| District / regional context | `associations` → `districts` → `regional_federations` (see [associations-schema.md](./associations-schema.md)); Bezirk is not edited on the association form — manual associations use the placeholder district |
+| Association email | `association_contacts` where `association_id` matches and `contact_type = 'email'` (required on association create/edit) |
+| Federation association number | `association_identifiers` where `type = 'djb_association_number'` (required and unique on association create/edit) |
 
 Example lookup (reference only):
 

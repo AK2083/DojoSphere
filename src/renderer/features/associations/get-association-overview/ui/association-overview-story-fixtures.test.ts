@@ -45,7 +45,6 @@ describe('association-overview-story-fixtures', () => {
         'city',
         'website',
         'status',
-        'district',
         'associationNumber',
         'headquarters',
         'trainingVenue',

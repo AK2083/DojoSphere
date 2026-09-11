@@ -47,10 +47,6 @@ const ASSOCIATION_WEBSITE_HOST_MAX_LENGTH = 180
 export /**
  *
  */
-const ASSOCIATION_DISTRICT_MAX_LENGTH = 120
-export /**
- *
- */
 const ASSOCIATION_NUMBER_MAX_LENGTH = 12
 export /**
  *
@@ -134,6 +130,22 @@ export function optionalEmailRule(value?: string | null): AssociationFormRuleRes
 }
 
 /**
+ * Validates a required email address (`@` and `.` required).
+ *
+ * @param value - Email value.
+ * @returns `true` when valid, otherwise an error code.
+ */
+export function requiredEmailRule(value?: string | null): AssociationFormRuleResult {
+  const required = requiredFieldRule(value)
+
+  if (required !== true) {
+    return required
+  }
+
+  return optionalEmailRule(value)
+}
+
+/**
  * Validates an optional website host/path (protocol selected separately).
  *
  * @param value - Host and optional path without protocol.
@@ -180,6 +192,22 @@ export function optionalGermanPostalCodeRule(value?: string | null): Association
 }
 
 /**
+ * Validates a required German postal code (exactly 5 digits).
+ *
+ * @param value - Postal code value.
+ * @returns `true` when valid, otherwise an error code.
+ */
+export function requiredGermanPostalCodeRule(value?: string | null): AssociationFormRuleResult {
+  const required = requiredFieldRule(value)
+
+  if (required !== true) {
+    return required
+  }
+
+  return optionalGermanPostalCodeRule(value)
+}
+
+/**
  * Validates an optional house number (digits, letters, and common separators).
  *
  * @param value - House number value.
@@ -202,6 +230,22 @@ export function optionalHouseNumberRule(value?: string | null): AssociationFormR
 }
 
 /**
+ * Validates a required house number.
+ *
+ * @param value - House number value.
+ * @returns `true` when valid, otherwise an error code.
+ */
+export function requiredHouseNumberRule(value?: string | null): AssociationFormRuleResult {
+  const required = requiredFieldRule(value)
+
+  if (required !== true) {
+    return required
+  }
+
+  return optionalHouseNumberRule(value)
+}
+
+/**
  * Validates an optional association number (digits only).
  *
  * @param value - Association number value.
@@ -219,6 +263,22 @@ export function optionalAssociationNumberRule(value?: string | null): Associatio
   }
 
   return /^\d+$/.test(trimmed) ? true : AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
+}
+
+/**
+ * Validates a required association number (digits only).
+ *
+ * @param value - Association number value.
+ * @returns `true` when valid, otherwise an error code.
+ */
+export function requiredAssociationNumberRule(value?: string | null): AssociationFormRuleResult {
+  const required = requiredFieldRule(value)
+
+  if (required !== true) {
+    return required
+  }
+
+  return optionalAssociationNumberRule(value)
 }
 
 /**
@@ -265,4 +325,20 @@ export function optionalCityRule(value?: string | null): AssociationFormRuleResu
   }
 
   return /^[\p{L}][\p{L}\d\s.'\-]*$/u.test(trimmed) ? true : AssociationFormErrorCode.INVALID_CITY
+}
+
+/**
+ * Validates a required city name.
+ *
+ * @param value - City value.
+ * @returns `true` when valid, otherwise an error code.
+ */
+export function requiredCityRule(value?: string | null): AssociationFormRuleResult {
+  const required = requiredFieldRule(value)
+
+  if (required !== true) {
+    return required
+  }
+
+  return optionalCityRule(value)
 }

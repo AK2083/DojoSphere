@@ -7,7 +7,6 @@ import translationKeys from '../i18n/keys'
 import { mapAssociationFormRule } from '../lib/association-form-error-manager'
 import {
   ASSOCIATION_CITY_MAX_LENGTH,
-  ASSOCIATION_DISTRICT_MAX_LENGTH,
   ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
   ASSOCIATION_NAME_MAX_LENGTH,
   ASSOCIATION_NUMBER_MAX_LENGTH,
@@ -16,14 +15,17 @@ import {
   ASSOCIATION_SHORT_NAME_MAX_LENGTH,
   ASSOCIATION_STREET_MAX_LENGTH,
   ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
-  optionalAssociationNumberRule,
   optionalCityRule,
-  optionalEmailRule,
   optionalGermanPostalCodeRule,
   optionalHouseNumberRule,
   optionalMaxLengthRule,
   optionalPhoneNumberRule,
   optionalWebsiteHostRule,
+  requiredAssociationNumberRule,
+  requiredCityRule,
+  requiredEmailRule,
+  requiredGermanPostalCodeRule,
+  requiredHouseNumberRule,
   requiredMaxLengthRule
 } from '../lib/association-form-rules'
 import { PHONE_COUNTRY_CODES } from '../lib/phone-country-codes'
@@ -77,13 +79,16 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
   const nameRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_NAME_MAX_LENGTH))]
   const shortNameRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_SHORT_NAME_MAX_LENGTH))]
   const websiteHostRules = [mapRule(optionalWebsiteHostRule)]
-  const districtRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_DISTRICT_MAX_LENGTH))]
-  const associationNumberRules = [mapRule(optionalAssociationNumberRule)]
+  const associationNumberRules = [mapRule(requiredAssociationNumberRule)]
   const streetRules = [mapRule(optionalMaxLengthRule(ASSOCIATION_STREET_MAX_LENGTH))]
   const houseNumberRules = [mapRule(optionalHouseNumberRule)]
   const postalCodeRules = [mapRule(optionalGermanPostalCodeRule)]
   const addressCityRules = [mapRule(optionalCityRule)]
-  const emailRules = [mapRule(optionalEmailRule)]
+  const headquartersStreetRules = [mapRule(requiredMaxLengthRule(ASSOCIATION_STREET_MAX_LENGTH))]
+  const headquartersHouseNumberRules = [mapRule(requiredHouseNumberRule)]
+  const headquartersPostalCodeRules = [mapRule(requiredGermanPostalCodeRule)]
+  const headquartersCityRules = [mapRule(requiredCityRule)]
+  const emailRules = [mapRule(requiredEmailRule)]
   const phoneRules = [mapRule(optionalPhoneNumberRule)]
 
   const isSubmitDisabled = computed(
@@ -190,19 +195,21 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
     nameRules,
     shortNameRules,
     websiteHostRules,
-    districtRules,
     associationNumberRules,
     streetRules,
     houseNumberRules,
     postalCodeRules,
     addressCityRules,
+    headquartersStreetRules,
+    headquartersHouseNumberRules,
+    headquartersPostalCodeRules,
+    headquartersCityRules,
     emailRules,
     phoneRules,
     fieldLimits: {
       name: ASSOCIATION_NAME_MAX_LENGTH,
       shortName: ASSOCIATION_SHORT_NAME_MAX_LENGTH,
       websiteHost: ASSOCIATION_WEBSITE_HOST_MAX_LENGTH,
-      district: ASSOCIATION_DISTRICT_MAX_LENGTH,
       associationNumber: ASSOCIATION_NUMBER_MAX_LENGTH,
       street: ASSOCIATION_STREET_MAX_LENGTH,
       houseNumber: ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,

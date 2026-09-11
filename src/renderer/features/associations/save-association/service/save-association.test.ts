@@ -19,7 +19,6 @@ function filledForm() {
     name: '  Judoclub Nord e.V.  ',
     shortName: '  JC Nord  ',
     websiteHost: 'www.jcnord.example',
-    districtName: '  Bezirk Hamburg  ',
     associationNumber: '020123',
     headquarters: {
       street: 'Dojostraße',
@@ -52,10 +51,10 @@ describe('save-association service', () => {
         shortName: 'JC Nord',
         city: 'Hamburg',
         website: 'https://www.jcnord.example',
-        districtName: 'Bezirk Hamburg',
         isActive: true,
         source: 'manual'
       })
+      expect(input).not.toHaveProperty('districtName')
       expect(input.identifiers).toEqual([
         expect.objectContaining({
           type: 'djb_association_number',
@@ -106,7 +105,7 @@ describe('save-association service', () => {
         'token-1',
         expect.objectContaining({
           name: 'Judoclub Nord e.V.',
-          districtName: 'Bezirk Hamburg'
+          identifiers: expect.arrayContaining([expect.objectContaining({ value: '020123' })])
         })
       )
     })
@@ -123,7 +122,9 @@ describe('save-association service', () => {
         'association-1',
         expect.objectContaining({
           name: 'Judoclub Nord e.V.',
-          districtName: 'Bezirk Hamburg'
+          contacts: expect.arrayContaining([
+            expect.objectContaining({ contactType: 'email', value: 'info@jcnord.example' })
+          ])
         })
       )
     })

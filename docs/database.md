@@ -30,6 +30,8 @@ To add a migration:
 
 Migrations must not delete user data without an explicit, documented decision.
 
+Notable association constraint: `V015__associations_require_unique_association_number.sql` enforces unique `djb_association_number` values. Application rules for required Vereinsnummer, Hauptsitz, and E-Mail are documented in [associations-schema.md](./database/associations-schema.md#application-rules-manual-associations).
+
 ## Domain schemas
 
 | Domain | Doc | Tables |

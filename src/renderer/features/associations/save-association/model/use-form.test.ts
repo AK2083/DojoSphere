@@ -136,7 +136,14 @@ describe('useAssociationForm', () => {
   it('creates a association and navigates to the overview', async () => {
     const form = useAssociationForm()
     form.fields.value.name = 'New Association'
-    form.fields.value.districtName = 'Berlin'
+    form.fields.value.associationNumber = '020123'
+    form.fields.value.email = 'info@example.com'
+    form.fields.value.headquarters = {
+      street: 'Dojostraße',
+      houseNumber: '12',
+      postalCode: '20095',
+      city: 'Hamburg'
+    }
     form.isFormValid.value = true
     form.setFormRef({
       validate: vi.fn().mockResolvedValue({ valid: true }),

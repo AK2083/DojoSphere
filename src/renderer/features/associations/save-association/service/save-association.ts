@@ -40,8 +40,6 @@ export function mapFormStateToInput(fields: AssociationFormState): CreateAssocia
     website: mapped.website,
     isActive: mapped.isActive,
     source: mapped.source,
-    districtName: mapped.districtName,
-    districtShortName: mapped.districtShortName,
     identifiers: mapped.identifiers,
     addresses: mapped.addresses,
     contacts: mapped.contacts

@@ -192,12 +192,32 @@ describe('preload', () => {
     })
     await api.addAssociation('token-1', {
       name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg'
+      identifiers: [{ type: 'djb_association_number', value: '020123' }],
+      addresses: [
+        {
+          street: 'Dojostraße',
+          houseNumber: '12',
+          postalCode: '20095',
+          city: 'Hamburg',
+          addressType: 'primary'
+        }
+      ],
+      contacts: [{ contactType: 'email', value: 'info@example.com' }]
     })
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:add', {
       token: 'token-1',
       name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg'
+      identifiers: [{ type: 'djb_association_number', value: '020123' }],
+      addresses: [
+        {
+          street: 'Dojostraße',
+          houseNumber: '12',
+          postalCode: '20095',
+          city: 'Hamburg',
+          addressType: 'primary'
+        }
+      ],
+      contacts: [{ contactType: 'email', value: 'info@example.com' }]
     })
 
     ipcRenderer.invoke.mockResolvedValueOnce({

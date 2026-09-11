@@ -22,6 +22,35 @@ async function createLocalUserWithSession() {
   return result
 }
 
+function validAssociationPayload(associationNumber = '020123') {
+  return {
+    name: 'Judoclub Nord e.V.',
+    identifiers: [
+      {
+        type: 'djb_association_number',
+        value: associationNumber,
+        authority: 'DJB'
+      }
+    ],
+    addresses: [
+      {
+        street: 'Dojostraße',
+        houseNumber: '12',
+        postalCode: '20095',
+        city: 'Hamburg',
+        addressType: 'primary'
+      }
+    ],
+    contacts: [
+      {
+        contactType: 'email',
+        value: 'info@example.com',
+        isPublic: true
+      }
+    ]
+  }
+}
+
 describe('registerAssociationsIpc', () => {
   afterEach(async () => {
     vi.restoreAllMocks()
@@ -42,16 +71,12 @@ describe('registerAssociationsIpc', () => {
 
     const association = (await addHandler(
       {},
-      {
-        token: sessionToken,
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg'
-      }
+      { token: sessionToken, ...validAssociationPayload() }
     )) as Association
 
     expect(association).toMatchObject({
       name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg'
+      districtName: 'Placeholder District'
     })
 
     const auditRow = getDatabase()
@@ -89,21 +114,14 @@ describe('registerAssociationsIpc', () => {
     const listHandler = getIpcHandler('associations:list')
     const { sessionToken } = await createLocalUserWithSession()
 
-    await addHandler(
-      {},
-      {
-        token: sessionToken,
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg'
-      }
-    )
+    await addHandler({}, { token: sessionToken, ...validAssociationPayload() })
 
     const associations = await listHandler({}, sessionToken)
 
     expect(associations).toEqual([
       expect.objectContaining({
         name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg'
+        districtName: 'Placeholder District'
       })
     ])
   })
@@ -122,11 +140,7 @@ describe('registerAssociationsIpc', () => {
 
     const created = (await addHandler(
       {},
-      {
-        token: sessionToken,
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg'
-      }
+      { token: sessionToken, ...validAssociationPayload() }
     )) as Association
 
     const association = await getHandler({}, { token: sessionToken, id: created.id })
@@ -151,11 +165,7 @@ describe('registerAssociationsIpc', () => {
 
     const created = (await addHandler(
       {},
-      {
-        token: sessionToken,
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg'
-      }
+      { token: sessionToken, ...validAssociationPayload() }
     )) as Association
 
     const updated = await updateHandler(
@@ -188,11 +198,7 @@ describe('registerAssociationsIpc', () => {
 
     const created = (await addHandler(
       {},
-      {
-        token: sessionToken,
-        name: 'Temporary Association',
-        districtName: 'Bezirk Hamburg'
-      }
+      { token: sessionToken, ...validAssociationPayload('030001'), name: 'Temporary Association' }
     )) as Association
 
     await deleteHandler({}, { token: sessionToken, id: created.id })

@@ -38,7 +38,7 @@ describe('runMigrations', () => {
       'V011__competitors_rename_coach_to_contact_person.sql',
       'V012__competitors_unique_participants.sql',
       'V013__authorize_seed_associations_overview_permissions.sql',
-      'V014__associations_district_name_unique.sql'
+      'V015__associations_require_unique_association_number.sql'
     ])
   })
 

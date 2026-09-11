@@ -234,8 +234,6 @@ export interface CreateAssociationInput {
   website?: string | null
   isActive?: boolean
   source?: string | null
-  districtName: string
-  districtShortName?: string | null
   identifiers?: Array<{
     type: string
     value: string
@@ -264,8 +262,6 @@ export interface UpdateAssociationInput {
   city?: string | null
   website?: string | null
   isActive?: boolean
-  districtName?: string
-  districtShortName?: string | null
   identifiers?: CreateAssociationInput['identifiers']
   addresses?: CreateAssociationInput['addresses']
   contacts?: CreateAssociationInput['contacts']

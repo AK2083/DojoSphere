@@ -13,7 +13,6 @@ export const storyFieldHeaders: AssociationFieldHeader[] = [
   { title: 'City', key: 'city' },
   { title: 'Website', key: 'website' },
   { title: 'Status', key: 'status' },
-  { title: 'District', key: 'district' },
   { title: 'Country', key: 'country' },
   { title: 'Association', key: 'association' },
   { title: 'Regional association', key: 'regionalFederation' },

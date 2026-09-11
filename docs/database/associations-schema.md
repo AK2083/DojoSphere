@@ -2,7 +2,9 @@
 
 Hierarchy for judo organizations and associations: country → national association → regional association → district → association. Association details (identifiers, addresses, contacts) are normalized into child tables.
 
-Used by `competitors.association_id` — see [participants-schema.md](./participants-schema.md). The UI term is **association**; participant rows reference `associations.id` only (no denormalized association name on `competitors`).
+Used by `competitors.association_id` — see [participants-schema.md](./participants-schema.md). The UI term is **association** / **Verein**; participant rows reference `associations.id` only (no denormalized association name on `competitors`).
+
+Manual association create/edit does **not** collect Bezirk. Required application fields are association number (Vereinsnummer), headquarters (Hauptsitz), and email — see [Application rules](#application-rules-manual-associations).
 
 Reference and federation data — no competitor personal data in these tables except where contacts are stored for associations (operator responsibility for retention and publication via `is_public`).
 
@@ -157,7 +159,7 @@ State / regional federations under a national association.
 
 ### `districts`
 
-Districts (Bezirke) under a regional association.
+Districts (Bezirke) under a regional association. Kept for federation hierarchy and joins; the association create/edit form does **not** collect a Bezirk. Manually created associations use the seeded placeholder district.
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
@@ -172,7 +174,7 @@ Districts (Bezirke) under a regional association.
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | referenced by `competitors.association_id` |
-| `district_id` | UUID | yes | FK → `districts.id` |
+| `district_id` | UUID | yes | FK → `districts.id`; manual creates use the placeholder district |
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `city` | TEXT | no | primary city label (detail in `association_addresses`) |
@@ -184,14 +186,14 @@ Districts (Bezirke) under a regional association.
 
 ### `association_identifiers`
 
-External or federation IDs (e.g. association number).
+External or federation IDs (e.g. association number / Vereinsnummer).
 
 | Column | DB type | Required | Notes |
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
 | `association_id` | UUID | yes | FK → `associations.id` |
 | `type` | TEXT | yes | e.g. `djb_association_number` |
-| `value` | TEXT | yes | identifier value |
+| `value` | TEXT | yes | identifier value; unique for `djb_association_number` (see V015) |
 | `authority` | TEXT | no | issuing body |
 
 ### `association_addresses`
@@ -200,12 +202,12 @@ External or federation IDs (e.g. association number).
 | ------ | ------- | -------- | ----- |
 | `id` | UUID | yes (PK) | |
 | `association_id` | UUID | yes | FK → `associations.id` |
-| `street` | TEXT | no | |
-| `house_number` | TEXT | no | |
-| `postal_code` | TEXT | no | |
-| `city` | TEXT | no | |
+| `street` | TEXT | no | required in app for headquarters (`address_type = 'primary'`) |
+| `house_number` | TEXT | no | required in app for headquarters |
+| `postal_code` | TEXT | no | required in app for headquarters |
+| `city` | TEXT | no | required in app for headquarters |
 | `country_code` | CHAR(2) | no | ISO 3166-1 alpha-2 |
-| `address_type` | TEXT | yes | e.g. `primary`, `training` |
+| `address_type` | TEXT | yes | e.g. `primary` (Hauptsitz), `training`, `billing` |
 
 ### `association_contacts`
 
@@ -216,9 +218,20 @@ Association contact data (email, phone, etc.). Use `is_public` for data minimiza
 | `id` | UUID | yes (PK) | |
 | `association_id` | UUID | yes | FK → `associations.id` |
 | `contact_type` | TEXT | yes | e.g. `email`, `phone` |
-| `value` | TEXT | yes | contact value |
+| `value` | TEXT | yes | contact value; email required in app and must contain `@` and `.` |
 | `label` | TEXT | no | e.g. `registration`, `general` |
 | `is_public` | INTEGER | yes | `1` = may be shown on LAN overview; `0` = internal |
+
+## Application rules (manual associations)
+
+Enforced in the association form and repository (beyond column nullability):
+
+| Rule | Storage | Notes |
+| ---- | ------- | ----- |
+| Association number (Vereinsnummer) required | `association_identifiers` with `type = 'djb_association_number'` | Unique across associations via `V015__associations_require_unique_association_number.sql` |
+| Headquarters (Hauptsitz) required | `association_addresses` with `address_type = 'primary'` | Street, house number, postal code, and city must be non-empty |
+| Email required | `association_contacts` with `contact_type = 'email'` | Value must match a simple email shape (`local@domain.tld`: `@` and `.` required) |
+| Bezirk not collected | `associations.district_id` | Always set to the seeded placeholder district on create/update |
 
 ## Foreign keys
 
@@ -318,11 +331,12 @@ CREATE INDEX idx_associations_name ON associations(name);
 CREATE INDEX idx_association_identifiers_association_id ON association_identifiers(association_id);
 CREATE INDEX idx_association_addresses_association_id ON association_addresses(association_id);
 CREATE INDEX idx_association_contacts_association_id ON association_contacts(association_id);
-CREATE UNIQUE INDEX idx_districts_regional_federation_name
-  ON districts (regional_federation_id, name);
-```
 
-District names are unique within a regional federation (`V014__associations_district_name_unique.sql`) so free-text district fields on the association form resolve to a single district row.
+-- V015__associations_require_unique_association_number.sql
+CREATE UNIQUE INDEX IF NOT EXISTS idx_association_identifiers_djb_number
+  ON association_identifiers (value)
+  WHERE type = 'djb_association_number';
+```
 
 ## Related
 
@@ -369,15 +383,23 @@ erDiagram
 
 ## UI mapping
 
+### Participant form / overview
+
 | UI | Database |
 | -- | -------- |
-| `ParticipantForm.association` (selector) | `competitors.association_id` → `associations.id` |
+| `ParticipantForm` association selector (label: Verein) | `competitors.association_id` → `associations.id` |
 | Association display name | `associations.name` (or `short_name`) |
-| Association contact email (removed from participant form) | `association_contacts` where `contact_type = 'email'` |
+| Participant overview column “Association” / “Verein” | same join — not stored on `competitors` |
+| Association contact email | not on participant form; see association contacts below |
 
-| Association selector label | `associations.name` joined via `competitors.association_id` |
-| Participant overview column “Association” | same join — not stored on `competitors` |
+### Association form / overview
 
-## Related
-
-See [Participants link](#participants-link) above for the full cross-schema table.
+| UI | Database |
+| -- | -------- |
+| Name | `associations.name` |
+| Association number (Vereinsnummer, required) | `association_identifiers` (`type = 'djb_association_number'`) |
+| Headquarters / Hauptsitz (required) | `association_addresses` (`address_type = 'primary'`) |
+| Training venue / billing address | `association_addresses` (`training` / `billing`) |
+| Email (required, `@` and `.`) | `association_contacts` (`contact_type = 'email'`) |
+| Phone (optional) | `association_contacts` (`contact_type = 'phone'`) |
+| Bezirk | not shown; `district_id` stays on the placeholder district |

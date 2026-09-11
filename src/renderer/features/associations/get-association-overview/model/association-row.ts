@@ -1,4 +1,9 @@
-import type { Association } from '@shared/types/electron-api'
+import type {
+  Association,
+  AssociationAddress,
+  AssociationContact,
+  AssociationIdentifier
+} from '@shared/types/electron-api'
 
 /**
  * Association row shaped for the associations overview cards.
@@ -6,3 +11,5 @@ import type { Association } from '@shared/types/electron-api'
  * Mirrors the SQLite association hierarchy and child tables returned via IPC.
  */
 export type AssociationOverviewRow = Association
+
+export type { AssociationAddress, AssociationContact, AssociationIdentifier }

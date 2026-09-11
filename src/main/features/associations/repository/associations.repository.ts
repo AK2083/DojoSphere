@@ -7,7 +7,7 @@ import {
   recordAssociationUpdated
 } from '@main/features/audit'
 import {
-  PLACEHOLDER_REGIONAL_FEDERATION_ID,
+  PLACEHOLDER_DISTRICT_ID,
   UNKNOWN_ASSOCIATION_ID
 } from '@main/shared/database/reference-seed-ids'
 import { getDatabase, runInTransaction } from '@main/shared/database'
@@ -46,8 +46,6 @@ export type CreateAssociationInput = {
   website?: string | null
   isActive?: boolean
   source?: string | null
-  districtName: string
-  districtShortName?: string | null
   identifiers?: AssociationIdentifierInput[]
   addresses?: AssociationAddressInput[]
   contacts?: AssociationContactInput[]
@@ -60,8 +58,6 @@ export type UpdateAssociationInput = {
   city?: string | null
   website?: string | null
   isActive?: boolean
-  districtName?: string
-  districtShortName?: string | null
   identifiers?: AssociationIdentifierInput[]
   addresses?: AssociationAddressInput[]
   contacts?: AssociationContactInput[]
@@ -167,52 +163,48 @@ function normalizeRequiredName(value: string, fieldLabel: string): string {
   return trimmed
 }
 
-function resolveDistrictId(
-  db: Database,
-  districtName: string,
-  districtShortName?: string | null
-): string {
-  const name = normalizeRequiredName(districtName, 'District name')
-  const shortName = normalizeOptionalText(districtShortName)
+const ASSOCIATION_NUMBER_TYPE = 'djb_association_number'
+const HEADQUARTERS_ADDRESS_TYPE = 'primary'
+const EMAIL_CONTACT_TYPE = 'email'
 
-  const existing = db
-    .prepare(
-      `
-      SELECT id
-      FROM districts
-      WHERE regional_federation_id = ? AND name = ?
-      LIMIT 1
-    `
-    )
-    .get(PLACEHOLDER_REGIONAL_FEDERATION_ID, name) as { id: string } | undefined
+function assertRequiredAssociationDetails(input: {
+  identifiers: AssociationIdentifierInput[]
+  addresses: AssociationAddressInput[]
+  contacts: AssociationContactInput[]
+}): void {
+  const associationNumber = input.identifiers.find(
+    (identifier) => identifier.type === ASSOCIATION_NUMBER_TYPE && identifier.value.trim()
+  )
 
-  if (existing) {
-    if (shortName !== null) {
-      db.prepare(`UPDATE districts SET short_name = ? WHERE id = ?`).run(shortName, existing.id)
-    }
-
-    return existing.id
+  if (!associationNumber) {
+    throw new Error('Association number must not be empty')
   }
 
-  const id = randomUUID()
-  const sortOrderRow = db
-    .prepare(
-      `
-      SELECT COALESCE(MAX(sort_order), 0) + 1 AS nextSortOrder
-      FROM districts
-      WHERE regional_federation_id = ?
-    `
-    )
-    .get(PLACEHOLDER_REGIONAL_FEDERATION_ID) as { nextSortOrder: number }
+  const headquarters = input.addresses.find(
+    (address) => address.addressType === HEADQUARTERS_ADDRESS_TYPE
+  )
 
-  db.prepare(
-    `
-    INSERT INTO districts (id, regional_federation_id, name, short_name, sort_order)
-    VALUES (?, ?, ?, ?, ?)
-  `
-  ).run(id, PLACEHOLDER_REGIONAL_FEDERATION_ID, name, shortName, sortOrderRow.nextSortOrder)
+  if (
+    !headquarters ||
+    !normalizeOptionalText(headquarters.street) ||
+    !normalizeOptionalText(headquarters.houseNumber) ||
+    !normalizeOptionalText(headquarters.postalCode) ||
+    !normalizeOptionalText(headquarters.city)
+  ) {
+    throw new Error('Headquarters address must not be empty')
+  }
 
-  return id
+  const email = input.contacts.find(
+    (contact) => contact.contactType === EMAIL_CONTACT_TYPE && contact.value.trim()
+  )
+
+  if (!email) {
+    throw new Error('Email must not be empty')
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+    throw new Error('Email is invalid')
+  }
 }
 
 function replaceAssociationChildren(
@@ -445,15 +437,18 @@ export function addAssociation(
   input: CreateAssociationInput
 ): AssociationRecord {
   const name = normalizeRequiredName(input.name, 'Association name')
-  const districtName = normalizeRequiredName(input.districtName, 'District name')
+  const identifiers = input.identifiers ?? []
+  const addresses = input.addresses ?? []
+  const contacts = input.contacts ?? []
+
+  assertRequiredAssociationDetails({ identifiers, addresses, contacts })
+
   const db = getDatabase()
 
   return withDbErrorLogging('associations', 'create', () => {
     const associationId = randomUUID()
 
     runInTransaction(db, () => {
-      const districtId = resolveDistrictId(db, districtName, input.districtShortName)
-
       db.prepare(
         `
         INSERT INTO associations (
@@ -463,7 +458,7 @@ export function addAssociation(
       `
       ).run(
         associationId,
-        districtId,
+        PLACEHOLDER_DISTRICT_ID,
         name,
         normalizeOptionalText(input.shortName),
         normalizeOptionalText(input.city),
@@ -473,9 +468,9 @@ export function addAssociation(
       )
 
       replaceAssociationChildren(db, associationId, {
-        identifiers: input.identifiers ?? [],
-        addresses: input.addresses ?? [],
-        contacts: input.contacts ?? []
+        identifiers,
+        addresses,
+        contacts
       })
 
       recordAssociationCreated({ actorUserId, associationId })
@@ -520,14 +515,41 @@ export function updateAssociation(
   const nextWebsite =
     input.website !== undefined ? normalizeOptionalText(input.website) : existing.website
   const nextIsActive = input.isActive !== undefined ? input.isActive : existing.isActive
-  const nextDistrictName =
-    input.districtName !== undefined
-      ? normalizeRequiredName(input.districtName, 'District name')
-      : existing.districtName
-  const nextDistrictShortName =
-    input.districtShortName !== undefined
-      ? normalizeOptionalText(input.districtShortName)
-      : existing.districtShortName
+
+  const nextIdentifiers =
+    input.identifiers !== undefined
+      ? input.identifiers
+      : existing.identifiers.map((identifier) => ({
+          type: identifier.type,
+          value: identifier.value,
+          authority: identifier.authority
+        }))
+  const nextAddresses =
+    input.addresses !== undefined
+      ? input.addresses
+      : existing.addresses.map((address) => ({
+          street: address.street,
+          houseNumber: address.houseNumber,
+          postalCode: address.postalCode,
+          city: address.city,
+          countryCode: address.countryCode,
+          addressType: address.addressType
+        }))
+  const nextContacts =
+    input.contacts !== undefined
+      ? input.contacts
+      : existing.contacts.map((contact) => ({
+          contactType: contact.contactType,
+          value: contact.value,
+          label: contact.label,
+          isPublic: contact.isPublic
+        }))
+
+  assertRequiredAssociationDetails({
+    identifiers: nextIdentifiers,
+    addresses: nextAddresses,
+    contacts: nextContacts
+  })
 
   const changedFields: string[] = []
 
@@ -551,13 +573,6 @@ export function updateAssociation(
     changedFields.push('is_active')
   }
 
-  if (
-    nextDistrictName !== existing.districtName ||
-    nextDistrictShortName !== existing.districtShortName
-  ) {
-    changedFields.push('district')
-  }
-
   if (input.identifiers !== undefined) {
     changedFields.push('identifiers')
   }
@@ -578,8 +593,6 @@ export function updateAssociation(
 
   return withDbErrorLogging('associations', 'update', () => {
     runInTransaction(db, () => {
-      const districtId = resolveDistrictId(db, nextDistrictName, nextDistrictShortName)
-
       db.prepare(
         `
         UPDATE associations
@@ -593,7 +606,7 @@ export function updateAssociation(
         WHERE id = ?
       `
       ).run(
-        districtId,
+        PLACEHOLDER_DISTRICT_ID,
         nextName,
         nextShortName,
         nextCity,

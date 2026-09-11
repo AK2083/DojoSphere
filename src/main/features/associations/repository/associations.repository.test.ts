@@ -3,6 +3,58 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { closeTestDatabase, initTestDatabase } from '../../../test/database'
 import { UNKNOWN_ASSOCIATION_ID } from '../../../shared/database/reference-seed-ids'
 
+function validAssociationInput(
+  overrides: Partial<{
+    name: string
+    shortName: string | null
+    city: string | null
+    website: string | null
+    isActive: boolean
+    associationNumber: string
+    email: string
+  }> = {}
+) {
+  const associationNumber = overrides.associationNumber ?? '020123'
+  const email = overrides.email ?? 'info@example.com'
+
+  return {
+    name: overrides.name ?? 'Judoclub Nord e.V.',
+    shortName: overrides.shortName ?? 'JC Nord',
+    city: overrides.city ?? 'Hamburg',
+    website: overrides.website ?? 'https://www.jcnord.example',
+    isActive: overrides.isActive ?? true,
+    identifiers: [
+      {
+        type: 'djb_association_number',
+        value: associationNumber,
+        authority: 'DJB'
+      }
+    ],
+    addresses: [
+      {
+        street: 'Dojostraße',
+        houseNumber: '12',
+        postalCode: '20095',
+        city: 'Hamburg',
+        countryCode: 'DE',
+        addressType: 'primary'
+      }
+    ],
+    contacts: [
+      {
+        contactType: 'email',
+        value: email,
+        isPublic: true
+      },
+      {
+        contactType: 'phone',
+        value: '+4940123456',
+        isPublic: false
+      }
+    ]
+  }
+}
+
 describe('associations.repository', () => {
   afterEach(async () => {
     vi.restoreAllMocks()
@@ -24,45 +76,13 @@ describe('associations.repository', () => {
 
     const { id: actorUserId } = addUser({ displayName: 'Association Keeper', userType: 'system' })
 
-    const association = addAssociation(actorUserId, {
-      name: 'Judoclub Nord e.V.',
-      shortName: 'JC Nord',
-      city: 'Hamburg',
-      website: 'https://www.jcnord.example',
-      districtName: 'Bezirk Hamburg',
-      districtShortName: 'HH',
-      identifiers: [
-        {
-          type: 'djb_association_number',
-          value: '020123',
-          authority: 'DJB'
-        }
-      ],
-      addresses: [
-        {
-          street: 'Dojostraße',
-          houseNumber: '12',
-          postalCode: '20095',
-          city: 'Hamburg',
-          countryCode: 'DE',
-          addressType: 'primary'
-        }
-      ],
-      contacts: [
-        {
-          contactType: 'email',
-          value: 'info@jcnord.example',
-          isPublic: true
-        }
-      ]
-    })
+    const association = addAssociation(actorUserId, validAssociationInput())
 
     expect(association).toMatchObject({
       name: 'Judoclub Nord e.V.',
       shortName: 'JC Nord',
       city: 'Hamburg',
-      districtName: 'Bezirk Hamburg',
-      districtShortName: 'HH',
+      districtName: 'Placeholder District',
       countryName: 'Germany',
       federationShortName: 'DJB',
       source: 'manual',
@@ -79,39 +99,19 @@ describe('associations.repository', () => {
     expect(association.contacts).toEqual([
       {
         contactType: 'email',
-        value: 'info@jcnord.example',
+        value: 'info@example.com',
         label: null,
         isPublic: true
+      },
+      {
+        contactType: 'phone',
+        value: '+4940123456',
+        label: null,
+        isPublic: false
       }
     ])
     expect(getAssociations()).toHaveLength(1)
     expect(getAssociation(association.id)?.name).toBe('Judoclub Nord e.V.')
-  })
-
-  it('reuses an existing district by name within the placeholder regional federation', async () => {
-    await initTestDatabase()
-    const { addUser } = await import('@main/features/users')
-    const { addAssociation } = await import('./associations.repository')
-    const { getDatabase } = await import('@main/shared/database')
-
-    const { id: actorUserId } = addUser({ displayName: 'District Actor', userType: 'system' })
-
-    addAssociation(actorUserId, {
-      name: 'First Association',
-      districtName: 'Bezirk Hamburg',
-      districtShortName: 'HH'
-    })
-    addAssociation(actorUserId, {
-      name: 'Second Association',
-      districtName: 'Bezirk Hamburg',
-      districtShortName: 'HH2'
-    })
-
-    const districts = getDatabase()
-      .prepare(`SELECT name, short_name AS shortName FROM districts WHERE name = ?`)
-      .all('Bezirk Hamburg') as Array<{ name: string; shortName: string | null }>
-
-    expect(districts).toEqual([{ name: 'Bezirk Hamburg', shortName: 'HH2' }])
   })
 
   it('updates association fields and replaces child collections', async () => {
@@ -120,35 +120,46 @@ describe('associations.repository', () => {
     const { addAssociation, updateAssociation } = await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Update Actor', userType: 'system' })
-    const created = addAssociation(actorUserId, {
-      name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg',
-      contacts: [{ contactType: 'email', value: 'old@example.com' }]
-    })
+    const created = addAssociation(actorUserId, validAssociationInput())
 
     const updated = updateAssociation(actorUserId, created.id, {
       name: 'Judoclub Nord Updated',
       isActive: false,
-      districtName: 'Bezirk Berlin',
-      contacts: [{ contactType: 'phone', value: '+49 30 111', isPublic: false }],
-      identifiers: [],
-      addresses: []
+      identifiers: [
+        {
+          type: 'djb_association_number',
+          value: '020999',
+          authority: 'DJB'
+        }
+      ],
+      addresses: [
+        {
+          street: 'Neue Straße',
+          houseNumber: '1',
+          postalCode: '10115',
+          city: 'Berlin',
+          addressType: 'primary'
+        }
+      ],
+      contacts: [{ contactType: 'email', value: 'neu@example.com', isPublic: true }]
     })
 
     expect(updated).toMatchObject({
       name: 'Judoclub Nord Updated',
       isActive: false,
-      districtName: 'Bezirk Berlin',
       contacts: [
         {
-          contactType: 'phone',
-          value: '+49 30 111',
+          contactType: 'email',
+          value: 'neu@example.com',
           label: null,
-          isPublic: false
+          isPublic: true
         }
-      ],
-      identifiers: [],
-      addresses: []
+      ]
+    })
+    expect(updated.addresses[0]).toMatchObject({
+      street: 'Neue Straße',
+      city: 'Berlin',
+      addressType: 'primary'
     })
   })
 
@@ -158,10 +169,7 @@ describe('associations.repository', () => {
     const { addAssociation, updateAssociation } = await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Noop Actor', userType: 'system' })
-    const created = addAssociation(actorUserId, {
-      name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg'
-    })
+    const created = addAssociation(actorUserId, validAssociationInput())
 
     const updated = updateAssociation(actorUserId, created.id, {})
 
@@ -175,10 +183,10 @@ describe('associations.repository', () => {
       await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Delete Actor', userType: 'system' })
-    const created = addAssociation(actorUserId, {
-      name: 'Temporary Association',
-      districtName: 'Bezirk Hamburg'
-    })
+    const created = addAssociation(
+      actorUserId,
+      validAssociationInput({ associationNumber: '030001' })
+    )
 
     deleteAssociation(actorUserId, created.id)
 
@@ -192,10 +200,10 @@ describe('associations.repository', () => {
     const { addAssociation, deleteAssociation } = await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Linked Actor', userType: 'system' })
-    const association = addAssociation(actorUserId, {
-      name: 'Linked Association',
-      districtName: 'Bezirk Hamburg'
-    })
+    const association = addAssociation(
+      actorUserId,
+      validAssociationInput({ associationNumber: '040001' })
+    )
 
     addCompetitor(actorUserId, {
       givenName: 'Yuki',
@@ -245,26 +253,23 @@ describe('associations.repository', () => {
     const { addAssociation, updateAssociation } = await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Field Actor', userType: 'system' })
-    const created = addAssociation(actorUserId, {
-      name: 'Judoclub Nord e.V.',
-      districtName: 'Bezirk Hamburg',
-      isActive: false
-    })
+    const created = addAssociation(
+      actorUserId,
+      validAssociationInput({ isActive: false, associationNumber: '050001' })
+    )
 
     expect(created.isActive).toBe(false)
 
     const updated = updateAssociation(actorUserId, created.id, {
       shortName: 'JC Nord',
-      city: 'Hamburg',
-      website: 'https://www.jcnord.example',
-      districtShortName: 'HH'
+      city: 'Kiel',
+      website: 'https://www.jcnord.example'
     })
 
     expect(updated).toMatchObject({
       shortName: 'JC Nord',
-      city: 'Hamburg',
+      city: 'Kiel',
       website: 'https://www.jcnord.example',
-      districtShortName: 'HH',
       isActive: false
     })
   })
@@ -275,26 +280,63 @@ describe('associations.repository', () => {
     const { addAssociation, updateAssociation } = await import('./associations.repository')
 
     const { id: actorUserId } = addUser({ displayName: 'Optional Actor', userType: 'system' })
-    const created = addAssociation(actorUserId, {
-      name: 'Judoclub Nord e.V.',
-      shortName: 'JC Nord',
-      districtName: 'Bezirk Hamburg',
-      isActive: false
-    })
+    const created = addAssociation(
+      actorUserId,
+      validAssociationInput({ isActive: false, associationNumber: '060001' })
+    )
 
     const updated = updateAssociation(actorUserId, created.id, {
       shortName: '   ',
-      city: null,
       website: null,
       isActive: true
     })
 
     expect(updated).toMatchObject({
       shortName: null,
-      city: null,
       website: null,
       isActive: true
     })
+  })
+
+  it('rejects missing association number, headquarters, or email', async () => {
+    await initTestDatabase()
+    const { addUser } = await import('@main/features/users')
+    const { addAssociation } = await import('./associations.repository')
+
+    const { id: actorUserId } = addUser({ displayName: 'Required Actor', userType: 'system' })
+
+    expect(() =>
+      addAssociation(actorUserId, {
+        name: 'Judoclub Nord e.V.',
+        addresses: validAssociationInput().addresses,
+        contacts: validAssociationInput().contacts
+      })
+    ).toThrow('Association number must not be empty')
+
+    expect(() =>
+      addAssociation(actorUserId, {
+        name: 'Judoclub Nord e.V.',
+        identifiers: validAssociationInput().identifiers,
+        contacts: validAssociationInput().contacts
+      })
+    ).toThrow('Headquarters address must not be empty')
+
+    expect(() =>
+      addAssociation(actorUserId, {
+        name: 'Judoclub Nord e.V.',
+        identifiers: validAssociationInput().identifiers,
+        addresses: validAssociationInput().addresses
+      })
+    ).toThrow('Email must not be empty')
+
+    expect(() =>
+      addAssociation(actorUserId, {
+        name: 'Judoclub Nord e.V.',
+        identifiers: validAssociationInput().identifiers,
+        addresses: validAssociationInput().addresses,
+        contacts: [{ contactType: 'email', value: 'not-an-email' }]
+      })
+    ).toThrow('Email is invalid')
   })
 
   it('rejects blank identifier and contact values', async () => {
@@ -306,44 +348,13 @@ describe('associations.repository', () => {
 
     expect(() =>
       addAssociation(actorUserId, {
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg',
-        identifiers: [{ type: '  ', value: '020123' }]
+        ...validAssociationInput({ associationNumber: '070001' }),
+        identifiers: [
+          { type: 'djb_association_number', value: '070001', authority: 'DJB' },
+          { type: '  ', value: 'extra' }
+        ]
       })
     ).toThrow('Identifier type must not be empty')
-
-    expect(() =>
-      addAssociation(actorUserId, {
-        name: 'Judoclub Nord e.V.',
-        districtName: 'Bezirk Hamburg',
-        contacts: [{ contactType: 'email', value: '  ' }]
-      })
-    ).toThrow('Contact value must not be empty')
-  })
-
-  it('reuses a district without overwriting short name when omitted', async () => {
-    await initTestDatabase()
-    const { addUser } = await import('@main/features/users')
-    const { addAssociation } = await import('./associations.repository')
-    const { getDatabase } = await import('@main/shared/database')
-
-    const { id: actorUserId } = addUser({ displayName: 'Reuse Actor', userType: 'system' })
-
-    addAssociation(actorUserId, {
-      name: 'First Association',
-      districtName: 'Bezirk Hamburg',
-      districtShortName: 'HH'
-    })
-    addAssociation(actorUserId, {
-      name: 'Second Association',
-      districtName: 'Bezirk Hamburg'
-    })
-
-    const district = getDatabase()
-      .prepare(`SELECT short_name AS shortName FROM districts WHERE name = ?`)
-      .get('Bezirk Hamburg') as { shortName: string | null }
-
-    expect(district.shortName).toBe('HH')
   })
 
   it('throws when the association disappears after create', async () => {
@@ -368,10 +379,7 @@ describe('associations.repository', () => {
     })
 
     expect(() =>
-      repository.addAssociation(actorUserId, {
-        name: 'Ghost Association',
-        districtName: 'Bezirk Hamburg'
-      })
+      repository.addAssociation(actorUserId, validAssociationInput({ associationNumber: '080001' }))
     ).toThrow('Association not found')
   })
 
@@ -382,10 +390,10 @@ describe('associations.repository', () => {
     const { getDatabase } = await import('@main/shared/database')
 
     const { id: actorUserId } = addUser({ displayName: 'Update Race Actor', userType: 'system' })
-    const created = repository.addAssociation(actorUserId, {
-      name: 'Temporary Association',
-      districtName: 'Bezirk Hamburg'
-    })
+    const created = repository.addAssociation(
+      actorUserId,
+      validAssociationInput({ associationNumber: '090001' })
+    )
 
     const db = getDatabase()
     const realPrepare = db.prepare.bind(db)
@@ -425,16 +433,9 @@ describe('associations.repository', () => {
 
     expect(() =>
       addAssociation(actorUserId, {
-        name: '   ',
-        districtName: 'Bezirk Hamburg'
+        ...validAssociationInput({ associationNumber: '100001' }),
+        name: '   '
       })
     ).toThrow('Association name must not be empty')
-
-    expect(() =>
-      addAssociation(actorUserId, {
-        name: 'Valid Name',
-        districtName: '   '
-      })
-    ).toThrow('District name must not be empty')
   })
 })

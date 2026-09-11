@@ -10,7 +10,12 @@ import {
   optionalMaxLengthRule,
   optionalPhoneNumberRule,
   optionalWebsiteHostRule,
+  requiredAssociationNumberRule,
+  requiredCityRule,
+  requiredEmailRule,
   requiredFieldRule,
+  requiredGermanPostalCodeRule,
+  requiredHouseNumberRule,
   requiredMaxLengthRule
 } from './association-form-rules'
 
@@ -26,6 +31,13 @@ describe('association-form-rules', () => {
     expect(optionalMaxLengthRule(3)('abcd')).toBe(AssociationFormErrorCode.TEXT_TOO_LONG)
     expect(requiredMaxLengthRule(3)('')).toBe(AssociationFormErrorCode.REQUIRED)
     expect(requiredMaxLengthRule(3)('ab')).toBe(true)
+  })
+
+  it('validates required emails with @ and .', () => {
+    expect(requiredEmailRule('')).toBe(AssociationFormErrorCode.REQUIRED)
+    expect(requiredEmailRule('info@example.com')).toBe(true)
+    expect(requiredEmailRule('bad-email')).toBe(AssociationFormErrorCode.INVALID_EMAIL)
+    expect(requiredEmailRule('bad@email')).toBe(AssociationFormErrorCode.INVALID_EMAIL)
   })
 
   it('validates optional emails', () => {
@@ -77,6 +89,14 @@ describe('association-form-rules', () => {
     expect(optionalHouseNumberRule('1'.repeat(11))).toBe(AssociationFormErrorCode.TEXT_TOO_LONG)
   })
 
+  it('validates required association numbers as digits', () => {
+    expect(requiredAssociationNumberRule('')).toBe(AssociationFormErrorCode.REQUIRED)
+    expect(requiredAssociationNumberRule('020123')).toBe(true)
+    expect(requiredAssociationNumberRule('02A123')).toBe(
+      AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
+    )
+  })
+
   it('validates optional association numbers as digits', () => {
     expect(optionalAssociationNumberRule('')).toBe(true)
     expect(optionalAssociationNumberRule(null)).toBe(true)
@@ -87,6 +107,15 @@ describe('association-form-rules', () => {
     expect(optionalAssociationNumberRule('1'.repeat(13))).toBe(
       AssociationFormErrorCode.TEXT_TOO_LONG
     )
+  })
+
+  it('validates required headquarters address fields', () => {
+    expect(requiredGermanPostalCodeRule('')).toBe(AssociationFormErrorCode.REQUIRED)
+    expect(requiredGermanPostalCodeRule('20095')).toBe(true)
+    expect(requiredHouseNumberRule('')).toBe(AssociationFormErrorCode.REQUIRED)
+    expect(requiredHouseNumberRule('12a')).toBe(true)
+    expect(requiredCityRule('')).toBe(AssociationFormErrorCode.REQUIRED)
+    expect(requiredCityRule('Hamburg')).toBe(true)
   })
 
   it('validates optional national phone numbers', () => {
