@@ -14,7 +14,7 @@ function validAssociationInput(
     email: string
   }> = {}
 ) {
-  const associationNumber = overrides.associationNumber ?? '020123'
+  const associationNumber = overrides.associationNumber ?? 'VR 20123 P'
   const email = overrides.email ?? 'info@example.com'
 
   return {
@@ -25,9 +25,9 @@ function validAssociationInput(
     isActive: overrides.isActive ?? true,
     identifiers: [
       {
-        type: 'djb_association_number',
+        type: 'vereinsregister_number',
         value: associationNumber,
-        authority: 'DJB'
+        authority: null
       }
     ],
     addresses: [
@@ -90,9 +90,9 @@ describe('associations.repository', () => {
     })
     expect(association.identifiers).toEqual([
       {
-        type: 'djb_association_number',
-        value: '020123',
-        authority: 'DJB'
+        type: 'vereinsregister_number',
+        value: 'VR 20123 P',
+        authority: null
       }
     ])
     expect(association.addresses).toHaveLength(1)
@@ -127,9 +127,9 @@ describe('associations.repository', () => {
       isActive: false,
       identifiers: [
         {
-          type: 'djb_association_number',
-          value: '020999',
-          authority: 'DJB'
+          type: 'vereinsregister_number',
+          value: 'VR 20999 P',
+          authority: null
         }
       ],
       addresses: [
@@ -185,7 +185,7 @@ describe('associations.repository', () => {
     const { id: actorUserId } = addUser({ displayName: 'Delete Actor', userType: 'system' })
     const created = addAssociation(
       actorUserId,
-      validAssociationInput({ associationNumber: '030001' })
+      validAssociationInput({ associationNumber: 'VR 30001 P' })
     )
 
     deleteAssociation(actorUserId, created.id)
@@ -202,7 +202,7 @@ describe('associations.repository', () => {
     const { id: actorUserId } = addUser({ displayName: 'Linked Actor', userType: 'system' })
     const association = addAssociation(
       actorUserId,
-      validAssociationInput({ associationNumber: '040001' })
+      validAssociationInput({ associationNumber: 'VR 40001 P' })
     )
 
     addCompetitor(actorUserId, {
@@ -255,7 +255,7 @@ describe('associations.repository', () => {
     const { id: actorUserId } = addUser({ displayName: 'Field Actor', userType: 'system' })
     const created = addAssociation(
       actorUserId,
-      validAssociationInput({ isActive: false, associationNumber: '050001' })
+      validAssociationInput({ isActive: false, associationNumber: 'VR 50001 P' })
     )
 
     expect(created.isActive).toBe(false)
@@ -282,7 +282,7 @@ describe('associations.repository', () => {
     const { id: actorUserId } = addUser({ displayName: 'Optional Actor', userType: 'system' })
     const created = addAssociation(
       actorUserId,
-      validAssociationInput({ isActive: false, associationNumber: '060001' })
+      validAssociationInput({ isActive: false, associationNumber: 'VR 60001 P' })
     )
 
     const updated = updateAssociation(actorUserId, created.id, {
@@ -348,9 +348,9 @@ describe('associations.repository', () => {
 
     expect(() =>
       addAssociation(actorUserId, {
-        ...validAssociationInput({ associationNumber: '070001' }),
+        ...validAssociationInput({ associationNumber: 'VR 70001 P' }),
         identifiers: [
-          { type: 'djb_association_number', value: '070001', authority: 'DJB' },
+          { type: 'vereinsregister_number', value: 'VR 70001 P', authority: null },
           { type: '  ', value: 'extra' }
         ]
       })
@@ -379,7 +379,10 @@ describe('associations.repository', () => {
     })
 
     expect(() =>
-      repository.addAssociation(actorUserId, validAssociationInput({ associationNumber: '080001' }))
+      repository.addAssociation(
+        actorUserId,
+        validAssociationInput({ associationNumber: 'VR 80001 P' })
+      )
     ).toThrow('Association not found')
   })
 
@@ -392,7 +395,7 @@ describe('associations.repository', () => {
     const { id: actorUserId } = addUser({ displayName: 'Update Race Actor', userType: 'system' })
     const created = repository.addAssociation(
       actorUserId,
-      validAssociationInput({ associationNumber: '090001' })
+      validAssociationInput({ associationNumber: 'VR 90001 P' })
     )
 
     const db = getDatabase()
@@ -433,7 +436,7 @@ describe('associations.repository', () => {
 
     expect(() =>
       addAssociation(actorUserId, {
-        ...validAssociationInput({ associationNumber: '100001' }),
+        ...validAssociationInput({ associationNumber: 'VR 100001 P' }),
         name: '   '
       })
     ).toThrow('Association name must not be empty')

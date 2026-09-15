@@ -12,6 +12,7 @@ export type BrowserWindowMock = {
   webContents: {
     on: ReturnType<typeof vi.fn>
     openDevTools: ReturnType<typeof vi.fn>
+    setWindowOpenHandler: ReturnType<typeof vi.fn>
   }
 }
 
@@ -21,7 +22,8 @@ export const BrowserWindowConstructor = vi.fn(function BrowserWindow(this: Brows
     loadFile: vi.fn().mockResolvedValue(undefined),
     webContents: {
       on: vi.fn(),
-      openDevTools: vi.fn()
+      openDevTools: vi.fn(),
+      setWindowOpenHandler: vi.fn()
     }
   }
 
@@ -57,6 +59,10 @@ export const Menu = {
   setApplicationMenu: vi.fn()
 }
 
+export const shell = {
+  openExternal: vi.fn().mockResolvedValue(undefined)
+}
+
 export function createBrowserWindowMock() {
   return browserWindowMock
 }
@@ -88,6 +94,7 @@ export function resetElectronMocks() {
   ipcRenderer.invoke.mockClear()
   contextBridge.exposeInMainWorld.mockClear()
   Menu.setApplicationMenu.mockClear()
+  shell.openExternal.mockClear()
   app.whenReady.mockClear()
   app.quit.mockClear()
   app.on.mockClear()

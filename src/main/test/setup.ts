@@ -7,7 +7,8 @@ import {
   ipcMain,
   ipcRenderer,
   Menu,
-  resetElectronMocks
+  resetElectronMocks,
+  shell
 } from './electron-mock'
 
 vi.mock('electron', () => ({
@@ -16,7 +17,8 @@ vi.mock('electron', () => ({
   contextBridge,
   ipcMain,
   ipcRenderer,
-  Menu
+  Menu,
+  shell
 }))
 
 afterEach(() => {

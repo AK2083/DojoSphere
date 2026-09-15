@@ -192,7 +192,7 @@ describe('preload', () => {
     })
     await api.addAssociation('token-1', {
       name: 'Judoclub Nord e.V.',
-      identifiers: [{ type: 'djb_association_number', value: '020123' }],
+      identifiers: [{ type: 'vereinsregister_number', value: 'VR 20123 P' }],
       addresses: [
         {
           street: 'Dojostraße',
@@ -207,7 +207,7 @@ describe('preload', () => {
     expect(ipcRenderer.invoke).toHaveBeenCalledWith('associations:add', {
       token: 'token-1',
       name: 'Judoclub Nord e.V.',
-      identifiers: [{ type: 'djb_association_number', value: '020123' }],
+      identifiers: [{ type: 'vereinsregister_number', value: 'VR 20123 P' }],
       addresses: [
         {
           street: 'Dojostraße',

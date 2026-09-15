@@ -1,7 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DEV_SERVER_URL } from '../../../config/dev'
-import { app, BrowserWindowConstructor, createBrowserWindowMock, Menu } from '../test/electron-mock'
+import {
+  app,
+  BrowserWindowConstructor,
+  createBrowserWindowMock,
+  Menu,
+  shell
+} from '../test/electron-mock'
 
 function getBrowserWindowMock() {
   const win = createBrowserWindowMock()
@@ -40,6 +46,35 @@ describe('createWindow', () => {
       })
     )
     expect(loadRendererMock).toHaveBeenCalledWith(getBrowserWindowMock(), DEV_SERVER_URL)
+  })
+
+  it('opens http(s) links externally and denies in-app windows', async () => {
+    vi.doMock('./load-renderer', () => ({
+      loadRenderer: vi.fn().mockResolvedValue(undefined)
+    }))
+
+    const { createWindow } = await import('./main-window')
+    createWindow(DEV_SERVER_URL)
+
+    const win = getBrowserWindowMock()
+    const openHandler = win.webContents.setWindowOpenHandler.mock.calls[0]?.[0] as
+      ((details: { url: string }) => { action: 'allow' | 'deny' }) | undefined
+
+    expect(openHandler).toEqual(expect.any(Function))
+    expect(openHandler?.({ url: 'https://www.example.com' })).toEqual({ action: 'deny' })
+    expect(shell.openExternal).toHaveBeenCalledWith('https://www.example.com')
+
+    shell.openExternal.mockClear()
+    expect(openHandler?.({ url: 'http://www.example.com' })).toEqual({ action: 'deny' })
+    expect(shell.openExternal).toHaveBeenCalledWith('http://www.example.com')
+
+    shell.openExternal.mockClear()
+    expect(openHandler?.({ url: 'file:///tmp/secret' })).toEqual({ action: 'deny' })
+    expect(shell.openExternal).not.toHaveBeenCalled()
+
+    shell.openExternal.mockClear()
+    expect(openHandler?.({ url: 'not a url' })).toEqual({ action: 'deny' })
+    expect(shell.openExternal).not.toHaveBeenCalled()
   })
 
   it('blocks devtools shortcut when packaged', async () => {

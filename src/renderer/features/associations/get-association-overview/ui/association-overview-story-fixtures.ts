@@ -43,9 +43,9 @@ const storyAssociationRows: AssociationOverviewRow[] = [
     countryName: 'Germany',
     identifiers: [
       {
-        type: 'djb_association_number',
-        value: '020123',
-        authority: 'DJB'
+        type: 'vereinsregister_number',
+        value: 'VR 20123 P',
+        authority: null
       }
     ],
     addresses: [

@@ -13,7 +13,7 @@ export default {
   country: 'Country',
   federation: 'Federation',
   regionalFederation: 'Regional federation',
-  associationNumber: 'Association number',
+  associationNumber: 'Registry number',
   headquarters: 'Headquarters',
   trainingVenue: 'Training venue',
   billingAddress: 'Billing address',

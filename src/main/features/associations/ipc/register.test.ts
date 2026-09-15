@@ -22,14 +22,14 @@ async function createLocalUserWithSession() {
   return result
 }
 
-function validAssociationPayload(associationNumber = '020123') {
+function validAssociationPayload(associationNumber = 'VR 20123 P') {
   return {
     name: 'Judoclub Nord e.V.',
     identifiers: [
       {
-        type: 'djb_association_number',
+        type: 'vereinsregister_number',
         value: associationNumber,
-        authority: 'DJB'
+        authority: null
       }
     ],
     addresses: [
