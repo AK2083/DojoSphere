@@ -2,14 +2,25 @@ name: Deploy Supabase Migrations
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
 
 jobs:
   deploy:
-    runs-on: [self-hosted, unraid] # Nutzt deinen Unraid Runner
+    runs-on: [self-hosted, unraid]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      # NEU: Installiert Node.js 20 und npm auf dem Runner
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v3
