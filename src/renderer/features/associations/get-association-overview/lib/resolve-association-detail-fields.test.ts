@@ -7,7 +7,7 @@ describe('resolveAssociationDetailFields', () => {
     expect(
       resolveAssociationDetailFields({
         identifiers: [
-          { type: 'djb_association_number', value: '020123', authority: 'DJB' },
+          { type: 'vereinsregister_number', value: 'VR 20123 P', authority: null },
           { type: 'other', value: 'ignored', authority: null }
         ],
         addresses: [
@@ -52,7 +52,7 @@ describe('resolveAssociationDetailFields', () => {
         ]
       })
     ).toEqual({
-      associationNumber: '020123',
+      associationNumber: 'VR 20123 P',
       headquarters: 'Dojostraße 12, 20095 Hamburg, DE',
       trainingVenue: 'Trainingweg 4, 20099 Hamburg, DE',
       billingAddress: 'Rechnungsweg 1, 20095 Hamburg, DE',
@@ -81,7 +81,7 @@ describe('resolveAssociationDetailFields', () => {
   it('returns null for blank association number and contact values', () => {
     expect(
       resolveAssociationDetailFields({
-        identifiers: [{ type: 'djb_association_number', value: '   ', authority: null }],
+        identifiers: [{ type: 'vereinsregister_number', value: '   ', authority: null }],
         addresses: [],
         contacts: [
           {

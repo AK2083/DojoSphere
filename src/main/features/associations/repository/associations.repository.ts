@@ -163,7 +163,7 @@ function normalizeRequiredName(value: string, fieldLabel: string): string {
   return trimmed
 }
 
-const ASSOCIATION_NUMBER_TYPE = 'djb_association_number'
+const ASSOCIATION_NUMBER_TYPE = 'vereinsregister_number'
 const HEADQUARTERS_ADDRESS_TYPE = 'primary'
 const EMAIL_CONTACT_TYPE = 'email'
 

@@ -292,7 +292,7 @@ export function mapFormStateToAssociation(
           {
             type: ASSOCIATION_NUMBER_IDENTIFIER_TYPE,
             value: associationNumber,
-            authority: 'DJB'
+            authority: null
           }
         ]
       : [],

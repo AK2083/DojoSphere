@@ -130,7 +130,18 @@ function detailsPanelId(): string {
       <dt>{{ headerTitle('city') }}</dt>
       <dd>{{ displayOrEmpty(association.city) }}</dd>
       <dt>{{ headerTitle('website') }}</dt>
-      <dd>{{ displayOrEmpty(association.website) }}</dd>
+      <dd>
+        <a
+          v-if="association.website?.trim()"
+          class="association-entry__website-link"
+          :href="association.website"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ association.website }}
+        </a>
+        <template v-else>{{ emptyValue }}</template>
+      </dd>
       <dt>{{ headerTitle('status') }}</dt>
       <dd>{{ association.statusLabel }}</dd>
       <dt>{{ headerTitle('associationNumber') }}</dt>
@@ -289,6 +300,16 @@ function detailsPanelId(): string {
   text-align: left;
   color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
   overflow-wrap: anywhere;
+}
+
+.association-entry__website-link {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.association-entry__website-link:hover {
+  text-decoration-thickness: 2px;
 }
 
 .association-entry__details-toggle {

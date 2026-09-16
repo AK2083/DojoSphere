@@ -24,9 +24,9 @@ export const ASSOCIATION_MOCK_DATA: AssociationOverviewRow[] = [
     countryName: 'Germany',
     identifiers: [
       {
-        type: 'djb_association_number',
-        value: '020123',
-        authority: 'DJB'
+        type: 'vereinsregister_number',
+        value: 'VR 20123 P',
+        authority: null
       }
     ],
     addresses: [
@@ -88,9 +88,9 @@ export const ASSOCIATION_MOCK_DATA: AssociationOverviewRow[] = [
     countryName: 'Germany',
     identifiers: [
       {
-        type: 'djb_association_number',
-        value: '090456',
-        authority: 'DJB'
+        type: 'vereinsregister_number',
+        value: 'VR 90456 P',
+        authority: null
       }
     ],
     addresses: [

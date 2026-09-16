@@ -164,7 +164,7 @@ describe('competitors.repository', () => {
     })
     const association = addAssociation(actorUserId, {
       name: 'Judoclub Nord e.V.',
-      identifiers: [{ type: 'djb_association_number', value: '020123', authority: 'DJB' }],
+      identifiers: [{ type: 'vereinsregister_number', value: 'VR 20123 P', authority: null }],
       addresses: [
         {
           street: 'Dojostraße',

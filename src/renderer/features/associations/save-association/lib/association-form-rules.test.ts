@@ -89,22 +89,26 @@ describe('association-form-rules', () => {
     expect(optionalHouseNumberRule('1'.repeat(11))).toBe(AssociationFormErrorCode.TEXT_TOO_LONG)
   })
 
-  it('validates required association numbers as digits', () => {
+  it('validates required association numbers as registry numbers', () => {
     expect(requiredAssociationNumberRule('')).toBe(AssociationFormErrorCode.REQUIRED)
-    expect(requiredAssociationNumberRule('020123')).toBe(true)
+    expect(requiredAssociationNumberRule('VR 20123 P')).toBe(true)
+    expect(requiredAssociationNumberRule('VR 789 NP')).toBe(true)
+    expect(requiredAssociationNumberRule('020123')).toBe(
+      AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
+    )
     expect(requiredAssociationNumberRule('02A123')).toBe(
       AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
     )
   })
 
-  it('validates optional association numbers as digits', () => {
+  it('validates optional association numbers as registry numbers', () => {
     expect(optionalAssociationNumberRule('')).toBe(true)
     expect(optionalAssociationNumberRule(null)).toBe(true)
-    expect(optionalAssociationNumberRule('020123')).toBe(true)
-    expect(optionalAssociationNumberRule('02A123')).toBe(
+    expect(optionalAssociationNumberRule('VR 20123 P')).toBe(true)
+    expect(optionalAssociationNumberRule('020123')).toBe(
       AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
     )
-    expect(optionalAssociationNumberRule('1'.repeat(13))).toBe(
+    expect(optionalAssociationNumberRule(`VR ${'1'.repeat(20)} P`)).toBe(
       AssociationFormErrorCode.TEXT_TOO_LONG
     )
   })

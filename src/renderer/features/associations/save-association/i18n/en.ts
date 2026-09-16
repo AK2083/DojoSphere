@@ -13,7 +13,7 @@ export default {
       name: 'e.g. Judoclub Nord e.V.',
       shortName: 'e.g. JC Nord',
       websiteHost: 'www.jcnord.example',
-      associationNumber: 'e.g. 020123',
+      associationNumber: 'e.g. VR 2876 P',
       street: 'e.g. Dojo Street',
       houseNumber: 'e.g. 12',
       postalCode: 'e.g. 20095',
@@ -43,7 +43,7 @@ export default {
       invalid: 'Please enter a valid house number.'
     },
     associationNumber: {
-      invalid: 'Please enter an association number using digits only.'
+      invalid: 'Please enter a registry number (e.g. VR 2876 P).'
     },
     phone: {
       invalid: 'Please enter a valid phone number.'

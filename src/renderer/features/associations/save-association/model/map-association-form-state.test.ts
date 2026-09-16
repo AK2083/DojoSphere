@@ -43,7 +43,7 @@ describe('map-association-form-state', () => {
     const form = mapAssociationToFormState(ASSOCIATION_MOCK_DATA[0]!)
 
     expect(form.name).toBe('Judoclub Nord e.V.')
-    expect(form.associationNumber).toBe('020123')
+    expect(form.associationNumber).toBe('VR 20123 P')
     expect(form.email).toBe('info@jcnord.example')
     expect(form.phoneCountryCode).toBe('+49')
     expect(form.phoneNumber).toBe('40 555 0100')
@@ -213,7 +213,7 @@ describe('map-association-form-state', () => {
       websiteProtocol: 'https://' as const,
       websiteHost: 'test.example',
       districtName: 'Berlin',
-      associationNumber: '110011',
+      associationNumber: 'VR 110011 P',
       headquarters: {
         street: 'Hauptstr.',
         houseNumber: '1',
@@ -249,9 +249,9 @@ describe('map-association-form-state', () => {
     expect(association.website).toBe('https://test.example')
     expect(association.identifiers).toEqual([
       {
-        type: 'djb_association_number',
-        value: '110011',
-        authority: 'DJB'
+        type: 'vereinsregister_number',
+        value: 'VR 110011 P',
+        authority: null
       }
     ])
     expect(association.addresses).toEqual([

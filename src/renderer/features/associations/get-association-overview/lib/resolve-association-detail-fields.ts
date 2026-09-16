@@ -6,8 +6,8 @@ import type {
 } from '../model/association-row'
 import { formatAssociationAddress } from './format-association-address'
 
-/** Identifier type used for the federation association number (Vereinsnummer). */
-export const ASSOCIATION_NUMBER_IDENTIFIER_TYPE = 'djb_association_number'
+/** Identifier type used for the court registry association number (Vereinsnummer). */
+export const ASSOCIATION_NUMBER_IDENTIFIER_TYPE = 'vereinsregister_number'
 
 /** Known address types shown on the association card. */
 export const ASSOCIATION_ADDRESS_TYPES = {

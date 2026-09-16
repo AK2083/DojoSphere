@@ -47,7 +47,7 @@ const ASSOCIATION_WEBSITE_HOST_MAX_LENGTH = 180
 export /**
  *
  */
-const ASSOCIATION_NUMBER_MAX_LENGTH = 12
+const ASSOCIATION_NUMBER_MAX_LENGTH = 20
 export /**
  *
  */
@@ -246,10 +246,10 @@ export function requiredHouseNumberRule(value?: string | null): AssociationFormR
 }
 
 /**
- * Validates an optional association number (digits only).
+ * Validates an optional German Vereinsregister number (e.g. `VR 2876 P`).
  *
  * @param value - Association number value.
- * @returns `true` when empty or digits within length, otherwise an error code.
+ * @returns `true` when empty or a valid VR number, otherwise an error code.
  */
 export function optionalAssociationNumberRule(value?: string | null): AssociationFormRuleResult {
   const trimmed = value?.trim() ?? ''
@@ -262,11 +262,13 @@ export function optionalAssociationNumberRule(value?: string | null): Associatio
     return AssociationFormErrorCode.TEXT_TOO_LONG
   }
 
-  return /^\d+$/.test(trimmed) ? true : AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
+  return /^VR\s+\d{1,6}(\s+[A-Z]{1,3})?$/i.test(trimmed)
+    ? true
+    : AssociationFormErrorCode.INVALID_ASSOCIATION_NUMBER
 }
 
 /**
- * Validates a required association number (digits only).
+ * Validates a required German Vereinsregister number (e.g. `VR 2876 P`).
  *
  * @param value - Association number value.
  * @returns `true` when valid, otherwise an error code.
