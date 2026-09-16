@@ -1,3 +1,9 @@
+# [1.26.0](https://github.com/AK2083/DojoSphere/compare/v1.25.0...v1.26.0) (2026-09-16)
+
+### Features
+
+- enhance migration workflow for Supabase ([#205](https://github.com/AK2083/DojoSphere/issues/205)) ([6071415](https://github.com/AK2083/DojoSphere/commit/6071415504def08fd2d13659cab7a302d5bd13f4))
+
 # [1.25.0](https://github.com/AK2083/DojoSphere/compare/v1.24.0...v1.25.0) (2026-09-16)
 
 ### Features
