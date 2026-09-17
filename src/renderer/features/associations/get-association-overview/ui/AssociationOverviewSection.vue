@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useTranslation } from '@shared/lib'
 
+import { SyncAssociationsDialog, useSyncAssociations } from '../../sync-associations'
 import translationKeys from '../i18n/keys'
 import { useAssociationOverview } from '../model/use-association-overview'
 import AssociationEntry from './AssociationEntry.vue'
@@ -16,10 +17,13 @@ const {
   loadErrorMessage,
   overviewItems,
   fieldHeaders,
+  refresh,
   handleAdd,
   handleEdit,
   handleDelete
 } = useAssociationOverview()
+
+const syncDialog = useSyncAssociations()
 
 const isMobile = computed(() => smAndDown.value)
 const addLabel = computed(() => t(translationKeys.actions.add))
@@ -54,6 +58,19 @@ const gridClassNames = computed(() => ({
       :add-label="addLabel"
       :is-mobile="isMobile"
       @add="handleAdd"
+      @sync="syncDialog.open()"
+    />
+
+    <SyncAssociationsDialog
+      v-model="syncDialog.isOpen.value"
+      :phase="syncDialog.phase.value"
+      :progress="syncDialog.progress.value"
+      :error-message="syncDialog.errorMessage.value"
+      :is-not-signed-in="syncDialog.isNotSignedIn.value"
+      :synced-count="syncDialog.syncedCount.value"
+      @confirm="syncDialog.confirm()"
+      @close="syncDialog.close()"
+      @done="refresh()"
     />
 
     <div v-if="loading" class="association-overview-section__grid" :class="gridClassNames">

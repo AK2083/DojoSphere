@@ -24,7 +24,7 @@ describe('runMigrations', () => {
       .prepare('SELECT id, name FROM _migrations ORDER BY name')
       .all() as Array<{ id: string; name: string }>
 
-    expect(appliedMigrations).toHaveLength(13)
+    expect(appliedMigrations).toHaveLength(14)
     expect(appliedMigrations.map((migration) => migration.name)).toEqual([
       'V001__authorize_create_tables.sql',
       'V002__authorize_seed_roles_permissions.sql',
@@ -38,7 +38,8 @@ describe('runMigrations', () => {
       'V011__competitors_rename_coach_to_contact_person.sql',
       'V012__competitors_unique_participants.sql',
       'V013__authorize_seed_associations_overview_permissions.sql',
-      'V015__associations_require_unique_association_number.sql'
+      'V015__associations_require_unique_association_number.sql',
+      'V016__associations_add_synced_at.sql'
     ])
   })
 
@@ -50,7 +51,7 @@ describe('runMigrations', () => {
 
     const count = db.prepare('SELECT COUNT(*) AS count FROM _migrations').get() as { count: number }
 
-    expect(count.count).toBe(13)
+    expect(count.count).toBe(14)
   })
 
   it('throws when a legacy users table blocks the expected schema', () => {

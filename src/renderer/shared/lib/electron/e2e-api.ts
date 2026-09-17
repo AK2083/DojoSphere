@@ -521,6 +521,15 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       failedCount: 0
     }),
     onImportParticipantsProgress: () => () => undefined,
+    getSyncTimestamps: async () => ({
+      countries: null,
+      federations: null,
+      regionalFederations: null,
+      districts: null,
+      associations: null
+    }),
+    applySync: async () => undefined,
+    onSyncProgress: () => () => undefined,
     hasPermission: async () => true,
     getOsUsername: async () => 'TestUser',
     ...overrides

@@ -1,7 +1,8 @@
 export default {
   toolbar: {
     ariaLabel: 'Vereinsliste-Werkzeugleiste',
-    placeholderAction: 'Filter (noch nicht verfügbar)'
+    placeholderAction: 'Filter (noch nicht verfügbar)',
+    sync: 'Aus der Cloud synchronisieren'
   },
   list: {
     ariaLabel: 'Vereinsliste',

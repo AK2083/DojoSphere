@@ -267,6 +267,117 @@ export interface UpdateAssociationInput {
   contacts?: CreateAssociationInput['contacts']
 }
 
+// ---------------------------------------------------------------------------
+// Association cloud sync
+// ---------------------------------------------------------------------------
+
+/** Latest synced_at timestamps for each association hierarchy table. */
+export interface AssociationSyncTimestamps {
+  countries: string | null
+  federations: string | null
+  regionalFederations: string | null
+  districts: string | null
+  associations: string | null
+}
+
+/** A single country row as received from Supabase. */
+export interface SyncCountryRow {
+  id: string
+  name: string
+  isoCode: string
+  updatedAt: string | null
+}
+
+/** A single federation row as received from Supabase. */
+export interface SyncFederationRow {
+  id: string
+  countryId: string
+  name: string
+  shortName: string | null
+  website: string | null
+  updatedAt: string | null
+}
+
+/** A single regional federation row as received from Supabase. */
+export interface SyncRegionalFederationRow {
+  id: string
+  federationId: string
+  name: string
+  shortName: string | null
+  website: string | null
+  updatedAt: string | null
+}
+
+/** A single district row as received from Supabase. */
+export interface SyncDistrictRow {
+  id: string
+  regionalFederationId: string
+  name: string
+  shortName: string | null
+  sortOrder: number
+  updatedAt: string | null
+}
+
+/** An association identifier row as received from Supabase. */
+export interface SyncAssociationIdentifierRow {
+  id: string
+  type: string
+  value: string
+  authority: string | null
+}
+
+/** An association address row as received from Supabase. */
+export interface SyncAssociationAddressRow {
+  id: string
+  street: string | null
+  houseNumber: string | null
+  postalCode: string | null
+  city: string | null
+  countryCode: string | null
+  addressType: string
+}
+
+/** An association contact row as received from Supabase. */
+export interface SyncAssociationContactRow {
+  id: string
+  contactType: string
+  value: string
+  label: string | null
+  isPublic: boolean
+}
+
+/** A full association record with children as received from Supabase. */
+export interface SyncAssociationRow {
+  id: string
+  districtId: string
+  name: string
+  shortName: string | null
+  city: string | null
+  website: string | null
+  isActive: boolean
+  source: string | null
+  updatedAt: string | null
+  identifiers: SyncAssociationIdentifierRow[]
+  addresses: SyncAssociationAddressRow[]
+  contacts: SyncAssociationContactRow[]
+}
+
+/** Full payload sent from renderer to main for a sync batch. */
+export interface AssociationSyncPayload {
+  countries: SyncCountryRow[]
+  federations: SyncFederationRow[]
+  regionalFederations: SyncRegionalFederationRow[]
+  districts: SyncDistrictRow[]
+  associations: SyncAssociationRow[]
+}
+
+/** Progress event emitted per association during sync. */
+export interface AssociationSyncProgressEvent {
+  processed: number
+  total: number
+  currentName: string
+}
+
 /** Input for recording an audit event via IPC. */
 export interface AuditRecordInput {
   token: string
@@ -313,6 +424,9 @@ export interface ElectronAPI {
     input: UpdateAssociationInput
   ) => Promise<Association>
   deleteAssociation: (token: string, id: string) => Promise<void>
+  getSyncTimestamps: (token: string) => Promise<AssociationSyncTimestamps>
+  applySync: (token: string, payload: AssociationSyncPayload) => Promise<void>
+  onSyncProgress: (listener: (progress: AssociationSyncProgressEvent) => void) => () => void
   hasPermission: (token: string, resource: string, action: string) => Promise<boolean>
   getOsUsername: () => Promise<string>
 }
