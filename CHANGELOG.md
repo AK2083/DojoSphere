@@ -1,3 +1,9 @@
+# [1.27.0](https://github.com/AK2083/DojoSphere/compare/v1.26.0...v1.27.0) (2026-09-17)
+
+### Features
+
+- implement cloud sync for associations ([#207](https://github.com/AK2083/DojoSphere/issues/207)) ([61c5ab0](https://github.com/AK2083/DojoSphere/commit/61c5ab0d0cc095656a67d51ed42738417c90d75e))
+
 # [1.26.0](https://github.com/AK2083/DojoSphere/compare/v1.25.0...v1.26.0) (2026-09-16)
 
 ### Features
