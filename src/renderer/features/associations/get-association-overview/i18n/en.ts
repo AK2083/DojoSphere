@@ -1,7 +1,8 @@
 export default {
   toolbar: {
     ariaLabel: 'Association list toolbar',
-    placeholderAction: 'Filter (not available yet)'
+    placeholderAction: 'Filter (not available yet)',
+    sync: 'Sync from cloud'
   },
   list: {
     ariaLabel: 'Associations list',

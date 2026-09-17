@@ -132,6 +132,7 @@ flowchart TB
 | `id` | UUID | yes (PK) | |
 | `name` | TEXT | yes | display name |
 | `iso_code` | CHAR(2) | yes | ISO 3166-1 alpha-2, unique |
+| `synced_at` | DATETIME | no | set by cloud sync — see [Cloud sync](#cloud-sync) |
 
 ### `federations`
 
@@ -144,6 +145,7 @@ National federations (e.g. DJB for Germany).
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `website` | TEXT | no | URL |
+| `synced_at` | DATETIME | no | set by cloud sync — see [Cloud sync](#cloud-sync) |
 
 ### `regional_federations`
 
@@ -156,6 +158,7 @@ State / regional federations under a national association.
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `website` | TEXT | no | URL |
+| `synced_at` | DATETIME | no | set by cloud sync — see [Cloud sync](#cloud-sync) |
 
 ### `districts`
 
@@ -168,6 +171,7 @@ Districts (Bezirke) under a regional association. Kept for federation hierarchy 
 | `name` | TEXT | yes | |
 | `short_name` | TEXT | no | |
 | `sort_order` | INTEGER | yes | UI sort within parent |
+| `synced_at` | DATETIME | no | set by cloud sync — see [Cloud sync](#cloud-sync) |
 
 ### `associations`
 
@@ -183,6 +187,7 @@ Districts (Bezirke) under a regional association. Kept for federation hierarchy 
 | `source` | TEXT | no | import origin, e.g. `djb-registry`, `manual` |
 | `created_at` | DATETIME | yes | system |
 | `updated_at` | DATETIME | no | system, set by DB trigger on update |
+| `synced_at` | DATETIME | no | set by cloud sync — ISO 8601 timestamp of the last successful Supabase → SQLite upsert; `NULL` for rows that have never been synced (seeded or manually created) — see [Cloud sync](#cloud-sync) |
 
 ### `association_identifiers`
 
@@ -403,3 +408,32 @@ erDiagram
 | Email (required, `@` and `.`) | `association_contacts` (`contact_type = 'email'`) |
 | Phone (optional) | `association_contacts` (`contact_type = 'phone'`) |
 | Bezirk | not shown; `district_id` stays on the placeholder district |
+
+## Cloud sync
+
+### Overview
+
+The *Sync from cloud* feature downloads association reference data from Supabase into the local SQLite database. It is triggered from the association overview toolbar via the cloud-sync button.
+
+### `synced_at` column
+
+Every association hierarchy table (`countries`, `federations`, `regional_federations`, `districts`, `associations`) has a `synced_at TEXT` column (added in `V016__associations_add_synced_at.sql`). It stores the ISO 8601 UTC timestamp at which the row was last written from Supabase. A `NULL` value means the row has never been synced (seeded locally or created manually).
+
+### Incremental sync strategy
+
+1. **Get local timestamps** — the main process reads `MAX(synced_at)` for each table via IPC (`associations:getSyncTimestamps`).
+2. **Filter on Supabase** — the renderer queries Supabase with `updated_at > latestSyncedAt` (or fetches all rows when `latestSyncedAt IS NULL`). This relies on the `updated_at` column that exists on `associations` (from the initial migration) and was added to the other hierarchy tables in `supabase/migrations/20260916000000_add_updated_at_to_hierarchy_tables.sql`.
+3. **Upsert locally** — the renderer sends the payload to the main process via IPC (`associations:applySync`). The main process upserts all rows with `INSERT … ON CONFLICT(id) DO UPDATE` and sets `synced_at = datetime('now')`.
+4. **Progress streaming** — the main process emits one `associations:sync:progress` event per association back to the renderer while upserts are in flight.
+
+### Duplicate prevention
+
+Because upserts use `ON CONFLICT(id) DO UPDATE`, re-running a sync never creates duplicate rows. Only rows whose `updated_at` post-dates the local `synced_at` are downloaded.
+
+### Child tables
+
+`association_identifiers`, `association_addresses`, and `association_contacts` do not have their own `updated_at` columns. They are always re-synced (delete + insert) for any parent `associations` row that is included in the sync payload.
+
+### Supabase RLS
+
+Hierarchy tables are readable by authenticated users via Row Level Security policies (`SELECT … TO authenticated`). No write access is granted to clients.

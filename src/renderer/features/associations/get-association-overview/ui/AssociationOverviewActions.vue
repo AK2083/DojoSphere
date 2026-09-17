@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mdiPlus, mdiTune } from '@mdi/js'
+import { mdiCloudSync, mdiPlus, mdiTune } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
@@ -12,11 +12,13 @@ defineProps<{
 
 const emit = defineEmits<{
   add: []
+  sync: []
 }>()
 
 const { t } = useTranslation()
 
 const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
+const syncLabel = computed(() => t(translationKeys.toolbar.sync))
 </script>
 
 <template>
@@ -58,6 +60,18 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
       <v-spacer />
 
       <div class="association-overview-actions__end">
+        <v-tooltip :text="syncLabel" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon-btn
+              v-bind="tooltipProps"
+              :icon="mdiCloudSync"
+              variant="text"
+              :aria-label="syncLabel"
+              @click="emit('sync')"
+            />
+          </template>
+        </v-tooltip>
+
         <v-tooltip :text="filterLabel" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-icon-btn

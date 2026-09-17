@@ -15,6 +15,11 @@ import {
   type UpdateAssociationInput,
   updateAssociation
 } from '../repository/associations.repository'
+import {
+  applySyncBatch,
+  getSyncTimestamps,
+  type AssociationSyncPayload
+} from '../sync/sync-associations.service'
 
 type AddAssociationIpcInput = CreateAssociationInput & { token: string }
 type UpdateAssociationIpcInput = UpdateAssociationInput & { token: string; id: string }
@@ -74,4 +79,29 @@ export function registerAssociationsIpc() {
 
     deleteAssociation(session.userId, input.id)
   })
+
+  /**
+   * Returns the latest synced_at timestamp for each association hierarchy table.
+   * The renderer uses these to build incremental Supabase queries (only fetch rows
+   * whose updated_at is newer than the local synced_at).
+   */
+  ipcMain.handle('associations:getSyncTimestamps', (_event, token: string) => {
+    requireActiveSession(token, getActiveSessionByToken)
+
+    return getSyncTimestamps()
+  })
+
+  /**
+   * Accepts the sync payload from the renderer (records fetched from Supabase),
+   * upserts them into SQLite, and streams per-association progress events back
+   * via associations:sync:progress.
+   */
+  ipcMain.handle(
+    'associations:applySync',
+    (event, input: { token: string; payload: AssociationSyncPayload }) => {
+      requireActiveSession(input.token, getActiveSessionByToken)
+
+      applySyncBatch(input.payload, event.sender)
+    }
+  )
 }

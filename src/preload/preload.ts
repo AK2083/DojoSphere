@@ -1,6 +1,10 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 
-import type { ElectronAPI, ImportProgressEvent } from '@shared/types/electron-api'
+import type {
+  AssociationSyncProgressEvent,
+  ElectronAPI,
+  ImportProgressEvent
+} from '@shared/types/electron-api'
 
 const api: ElectronAPI = {
   getUsers: () => ipcRenderer.invoke('users:list'),
@@ -40,6 +44,18 @@ const api: ElectronAPI = {
   updateAssociation: (token, id, input) =>
     ipcRenderer.invoke('associations:update', { token, id, ...input }),
   deleteAssociation: (token, id) => ipcRenderer.invoke('associations:delete', { token, id }),
+  getSyncTimestamps: (token) => ipcRenderer.invoke('associations:getSyncTimestamps', token),
+  applySync: (token, payload) => ipcRenderer.invoke('associations:applySync', { token, payload }),
+  onSyncProgress: (listener) => {
+    const handler = (_event: IpcRendererEvent, progress: AssociationSyncProgressEvent) =>
+      listener(progress)
+
+    ipcRenderer.on('associations:sync:progress', handler)
+
+    return () => {
+      ipcRenderer.removeListener('associations:sync:progress', handler)
+    }
+  },
   hasPermission: (token, resource, action) =>
     ipcRenderer.invoke('authorization:hasPermission', { token, resource, action }),
   getOsUsername: () => ipcRenderer.invoke('system:osUsername')

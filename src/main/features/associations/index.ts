@@ -1,5 +1,10 @@
 export { registerAssociationsIpc } from './ipc/register'
 export type {
+  AssociationSyncPayload,
+  AssociationSyncProgressEvent,
+  AssociationSyncTimestamps
+} from './sync/sync-associations.service'
+export type {
   AssociationAddressInput,
   AssociationContactInput,
   AssociationIdentifierInput,
