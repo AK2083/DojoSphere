@@ -1,3 +1,9 @@
+## [1.27.1](https://github.com/AK2083/DojoSphere/compare/v1.27.0...v1.27.1) (2026-09-18)
+
+### Bug Fixes
+
+- correct title casing in index.html ([#209](https://github.com/AK2083/DojoSphere/issues/209)) ([458e4b1](https://github.com/AK2083/DojoSphere/commit/458e4b1776338f75f5ffe63d100cc0b0e0807222))
+
 # [1.27.0](https://github.com/AK2083/DojoSphere/compare/v1.26.0...v1.27.0) (2026-09-17)
 
 ### Features
