@@ -2,6 +2,13 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 
 import SyncAssociationsDialog from './SyncAssociationsDialog.vue'
 
+const sampleResults = [
+  { id: '1', name: 'Judoclub Nord e.V.', success: true as boolean | null },
+  { id: '2', name: 'Budokan Süd', success: true as boolean | null },
+  { id: '3', name: 'Dojo West', success: false as boolean | null },
+  { id: '4', name: 'Judo Akademie Ost', success: null as boolean | null }
+]
+
 const meta = {
   title: 'Features/Associations/SyncAssociations/SyncAssociationsDialog',
   component: SyncAssociationsDialog,
@@ -12,9 +19,8 @@ const meta = {
     modelValue: true,
     phase: 'legal',
     progress: { processed: 0, total: 0, currentName: '' },
-    errorMessage: null,
-    isNotSignedIn: false,
-    syncedCount: 0
+    results: [],
+    errorMessage: null
   }
 } satisfies Meta<typeof SyncAssociationsDialog>
 
@@ -25,13 +31,6 @@ type Story = StoryObj<typeof meta>
 /** Initial legal notice shown before the user confirms the download. */
 export const Legal: Story = {}
 
-/** Legal phase with a "not signed in" warning. */
-export const LegalNotSignedIn: Story = {
-  args: {
-    isNotSignedIn: true
-  }
-}
-
 /** Legal phase after a sync error – error banner is visible. */
 export const LegalWithError: Story = {
   args: {
@@ -39,19 +38,20 @@ export const LegalWithError: Story = {
   }
 }
 
-/** Syncing phase while associations are being downloaded and applied. */
+/** Syncing phase with percentage progress and a live result list. */
 export const Syncing: Story = {
   args: {
     phase: 'syncing',
     progress: {
-      processed: 12,
-      total: 47,
-      currentName: 'Judoclub Nord e.V.'
-    }
+      processed: 2,
+      total: 4,
+      currentName: 'Budokan Süd'
+    },
+    results: sampleResults
   }
 }
 
-/** Syncing phase before the first progress event arrives (spinner only). */
+/** Syncing phase before the first progress event arrives (indeterminate). */
 export const SyncingBeforeFirstProgress: Story = {
   args: {
     phase: 'syncing',
@@ -59,22 +59,32 @@ export const SyncingBeforeFirstProgress: Story = {
       processed: 0,
       total: 0,
       currentName: ''
-    }
+    },
+    results: sampleResults.map((item) => ({ ...item, success: null }))
   }
 }
 
-/** Done phase – associations were successfully synced. */
+/** Finished import with check / cross icons and a close action. */
 export const Done: Story = {
   args: {
     phase: 'done',
-    syncedCount: 47
+    progress: {
+      processed: 4,
+      total: 4,
+      currentName: 'Judo Akademie Ost'
+    },
+    results: sampleResults.map((item, index) => ({
+      ...item,
+      success: index < 3
+    }))
   }
 }
 
-/** Done phase – all associations were already up to date. */
-export const DoneNothingNew: Story = {
+/** Finished sync with nothing to import – empty state stays open until closed. */
+export const DoneEmpty: Story = {
   args: {
     phase: 'done',
-    syncedCount: 0
+    progress: { processed: 0, total: 0, currentName: '' },
+    results: []
   }
 }

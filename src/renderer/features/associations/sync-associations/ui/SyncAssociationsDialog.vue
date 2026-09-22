@@ -1,25 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mdiCloudSync } from '@mdi/js'
+import { mdiCloudDownload } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
-import type { SyncPhase, SyncProgress } from '../model/use-sync-associations'
+import type { SyncPhase, SyncProgress, SyncResultItem } from '../model/use-sync-associations'
+import SyncResultEntry from './SyncResultEntry.vue'
 
 const props = defineProps<{
   modelValue: boolean
   phase: SyncPhase
   progress: SyncProgress
+  results: SyncResultItem[]
   errorMessage: string | null
-  isNotSignedIn: boolean
-  syncedCount: number
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   confirm: []
-  close: []
-  done: []
 }>()
 
 const { t } = useTranslation()
@@ -29,57 +27,50 @@ const isOpen = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
+const progressPercent = computed(() => {
+  if (props.progress.total <= 0) {
+    return 0
+  }
+
+  return Math.min(100, Math.round((props.progress.processed / props.progress.total) * 100))
+})
+
+const progressAriaLabel = computed(() =>
+  t(translationKeys.dialog.syncing.percent, { percent: progressPercent.value })
+)
+
+const showResultsList = computed(
+  () => (props.phase === 'syncing' || props.phase === 'done') && props.results.length > 0
+)
+
 function handleCancel() {
+  if (props.phase === 'syncing') {
+    return
+  }
+
   emit('update:modelValue', false)
 }
 
 function handleConfirm() {
   emit('confirm')
 }
-
-function handleClose() {
-  emit('close')
-  emit('done')
-  emit('update:modelValue', false)
-}
-
-const progressLabel = computed(() =>
-  t(translationKeys.dialog.syncing.progress, {
-    processed: props.progress.processed,
-    total: props.progress.total
-  })
-)
-
-const currentLabel = computed(() =>
-  props.progress.currentName
-    ? t(translationKeys.dialog.syncing.current, { name: props.progress.currentName })
-    : ''
-)
-
-const doneMessage = computed(() =>
-  props.syncedCount > 0
-    ? t(translationKeys.dialog.done.message, { count: props.syncedCount })
-    : t(translationKeys.dialog.done.nothingNew)
-)
 </script>
 
 <template>
   <v-dialog
     v-model="isOpen"
-    max-width="540"
+    max-width="560"
     :persistent="phase === 'syncing'"
     :aria-label="t(translationKeys.dialog.title)"
   >
     <v-card class="sync-associations-dialog">
-      <!-- Header -->
       <v-card-title class="sync-associations-dialog__title">
-        <v-icon :icon="mdiCloudSync" size="small" class="mr-2" aria-hidden="true" />
+        <v-icon :icon="mdiCloudDownload" size="small" class="mr-2" aria-hidden="true" />
         {{ t(translationKeys.dialog.title) }}
       </v-card-title>
 
       <v-divider />
 
-      <!-- LEGAL PHASE -->
       <template v-if="phase === 'legal'">
         <v-card-text class="sync-associations-dialog__body">
           <p class="text-subtitle-2 mb-2">
@@ -89,22 +80,14 @@ const doneMessage = computed(() =>
             {{ t(translationKeys.dialog.legal.body) }}
           </p>
           <p class="text-caption text-medium-emphasis mt-3">
+            {{ t(translationKeys.dialog.legal.gdpr) }}
+          </p>
+          <p class="text-caption text-medium-emphasis mt-2">
             {{ t(translationKeys.dialog.legal.source) }}
           </p>
 
           <v-alert
-            v-if="isNotSignedIn"
-            type="warning"
-            variant="tonal"
-            density="comfortable"
-            class="mt-4"
-            role="alert"
-          >
-            {{ t(translationKeys.dialog.notSignedIn) }}
-          </v-alert>
-
-          <v-alert
-            v-else-if="errorMessage"
+            v-if="errorMessage"
             type="error"
             variant="tonal"
             density="comfortable"
@@ -120,53 +103,74 @@ const doneMessage = computed(() =>
             {{ t(translationKeys.dialog.actions.cancel) }}
           </v-btn>
           <v-spacer />
-          <v-btn variant="flat" color="primary" :prepend-icon="mdiCloudSync" @click="handleConfirm">
+          <v-btn
+            variant="flat"
+            color="primary"
+            :prepend-icon="mdiCloudDownload"
+            @click="handleConfirm"
+          >
             {{ t(translationKeys.dialog.actions.confirm) }}
           </v-btn>
         </v-card-actions>
       </template>
 
-      <!-- SYNCING PHASE -->
-      <template v-else-if="phase === 'syncing'">
-        <v-card-text
-          class="sync-associations-dialog__body sync-associations-dialog__body--centered"
-        >
-          <v-progress-circular
-            indeterminate
-            color="primary"
-            size="64"
-            class="mb-6"
-            aria-label="Synchronising associations"
-          />
-
-          <p
-            v-if="progress.total > 0"
-            class="text-body-1 font-weight-medium sync-associations-dialog__progress-label"
-          >
-            {{ progressLabel }}
-          </p>
-          <p v-else class="text-body-2 text-medium-emphasis">&nbsp;</p>
-
-          <p
-            v-if="currentLabel"
-            class="text-body-2 text-medium-emphasis mt-1 sync-associations-dialog__current-name"
-          >
-            {{ currentLabel }}
-          </p>
-        </v-card-text>
-      </template>
-
-      <!-- DONE PHASE -->
-      <template v-else-if="phase === 'done'">
+      <template v-else>
         <v-card-text class="sync-associations-dialog__body">
-          <v-alert type="success" variant="tonal" density="comfortable">
-            {{ doneMessage }}
+          <div v-if="phase === 'syncing'" class="sync-associations-dialog__progress">
+            <v-progress-circular
+              :model-value="progressPercent"
+              :indeterminate="progress.total <= 0"
+              color="primary"
+              size="72"
+              width="5"
+              class="mb-3"
+              :aria-label="progressAriaLabel"
+              role="progressbar"
+              :aria-valuenow="progressPercent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <span class="text-body-2 font-weight-medium">{{ progressPercent }}%</span>
+            </v-progress-circular>
+
+            <p class="text-body-2 text-medium-emphasis mb-0">
+              {{ t(translationKeys.dialog.syncing.loading) }}
+            </p>
+          </div>
+
+          <v-alert
+            v-if="phase === 'done' && errorMessage"
+            type="error"
+            variant="tonal"
+            density="comfortable"
+            class="mb-4"
+            role="alert"
+          >
+            {{ t(translationKeys.dialog.error) }}
           </v-alert>
+
+          <p
+            v-if="phase === 'done' && results.length === 0 && !errorMessage"
+            class="text-body-2 text-medium-emphasis mb-0"
+            role="status"
+          >
+            {{ t(translationKeys.dialog.results.empty) }}
+          </p>
+
+          <ul
+            v-if="showResultsList"
+            class="sync-associations-dialog__results"
+            :aria-label="t(translationKeys.dialog.results.listAria)"
+          >
+            <li v-for="item in results" :key="item.id">
+              <SyncResultEntry :item="item" />
+            </li>
+          </ul>
         </v-card-text>
 
-        <v-card-actions class="sync-associations-dialog__actions">
+        <v-card-actions v-if="phase === 'done'" class="sync-associations-dialog__actions">
           <v-spacer />
-          <v-btn variant="flat" color="primary" @click="handleClose">
+          <v-btn variant="flat" color="primary" @click="handleCancel">
             {{ t(translationKeys.dialog.actions.close) }}
           </v-btn>
         </v-card-actions>
@@ -186,12 +190,14 @@ const doneMessage = computed(() =>
   padding: 1.25rem;
 }
 
-.sync-associations-dialog__body--centered {
+.sync-associations-dialog__progress {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 2rem 1.25rem;
+  min-height: 7rem;
+  margin-bottom: 1rem;
 }
 
 .sync-associations-dialog__legal-body {
@@ -202,15 +208,15 @@ const doneMessage = computed(() =>
   padding: 0.5rem 1rem 1rem;
 }
 
-.sync-associations-dialog__progress-label {
-  min-height: 1.5rem;
-}
-
-.sync-associations-dialog__current-name {
-  min-height: 1.25rem;
-  max-width: 28rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.sync-associations-dialog__results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  gap: 0.125rem 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 18rem;
+  overflow: auto;
+  width: 100%;
 }
 </style>

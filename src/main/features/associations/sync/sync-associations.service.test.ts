@@ -84,7 +84,8 @@ describe('sync-associations.service', () => {
         federations: null,
         regionalFederations: null,
         districts: null,
-        associations: null
+        associations: null,
+        localAssociationIds: []
       })
     })
 
@@ -104,6 +105,7 @@ describe('sync-associations.service', () => {
       expect(typeof timestamps.districts).toBe('string')
       // No associations in payload, so that stays null
       expect(timestamps.associations).toBeNull()
+      expect(timestamps.localAssociationIds).toEqual([])
     })
 
     it('returns synced_at for associations after they are synced', async () => {
@@ -134,6 +136,44 @@ describe('sync-associations.service', () => {
 
       const timestamps = getSyncTimestamps()
       expect(typeof timestamps.associations).toBe('string')
+      expect(timestamps.localAssociationIds).toEqual(['aa000000-0000-4000-8000-000000000001'])
+    })
+
+    it('clears association sync watermark when all non-seed associations are gone', async () => {
+      await initTestDatabase()
+      const { getSyncTimestamps, applySyncBatch } = await import('./sync-associations.service')
+      const { getDatabase } = await import('@main/shared/database')
+      const sender = makeSender()
+
+      applySyncBatch(
+        makePayload({
+          associations: [
+            {
+              id: 'aa000000-0000-4000-8000-000000000001',
+              districtId: 'ee000000-0000-4000-8000-000000000004',
+              name: 'Synced Club',
+              shortName: null,
+              city: null,
+              website: null,
+              isActive: true,
+              source: 'cloud',
+              updatedAt: null,
+              identifiers: [],
+              addresses: [],
+              contacts: []
+            }
+          ]
+        }),
+        sender as never
+      )
+
+      getDatabase()
+        .prepare(`DELETE FROM associations WHERE id = ?`)
+        .run('aa000000-0000-4000-8000-000000000001')
+
+      const timestamps = getSyncTimestamps()
+      expect(timestamps.associations).toBeNull()
+      expect(timestamps.localAssociationIds).toEqual([])
     })
   })
 
@@ -359,12 +399,16 @@ describe('sync-associations.service', () => {
       expect(sender.send).toHaveBeenNthCalledWith(1, 'associations:sync:progress', {
         processed: 1,
         total: 2,
-        currentName: 'Club Alpha'
+        currentName: 'Club Alpha',
+        id: 'aa000000-0000-4000-8000-000000000020',
+        success: true
       })
       expect(sender.send).toHaveBeenNthCalledWith(2, 'associations:sync:progress', {
         processed: 2,
         total: 2,
-        currentName: 'Club Beta'
+        currentName: 'Club Beta',
+        id: 'aa000000-0000-4000-8000-000000000021',
+        success: true
       })
     })
 
@@ -482,6 +526,73 @@ describe('sync-associations.service', () => {
 
       expect(contacts[0]?.label).toBe('Board contact')
       expect(contacts[0]?.is_public).toBe(0)
+    })
+
+    it('emits success=false when an association upsert fails', async () => {
+      await initTestDatabase()
+      const { applySyncBatch } = await import('./sync-associations.service')
+      const sender = makeSender()
+
+      applySyncBatch(
+        makePayload({
+          associations: [
+            {
+              id: 'aa000000-0000-4000-8000-000000000060',
+              districtId: 'missing-district-id',
+              name: 'Broken Club',
+              shortName: null,
+              city: null,
+              website: null,
+              isActive: true,
+              source: 'cloud',
+              updatedAt: null,
+              identifiers: [],
+              addresses: [],
+              contacts: []
+            }
+          ]
+        }),
+        sender as never
+      )
+
+      expect(sender.send).toHaveBeenCalledWith('associations:sync:progress', {
+        processed: 1,
+        total: 1,
+        currentName: 'Broken Club',
+        id: 'aa000000-0000-4000-8000-000000000060',
+        success: false
+      })
+    })
+
+    it('skips the seeded Unknown association in the payload', async () => {
+      await initTestDatabase()
+      const { applySyncBatch } = await import('./sync-associations.service')
+      const { UNKNOWN_ASSOCIATION_ID } = await import('@main/shared/database/reference-seed-ids')
+      const sender = makeSender()
+
+      applySyncBatch(
+        makePayload({
+          associations: [
+            {
+              id: UNKNOWN_ASSOCIATION_ID,
+              districtId: 'ee000000-0000-4000-8000-000000000004',
+              name: 'Unknown',
+              shortName: null,
+              city: null,
+              website: null,
+              isActive: true,
+              source: 'seed',
+              updatedAt: null,
+              identifiers: [],
+              addresses: [],
+              contacts: []
+            }
+          ]
+        }),
+        sender as never
+      )
+
+      expect(sender.send).not.toHaveBeenCalled()
     })
 
     it('sets synced_at on upserted associations', async () => {

@@ -1,27 +1,33 @@
 export default {
   dialog: {
-    title: 'Vereine aus der Cloud synchronisieren',
+    title: 'Vereinsdaten aktualisieren',
     legal: {
       heading: 'Rechtlicher Hinweis',
-      body: 'Diese Aktion lädt Vereinsdaten (Vereinsnamen, Adressen, Kontaktinformationen und Verbandshierarchie) von einem entfernten Server herunter. Bei den Daten handelt es sich um öffentlich zugängliche Referenzdaten.\n\nMit Ihrer Bestätigung erklären Sie sich damit einverstanden, dass die Anwendung eine Internetverbindung herstellt, um diese Daten abzurufen und lokal zu speichern. Es werden dabei keine personenbezogenen Benutzerdaten übertragen.',
-      source: 'Datenquelle: djb-registry'
+      body: 'Mit der Bestätigung werden frei im Internet verfügbare Vereins-Referenzdaten (Namen, Adressen, Kontaktdaten und Verbandshierarchie) von einem entfernten Server heruntergeladen und lokal auf diesem Gerät gespeichert.\n\nLokal gelöschte Vereine werden beim nächsten Update erneut importiert, sofern sie in der Cloud-Quelle weiterhin vorhanden sind. Unveränderte, bereits vorhandene Vereine werden übersprungen.\n\nEs handelt sich um öffentlich zugängliche Verzeichnisdaten. Für den Abruf wird eine Internetverbindung hergestellt.',
+      gdpr: 'Datenschutz (DSGVO): Es werden keine personenbezogenen Daten Ihres Nutzerkontos an Dritte übermittelt. Heruntergeladen und lokal gespeichert werden ausschließlich die genannten öffentlichen Referenzdaten. Die Verarbeitung erfolgt zum Zweck der lokalen Nutzung in DojoSphere. Sie können die lokal gespeicherten Daten jederzeit löschen, indem Sie die Anwendungsdaten zurücksetzen.',
+      source: 'Datenquelle: öffentlich verfügbare Vereinsregister / Verbandsverzeichnisse'
     },
     actions: {
       cancel: 'Abbrechen',
-      confirm: 'Herunterladen und synchronisieren',
+      confirm: 'Herunterladen',
       close: 'Schließen'
     },
     syncing: {
-      progress: '{processed} / {total} Vereine aktualisiert',
-      current: 'Wird aktualisiert: {name}'
+      loading: 'Vereinsdaten werden geladen …',
+      percent: '{percent} Prozent geladen'
     },
-    done: {
-      message: '{count} Vereine wurden erfolgreich synchronisiert.',
-      nothingNew: 'Alle Vereine sind bereits aktuell.'
+    results: {
+      listAria: 'Importierte Vereine',
+      statusSuccess: '{name} erfolgreich importiert',
+      statusFailure: '{name} nicht importiert',
+      statusPending: '{name} wird importiert',
+      empty: 'Keine neuen oder fehlenden Vereine zum Import gefunden.'
     },
     error:
-      'Synchronisierung fehlgeschlagen. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
-    notSignedIn:
-      'Sie müssen in Ihrem Cloud-Konto angemeldet sein, um Vereine zu synchronisieren. Bitte melden Sie sich an und versuchen Sie es erneut.'
+      'Aktualisierung fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
+    toast: {
+      imported: '{count} Vereine importiert',
+      none: '0 Vereine importiert'
+    }
   }
 }

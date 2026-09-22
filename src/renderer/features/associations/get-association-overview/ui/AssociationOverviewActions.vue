@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { mdiCloudSync, mdiPlus, mdiTune } from '@mdi/js'
+import { mdiCloudDownload, mdiPlus, mdiTune } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
 import translationKeys from '../i18n/keys'
 
 defineProps<{
   addLabel: string
+  updateLabel: string
   isMobile: boolean
 }>()
 
@@ -18,7 +19,6 @@ const emit = defineEmits<{
 const { t } = useTranslation()
 
 const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
-const syncLabel = computed(() => t(translationKeys.toolbar.sync))
 </script>
 
 <template>
@@ -45,12 +45,38 @@ const syncLabel = computed(() => t(translationKeys.toolbar.sync))
               v-bind="tooltipProps"
               variant="text"
               rounded
-              class="association-overview-actions__add"
+              class="association-overview-actions__action"
               @click="emit('add')"
             >
-              <span class="association-overview-actions__add-content">
+              <span class="association-overview-actions__action-content">
                 <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
                 <span>{{ addLabel }}</span>
+              </span>
+            </v-btn>
+          </template>
+        </v-tooltip>
+
+        <v-tooltip :text="updateLabel" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-icon-btn
+              v-if="isMobile"
+              v-bind="tooltipProps"
+              :icon="mdiCloudDownload"
+              variant="text"
+              :aria-label="updateLabel"
+              @click="emit('sync')"
+            />
+            <v-btn
+              v-else
+              v-bind="tooltipProps"
+              variant="text"
+              rounded
+              class="association-overview-actions__action"
+              @click="emit('sync')"
+            >
+              <span class="association-overview-actions__action-content">
+                <v-icon :icon="mdiCloudDownload" size="default" aria-hidden="true" />
+                <span>{{ updateLabel }}</span>
               </span>
             </v-btn>
           </template>
@@ -60,18 +86,6 @@ const syncLabel = computed(() => t(translationKeys.toolbar.sync))
       <v-spacer />
 
       <div class="association-overview-actions__end">
-        <v-tooltip :text="syncLabel" location="top">
-          <template #activator="{ props: tooltipProps }">
-            <v-icon-btn
-              v-bind="tooltipProps"
-              :icon="mdiCloudSync"
-              variant="text"
-              :aria-label="syncLabel"
-              @click="emit('sync')"
-            />
-          </template>
-        </v-tooltip>
-
         <v-tooltip :text="filterLabel" location="top">
           <template #activator="{ props: tooltipProps }">
             <v-icon-btn
@@ -114,14 +128,14 @@ const syncLabel = computed(() => t(translationKeys.toolbar.sync))
   gap: 0.25rem;
 }
 
-.association-overview-actions__add {
+.association-overview-actions__action {
   min-width: 0;
   padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
 }
 
-.association-overview-actions__add-content {
+.association-overview-actions__action-content {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
