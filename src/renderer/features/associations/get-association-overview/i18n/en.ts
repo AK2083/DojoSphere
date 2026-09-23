@@ -2,7 +2,8 @@ export default {
   toolbar: {
     ariaLabel: 'Association list toolbar',
     placeholderAction: 'Filter (not available yet)',
-    sync: 'Update'
+    sync: 'Update',
+    syncOffline: 'Update is currently unavailable while you are offline.'
   },
   list: {
     ariaLabel: 'Associations list',

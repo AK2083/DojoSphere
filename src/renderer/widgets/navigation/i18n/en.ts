@@ -6,6 +6,7 @@ export default {
     signIn: 'SignIn',
     ariaSignIn: 'SignIn',
     signUp: 'Register',
+    signUpOffline: 'Registration is currently unavailable while you are offline.',
     ariaSignUp: 'Register',
     logout: 'Logout',
     ariaLogout: 'Logout',

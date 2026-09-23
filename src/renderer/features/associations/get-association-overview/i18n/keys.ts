@@ -2,7 +2,8 @@ export default {
   toolbar: {
     ariaLabel: 'associations.getAssociationOverview.toolbar.ariaLabel',
     placeholderAction: 'associations.getAssociationOverview.toolbar.placeholderAction',
-    sync: 'associations.getAssociationOverview.toolbar.sync'
+    sync: 'associations.getAssociationOverview.toolbar.sync',
+    syncOffline: 'associations.getAssociationOverview.toolbar.syncOffline'
   },
   list: {
     ariaLabel: 'associations.getAssociationOverview.list.ariaLabel',

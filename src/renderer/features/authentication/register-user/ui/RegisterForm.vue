@@ -13,7 +13,6 @@ const {
   showPassword,
   translatedEmailRules,
   translatedPasswordRules,
-  registerUnavailableHintCode,
   isRegistrationDisabled,
   isSubmitDisabled,
   errorCode,
@@ -74,22 +73,26 @@ const {
 
       <template #actions>
         <div class="d-flex flex-column w-100">
-          <v-btn
-            type="submit"
-            block
-            variant="flat"
-            color="success"
-            :loading="loading"
-            :disabled="isSubmitDisabled"
+          <v-tooltip
+            :text="t(translationKeys.unavailable.offline)"
+            :disabled="!isRegistrationDisabled"
+            location="top"
           >
-            {{ t(translationKeys.submit) }}
-          </v-btn>
-          <v-alert
-            v-if="registerUnavailableHintCode"
-            :text="t(registerUnavailableHintCode)"
-            type="warning"
-            class="mt-2"
-          ></v-alert>
+            <template #activator="{ props: tooltipProps }">
+              <div v-bind="tooltipProps" class="w-100">
+                <v-btn
+                  type="submit"
+                  block
+                  variant="flat"
+                  color="success"
+                  :loading="loading"
+                  :disabled="isSubmitDisabled"
+                >
+                  {{ t(translationKeys.submit) }}
+                </v-btn>
+              </div>
+            </template>
+          </v-tooltip>
           <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
 
           <div class="d-flex align-center justify-center w-100 mt-2">

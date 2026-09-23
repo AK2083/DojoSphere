@@ -2,7 +2,8 @@ export default {
   toolbar: {
     ariaLabel: 'Vereinsliste-Werkzeugleiste',
     placeholderAction: 'Filter (noch nicht verfügbar)',
-    sync: 'Aktualisieren'
+    sync: 'Aktualisieren',
+    syncOffline: 'Aktualisieren ist derzeit nicht verfügbar, da du offline bist.'
   },
   list: {
     ariaLabel: 'Vereinsliste',

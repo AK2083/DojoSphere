@@ -5,8 +5,17 @@ import { hasUserPermission } from '@features/authentication/service/has-user-per
 import { isLocalAuthSession } from '@features/authentication/service/is-local-auth-session'
 import { getIsOtpActiveFromStorage } from '@features/authentication/service/register-storage'
 import { useNetworkStatusStore } from '@features/status'
+import AccountPage from '@pages/account'
+import AssociationFormPage from '@pages/association-form'
+import AssociationsPage from '@pages/associations'
+import DashboardPage from '@pages/dashboard'
+import EmailVerificationPage from '@pages/email-verification'
 import LoginPage from '@pages/login'
+import ParticipantFormPage from '@pages/participant-form'
+import ParticipantImportPage from '@pages/participant-import'
+import ParticipantsPage from '@pages/participants'
 import PasswordResetPage from '@pages/password-reset'
+import RegisterPage from '@pages/register'
 import SettingsPage from '@pages/settings'
 import { ASSOCIATIONS_OVERVIEW_PERMISSION } from '@shared/constants/associations-overview-permission'
 import { PARTICIPANTS_OVERVIEW_PERMISSION } from '@shared/constants/participants-overview-permission'
@@ -17,7 +26,7 @@ const routes = [
     path: '/',
     name: 'dashboard',
     meta: { requiresAuth: true },
-    component: () => import('@pages/dashboard')
+    component: DashboardPage
   },
   {
     path: '/dashboard',
@@ -27,7 +36,7 @@ const routes = [
     path: '/emailverification',
     name: 'emailverification',
     meta: { guestOnly: true },
-    component: () => import('@pages/email-verification')
+    component: EmailVerificationPage
   },
   {
     path: '/login',
@@ -39,7 +48,7 @@ const routes = [
     path: '/register',
     name: 'register',
     meta: { guestOnly: true },
-    component: () => import('@pages/register')
+    component: RegisterPage
   },
   {
     path: '/passwordreset',
@@ -51,7 +60,7 @@ const routes = [
     path: '/account',
     name: 'account',
     meta: { requiresAuth: true },
-    component: () => import('@pages/account')
+    component: AccountPage
   },
   {
     path: '/settings',
@@ -68,7 +77,7 @@ const routes = [
         action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.read
       }
     },
-    component: () => import('@pages/participants')
+    component: ParticipantsPage
   },
   {
     path: '/participants/import',
@@ -80,7 +89,7 @@ const routes = [
         action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.create
       }
     },
-    component: () => import('@pages/participant-import')
+    component: ParticipantImportPage
   },
   {
     path: '/participants/new',
@@ -92,7 +101,7 @@ const routes = [
         action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.create
       }
     },
-    component: () => import('@pages/participant-form')
+    component: ParticipantFormPage
   },
   {
     path: '/participants/:id/edit',
@@ -104,7 +113,7 @@ const routes = [
         action: PARTICIPANTS_OVERVIEW_PERMISSION.actions.update
       }
     },
-    component: () => import('@pages/participant-form')
+    component: ParticipantFormPage
   },
   {
     path: '/associations',
@@ -116,7 +125,7 @@ const routes = [
         action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.read
       }
     },
-    component: () => import('@pages/associations')
+    component: AssociationsPage
   },
   {
     path: '/associations/new',
@@ -128,7 +137,7 @@ const routes = [
         action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.create
       }
     },
-    component: () => import('@pages/association-form')
+    component: AssociationFormPage
   },
   {
     path: '/associations/:id/edit',
@@ -140,7 +149,7 @@ const routes = [
         action: ASSOCIATIONS_OVERVIEW_PERMISSION.actions.update
       }
     },
-    component: () => import('@pages/association-form')
+    component: AssociationFormPage
   }
 ]
 
