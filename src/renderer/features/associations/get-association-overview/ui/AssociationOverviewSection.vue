@@ -15,6 +15,7 @@ const { t } = useTranslation()
 const { smAndDown } = useDisplay()
 const {
   loading,
+  loadingEpoch,
   loadErrorMessage,
   overviewItems,
   fieldHeaders,
@@ -101,10 +102,15 @@ async function handleSyncConfirm(): Promise<void> {
       {{ toastMessage }}
     </v-snackbar>
 
-    <div v-if="loading" class="association-overview-section__grid" :class="gridClassNames">
+    <div
+      v-if="loading"
+      :key="`association-skeletons-${loadingEpoch}`"
+      class="association-overview-section__grid"
+      :class="gridClassNames"
+    >
       <AssociationEntryPlaceholder
         v-for="index in placeholderCount"
-        :key="`association-placeholder-${index}`"
+        :key="`association-placeholder-${loadingEpoch}-${index}`"
       />
     </div>
 

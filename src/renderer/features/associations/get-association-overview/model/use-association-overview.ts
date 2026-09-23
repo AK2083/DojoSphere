@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { logError, useTranslation } from '@shared/lib'
 
@@ -37,6 +37,7 @@ export function useAssociationOverview() {
   const loading = ref(true)
   const loadErrorMessage = ref('')
   const associations = ref<AssociationOverviewRow[]>([])
+  const loadingEpoch = ref(0)
 
   const fieldHeaders = computed<AssociationFieldHeader[]>(() => [
     { title: t(translationKeys.list.columns.city), key: 'city' },
@@ -66,8 +67,14 @@ export function useAssociationOverview() {
   )
 
   async function refresh(): Promise<void> {
+    loadingEpoch.value += 1
     loading.value = true
+    associations.value = []
     loadErrorMessage.value = ''
+
+    // Flush skeleton placeholders to the DOM before awaiting IPC so fast
+    // revisits still show the loading state for at least one frame.
+    await nextTick()
 
     try {
       associations.value = await loadAssociations()
@@ -106,6 +113,7 @@ export function useAssociationOverview() {
 
   return {
     loading,
+    loadingEpoch,
     loadErrorMessage,
     overviewItems,
     fieldHeaders,
