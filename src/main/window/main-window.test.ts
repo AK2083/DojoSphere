@@ -190,4 +190,55 @@ describe('createWindow', () => {
 
     expect(preventDefault).not.toHaveBeenCalled()
   })
+
+  it('opens http(s) and mailto urls externally and denies in-app navigation', async () => {
+    vi.doMock('./load-renderer', () => ({
+      loadRenderer: vi.fn().mockResolvedValue(undefined)
+    }))
+    const openExternalUrlMock = vi.fn().mockReturnValue(true)
+    vi.doMock('./open-external-url', () => ({
+      openExternalUrl: openExternalUrlMock
+    }))
+
+    const { createWindow } = await import('./main-window')
+    createWindow(DEV_SERVER_URL)
+
+    const win = getBrowserWindowMock()
+    expect(win.webContents.setWindowOpenHandler).toHaveBeenCalledOnce()
+
+    const openHandler = win.webContents.setWindowOpenHandler.mock.calls[0]?.[0] as (details: {
+      url: string
+    }) => { action: string }
+
+    expect(openHandler({ url: 'https://example.com' })).toEqual({ action: 'deny' })
+    expect(openExternalUrlMock).toHaveBeenCalledWith('https://example.com')
+
+    openExternalUrlMock.mockClear()
+    expect(openHandler({ url: 'mailto:info@example.com' })).toEqual({ action: 'deny' })
+    expect(openExternalUrlMock).toHaveBeenCalledWith('mailto:info@example.com')
+
+    openExternalUrlMock.mockClear()
+    openExternalUrlMock.mockReturnValue(false)
+    expect(openHandler({ url: 'file:///etc/passwd' })).toEqual({ action: 'deny' })
+    expect(openExternalUrlMock).toHaveBeenCalledWith('file:///etc/passwd')
+
+    const willNavigateHandler = win.webContents.on.mock.calls.find(
+      ([event]) => event === 'will-navigate'
+    )?.[1] as ((event: { preventDefault: () => void }, url: string) => void) | undefined
+
+    expect(willNavigateHandler).toEqual(expect.any(Function))
+
+    const preventDefault = vi.fn()
+    openExternalUrlMock.mockClear()
+    openExternalUrlMock.mockReturnValue(true)
+    willNavigateHandler?.({ preventDefault }, 'mailto:board@example.com')
+    expect(preventDefault).toHaveBeenCalled()
+    expect(openExternalUrlMock).toHaveBeenCalledWith('mailto:board@example.com')
+
+    preventDefault.mockClear()
+    openExternalUrlMock.mockClear()
+    willNavigateHandler?.({ preventDefault }, `${DEV_SERVER_URL}/#/associations`)
+    expect(preventDefault).not.toHaveBeenCalled()
+    expect(openExternalUrlMock).not.toHaveBeenCalled()
+  })
 })

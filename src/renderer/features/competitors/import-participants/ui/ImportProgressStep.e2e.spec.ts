@@ -9,7 +9,9 @@ async function uploadStubWorkbookAndOpenMapping(page: Parameters<typeof setEngli
   })
 
   // File select auto-advances to mapping after preview; wait so "Next" starts the import.
-  await expect(page.locator('.import-step-section').getByText('Map columns', { exact: true })).toBeVisible({
+  await expect(
+    page.locator('.import-step-section').getByText('Map columns', { exact: true })
+  ).toBeVisible({
     timeout: 10_000
   })
   await expect(page.getByRole('button', { name: 'Next step' })).toBeEnabled()

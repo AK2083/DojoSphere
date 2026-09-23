@@ -14,7 +14,9 @@ test.describe('ImportResultEntry', { tag: '@regression' }, () => {
     })
 
     // Wait for auto-advance to mapping, then start the import step.
-    await expect(page.locator('.import-step-section').getByText('Map columns', { exact: true })).toBeVisible({
+    await expect(
+      page.locator('.import-step-section').getByText('Map columns', { exact: true })
+    ).toBeVisible({
       timeout: 10_000
     })
     await expect(page.getByRole('button', { name: 'Next step' })).toBeEnabled()

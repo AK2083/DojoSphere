@@ -3,6 +3,7 @@ import path from 'node:path'
 import { app, BrowserWindow, Menu, shell } from 'electron'
 
 import { loadRenderer } from './load-renderer'
+import { openExternalUrl } from './open-external-url'
 
 function isHttpUrl(url: string): boolean {
   try {
@@ -40,6 +41,21 @@ export function createWindow(devServerUrl: string) {
   })
 
   void loadRenderer(win, devServerUrl)
+
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    openExternalUrl(url)
+    return { action: 'deny' }
+  })
+
+  // mailto: without target=_blank navigates the webview; hand off to the OS mail client.
+  win.webContents.on('will-navigate', (event, url) => {
+    if (!/^mailto:/i.test(url)) {
+      return
+    }
+
+    event.preventDefault()
+    openExternalUrl(url)
+  })
 
   win.webContents.on('before-input-event', (event, input) => {
     if (
