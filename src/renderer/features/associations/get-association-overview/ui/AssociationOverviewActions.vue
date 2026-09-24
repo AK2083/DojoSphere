@@ -51,13 +51,11 @@ const updateTooltip = computed(() =>
               v-bind="tooltipProps"
               variant="text"
               rounded
+              :prepend-icon="mdiPlus"
               class="association-overview-actions__action"
               @click="emit('add')"
             >
-              <span class="association-overview-actions__action-content">
-                <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
-                <span>{{ addLabel }}</span>
-              </span>
+              {{ addLabel }}
             </v-btn>
           </template>
         </v-tooltip>
@@ -77,14 +75,12 @@ const updateTooltip = computed(() =>
                 v-else
                 variant="text"
                 rounded
+                :prepend-icon="mdiCloudDownload"
                 class="association-overview-actions__action"
                 :disabled="isUpdateDisabled"
                 @click="emit('sync')"
               >
-                <span class="association-overview-actions__action-content">
-                  <v-icon :icon="mdiCloudDownload" size="default" aria-hidden="true" />
-                  <span>{{ updateLabel }}</span>
-                </span>
+                {{ updateLabel }}
               </v-btn>
             </span>
           </template>
@@ -145,12 +141,6 @@ const updateTooltip = computed(() =>
   padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
-}
-
-.association-overview-actions__action-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .association-overview-actions__placeholder-action {
