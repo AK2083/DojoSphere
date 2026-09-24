@@ -24,7 +24,7 @@ test.describe('AssociationForm', { tag: '@regression' }, () => {
           'Please fill in the association details. Fields marked with * are required; you can still edit the data later.'
         )
       ).toBeVisible()
-      await expect(form.getByLabel('Name')).toBeVisible()
+      await expect(form.getByRole('textbox', { name: 'Name', exact: true })).toBeVisible()
       await expect(form.getByLabel('Registry number')).toBeVisible()
       await expect(form.getByLabel('Email address')).toBeVisible()
       await expect(page.getByRole('button', { name: 'Save' })).toContainText('Save')
