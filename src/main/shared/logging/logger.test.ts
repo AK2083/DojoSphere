@@ -6,6 +6,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createLogger, initLogger, resetLogger } from './logger'
 
+async function waitForLogContents(logFile: string, expected: string): Promise<string> {
+  return vi.waitFor(
+    async () => {
+      // eslint-disable-next-line security/detect-non-literal-fs-filename -- vitest temp directory
+      const contents = await readFile(logFile, 'utf8')
+      expect(contents).toContain(expected)
+      return contents
+    },
+    { timeout: 2000, interval: 20 }
+  )
+}
+
 describe('main logger', () => {
   let tempDir = ''
 
@@ -26,16 +38,12 @@ describe('main logger', () => {
 
     logger.info('bootstrap complete', { step: 'ipc' })
 
-    await new Promise((resolve) => setTimeout(resolve, 10))
-
     expect(infoSpy).toHaveBeenCalledWith('[dojosphere:test]', 'bootstrap complete', {
       step: 'ipc'
     })
 
     const logFile = join(tempDir, 'logs', 'app.log')
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- vitest temp directory
-    const contents = await readFile(logFile, 'utf8')
-    expect(contents).toContain('[info] [test] bootstrap complete step=ipc')
+    await waitForLogContents(logFile, '[info] [test] bootstrap complete step=ipc')
   })
 
   it('writes debug, warning, and error logs through the matching console methods', () => {
@@ -59,12 +67,8 @@ describe('main logger', () => {
     const logger = createLogger('context')
     logger.info('message only', { ignored: undefined })
 
-    await new Promise((resolve) => setTimeout(resolve, 10))
-
     const logFile = join(tempDir, 'logs', 'app.log')
-    // eslint-disable-next-line security/detect-non-literal-fs-filename -- vitest temp directory
-    const contents = await readFile(logFile, 'utf8')
-    expect(contents).toContain('[info] [context] message only')
+    const contents = await waitForLogContents(logFile, '[info] [context] message only')
     expect(contents).not.toContain('ignored=')
   })
 
@@ -75,7 +79,7 @@ describe('main logger', () => {
 
     logger.info('console only')
 
-    await new Promise((resolve) => setTimeout(resolve, 10))
+    await new Promise((resolve) => setTimeout(resolve, 50))
 
     expect(infoSpy).toHaveBeenCalledOnce()
   })
