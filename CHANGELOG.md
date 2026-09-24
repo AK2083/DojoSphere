@@ -1,3 +1,9 @@
+# [1.28.0](https://github.com/AK2083/DojoSphere/compare/v1.27.1...v1.28.0) (2026-09-24)
+
+### Features
+
+- add association form and reset branch ([#213](https://github.com/AK2083/DojoSphere/issues/213)) ([aace02c](https://github.com/AK2083/DojoSphere/commit/aace02c3e8f8f14bfa5cffcda0cc5559d152be01))
+
 ## [1.27.1](https://github.com/AK2083/DojoSphere/compare/v1.27.0...v1.27.1) (2026-09-18)
 
 ### Bug Fixes
