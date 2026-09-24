@@ -344,15 +344,15 @@ function detailsPanelId(): string {
   overflow-wrap: anywhere;
 }
 
-  .association-entry__link {
-    color: rgb(var(--v-theme-primary));
-    text-decoration: underline;
-    text-underline-offset: 0.125rem;
-  }
+.association-entry__link {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+}
 
-  .association-entry__link:hover {
-    text-decoration-thickness: 0.125rem;
-  }
+.association-entry__link:hover {
+  text-decoration-thickness: 0.125rem;
+}
 
 .association-entry__details-toggle {
   border-top: thin solid rgba(var(--v-border-color), var(--v-border-opacity));

@@ -44,9 +44,6 @@ describe('ensureLocalSessionFromOsUsername', () => {
       importParticipantsPreview: vi.fn(),
       importParticipantsExecute: vi.fn(),
       onImportParticipantsProgress: vi.fn(),
-      getSyncTimestamps: vi.fn(),
-      applySync: vi.fn(),
-      onSyncProgress: vi.fn(),
       hasPermission: vi.fn(),
       getOsUsername: vi.fn()
     }
