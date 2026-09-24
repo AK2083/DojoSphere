@@ -13,14 +13,24 @@ test.describe('ImportResultEntry', { tag: '@regression' }, () => {
       buffer: globalThis.Buffer.from('stub')
     })
 
+    // Wait for auto-advance to mapping, then start the import step.
+    await expect(
+      page.locator('.import-step-section').getByText('Map columns', { exact: true })
+    ).toBeVisible({
+      timeout: 10_000
+    })
+    await expect(page.getByRole('button', { name: 'Next step' })).toBeEnabled()
     await page.getByRole('button', { name: 'Next step' }).click()
+    await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible({
+      timeout: 10_000
+    })
   })
 
   test(
     'renders imported participant with name, association and status icon',
     { tag: '@smoke' },
     async ({ page }) => {
-      await expect(page.getByText('Yuki Tanaka')).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByText('Yuki Tanaka')).toBeVisible()
       await expect(page.getByText('Dojo Nord').first()).toBeVisible()
       await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
     }

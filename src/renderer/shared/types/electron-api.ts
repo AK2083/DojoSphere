@@ -278,6 +278,8 @@ export interface AssociationSyncTimestamps {
   regionalFederations: string | null
   districts: string | null
   associations: string | null
+  /** Non-seed association IDs currently stored locally (used to re-fetch deleted rows). */
+  localAssociationIds: string[]
 }
 
 /** A single country row as received from Supabase. */
@@ -376,6 +378,8 @@ export interface AssociationSyncProgressEvent {
   processed: number
   total: number
   currentName: string
+  id: string
+  success: boolean
 }
 
 /** Input for recording an audit event via IPC. */

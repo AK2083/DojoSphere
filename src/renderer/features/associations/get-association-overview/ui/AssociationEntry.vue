@@ -18,6 +18,7 @@ import {
 } from '../lib/association-avatar'
 import { associationLabel } from '../lib/association-label'
 import { resolveAssociationDetailFields } from '../lib/resolve-association-detail-fields'
+import { truncateAssociationTitle } from '../lib/truncate-association-title'
 import type {
   AssociationFieldHeader,
   AssociationOverviewItem
@@ -39,8 +40,12 @@ const detailsExpanded = ref(false)
 const avatarColor = computed(() => associationAvatarColor(props.association.name))
 const headerBackground = computed(() => associationHeaderBackground(props.association.name))
 const displayLabel = computed(() => associationLabel(props.association))
+const truncatedTitle = computed(() => truncateAssociationTitle(props.association.name))
+const isTitleTruncated = computed(() => truncatedTitle.value !== props.association.name)
 const emptyValue = computed(() => t(translationKeys.entry.emptyValue))
 const detailFields = computed(() => resolveAssociationDetailFields(props.association))
+const websiteUrl = computed(() => websiteHref(props.association.website))
+const emailUrl = computed(() => emailHref(detailFields.value.email))
 
 const statusIcon = computed(() => (props.association.isActive ? mdiCheckCircle : mdiCloseCircle))
 const statusColor = computed(() => (props.association.isActive ? 'success' : 'error'))
@@ -53,6 +58,26 @@ function displayOrEmpty(value: string | null | undefined): string {
   const trimmed = value?.trim() ?? ''
 
   return trimmed.length > 0 ? trimmed : emptyValue.value
+}
+
+function websiteHref(value: string | null | undefined): string | null {
+  const trimmed = value?.trim() ?? ''
+
+  if (!trimmed) {
+    return null
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  return `https://${trimmed}`
+}
+
+function emailHref(value: string | null | undefined): string | null {
+  const trimmed = value?.trim() ?? ''
+
+  return trimmed ? `mailto:${trimmed}` : null
 }
 
 function hierarchyLabel(name: string, shortName: string | null): string {
@@ -76,8 +101,15 @@ function detailsPanelId(): string {
           <span aria-hidden="true">{{ associationInitials(association.name) }}</span>
         </v-avatar>
         <div class="association-entry__name-block">
-          <p class="association-entry__title">
-            {{ association.name }}
+          <v-tooltip v-if="isTitleTruncated" :text="association.name" location="bottom">
+            <template #activator="{ props: tooltipProps }">
+              <p v-bind="tooltipProps" class="association-entry__title">
+                {{ truncatedTitle }}
+              </p>
+            </template>
+          </v-tooltip>
+          <p v-else class="association-entry__title">
+            {{ truncatedTitle }}
           </p>
           <p v-if="association.shortName" class="association-entry__short-name">
             {{ association.shortName }}
@@ -129,21 +161,6 @@ function detailsPanelId(): string {
     <dl class="association-entry__summary">
       <dt>{{ headerTitle('city') }}</dt>
       <dd>{{ displayOrEmpty(association.city) }}</dd>
-      <dt>{{ headerTitle('website') }}</dt>
-      <dd>
-        <a
-          v-if="association.website?.trim()"
-          class="association-entry__website-link"
-          :href="association.website"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {{ association.website }}
-        </a>
-        <template v-else>{{ emptyValue }}</template>
-      </dd>
-      <dt>{{ headerTitle('status') }}</dt>
-      <dd>{{ association.statusLabel }}</dd>
       <dt>{{ headerTitle('associationNumber') }}</dt>
       <dd>{{ displayOrEmpty(detailFields.associationNumber) }}</dd>
     </dl>
@@ -193,8 +210,33 @@ function detailsPanelId(): string {
           <dt>{{ headerTitle('billingAddress') }}</dt>
           <dd>{{ displayOrEmpty(detailFields.billingAddress) }}</dd>
 
+          <dt>{{ headerTitle('website') }}</dt>
+          <dd>
+            <a
+              v-if="websiteUrl"
+              class="association-entry__link"
+              :href="websiteUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ displayOrEmpty(association.website) }}
+            </a>
+            <template v-else>{{ displayOrEmpty(association.website) }}</template>
+          </dd>
+
           <dt>{{ headerTitle('email') }}</dt>
-          <dd>{{ displayOrEmpty(detailFields.email) }}</dd>
+          <dd>
+            <a
+              v-if="emailUrl"
+              class="association-entry__link"
+              :href="emailUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ displayOrEmpty(detailFields.email) }}
+            </a>
+            <template v-else>{{ displayOrEmpty(detailFields.email) }}</template>
+          </dd>
           <dt>{{ headerTitle('phone') }}</dt>
           <dd>{{ displayOrEmpty(detailFields.phone) }}</dd>
         </dl>
@@ -302,14 +344,14 @@ function detailsPanelId(): string {
   overflow-wrap: anywhere;
 }
 
-.association-entry__website-link {
+.association-entry__link {
   color: rgb(var(--v-theme-primary));
   text-decoration: underline;
-  text-underline-offset: 0.12em;
+  text-underline-offset: 0.125rem;
 }
 
-.association-entry__website-link:hover {
-  text-decoration-thickness: 2px;
+.association-entry__link:hover {
+  text-decoration-thickness: 0.125rem;
 }
 
 .association-entry__details-toggle {

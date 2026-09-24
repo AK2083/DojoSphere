@@ -1,21 +1,32 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { getLocalSessionToken } from '@features/authentication/service/local-session-storage'
 import { logError } from '@shared/lib'
 
-import { fetchSyncPayloadFromSupabase, NotSignedInError } from '../service/sync-from-supabase'
+import { fetchSyncPayloadFromSupabase } from '../service/sync-from-supabase'
 
-/**
- *
- */
+/** Dialog phases for the association cloud import flow. */
 export type SyncPhase = 'legal' | 'syncing' | 'done'
 
-/**
- *
- */
+/** Progress counters while association rows are applied locally. */
 export type SyncProgress = {
   processed: number
   total: number
   currentName: string
+}
+
+/** Per-association import row shown in the sync dialog result list. */
+export type SyncResultItem = {
+  id: string
+  name: string
+  /** `null` while the row is still pending. */
+  success: boolean | null
+}
+
+/** Toast shown after an import attempt finishes. */
+export type SyncToast = {
+  open: boolean
+  color: 'success' | 'warning'
+  count: number
 }
 
 function requireApi() {
@@ -35,15 +46,14 @@ function requireApi() {
 }
 
 /**
- * Composable that owns all state and orchestration for the cloud sync dialog.
+ * Composable that owns state and orchestration for the cloud import dialog.
  *
  * Phases:
- *   legal   → dialog shows legal notice; user can cancel or confirm
- *   syncing → dialog shows circular progress + X/Y counter + current name
- *   done    → dialog shows completion or "nothing new" message
+ *   legal   → legal / GDPR notice; user can cancel or confirm
+ *   syncing → progress + live result list with check / cross icons
+ *   done    → final result list; user closes the dialog
  *
- * Emitting is handled by the caller (AssociationOverviewSection) which listens
- * for the `done` phase to trigger a list refresh.
+ * A toast reports how many associations were imported (warning when 0).
  *
  * @returns Reactive sync state and action handlers for the sync dialog.
  */
@@ -51,61 +61,79 @@ export function useSyncAssociations() {
   const isOpen = ref(false)
   const phase = ref<SyncPhase>('legal')
   const progress = ref<SyncProgress>({ processed: 0, total: 0, currentName: '' })
+  const results = ref<SyncResultItem[]>([])
   const errorMessage = ref<string | null>(null)
-  const isNotSignedIn = ref(false)
-  const syncedCount = ref(0)
+  const toast = ref<SyncToast>({ open: false, color: 'success', count: 0 })
+
+  const importedCount = computed(() => results.value.filter((item) => item.success === true).length)
 
   function open() {
     isOpen.value = true
     phase.value = 'legal'
     progress.value = { processed: 0, total: 0, currentName: '' }
+    results.value = []
     errorMessage.value = null
-    isNotSignedIn.value = false
-    syncedCount.value = 0
   }
 
   function close() {
+    if (phase.value === 'syncing') {
+      return
+    }
+
     isOpen.value = false
   }
 
+  function showToast(count: number) {
+    toast.value = {
+      open: true,
+      color: count === 0 ? 'warning' : 'success',
+      count
+    }
+  }
+
+  function dismissToast() {
+    toast.value = { ...toast.value, open: false }
+  }
+
+  function markRemainingFailed() {
+    results.value = results.value.map((item) =>
+      item.success === null ? { ...item, success: false } : item
+    )
+  }
+
   /**
-   * Called when the user clicks "Confirm" in the legal notice.
+   * Confirms the legal notice and imports association reference data.
    *
-   * Flow:
-   * 1. Switch to 'syncing' phase
-   * 2. Get local synced_at timestamps from main process via IPC
-   * 3. Fetch changed rows from Supabase (filtered by updated_at > synced_at)
-   * 4. Register progress listener
-   * 5. Send payload to main process via IPC (applySyncBatch)
-   * 6. Switch to 'done' phase on completion
+   * @returns `true` when import finished (including empty payload / partial row failures).
    */
-  async function confirm() {
+  async function confirm(): Promise<boolean> {
     phase.value = 'syncing'
     progress.value = { processed: 0, total: 0, currentName: '' }
+    results.value = []
     errorMessage.value = null
-    isNotSignedIn.value = false
 
     let unsubscribeProgress: (() => void) | null = null
 
     try {
       const { api, token } = requireApi()
-
-      // 1. Get the latest synced_at per table
       const timestamps = await api.getSyncTimestamps(token)
-
-      // 2. Fetch only changed records from Supabase
       const payload = await fetchSyncPayloadFromSupabase(timestamps)
-
       const total = payload.associations.length
 
+      results.value = payload.associations.map((assoc) => ({
+        id: assoc.id,
+        name: assoc.name,
+        success: null
+      }))
+
       if (total === 0) {
-        // Nothing to sync
-        syncedCount.value = 0
-        phase.value = 'done'
-        return
+        progress.value = { processed: 0, total: 0, currentName: '' }
+        showToast(0)
+        isOpen.value = false
+        phase.value = 'legal'
+        return true
       }
 
-      // 3. Subscribe to per-association progress events from main
       progress.value = { processed: 0, total, currentName: '' }
 
       unsubscribeProgress = api.onSyncProgress((event) => {
@@ -114,22 +142,31 @@ export function useSyncAssociations() {
           total: event.total,
           currentName: event.currentName
         }
+
+        results.value = results.value.map((item) =>
+          item.id === event.id ? { ...item, success: event.success } : item
+        )
       })
 
-      // 4. Apply sync in main process (blocks until complete)
       await api.applySync(token, payload)
 
-      syncedCount.value = total
-      phase.value = 'done'
-    } catch (error) {
-      if (error instanceof NotSignedInError) {
-        isNotSignedIn.value = true
-      } else {
-        logError(error as Error, 'associations', 'sync-from-cloud')
-        errorMessage.value = String((error as Error).message ?? error)
+      progress.value = {
+        processed: total,
+        total,
+        currentName: progress.value.currentName
       }
-      // Reset to legal phase so user can read the error and retry
-      phase.value = 'legal'
+      showToast(importedCount.value)
+      phase.value = 'done'
+      return true
+    } catch (error) {
+      logError(error as Error, 'associations', 'sync-from-cloud')
+      markRemainingFailed()
+      errorMessage.value = String((error as Error).message ?? error)
+      phase.value = results.value.length > 0 ? 'done' : 'legal'
+      if (results.value.length > 0) {
+        showToast(importedCount.value)
+      }
+      return false
     } finally {
       if (unsubscribeProgress) {
         unsubscribeProgress()
@@ -141,11 +178,13 @@ export function useSyncAssociations() {
     isOpen,
     phase,
     progress,
+    results,
+    importedCount,
     errorMessage,
-    isNotSignedIn,
-    syncedCount,
+    toast,
     open,
     close,
-    confirm
+    confirm,
+    dismissToast
   }
 }

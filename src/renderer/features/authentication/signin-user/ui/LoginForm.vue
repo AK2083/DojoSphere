@@ -13,7 +13,6 @@ const {
   showPassword,
   translatedEmailRules,
   translatedPasswordRules,
-  loginUnavailableHintCode,
   isLoginDisabled,
   isSubmitDisabled,
   errorCode,
@@ -79,24 +78,28 @@ const {
 
       <template #actions>
         <div class="d-flex flex-column w-100">
-          <v-btn
-            type="submit"
-            block
-            variant="flat"
-            color="success"
-            :loading="loading"
-            :disabled="isSubmitDisabled"
-            :aria-label="t(translationKeys.submit)"
+          <v-tooltip
+            :text="t(translationKeys.unavailable.offline)"
+            :disabled="!isLoginDisabled"
+            location="top"
           >
-            {{ t(translationKeys.submit) }}
-          </v-btn>
+            <template #activator="{ props: tooltipProps }">
+              <div v-bind="tooltipProps" class="w-100">
+                <v-btn
+                  type="submit"
+                  block
+                  variant="flat"
+                  color="success"
+                  :loading="loading"
+                  :disabled="isSubmitDisabled"
+                  :aria-label="t(translationKeys.submit)"
+                >
+                  {{ t(translationKeys.submit) }}
+                </v-btn>
+              </div>
+            </template>
+          </v-tooltip>
 
-          <v-alert
-            v-if="loginUnavailableHintCode"
-            :text="t(loginUnavailableHintCode)"
-            type="warning"
-            class="mt-2"
-          ></v-alert>
           <v-alert v-if="errorCode" :text="t(errorCode)" type="error" class="mt-2"></v-alert>
 
           <v-btn
@@ -115,15 +118,26 @@ const {
             <span class="text-body-2 text-medium-emphasis">
               {{ t(translationKeys.noAccount) }}
             </span>
-            <v-btn
-              type="button"
-              variant="plain"
-              :to="{ name: 'register' }"
-              :aria-label="t(translationKeys.register)"
-              class="text-none"
+            <v-tooltip
+              :text="t(translationKeys.unavailable.offline)"
+              :disabled="!isLoginDisabled"
+              location="top"
             >
-              {{ t(translationKeys.register) }}
-            </v-btn>
+              <template #activator="{ props: tooltipProps }">
+                <span v-bind="tooltipProps">
+                  <v-btn
+                    type="button"
+                    variant="plain"
+                    :to="isLoginDisabled ? undefined : { name: 'register' }"
+                    :disabled="isLoginDisabled"
+                    :aria-label="t(translationKeys.register)"
+                    class="text-none"
+                  >
+                    {{ t(translationKeys.register) }}
+                  </v-btn>
+                </span>
+              </template>
+            </v-tooltip>
           </div>
         </div>
       </template>

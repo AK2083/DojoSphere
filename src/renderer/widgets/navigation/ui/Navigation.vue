@@ -8,6 +8,7 @@ import {
   useParticipantsOverviewAccess,
   useSignOut
 } from '@features/authentication'
+import { useNetworkStatus } from '@features/status'
 import { mdiAccountGroup, mdiAccountPlus, mdiCog, mdiHomeGroup, mdiLogout } from '@mdi/js'
 import { useTranslation } from '@shared/lib'
 
@@ -18,6 +19,7 @@ const { smAndDown } = useDisplay()
 const { isCloudLoggedIn } = useAuthSession()
 const { canReadParticipantsOverview } = useParticipantsOverviewAccess()
 const { canReadAssociationsOverview } = useAssociationsOverviewAccess()
+const { isOnline } = useNetworkStatus()
 const {
   logout,
   loading: isSigningOut,
@@ -28,10 +30,14 @@ const { t } = useTranslation()
 
 const isMobile = computed(() => smAndDown.value)
 const showLogoutError = ref(false)
+const isRegisterDisabled = computed(() => !isOnline.value)
 
 const participantsLabel = computed(() => t(translationKeys.navigation.participants))
 const associationsLabel = computed(() => t(translationKeys.navigation.associations))
 const signUpLabel = computed(() => t(translationKeys.navigation.signUp))
+const signUpTooltip = computed(() =>
+  isRegisterDisabled.value ? t(translationKeys.navigation.signUpOffline) : signUpLabel.value
+)
 const logoutLabel = computed(() => t(translationKeys.navigation.logout))
 const settingsLabel = computed(() => t(translationKeys.navigation.settings))
 
@@ -46,6 +52,10 @@ function closeLogoutError() {
 }
 
 function navigateToRegister() {
+  if (isRegisterDisabled.value) {
+    return
+  }
+
   void router.push({ name: 'register' })
 }
 
@@ -89,17 +99,19 @@ watch(
     </template>
 
     <template #append>
-      <v-tooltip v-if="!isCloudLoggedIn" :text="signUpLabel" location="bottom">
+      <v-tooltip v-if="!isCloudLoggedIn" :text="signUpTooltip" location="bottom">
         <template #activator="{ props: tooltipProps }">
-          <v-btn
-            v-bind="tooltipProps"
-            icon
-            :aria-label="t(translationKeys.navigation.ariaSignUp)"
-            exact
-            @click="navigateToRegister"
-          >
-            <v-icon :icon="mdiAccountPlus" aria-hidden="true" />
-          </v-btn>
+          <span v-bind="tooltipProps">
+            <v-btn
+              icon
+              :aria-label="t(translationKeys.navigation.ariaSignUp)"
+              :disabled="isRegisterDisabled"
+              exact
+              @click="navigateToRegister"
+            >
+              <v-icon :icon="mdiAccountPlus" aria-hidden="true" />
+            </v-btn>
+          </span>
         </template>
       </v-tooltip>
 
@@ -162,6 +174,8 @@ watch(
             :prepend-icon="mdiAccountPlus"
             :title="signUpLabel"
             :aria-label="signUpLabel"
+            :disabled="isRegisterDisabled"
+            :subtitle="isRegisterDisabled ? signUpTooltip : undefined"
             exact
             @click="navigateToRegister"
           />

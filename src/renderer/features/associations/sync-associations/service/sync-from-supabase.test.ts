@@ -5,12 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // Hoisted mocks – must be declared before any import of the module under test
 // ---------------------------------------------------------------------------
 
-const getCurrentSessionMock = vi.hoisted(() => vi.fn())
 const supabaseFromMock = vi.hoisted(() => vi.fn())
-
-vi.mock('@shared/api', () => ({
-  getCurrentSession: getCurrentSessionMock
-}))
 
 vi.mock('@shared/api/supabase/client', () => ({
   supabase: { from: supabaseFromMock }
@@ -28,6 +23,7 @@ function makeQuery(result: QueryResult) {
     select: vi.fn().mockReturnThis(),
     gt: vi.fn().mockReturnThis(),
     in: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
     then(onFulfilled?: (value: QueryResult) => unknown, onRejected?: (reason: unknown) => unknown) {
       return Promise.resolve(result).then(onFulfilled, onRejected)
     }
@@ -46,7 +42,7 @@ function setupSupabaseMock(tableResults: Record<string, QueryResult>) {
 // Module under test (imported after mocks are set up)
 // ---------------------------------------------------------------------------
 
-import { fetchSyncPayloadFromSupabase, NotSignedInError } from './sync-from-supabase'
+import { fetchSyncPayloadFromSupabase } from './sync-from-supabase'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -57,7 +53,8 @@ const noTimestamps: AssociationSyncTimestamps = {
   federations: null,
   regionalFederations: null,
   districts: null,
-  associations: null
+  associations: null,
+  localAssociationIds: []
 }
 
 // ---------------------------------------------------------------------------
@@ -71,25 +68,7 @@ describe('fetchSyncPayloadFromSupabase', () => {
     setupSupabaseMock({})
   })
 
-  it('throws NotSignedInError when there is no active session', async () => {
-    getCurrentSessionMock.mockResolvedValue(null)
-
-    await expect(fetchSyncPayloadFromSupabase(noTimestamps)).rejects.toThrow(NotSignedInError)
-  })
-
-  it('throws NotSignedInError with the expected name and message', async () => {
-    getCurrentSessionMock.mockResolvedValue(null)
-
-    const error = await fetchSyncPayloadFromSupabase(noTimestamps).catch((e: unknown) => e)
-
-    expect(error).toBeInstanceOf(NotSignedInError)
-    expect((error as NotSignedInError).name).toBe('NotSignedInError')
-    expect((error as NotSignedInError).message).toBe('NOT_SIGNED_IN')
-  })
-
   it('returns empty arrays when all tables return no rows', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
     const payload = await fetchSyncPayloadFromSupabase(noTimestamps)
 
     expect(payload.countries).toEqual([])
@@ -100,7 +79,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps country rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       countries: {
         data: [
@@ -118,7 +96,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps federation rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       federations: {
         data: [
@@ -150,7 +127,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps regional_federation rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       regional_federations: {
         data: [
@@ -182,7 +158,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps district rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       districts: {
         data: [
@@ -214,7 +189,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps regional_federation rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       regional_federations: {
         data: [
@@ -246,7 +220,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps district rows to the expected camelCase shape', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       districts: {
         data: [
@@ -278,7 +251,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps association rows with empty children when none match', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -316,7 +288,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps association rows with populated children', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -406,7 +377,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps address rows with null optional fields', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -471,7 +441,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('filters children correctly when multiple associations are present', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -527,8 +496,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('applies a gt filter for federations when timestamps.federations is non-null', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
     const fedQuerySpy = { select: vi.fn().mockReturnThis(), gt: vi.fn().mockReturnThis() }
     fedQuerySpy.gt.mockReturnValue(makeQuery({ data: [], error: null }))
     fedQuerySpy.select.mockReturnValue(fedQuerySpy)
@@ -544,8 +511,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('applies a gt filter for regional_federations when timestamps.regionalFederations is non-null', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
     const rfQuerySpy = { select: vi.fn().mockReturnThis(), gt: vi.fn().mockReturnThis() }
     rfQuerySpy.gt.mockReturnValue(makeQuery({ data: [], error: null }))
     rfQuerySpy.select.mockReturnValue(rfQuerySpy)
@@ -564,8 +529,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('applies a gt filter for districts when timestamps.districts is non-null', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
     const districtQuerySpy = { select: vi.fn().mockReturnThis(), gt: vi.fn().mockReturnThis() }
     districtQuerySpy.gt.mockReturnValue(makeQuery({ data: [], error: null }))
     districtQuerySpy.select.mockReturnValue(districtQuerySpy)
@@ -580,28 +543,422 @@ describe('fetchSyncPayloadFromSupabase', () => {
     expect(districtQuerySpy.gt).toHaveBeenCalledWith('updated_at', '2026-04-15T00:00:00Z')
   })
 
-  it('applies a gt filter for associations when timestamps.associations is non-null', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
-    const assocQuerySpy = { select: vi.fn().mockReturnThis(), gt: vi.fn().mockReturnThis() }
-    assocQuerySpy.gt.mockReturnValue(makeQuery({ data: [], error: null }))
-    assocQuerySpy.select.mockReturnValue(assocQuerySpy)
+  it('applies a gt filter for associations when local ids exist and timestamps.associations is set', async () => {
+    const changedQuery = {
+      select: vi.fn().mockReturnThis(),
+      gt: vi.fn().mockReturnThis(),
+      neq: vi.fn().mockReturnThis(),
+      then(
+        onFulfilled?: (value: QueryResult) => unknown,
+        onRejected?: (reason: unknown) => unknown
+      ) {
+        return Promise.resolve({ data: [], error: null }).then(onFulfilled, onRejected)
+      }
+    }
+    const idsQuery = makeQuery({ data: [{ id: 'local-1' }], error: null })
+    let associationsCalls = 0
 
     supabaseFromMock.mockImplementation((table: string) => {
-      if (table === 'associations') return assocQuerySpy
+      if (table === 'associations') {
+        associationsCalls += 1
+        return associationsCalls === 1 ? changedQuery : idsQuery
+      }
       return makeQuery({ data: [], error: null })
     })
 
     await fetchSyncPayloadFromSupabase({
       ...noTimestamps,
-      associations: '2026-05-01T00:00:00Z'
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['local-1']
     })
 
-    expect(assocQuerySpy.gt).toHaveBeenCalledWith('updated_at', '2026-05-01T00:00:00Z')
+    expect(changedQuery.neq).toHaveBeenCalledWith('id', '00000000-0000-0000-0000-000000000000')
+    expect(changedQuery.gt).toHaveBeenCalledWith('updated_at', '2026-05-01T00:00:00Z')
+  })
+
+  it('merges changed and missing associations without duplicating ids', async () => {
+    const changedQuery = makeQuery({
+      data: [
+        {
+          id: 'changed-id',
+          district_id: 'd1',
+          name: 'Changed Club',
+          short_name: null,
+          city: null,
+          website: null,
+          is_active: true,
+          source: 'cloud',
+          updated_at: '2026-06-01T00:00:00Z'
+        }
+      ],
+      error: null
+    })
+    const idsQuery = makeQuery({
+      data: [{ id: 'changed-id' }, { id: 'missing-id' }],
+      error: null
+    })
+    const missingQuery = makeQuery({
+      data: [
+        {
+          id: 'missing-id',
+          district_id: 'd1',
+          name: 'Missing Club',
+          short_name: null,
+          city: null,
+          website: null,
+          is_active: true,
+          source: 'cloud',
+          updated_at: '2026-01-01T00:00:00Z'
+        }
+      ],
+      error: null
+    })
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return changedQuery
+        if (associationsCalls === 2) return idsQuery
+        return missingQuery
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toHaveLength(2)
+    expect(payload.associations.map((row) => row.id).sort()).toEqual(['changed-id', 'missing-id'])
+  })
+
+  it('re-fetches associations that are missing locally even when unchanged remotely', async () => {
+    const changedQuery = makeQuery({ data: [], error: null })
+    const idsQuery = makeQuery({
+      data: [{ id: 'present-id' }, { id: 'missing-id' }],
+      error: null
+    })
+    const missingQuery = makeQuery({
+      data: [
+        {
+          id: 'missing-id',
+          district_id: 'd1',
+          name: 'Missing Club',
+          short_name: null,
+          city: null,
+          website: null,
+          is_active: true,
+          source: 'cloud',
+          updated_at: '2026-01-01T00:00:00Z'
+        }
+      ],
+      error: null
+    })
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return changedQuery
+        if (associationsCalls === 2) return idsQuery
+        return missingQuery
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toHaveLength(1)
+    expect(payload.associations[0]).toMatchObject({ id: 'missing-id', name: 'Missing Club' })
+  })
+
+  it('never treats the seeded Unknown association as missing', async () => {
+    const changedQuery = makeQuery({ data: [], error: null })
+    const idsQuery = makeQuery({
+      data: [{ id: 'present-id' }, { id: '00000000-0000-0000-0000-000000000000' }],
+      error: null
+    })
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        return associationsCalls === 1 ? changedQuery : idsQuery
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toEqual([])
+    expect(associationsCalls).toBe(2)
+  })
+
+  it('uses an empty local id list when localAssociationIds is omitted', async () => {
+    setupSupabaseMock({
+      associations: { data: [], error: null }
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      countries: null,
+      federations: null,
+      regionalFederations: null,
+      districts: null,
+      associations: null
+    } as AssociationSyncTimestamps)
+
+    expect(payload.associations).toEqual([])
+  })
+
+  it('throws when fetching remote association ids fails', async () => {
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) {
+          return makeQuery({ data: [], error: null })
+        }
+        return makeQuery({ data: null, error: { message: 'ids failed' } })
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    await expect(
+      fetchSyncPayloadFromSupabase({
+        ...noTimestamps,
+        associations: '2026-05-01T00:00:00Z',
+        localAssociationIds: ['present-id']
+      })
+    ).rejects.toThrow('Failed to fetch association ids: ids failed')
+  })
+
+  it('treats a null remote association id list as empty', async () => {
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return makeQuery({ data: [], error: null })
+        return makeQuery({ data: null, error: null })
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toEqual([])
+  })
+
+  it('throws when fetching missing associations by id fails', async () => {
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return makeQuery({ data: [], error: null })
+        if (associationsCalls === 2) {
+          return makeQuery({ data: [{ id: 'missing-id' }], error: null })
+        }
+        return makeQuery({ data: null, error: { message: 'by-id failed' } })
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    await expect(
+      fetchSyncPayloadFromSupabase({
+        ...noTimestamps,
+        associations: '2026-05-01T00:00:00Z',
+        localAssociationIds: ['present-id']
+      })
+    ).rejects.toThrow('Failed to fetch associations by id: by-id failed')
+  })
+
+  it('ignores Unknown rows returned from a missing-id lookup', async () => {
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return makeQuery({ data: [], error: null })
+        if (associationsCalls === 2) {
+          return makeQuery({
+            data: [{ id: 'missing-id' }, { id: '00000000-0000-0000-0000-000000000000' }],
+            error: null
+          })
+        }
+        return makeQuery({
+          data: [
+            {
+              id: 'missing-id',
+              district_id: 'd1',
+              name: 'Missing Club',
+              short_name: null,
+              city: null,
+              website: null,
+              is_active: true,
+              source: 'cloud',
+              updated_at: null
+            },
+            {
+              id: '00000000-0000-0000-0000-000000000000',
+              district_id: 'd1',
+              name: 'Unknown',
+              short_name: null,
+              city: null,
+              website: null,
+              is_active: true,
+              source: 'seed',
+              updated_at: null
+            }
+          ],
+          error: null
+        })
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toHaveLength(1)
+    expect(payload.associations[0]?.id).toBe('missing-id')
+  })
+
+  it('treats a null missing-id lookup response as empty', async () => {
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return makeQuery({ data: [], error: null })
+        if (associationsCalls === 2) {
+          return makeQuery({ data: [{ id: 'missing-id' }], error: null })
+        }
+        return makeQuery({ data: null, error: null })
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toEqual([])
+  })
+
+  it('chunks missing association id lookups when more than 100 ids are missing', async () => {
+    const missingIds = Array.from({ length: 101 }, (_, index) => `missing-${index}`)
+    const inSpy = vi.fn().mockReturnThis()
+    let associationsCalls = 0
+
+    supabaseFromMock.mockImplementation((table: string) => {
+      if (table === 'associations') {
+        associationsCalls += 1
+        if (associationsCalls === 1) return makeQuery({ data: [], error: null })
+        if (associationsCalls === 2) {
+          return makeQuery({
+            data: missingIds.map((id) => ({ id })),
+            error: null
+          })
+        }
+
+        return {
+          select: vi.fn().mockReturnThis(),
+          gt: vi.fn().mockReturnThis(),
+          neq: vi.fn().mockReturnThis(),
+          in: inSpy.mockImplementation(() => ({
+            then(
+              onFulfilled?: (value: QueryResult) => unknown,
+              onRejected?: (reason: unknown) => unknown
+            ) {
+              return Promise.resolve({ data: [], error: null }).then(onFulfilled, onRejected)
+            }
+          })),
+          then(
+            onFulfilled?: (value: QueryResult) => unknown,
+            onRejected?: (reason: unknown) => unknown
+          ) {
+            return Promise.resolve({ data: [], error: null }).then(onFulfilled, onRejected)
+          }
+        }
+      }
+      return makeQuery({ data: [], error: null })
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase({
+      ...noTimestamps,
+      associations: '2026-05-01T00:00:00Z',
+      localAssociationIds: ['present-id']
+    })
+
+    expect(payload.associations).toEqual([])
+    expect(inSpy).toHaveBeenCalledTimes(2)
+    expect(inSpy.mock.calls[0]?.[1]).toHaveLength(100)
+    expect(inSpy.mock.calls[1]?.[1]).toHaveLength(1)
+  })
+
+  it('filters Unknown out of a full association download', async () => {
+    setupSupabaseMock({
+      associations: {
+        data: [
+          {
+            id: '00000000-0000-0000-0000-000000000000',
+            district_id: 'd1',
+            name: 'Unknown',
+            short_name: null,
+            city: null,
+            website: null,
+            is_active: true,
+            source: 'seed',
+            updated_at: null
+          },
+          {
+            id: 'club-1',
+            district_id: 'd1',
+            name: 'Real Club',
+            short_name: null,
+            city: null,
+            website: null,
+            is_active: true,
+            source: 'cloud',
+            updated_at: null
+          }
+        ],
+        error: null
+      },
+      association_identifiers: { data: [], error: null },
+      association_addresses: { data: [], error: null },
+      association_contacts: { data: [], error: null }
+    })
+
+    const payload = await fetchSyncPayloadFromSupabase(noTimestamps)
+
+    expect(payload.associations).toHaveLength(1)
+    expect(payload.associations[0]?.id).toBe('club-1')
   })
 
   it('skips association child fetches when the association list is empty', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: { data: [], error: null }
     })
@@ -617,8 +974,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('applies a gt filter when timestamps.countries is non-null', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
-
     const querySpy = { select: vi.fn().mockReturnThis(), gt: vi.fn().mockReturnThis() }
     querySpy.gt.mockReturnValue(makeQuery({ data: [], error: null }))
     querySpy.select.mockReturnValue(querySpy)
@@ -641,7 +996,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   it('handles null data responses (no error) by returning empty arrays', async () => {
     // Supabase can return { data: null, error: null } in edge cases.
     // The `data ?? []` expression must take the right branch (return []).
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       countries: { data: null, error: null },
       federations: { data: null, error: null },
@@ -660,7 +1014,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps federation rows with null shortName (covers shortName ?? null right branch)', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       federations: {
         data: [
@@ -682,7 +1035,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps district rows with null shortName (covers shortName ?? null right branch)', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       districts: {
         data: [
@@ -704,7 +1056,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('maps country rows with null updated_at (covers updatedAt ?? null right branch)', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       countries: {
         data: [{ id: 'c1', name: 'NoDate', iso_code: 'ND', updated_at: null }],
@@ -722,7 +1073,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
     // 1. `authority ?? null` right branch (authority is null)
     // 2. `data ?? []` right branch for association_addresses (data is null, no error)
     // 3. `data ?? []` right branch for association_contacts (data is null, no error)
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -767,7 +1117,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   it('covers data ?? [] right branch for association_identifiers when data is null', async () => {
     // fetchIdentifiersForIds is only called when there are associations.
     // Here we return null (no error) from identifiers to cover the `data ?? []` null path.
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -796,7 +1145,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the countries query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       countries: { data: null, error: { message: 'Connection refused' } }
     })
@@ -807,7 +1155,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the federations query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       federations: { data: null, error: { message: 'DB error' } }
     })
@@ -818,7 +1165,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the regional_federations query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       regional_federations: { data: null, error: { message: 'RF error' } }
     })
@@ -829,7 +1175,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the districts query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       districts: { data: null, error: { message: 'District error' } }
     })
@@ -840,7 +1185,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the associations query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: { data: null, error: { message: 'Assoc error' } }
     })
@@ -851,7 +1195,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the association_identifiers query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -880,7 +1223,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the association_addresses query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -909,7 +1251,6 @@ describe('fetchSyncPayloadFromSupabase', () => {
   })
 
   it('throws a descriptive error when the association_contacts query fails', async () => {
-    getCurrentSessionMock.mockResolvedValue({ user: { id: 'user-1' } })
     setupSupabaseMock({
       associations: {
         data: [
@@ -935,20 +1276,5 @@ describe('fetchSyncPayloadFromSupabase', () => {
     await expect(fetchSyncPayloadFromSupabase(noTimestamps)).rejects.toThrow(
       'Failed to fetch association contacts: Contact error'
     )
-  })
-})
-
-// ---------------------------------------------------------------------------
-// NotSignedInError
-// ---------------------------------------------------------------------------
-
-describe('NotSignedInError', () => {
-  it('is an Error subclass with the expected properties', () => {
-    const err = new NotSignedInError()
-
-    expect(err).toBeInstanceOf(Error)
-    expect(err).toBeInstanceOf(NotSignedInError)
-    expect(err.message).toBe('NOT_SIGNED_IN')
-    expect(err.name).toBe('NotSignedInError')
   })
 })

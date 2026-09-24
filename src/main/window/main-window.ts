@@ -1,18 +1,9 @@
 import path from 'node:path'
 
-import { app, BrowserWindow, Menu, shell } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 
 import { loadRenderer } from './load-renderer'
-
-function isHttpUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
+import { openExternalUrl } from './open-external-url'
 
 /**
  * Creates and configures the main application window.
@@ -31,15 +22,22 @@ export function createWindow(devServerUrl: string) {
     }
   })
 
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (isHttpUrl(url)) {
-      void shell.openExternal(url)
-    }
+  void loadRenderer(win, devServerUrl)
 
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    openExternalUrl(url)
     return { action: 'deny' }
   })
 
-  void loadRenderer(win, devServerUrl)
+  // mailto: without target=_blank navigates the webview; hand off to the OS mail client.
+  win.webContents.on('will-navigate', (event, url) => {
+    if (!/^mailto:/i.test(url)) {
+      return
+    }
+
+    event.preventDefault()
+    openExternalUrl(url)
+  })
 
   win.webContents.on('before-input-event', (event, input) => {
     if (

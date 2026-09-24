@@ -15,11 +15,23 @@ export default {
       websiteHost: 'www.jcnord.example',
       associationNumber: 'z. B. VR 2876 P',
       street: 'z. B. Dojostraße',
-      houseNumber: 'z. B. 12',
+      houseNumber: 'z. B. 12a',
       postalCode: 'z. B. 20095',
       city: 'z. B. Hamburg',
       email: "z. B. info{'@'}jcnord.example",
       phone: 'z. B. 40 555 0100'
+    },
+    fieldHints: {
+      name: 'Offizieller Vereinsname wie im Vereinsregister.',
+      shortName: 'Kurzer Anzeigename für Listen und Karten.',
+      websiteHost: 'Adresse der Vereinswebsite ohne https://.',
+      associationNumber: 'Vereinsregisternummer beim Amtsgericht.',
+      street: 'Straßenname der Adresse.',
+      houseNumber: 'Hausnummer inkl. optionalem Zusatz.',
+      postalCode: 'Fünfstellige deutsche Postleitzahl.',
+      city: 'Ort der Adresse.',
+      email: 'Öffentliche Kontakt-E-Mail des Vereins.',
+      phone: 'Nationale Rufnummer ohne Ländervorwahl.'
     }
   },
   actions: {

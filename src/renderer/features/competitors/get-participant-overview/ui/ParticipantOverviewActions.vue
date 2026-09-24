@@ -45,13 +45,11 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
               v-bind="tooltipProps"
               variant="text"
               rounded
+              :prepend-icon="mdiPlus"
               class="participant-overview-actions__add"
               @click="emit('add')"
             >
-              <span class="participant-overview-actions__add-content">
-                <v-icon :icon="mdiPlus" size="default" aria-hidden="true" />
-                <span>{{ addLabel }}</span>
-              </span>
+              {{ addLabel }}
             </v-btn>
           </template>
         </v-tooltip>
@@ -72,13 +70,11 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
               v-bind="tooltipProps"
               variant="text"
               rounded
+              :prepend-icon="mdiFileImport"
               class="participant-overview-actions__import"
               @click="emit('import')"
             >
-              <span class="participant-overview-actions__import-content">
-                <v-icon :icon="mdiFileImport" size="default" aria-hidden="true" />
-                <span>{{ importLabel }}</span>
-              </span>
+              {{ importLabel }}
             </v-btn>
           </template>
         </v-tooltip>
@@ -135,13 +131,6 @@ const filterLabel = computed(() => t(translationKeys.toolbar.placeholderAction))
   padding: 0.75rem 1.25rem;
   letter-spacing: normal;
   text-transform: none;
-}
-
-.participant-overview-actions__add-content,
-.participant-overview-actions__import-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .participant-overview-actions__placeholder-action {

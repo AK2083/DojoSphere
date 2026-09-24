@@ -15,11 +15,23 @@ export default {
       websiteHost: 'www.jcnord.example',
       associationNumber: 'e.g. VR 2876 P',
       street: 'e.g. Dojo Street',
-      houseNumber: 'e.g. 12',
+      houseNumber: 'e.g. 12a',
       postalCode: 'e.g. 20095',
       city: 'e.g. Hamburg',
       email: "e.g. info{'@'}jcnord.example",
       phone: 'e.g. 40 555 0100'
+    },
+    fieldHints: {
+      name: 'Official association name as in the registry.',
+      shortName: 'Short display name for lists and cards.',
+      websiteHost: 'Association website address without https://.',
+      associationNumber: 'Court registry number (Vereinsregister).',
+      street: 'Street name of the address.',
+      houseNumber: 'House number including an optional suffix.',
+      postalCode: 'Five-digit German postal code.',
+      city: 'City of the address.',
+      email: 'Public contact email of the association.',
+      phone: 'National phone number without country calling code.'
     }
   },
   actions: {

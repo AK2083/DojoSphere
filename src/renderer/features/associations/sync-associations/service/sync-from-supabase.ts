@@ -1,4 +1,3 @@
-import { getCurrentSession } from '@shared/api'
 import { supabase } from '@shared/api/supabase/client'
 import type {
   AssociationSyncPayload,
@@ -10,17 +9,6 @@ import type {
   SyncRegionalFederationRow
 } from '@shared/types/electron-api'
 
-/** Thrown when the user is not authenticated with Supabase. */
-export class NotSignedInError extends Error {
-  /**
-   *
-   */
-  constructor() {
-    super('NOT_SIGNED_IN')
-    this.name = 'NotSignedInError'
-  }
-}
-
 /**
  * Fetches updated association hierarchy records from Supabase.
  *
@@ -28,32 +16,30 @@ export class NotSignedInError extends Error {
  * changed since the last local sync are downloaded. If `latestSyncedAt` is
  * null the full table is fetched (first-time sync).
  *
+ * Associations additionally re-download any remote rows that are missing from
+ * the local database (e.g. after the user deleted a club), using
+ * `localAssociationIds` from the sync timestamps payload.
+ *
+ * Reference tables are readable with the publishable (anon) key via RLS, so a
+ * cloud login is not required for download. Applying the payload still needs a
+ * local app session (IPC).
+ *
  * For associations the child tables (identifiers, addresses, contacts) are
  * always included in full for any association that needs syncing, since those
  * child tables are re-inserted from scratch in the main process.
  *
  * @param timestamps  Latest synced_at values from the local SQLite database.
- * @throws {NotSignedInError} When no valid Supabase session is present.
  * @returns           Full sync payload ready to be forwarded to the main process via IPC.
  */
 export async function fetchSyncPayloadFromSupabase(
   timestamps: AssociationSyncTimestamps
 ): Promise<AssociationSyncPayload> {
-  // Verify the user has an active Supabase session before making any queries.
-  // The RLS policies on hierarchy tables require the `authenticated` role; without
-  // a valid JWT the request will be rejected with a JWT/key error.
-  const session = await getCurrentSession()
-
-  if (!session) {
-    throw new NotSignedInError()
-  }
-
   const [countries, federations, regionalFederations, districts, associations] = await Promise.all([
     fetchCountries(timestamps.countries),
     fetchFederations(timestamps.federations),
     fetchRegionalFederations(timestamps.regionalFederations),
     fetchDistricts(timestamps.districts),
-    fetchAssociations(timestamps.associations)
+    fetchAssociations(timestamps.associations, timestamps.localAssociationIds ?? [])
   ])
 
   return { countries, federations, regionalFederations, districts, associations }
@@ -149,33 +135,123 @@ async function fetchDistricts(latestSyncedAt: string | null): Promise<SyncDistri
   }))
 }
 
-async function fetchAssociations(latestSyncedAt: string | null): Promise<SyncAssociationRow[]> {
-  // Fetch associations that changed since last sync
+const ASSOCIATION_SELECT =
+  'id, district_id, name, short_name, city, website, is_active, source, updated_at'
+
+/** Local + cloud seed placeholder — never part of association cloud sync. */
+const UNKNOWN_ASSOCIATION_ID = '00000000-0000-0000-0000-000000000000'
+
+function isCloudSyncAssociationId(id: string): boolean {
+  return id !== UNKNOWN_ASSOCIATION_ID
+}
+
+async function fetchAssociations(
+  latestSyncedAt: string | null,
+  localAssociationIds: string[]
+): Promise<SyncAssociationRow[]> {
+  const localIdSet = new Set(localAssociationIds.filter(isCloudSyncAssociationId))
+
+  // No local clubs left → full download regardless of previous sync watermark.
+  if (localIdSet.size === 0) {
+    return hydrateAssociations(await fetchAssociationRows(null))
+  }
+
+  const [changedRows, remoteIdRows] = await Promise.all([
+    fetchAssociationRows(latestSyncedAt),
+    fetchRemoteAssociationIds()
+  ])
+
+  const missingIds = remoteIdRows.filter((id) => !localIdSet.has(id))
+  const changedIds = new Set(changedRows.map((row) => row.id as string))
+  const idsOnlyMissing = missingIds.filter((id) => !changedIds.has(id))
+
+  const missingRows =
+    idsOnlyMissing.length === 0 ? [] : await fetchAssociationRowsByIds(idsOnlyMissing)
+
+  const byId = new Map<string, Record<string, unknown>>()
+  for (const row of [...changedRows, ...missingRows]) {
+    byId.set(row.id as string, row)
+  }
+
+  return hydrateAssociations([...byId.values()])
+}
+
+async function fetchAssociationRows(
+  latestSyncedAt: string | null
+): Promise<Record<string, unknown>[]> {
   let assocQuery = supabase
     .from('associations')
-    .select('id, district_id, name, short_name, city, website, is_active, source, updated_at')
+    .select(ASSOCIATION_SELECT)
+    .neq('id', UNKNOWN_ASSOCIATION_ID)
   if (latestSyncedAt) {
     assocQuery = assocQuery.gt('updated_at', latestSyncedAt)
   }
 
-  const { data: assocData, error: assocError } = await assocQuery
+  const { data, error } = await assocQuery
 
-  if (assocError) throw new Error(`Failed to fetch associations: ${assocError.message}`)
+  if (error) throw new Error(`Failed to fetch associations: ${error.message}`)
 
-  const assocRows = assocData ?? []
+  return ((data ?? []) as Record<string, unknown>[]).filter((row) =>
+    isCloudSyncAssociationId(row.id as string)
+  )
+}
 
-  if (assocRows.length === 0) return []
+async function fetchRemoteAssociationIds(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('associations')
+    .select('id')
+    .neq('id', UNKNOWN_ASSOCIATION_ID)
 
-  const assocIds = assocRows.map((r) => r.id as string)
+  if (error) throw new Error(`Failed to fetch association ids: ${error.message}`)
 
-  // Fetch children in parallel for all matched associations
+  return (data ?? []).map((row) => row.id as string)
+}
+
+async function fetchAssociationRowsByIds(ids: string[]): Promise<Record<string, unknown>[]> {
+  const syncableIds = ids.filter(isCloudSyncAssociationId)
+  const chunks: string[][] = []
+  const chunkSize = 100
+
+  for (let index = 0; index < syncableIds.length; index += chunkSize) {
+    chunks.push(syncableIds.slice(index, index + chunkSize))
+  }
+
+  if (chunks.length === 0) return []
+
+  const results = await Promise.all(
+    chunks.map(async (chunk) => {
+      const { data, error } = await supabase
+        .from('associations')
+        .select(ASSOCIATION_SELECT)
+        .in('id', chunk)
+
+      if (error) throw new Error(`Failed to fetch associations by id: ${error.message}`)
+
+      return ((data ?? []) as Record<string, unknown>[]).filter((row) =>
+        isCloudSyncAssociationId(row.id as string)
+      )
+    })
+  )
+
+  return results.flat()
+}
+
+async function hydrateAssociations(
+  assocRows: Record<string, unknown>[]
+): Promise<SyncAssociationRow[]> {
+  const syncableRows = assocRows.filter((row) => isCloudSyncAssociationId(row.id as string))
+
+  if (syncableRows.length === 0) return []
+
+  const assocIds = syncableRows.map((r) => r.id as string)
+
   const [identifiers, addresses, contacts] = await Promise.all([
     fetchIdentifiersForIds(assocIds),
     fetchAddressesForIds(assocIds),
     fetchContactsForIds(assocIds)
   ])
 
-  return assocRows.map((row) => {
+  return syncableRows.map((row) => {
     const id = row.id as string
 
     return {

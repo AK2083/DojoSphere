@@ -2,10 +2,6 @@ import type { AssociationSyncPayload, AssociationSyncTimestamps } from '@shared/
 import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
-
 const logErrorMock = vi.fn()
 const getLocalSessionTokenMock = vi.fn()
 const fetchSyncPayloadMock = vi.fn()
@@ -29,16 +25,13 @@ vi.mock('../service/sync-from-supabase', async () => {
   }
 })
 
-// ---------------------------------------------------------------------------
-// Fixtures
-// ---------------------------------------------------------------------------
-
 const emptyTimestamps: AssociationSyncTimestamps = {
   countries: null,
   federations: null,
   regionalFederations: null,
   districts: null,
-  associations: null
+  associations: null,
+  localAssociationIds: []
 }
 
 const emptyPayload: AssociationSyncPayload = {
@@ -69,10 +62,6 @@ const oneAssociationPayload: AssociationSyncPayload = {
   ]
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function setupWindowApi(overrides: Partial<typeof globalThis.window.api> = {}) {
   const onSyncProgressMock = vi.fn().mockReturnValue(() => {})
   const getSyncTimestampsMock = vi.fn().mockResolvedValue(emptyTimestamps)
@@ -88,10 +77,6 @@ function setupWindowApi(overrides: Partial<typeof globalThis.window.api> = {}) {
   return { getSyncTimestampsMock, applySyncMock, onSyncProgressMock }
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 import { useSyncAssociations } from './use-sync-associations'
 
 describe('useSyncAssociations', () => {
@@ -101,19 +86,14 @@ describe('useSyncAssociations', () => {
     fetchSyncPayloadMock.mockResolvedValue(oneAssociationPayload)
   })
 
-  // -------------------------------------------------------------------------
-  // Initial state
-  // -------------------------------------------------------------------------
-
   it('starts with isOpen false and phase legal', () => {
     setupWindowApi()
-    const { isOpen, phase, errorMessage, isNotSignedIn, syncedCount } = useSyncAssociations()
+    const { isOpen, phase, errorMessage, results } = useSyncAssociations()
 
     expect(isOpen.value).toBe(false)
     expect(phase.value).toBe('legal')
     expect(errorMessage.value).toBeNull()
-    expect(isNotSignedIn.value).toBe(false)
-    expect(syncedCount.value).toBe(0)
+    expect(results.value).toEqual([])
   })
 
   it('starts with zero progress', () => {
@@ -123,10 +103,6 @@ describe('useSyncAssociations', () => {
     expect(progress.value).toEqual({ processed: 0, total: 0, currentName: '' })
   })
 
-  // -------------------------------------------------------------------------
-  // open / close
-  // -------------------------------------------------------------------------
-
   it('open() sets isOpen to true and resets state', () => {
     setupWindowApi()
     const { isOpen, phase, open } = useSyncAssociations()
@@ -135,18 +111,6 @@ describe('useSyncAssociations', () => {
 
     expect(isOpen.value).toBe(true)
     expect(phase.value).toBe('legal')
-  })
-
-  it('open() clears previous error state', () => {
-    setupWindowApi()
-    const { isOpen, errorMessage, isNotSignedIn, open } = useSyncAssociations()
-
-    // Simulate prior error by checking that open() resets
-    open()
-
-    expect(errorMessage.value).toBeNull()
-    expect(isNotSignedIn.value).toBe(false)
-    expect(isOpen.value).toBe(true)
   })
 
   it('close() sets isOpen to false', () => {
@@ -159,24 +123,48 @@ describe('useSyncAssociations', () => {
     expect(isOpen.value).toBe(false)
   })
 
-  // -------------------------------------------------------------------------
-  // confirm – happy path
-  // -------------------------------------------------------------------------
+  it('close() stays open while syncing', async () => {
+    setupWindowApi({
+      applySync: vi.fn().mockImplementation(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 20))
+      })
+    })
+    const { isOpen, open, close, confirm, phase } = useSyncAssociations()
 
-  it('confirm() transitions legal → syncing → done', async () => {
-    setupWindowApi()
-    const { phase, syncedCount, confirm } = useSyncAssociations()
-
-    expect(phase.value).toBe('legal')
-
+    open()
     const confirmPromise = confirm()
     expect(phase.value).toBe('syncing')
+    close()
+    expect(isOpen.value).toBe(true)
 
     await confirmPromise
     await flushPromises()
+  })
 
+  it('confirm() keeps the dialog open on the done phase after a successful import', async () => {
+    setupWindowApi({
+      onSyncProgress: vi.fn().mockImplementation((cb) => {
+        cb({
+          processed: 1,
+          total: 1,
+          currentName: 'Club Alpha',
+          id: 'assoc-1',
+          success: true
+        })
+        return () => {}
+      })
+    })
+    const { isOpen, open, phase, results, toast, confirm } = useSyncAssociations()
+
+    open()
+    const succeeded = await confirm()
+    await flushPromises()
+
+    expect(succeeded).toBe(true)
+    expect(isOpen.value).toBe(true)
     expect(phase.value).toBe('done')
-    expect(syncedCount.value).toBe(1)
+    expect(results.value).toEqual([{ id: 'assoc-1', name: 'Club Alpha', success: true }])
+    expect(toast.value).toEqual({ open: true, color: 'success', count: 1 })
   })
 
   it('confirm() calls getSyncTimestamps and passes timestamps to fetchSyncPayload', async () => {
@@ -193,7 +181,14 @@ describe('useSyncAssociations', () => {
 
   it('updates progress when the main process emits a sync:progress event', async () => {
     let capturedCallback:
-      ((e: { processed: number; total: number; currentName: string }) => void) | undefined
+      | ((e: {
+          processed: number
+          total: number
+          currentName: string
+          id: string
+          success: boolean
+        }) => void)
+      | undefined
 
     setupWindowApi({
       onSyncProgress: vi.fn().mockImplementation((cb) => {
@@ -201,17 +196,23 @@ describe('useSyncAssociations', () => {
         return () => {}
       }),
       applySync: vi.fn().mockImplementation(async () => {
-        // Simulate a progress event arriving while applySync is running
-        capturedCallback?.({ processed: 1, total: 1, currentName: 'Club Alpha' })
+        capturedCallback?.({
+          processed: 1,
+          total: 1,
+          currentName: 'Club Alpha',
+          id: 'assoc-1',
+          success: true
+        })
       })
     })
 
-    const { progress, confirm } = useSyncAssociations()
+    const { progress, results, confirm } = useSyncAssociations()
 
     await confirm()
     await flushPromises()
 
     expect(progress.value).toMatchObject({ processed: 1, total: 1, currentName: 'Club Alpha' })
+    expect(results.value[0]?.success).toBe(true)
   })
 
   it('confirm() calls applySync with the payload from Supabase', async () => {
@@ -237,21 +238,20 @@ describe('useSyncAssociations', () => {
     expect(unsubscribeMock).toHaveBeenCalled()
   })
 
-  // -------------------------------------------------------------------------
-  // confirm – nothing to sync
-  // -------------------------------------------------------------------------
-
-  it('confirm() goes directly to done phase when payload is empty', async () => {
+  it('confirm() closes immediately and shows a warning toast when payload is empty', async () => {
     setupWindowApi()
     fetchSyncPayloadMock.mockResolvedValue(emptyPayload)
 
-    const { phase, syncedCount, confirm } = useSyncAssociations()
+    const { isOpen, open, phase, toast, confirm } = useSyncAssociations()
+    open()
 
-    await confirm()
+    const succeeded = await confirm()
     await flushPromises()
 
-    expect(phase.value).toBe('done')
-    expect(syncedCount.value).toBe(0)
+    expect(succeeded).toBe(true)
+    expect(isOpen.value).toBe(false)
+    expect(phase.value).toBe('legal')
+    expect(toast.value).toEqual({ open: true, color: 'warning', count: 0 })
   })
 
   it('confirm() does not call applySync when there is nothing to sync', async () => {
@@ -265,61 +265,117 @@ describe('useSyncAssociations', () => {
     expect(applySyncMock).not.toHaveBeenCalled()
   })
 
-  // -------------------------------------------------------------------------
-  // confirm – error handling
-  // -------------------------------------------------------------------------
-
-  it('confirm() sets isNotSignedIn when NotSignedInError is thrown', async () => {
-    setupWindowApi()
-    const { NotSignedInError } = await import('../service/sync-from-supabase')
-    fetchSyncPayloadMock.mockRejectedValue(new NotSignedInError())
-
-    const { phase, isNotSignedIn, confirm } = useSyncAssociations()
-
-    await confirm()
-    await flushPromises()
-
-    expect(isNotSignedIn.value).toBe(true)
-    expect(phase.value).toBe('legal')
-    expect(logErrorMock).not.toHaveBeenCalled()
-  })
-
   it('confirm() records errorMessage and logs for unexpected errors', async () => {
     setupWindowApi()
     fetchSyncPayloadMock.mockRejectedValue(new Error('Network timeout'))
 
-    const { phase, errorMessage, isNotSignedIn, confirm } = useSyncAssociations()
+    const { phase, errorMessage, confirm } = useSyncAssociations()
 
-    await confirm()
+    const succeeded = await confirm()
     await flushPromises()
 
+    expect(succeeded).toBe(false)
     expect(phase.value).toBe('legal')
-    expect(isNotSignedIn.value).toBe(false)
     expect(errorMessage.value).toContain('Network timeout')
     expect(logErrorMock).toHaveBeenCalledWith(expect.any(Error), 'associations', 'sync-from-cloud')
   })
 
-  it('confirm() unsubscribes progress even when applySync throws', async () => {
+  it('confirm() keeps the result list when applySync throws after results were built', async () => {
     const unsubscribeMock = vi.fn()
     setupWindowApi({
       onSyncProgress: vi.fn().mockReturnValue(unsubscribeMock),
-      // applySync rejects AFTER onSyncProgress is already subscribed
       applySync: vi.fn().mockRejectedValue(new Error('apply failed'))
     })
-    // Provide a non-empty payload so we reach the onSyncProgress subscription
     fetchSyncPayloadMock.mockResolvedValue(oneAssociationPayload)
 
-    const { confirm } = useSyncAssociations()
+    const { phase, results, toast, confirm } = useSyncAssociations()
 
     await confirm()
     await flushPromises()
 
     expect(unsubscribeMock).toHaveBeenCalled()
+    expect(phase.value).toBe('done')
+    expect(results.value).toEqual([{ id: 'assoc-1', name: 'Club Alpha', success: false }])
+    expect(toast.value).toEqual({ open: true, color: 'warning', count: 0 })
+  })
+
+  it('confirm() keeps already resolved results when applySync fails mid-way', async () => {
+    const twoAssociationPayload: AssociationSyncPayload = {
+      ...emptyPayload,
+      associations: [
+        {
+          id: 'assoc-1',
+          districtId: 'district-1',
+          name: 'Club Alpha',
+          shortName: null,
+          city: null,
+          website: null,
+          isActive: true,
+          source: 'cloud',
+          updatedAt: null,
+          identifiers: [],
+          addresses: [],
+          contacts: []
+        },
+        {
+          id: 'assoc-2',
+          districtId: 'district-1',
+          name: 'Club Beta',
+          shortName: null,
+          city: null,
+          website: null,
+          isActive: true,
+          source: 'cloud',
+          updatedAt: null,
+          identifiers: [],
+          addresses: [],
+          contacts: []
+        }
+      ]
+    }
+
+    let capturedCallback:
+      | ((e: {
+          processed: number
+          total: number
+          currentName: string
+          id: string
+          success: boolean
+        }) => void)
+      | undefined
+
+    setupWindowApi({
+      onSyncProgress: vi.fn().mockImplementation((cb) => {
+        capturedCallback = cb
+        return () => {}
+      }),
+      applySync: vi.fn().mockImplementation(async () => {
+        capturedCallback?.({
+          processed: 1,
+          total: 2,
+          currentName: 'Club Alpha',
+          id: 'assoc-1',
+          success: true
+        })
+        throw new Error('apply failed after first club')
+      })
+    })
+    fetchSyncPayloadMock.mockResolvedValue(twoAssociationPayload)
+
+    const { results, toast, confirm } = useSyncAssociations()
+
+    await confirm()
+    await flushPromises()
+
+    expect(results.value).toEqual([
+      { id: 'assoc-1', name: 'Club Alpha', success: true },
+      { id: 'assoc-2', name: 'Club Beta', success: false }
+    ])
+    expect(toast.value).toEqual({ open: true, color: 'success', count: 1 })
   })
 
   it('confirm() stringifies non-Error thrown values using the value itself', async () => {
     setupWindowApi()
-    // Throw a raw string – it has no `.message`, so `?? error` right branch is taken
     fetchSyncPayloadMock.mockRejectedValue('raw string error')
 
     const { errorMessage, confirm } = useSyncAssociations()
@@ -330,28 +386,20 @@ describe('useSyncAssociations', () => {
     expect(errorMessage.value).toContain('raw string error')
   })
 
-  it('confirm() resets isNotSignedIn on a fresh call after a previous error', async () => {
+  it('confirm() clears a previous errorMessage on a fresh successful call', async () => {
     setupWindowApi()
-    const { NotSignedInError } = await import('../service/sync-from-supabase')
+    const { errorMessage, confirm } = useSyncAssociations()
 
-    const { isNotSignedIn, confirm } = useSyncAssociations()
-
-    // First call → not-signed-in error
-    fetchSyncPayloadMock.mockRejectedValue(new NotSignedInError())
+    fetchSyncPayloadMock.mockRejectedValue(new Error('temporary failure'))
     await confirm()
     await flushPromises()
-    expect(isNotSignedIn.value).toBe(true)
+    expect(errorMessage.value).toContain('temporary failure')
 
-    // Second call → success
     fetchSyncPayloadMock.mockResolvedValue(emptyPayload)
     await confirm()
     await flushPromises()
-    expect(isNotSignedIn.value).toBe(false)
+    expect(errorMessage.value).toBeNull()
   })
-
-  // -------------------------------------------------------------------------
-  // confirm – Electron API unavailable
-  // -------------------------------------------------------------------------
 
   it('confirm() records an error when the Electron API is unavailable', async () => {
     globalThis.window.api = undefined as never
@@ -376,5 +424,15 @@ describe('useSyncAssociations', () => {
 
     expect(phase.value).toBe('legal')
     expect(errorMessage.value).not.toBeNull()
+  })
+
+  it('dismissToast() closes the toast', () => {
+    setupWindowApi()
+    const { toast, dismissToast } = useSyncAssociations()
+    toast.value = { open: true, color: 'success', count: 3 }
+
+    dismissToast()
+
+    expect(toast.value.open).toBe(false)
   })
 })

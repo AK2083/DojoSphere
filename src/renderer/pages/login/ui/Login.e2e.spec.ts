@@ -1,7 +1,7 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 
-test.describe('login page', { tag: '@regression' }, () => {
-  test('login route renders', { tag: ['@smoke', '@critical'] }, async ({ page }) => {
+test.describe('Login', { tag: '@regression' }, () => {
+  test('renders login form on login route', { tag: ['@smoke', '@critical'] }, async ({ page }) => {
     await page.goto('/#/login')
 
     await expect(page).toHaveURL(/#\/login$/)

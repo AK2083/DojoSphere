@@ -4,6 +4,7 @@ export default {
     legal: {
       heading: 'associations.syncAssociations.dialog.legal.heading',
       body: 'associations.syncAssociations.dialog.legal.body',
+      gdpr: 'associations.syncAssociations.dialog.legal.gdpr',
       source: 'associations.syncAssociations.dialog.legal.source'
     },
     actions: {
@@ -12,14 +13,20 @@ export default {
       close: 'associations.syncAssociations.dialog.actions.close'
     },
     syncing: {
-      progress: 'associations.syncAssociations.dialog.syncing.progress',
-      current: 'associations.syncAssociations.dialog.syncing.current'
+      loading: 'associations.syncAssociations.dialog.syncing.loading',
+      percent: 'associations.syncAssociations.dialog.syncing.percent'
     },
-    done: {
-      message: 'associations.syncAssociations.dialog.done.message',
-      nothingNew: 'associations.syncAssociations.dialog.done.nothingNew'
+    results: {
+      listAria: 'associations.syncAssociations.dialog.results.listAria',
+      statusSuccess: 'associations.syncAssociations.dialog.results.statusSuccess',
+      statusFailure: 'associations.syncAssociations.dialog.results.statusFailure',
+      statusPending: 'associations.syncAssociations.dialog.results.statusPending',
+      empty: 'associations.syncAssociations.dialog.results.empty'
     },
     error: 'associations.syncAssociations.dialog.error',
-    notSignedIn: 'associations.syncAssociations.dialog.notSignedIn'
+    toast: {
+      imported: 'associations.syncAssociations.dialog.toast.imported',
+      none: 'associations.syncAssociations.dialog.toast.none'
+    }
   }
 }

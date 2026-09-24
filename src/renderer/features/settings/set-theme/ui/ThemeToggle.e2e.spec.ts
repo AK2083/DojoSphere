@@ -4,7 +4,7 @@ import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 const THEME_STORAGE_KEY = 'dojosphere.settings.theme'
 
 test.describe('ThemeToggle', { tag: '@regression' }, () => {
-  test('persists system, dark and light mode selections', { tag: '@smoke' }, async ({ page }) => {
+  test('persists system, dark and light mode selections', async ({ page }) => {
     await setEnglishLanguage(page)
     await page.addInitScript(
       ([themeKey]) => {

@@ -1,13 +1,13 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('password reset page', { tag: '@regression' }, () => {
+test.describe('PasswordReset', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
   test(
-    'password reset route renders stepper card',
+    'renders password reset stepper with three steps',
     { tag: ['@smoke', '@critical'] },
     async ({ page }) => {
       await page.goto('/#/passwordreset')

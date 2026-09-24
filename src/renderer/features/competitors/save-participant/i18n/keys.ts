@@ -32,6 +32,34 @@ const translationKeys = {
       startEligible: 'competitors.saveParticipant.form.fields.startEligible',
       registrationStatus: 'competitors.saveParticipant.form.fields.registrationStatus',
       remarks: 'competitors.saveParticipant.form.fields.remarks'
+    },
+    placeholders: {
+      givenName: 'competitors.saveParticipant.form.placeholders.givenName',
+      familyName: 'competitors.saveParticipant.form.placeholders.familyName',
+      passNumber: 'competitors.saveParticipant.form.placeholders.passNumber',
+      licenseNumber: 'competitors.saveParticipant.form.placeholders.licenseNumber',
+      contactPhone: 'competitors.saveParticipant.form.placeholders.contactPhone',
+      contactPerson: 'competitors.saveParticipant.form.placeholders.contactPerson',
+      remarks: 'competitors.saveParticipant.form.placeholders.remarks'
+    },
+    fieldHints: {
+      givenName: 'competitors.saveParticipant.form.fieldHints.givenName',
+      familyName: 'competitors.saveParticipant.form.fieldHints.familyName',
+      gender: 'competitors.saveParticipant.form.fieldHints.gender',
+      birthDate: 'competitors.saveParticipant.form.fieldHints.birthDate',
+      association: 'competitors.saveParticipant.form.fieldHints.association',
+      nationality: 'competitors.saveParticipant.form.fieldHints.nationality',
+      ageClass: 'competitors.saveParticipant.form.fieldHints.ageClass',
+      weightClass: 'competitors.saveParticipant.form.fieldHints.weightClass',
+      passNumber: 'competitors.saveParticipant.form.fieldHints.passNumber',
+      gradingSystem: 'competitors.saveParticipant.form.fieldHints.gradingSystem',
+      grade: 'competitors.saveParticipant.form.fieldHints.grade',
+      licenseNumber: 'competitors.saveParticipant.form.fieldHints.licenseNumber',
+      contactPhone: 'competitors.saveParticipant.form.fieldHints.contactPhone',
+      contactPerson: 'competitors.saveParticipant.form.fieldHints.contactPerson',
+      registrationStatus: 'competitors.saveParticipant.form.fieldHints.registrationStatus',
+      remarks: 'competitors.saveParticipant.form.fieldHints.remarks',
+      startEligible: 'competitors.saveParticipant.form.fieldHints.startEligible'
     }
   },
   gender: {

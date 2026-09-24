@@ -8,18 +8,14 @@ test.describe('ParticipantEntry', { tag: '@regression' }, () => {
     await page.setViewportSize({ width: 1280, height: 800 })
   })
 
-  test(
-    'shows association name below participant name in the card header',
-    { tag: '@smoke' },
-    async ({ page }) => {
-      await gotoParticipantsPage(page, { withParticipants: true })
+  test('shows association name below participant name in the card header', async ({ page }) => {
+    await gotoParticipantsPage(page, { withParticipants: true })
 
-      const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
+    const yukiCard = page.locator('.participant-entry').filter({ hasText: 'Yuki Tanaka' })
 
-      await expect(yukiCard).toBeVisible()
-      await expect(yukiCard.getByText('Dojo Nord')).toBeVisible()
-    }
-  )
+    await expect(yukiCard).toBeVisible()
+    await expect(yukiCard.getByText('Dojo Nord')).toBeVisible()
+  })
 
   test('shows summary fields and expandable details', async ({ page }) => {
     await gotoParticipantsPage(page, { withParticipants: true })

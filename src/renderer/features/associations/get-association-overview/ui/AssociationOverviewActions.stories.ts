@@ -11,6 +11,7 @@ const meta = {
   },
   args: {
     addLabel: 'Add association',
+    updateLabel: 'Update',
     isMobile: false
   }
 } satisfies Meta<typeof AssociationOverviewActions>

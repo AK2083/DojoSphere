@@ -116,6 +116,34 @@ export default {
       startEligible: 'Startberechtigt',
       registrationStatus: 'Status',
       remarks: 'Bemerkung'
+    },
+    placeholders: {
+      givenName: 'z. B. Max',
+      familyName: 'z. B. Mustermann',
+      passNumber: 'z. B. DE-123456',
+      licenseNumber: 'z. B. L-987654',
+      contactPhone: 'z. B. 0170 1234567',
+      contactPerson: 'z. B. Erika Mustermann',
+      remarks: 'z. B. Bitte am Wiegen früh erscheinen'
+    },
+    fieldHints: {
+      givenName: 'Vorname des Teilnehmers wie im Judopass.',
+      familyName: 'Nachname des Teilnehmers wie im Judopass.',
+      gender: 'Geschlecht für die Turnierzuordnung.',
+      birthDate: 'Geburtsdatum zur Bestimmung der Altersklasse.',
+      association: 'Aktiver Verein, für den der Teilnehmer startet.',
+      nationality: 'Staatsangehörigkeit als Ländercode.',
+      ageClass: 'Altersklasse gemäß Ausschreibung.',
+      weightClass: 'Gewichtsklasse passend zur Altersklasse.',
+      passNumber: 'Nummer des Judopasses (max. 32 Zeichen).',
+      gradingSystem: 'Graduierungssystem für die Gürtelstufe.',
+      grade: 'Aktuelle Kyu- oder Dan-Graduierung.',
+      licenseNumber: 'Optionale Wettkampflizenznummer (max. 32 Zeichen).',
+      contactPhone: 'Erreichbare Telefonnummer für Rückfragen (max. 32 Zeichen).',
+      contactPerson: 'Ansprechpartner bei Rückfragen (max. 80 Zeichen).',
+      registrationStatus: 'Aktueller Melde-Status für das Turnier.',
+      remarks: 'Freitext-Hinweis zur Anmeldung (max. 500 Zeichen).',
+      startEligible: 'Ob der Teilnehmer startberechtigt ist.'
     }
   },
   gender: {

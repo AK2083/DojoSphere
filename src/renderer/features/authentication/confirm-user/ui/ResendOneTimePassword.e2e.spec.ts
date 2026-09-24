@@ -3,7 +3,7 @@ import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { setupPendingEmailVerification } from '@shared/tests/e2e/setup-email-verification'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ResendOneTimePassword (confirm-user)', { tag: '@regression' }, () => {
+test.describe('ResendOneTimePassword', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
     await setupPendingEmailVerification(page)

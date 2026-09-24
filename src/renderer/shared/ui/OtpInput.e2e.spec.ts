@@ -7,7 +7,7 @@ async function enteredOtp(page: Page): Promise<string> {
   return getOtpInput(page).inputValue()
 }
 
-test.describe('shared/ui OtpInput', { tag: '@regression' }, () => {
+test.describe('OtpInput', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
     await expect(getOtpFields(page)).toHaveCount(6)

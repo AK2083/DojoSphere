@@ -15,7 +15,7 @@ test.describe('NewPasswordStep', { tag: '@regression' }, () => {
 
   test(
     'renders new-password fields after successful otp step',
-    { tag: '@smoke' },
+    { tag: '@critical' },
     async ({ page }) => {
       await goToPasswordResetNewPasswordStep(page)
 

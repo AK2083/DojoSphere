@@ -526,7 +526,8 @@ export function installPlaywrightBrowserElectronApi(overrides: Partial<ElectronA
       federations: null,
       regionalFederations: null,
       districts: null,
-      associations: null
+      associations: null,
+      localAssociationIds: []
     }),
     applySync: async () => undefined,
     onSyncProgress: () => () => undefined,

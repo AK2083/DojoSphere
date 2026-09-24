@@ -1,6 +1,7 @@
 import type { WebContents } from 'electron'
 
 import { getDatabase, runInTransaction } from '@main/shared/database'
+import { UNKNOWN_ASSOCIATION_ID } from '@main/shared/database/reference-seed-ids'
 import { withDbErrorLogging } from '@main/shared/logging'
 
 // ---------------------------------------------------------------------------
@@ -124,6 +125,8 @@ export type AssociationSyncProgressEvent = {
   processed: number
   total: number
   currentName: string
+  id: string
+  success: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -139,11 +142,15 @@ export type AssociationSyncTimestamps = {
   regionalFederations: string | null
   districts: string | null
   associations: string | null
+  /** Non-seed association IDs currently stored locally (used to re-fetch deleted rows). */
+  localAssociationIds: string[]
 }
 
 /**
  * Returns the latest `synced_at` value for each association hierarchy table.
  * A `null` entry means that table has never been synced from the cloud.
+ * Association timestamps ignore the seeded Unknown placeholder so a full wipe of
+ * user-visible clubs triggers a complete re-download.
  *
  * @returns Latest synced_at per table, or `null` when a table has never been synced.
  */
@@ -158,12 +165,32 @@ export function getSyncTimestamps(): AssociationSyncTimestamps {
       return row.ts
     }
 
+    const associationsTs = db
+      .prepare(
+        `SELECT MAX(synced_at) AS ts
+         FROM associations
+         WHERE id != ? AND IFNULL(source, '') != 'seed'`
+      )
+      .get(UNKNOWN_ASSOCIATION_ID) as { ts: string | null }
+
+    const localAssociationIds = (
+      db
+        .prepare(
+          `SELECT id
+           FROM associations
+           WHERE id != ? AND IFNULL(source, '') != 'seed'
+           ORDER BY id`
+        )
+        .all(UNKNOWN_ASSOCIATION_ID) as { id: string }[]
+    ).map((row) => row.id)
+
     return {
       countries: pick('countries'),
       federations: pick('federations'),
       regionalFederations: pick('regional_federations'),
       districts: pick('districts'),
-      associations: pick('associations')
+      associations: associationsTs.ts,
+      localAssociationIds
     }
   })
 }
@@ -260,7 +287,10 @@ export function applySyncBatch(payload: AssociationSyncPayload, sender: WebConte
     })
 
     // --- 2. Upsert each association + children, emit progress events ---
-    const total = payload.associations.length
+    const syncableAssociations = payload.associations.filter(
+      (assoc) => assoc.id !== UNKNOWN_ASSOCIATION_ID && assoc.source !== 'seed'
+    )
+    const total = syncableAssociations.length
 
     const upsertAssociation = db.prepare(`
       INSERT INTO associations (
@@ -299,57 +329,71 @@ export function applySyncBatch(payload: AssociationSyncPayload, sender: WebConte
       ) VALUES (?, ?, ?, ?, ?, ?)
     `)
 
-    payload.associations.forEach((assoc, index) => {
-      runInTransaction(db, () => {
-        upsertAssociation.run(
-          assoc.id,
-          assoc.districtId,
-          assoc.name,
-          assoc.shortName ?? null,
-          assoc.city ?? null,
-          assoc.website ?? null,
-          assoc.isActive ? 1 : 0,
-          assoc.source ?? null,
-          now
-        )
+    syncableAssociations.forEach((assoc, index) => {
+      let success = true
 
-        // Replace children entirely for synced associations
-        deleteIdentifiers.run(assoc.id)
-        for (const ident of assoc.identifiers) {
-          insertIdentifier.run(ident.id, assoc.id, ident.type, ident.value, ident.authority ?? null)
-        }
-
-        deleteAddresses.run(assoc.id)
-        for (const addr of assoc.addresses) {
-          insertAddress.run(
-            addr.id,
+      try {
+        runInTransaction(db, () => {
+          upsertAssociation.run(
             assoc.id,
-            addr.street ?? null,
-            addr.houseNumber ?? null,
-            addr.postalCode ?? null,
-            addr.city ?? null,
-            addr.countryCode ?? null,
-            addr.addressType
+            assoc.districtId,
+            assoc.name,
+            assoc.shortName ?? null,
+            assoc.city ?? null,
+            assoc.website ?? null,
+            assoc.isActive ? 1 : 0,
+            assoc.source ?? null,
+            now
           )
-        }
 
-        deleteContacts.run(assoc.id)
-        for (const contact of assoc.contacts) {
-          insertContact.run(
-            contact.id,
-            assoc.id,
-            contact.contactType,
-            contact.value,
-            contact.label ?? null,
-            contact.isPublic ? 1 : 0
-          )
-        }
-      })
+          // Replace children entirely for synced associations
+          deleteIdentifiers.run(assoc.id)
+          for (const ident of assoc.identifiers) {
+            insertIdentifier.run(
+              ident.id,
+              assoc.id,
+              ident.type,
+              ident.value,
+              ident.authority ?? null
+            )
+          }
+
+          deleteAddresses.run(assoc.id)
+          for (const addr of assoc.addresses) {
+            insertAddress.run(
+              addr.id,
+              assoc.id,
+              addr.street ?? null,
+              addr.houseNumber ?? null,
+              addr.postalCode ?? null,
+              addr.city ?? null,
+              addr.countryCode ?? null,
+              addr.addressType
+            )
+          }
+
+          deleteContacts.run(assoc.id)
+          for (const contact of assoc.contacts) {
+            insertContact.run(
+              contact.id,
+              assoc.id,
+              contact.contactType,
+              contact.value,
+              contact.label ?? null,
+              contact.isPublic ? 1 : 0
+            )
+          }
+        })
+      } catch {
+        success = false
+      }
 
       const progress: AssociationSyncProgressEvent = {
         processed: index + 1,
         total,
-        currentName: assoc.name
+        currentName: assoc.name,
+        id: assoc.id,
+        success
       }
       sender.send('associations:sync:progress', progress)
     })

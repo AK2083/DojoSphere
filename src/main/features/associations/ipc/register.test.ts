@@ -281,7 +281,8 @@ describe('registerAssociationsIpc', () => {
       federations: null,
       regionalFederations: null,
       districts: null,
-      associations: null
+      associations: null,
+      localAssociationIds: []
     })
   })
 
