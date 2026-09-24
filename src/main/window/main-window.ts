@@ -1,19 +1,9 @@
 import path from 'node:path'
 
-import { app, BrowserWindow, Menu, shell } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 
 import { loadRenderer } from './load-renderer'
 import { openExternalUrl } from './open-external-url'
-
-function isHttpUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
 
 /**
  * Creates and configures the main application window.
@@ -30,14 +20,6 @@ export function createWindow(devServerUrl: string) {
       preload: path.join(__dirname, 'preload.js'),
       devTools: !app.isPackaged
     }
-  })
-
-  win.webContents.setWindowOpenHandler(({ url }) => {
-    if (isHttpUrl(url)) {
-      void shell.openExternal(url)
-    }
-
-    return { action: 'deny' }
   })
 
   void loadRenderer(win, devServerUrl)
