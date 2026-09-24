@@ -1,3 +1,31 @@
+import {
+  ASSOCIATION_CITY_MAX_LENGTH,
+  ASSOCIATION_EMAIL_MAX_LENGTH,
+  ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
+  ASSOCIATION_NAME_MAX_LENGTH,
+  ASSOCIATION_NUMBER_MAX_LENGTH,
+  ASSOCIATION_PHONE_MAX_LENGTH,
+  ASSOCIATION_PHONE_MIN_DIGITS,
+  ASSOCIATION_POSTAL_CODE_LENGTH,
+  ASSOCIATION_SHORT_NAME_MAX_LENGTH,
+  ASSOCIATION_STREET_MAX_LENGTH,
+  ASSOCIATION_WEBSITE_HOST_MAX_LENGTH
+} from '@shared/domain/association-field-limits'
+
+export {
+  ASSOCIATION_CITY_MAX_LENGTH,
+  ASSOCIATION_EMAIL_MAX_LENGTH,
+  ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
+  ASSOCIATION_NAME_MAX_LENGTH,
+  ASSOCIATION_NUMBER_MAX_LENGTH,
+  ASSOCIATION_PHONE_MAX_LENGTH,
+  ASSOCIATION_PHONE_MIN_DIGITS,
+  ASSOCIATION_POSTAL_CODE_LENGTH,
+  ASSOCIATION_SHORT_NAME_MAX_LENGTH,
+  ASSOCIATION_STREET_MAX_LENGTH,
+  ASSOCIATION_WEBSITE_HOST_MAX_LENGTH
+}
+
 /** Canonical validation error codes for the association form. */
 export const AssociationFormErrorCode = {
   REQUIRED: 'required',
@@ -17,49 +45,6 @@ export type AssociationFormErrorCode =
 
 /** Result of a association form validation rule. */
 export type AssociationFormRuleResult = true | AssociationFormErrorCode
-
-/** Soft length limits aligned with practical SQLite TEXT columns / German formats. */
-export const ASSOCIATION_NAME_MAX_LENGTH = 120
-export /**
- *
- */
-const ASSOCIATION_SHORT_NAME_MAX_LENGTH = 40
-export /**
- *
- */
-const ASSOCIATION_CITY_MAX_LENGTH = 80
-export /**
- *
- */
-const ASSOCIATION_STREET_MAX_LENGTH = 120
-export /**
- *
- */
-const ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH = 10
-export /**
- *
- */
-const ASSOCIATION_POSTAL_CODE_LENGTH = 5
-export /**
- *
- */
-const ASSOCIATION_WEBSITE_HOST_MAX_LENGTH = 180
-export /**
- *
- */
-const ASSOCIATION_NUMBER_MAX_LENGTH = 20
-export /**
- *
- */
-const ASSOCIATION_EMAIL_MAX_LENGTH = 120
-export /**
- *
- */
-const ASSOCIATION_PHONE_MAX_LENGTH = 20
-export /**
- *
- */
-const ASSOCIATION_PHONE_MIN_DIGITS = 3
 
 /**
  * Requires a non-empty trimmed text value.

@@ -1,6 +1,6 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 
-test.describe('account page', { tag: '@regression' }, () => {
+test.describe('Account', { tag: '@regression' }, () => {
   test(
     'bootstraps local auth and renders account page',
     { tag: ['@smoke', '@critical'] },

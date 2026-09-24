@@ -24,6 +24,18 @@ const translationKeys = {
       city: 'associations.saveAssociation.form.placeholders.city',
       email: 'associations.saveAssociation.form.placeholders.email',
       phone: 'associations.saveAssociation.form.placeholders.phone'
+    },
+    fieldHints: {
+      name: 'associations.saveAssociation.form.fieldHints.name',
+      shortName: 'associations.saveAssociation.form.fieldHints.shortName',
+      websiteHost: 'associations.saveAssociation.form.fieldHints.websiteHost',
+      associationNumber: 'associations.saveAssociation.form.fieldHints.associationNumber',
+      street: 'associations.saveAssociation.form.fieldHints.street',
+      houseNumber: 'associations.saveAssociation.form.fieldHints.houseNumber',
+      postalCode: 'associations.saveAssociation.form.fieldHints.postalCode',
+      city: 'associations.saveAssociation.form.fieldHints.city',
+      email: 'associations.saveAssociation.form.fieldHints.email',
+      phone: 'associations.saveAssociation.form.fieldHints.phone'
     }
   },
   status: {

@@ -2,7 +2,7 @@ import { expect, test } from '@shared/tests/e2e/fixtures'
 import { goToPasswordResetOtpStep, mockRecoveryRequest } from '@shared/tests/e2e/password-recovery'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('ResendOneTimePassword (password-forgotten)', { tag: '@regression' }, () => {
+test.describe('ResendOneTimePassword', { tag: '@regression' }, () => {
   test.describe.configure({ timeout: 60_000 })
 
   test.beforeEach(async ({ page }) => {
@@ -10,7 +10,7 @@ test.describe('ResendOneTimePassword (password-forgotten)', { tag: '@regression'
     await mockRecoveryRequest(page)
   })
 
-  test('shows resend action on otp step', { tag: '@smoke' }, async ({ page }) => {
+  test('renders resend action on password-reset OTP step', { tag: '@smoke' }, async ({ page }) => {
     await goToPasswordResetOtpStep(page)
 
     const resendButton = page.getByRole('button', {

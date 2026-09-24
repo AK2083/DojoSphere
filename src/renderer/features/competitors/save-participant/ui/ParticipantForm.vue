@@ -125,13 +125,17 @@ function openBirthDatePicker(): void {
           {{ t(translationKeys.form.requiredFieldsLegend) }}
         </p>
 
-        <fieldset :disabled="isLoading" class="participant-form__fields">
+        <fieldset :disabled="isLoading" class="participant-form__fields d-flex flex-column ga-3">
           <v-row density="comfortable">
             <v-col cols="12" sm="6">
               <v-text-field
                 v-model="fields.givenName"
                 :rules="givenNameRules"
                 :maxlength="COMPETITOR_NAME_MAX_LENGTH"
+                :counter="COMPETITOR_NAME_MAX_LENGTH"
+                :placeholder="t(translationKeys.form.placeholders.givenName)"
+                :hint="t(translationKeys.form.fieldHints.givenName)"
+                persistent-hint
                 autocomplete="off"
                 required
               >
@@ -145,6 +149,10 @@ function openBirthDatePicker(): void {
                 v-model="fields.familyName"
                 :rules="familyNameRules"
                 :maxlength="COMPETITOR_NAME_MAX_LENGTH"
+                :counter="COMPETITOR_NAME_MAX_LENGTH"
+                :placeholder="t(translationKeys.form.placeholders.familyName)"
+                :hint="t(translationKeys.form.fieldHints.familyName)"
+                persistent-hint
                 autocomplete="off"
                 required
               >
@@ -161,6 +169,8 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :rules="genderRules"
+            :hint="t(translationKeys.form.fieldHints.gender)"
+            persistent-hint
             required
           >
             <template #label>
@@ -174,6 +184,8 @@ function openBirthDatePicker(): void {
             type="date"
             class="participant-form__birth-date"
             :rules="birthDateRules"
+            :hint="t(translationKeys.form.fieldHints.birthDate)"
+            persistent-hint
             required
           >
             <template #label>
@@ -199,6 +211,8 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :rules="associationRules"
+            :hint="t(translationKeys.form.fieldHints.association)"
+            persistent-hint
             required
           >
             <template #label>
@@ -212,6 +226,8 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :rules="nationalityRules"
+            :hint="t(translationKeys.form.fieldHints.nationality)"
+            persistent-hint
             required
           >
             <template #label>
@@ -225,6 +241,8 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :rules="ageClassRules"
+            :hint="t(translationKeys.form.fieldHints.ageClass)"
+            persistent-hint
             required
           >
             <template #label>
@@ -248,8 +266,12 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :rules="weightClassRules"
-            :hint="t(translationKeys.form.selectAgeClassFirst)"
-            :persistent-hint="!fields.ageClassId"
+            :hint="
+              fields.ageClassId
+                ? t(translationKeys.form.fieldHints.weightClass)
+                : t(translationKeys.form.selectAgeClassFirst)
+            "
+            persistent-hint
             required
           >
             <template #label>
@@ -261,6 +283,10 @@ function openBirthDatePicker(): void {
             v-model="fields.passNumber"
             :rules="passNumberRules"
             :maxlength="COMPETITOR_PASS_NUMBER_MAX_LENGTH"
+            :counter="COMPETITOR_PASS_NUMBER_MAX_LENGTH"
+            :placeholder="t(translationKeys.form.placeholders.passNumber)"
+            :hint="t(translationKeys.form.fieldHints.passNumber)"
+            persistent-hint
             autocomplete="off"
             required
           >
@@ -277,6 +303,8 @@ function openBirthDatePicker(): void {
                 item-title="title"
                 item-value="value"
                 :label="t(translationKeys.form.fields.gradingSystem)"
+                :hint="t(translationKeys.form.fieldHints.gradingSystem)"
+                persistent-hint
               />
             </v-col>
             <v-col cols="12" sm="6">
@@ -287,6 +315,8 @@ function openBirthDatePicker(): void {
                   item-title="title"
                   item-value="value"
                   :label="t(translationKeys.form.fields.grade)"
+                  :hint="t(translationKeys.form.fieldHints.grade)"
+                  persistent-hint
                   class="participant-form__grade-select"
                   clearable
                 />
@@ -300,6 +330,10 @@ function openBirthDatePicker(): void {
             :label="t(translationKeys.form.fields.licenseNumber)"
             :rules="licenseNumberRules"
             :maxlength="COMPETITOR_LICENSE_NUMBER_MAX_LENGTH"
+            :counter="COMPETITOR_LICENSE_NUMBER_MAX_LENGTH"
+            :placeholder="t(translationKeys.form.placeholders.licenseNumber)"
+            :hint="t(translationKeys.form.fieldHints.licenseNumber)"
+            persistent-hint
             autocomplete="off"
           />
 
@@ -309,6 +343,10 @@ function openBirthDatePicker(): void {
             :label="t(translationKeys.form.fields.contactPhone)"
             :rules="contactPhoneRules"
             :maxlength="COMPETITOR_CONTACT_PHONE_MAX_LENGTH"
+            :counter="COMPETITOR_CONTACT_PHONE_MAX_LENGTH"
+            :placeholder="t(translationKeys.form.placeholders.contactPhone)"
+            :hint="t(translationKeys.form.fieldHints.contactPhone)"
+            persistent-hint
             autocomplete="off"
           />
 
@@ -317,6 +355,10 @@ function openBirthDatePicker(): void {
             :label="t(translationKeys.form.fields.contactPerson)"
             :rules="contactPersonRules"
             :maxlength="COMPETITOR_COACH_MAX_LENGTH"
+            :counter="COMPETITOR_COACH_MAX_LENGTH"
+            :placeholder="t(translationKeys.form.placeholders.contactPerson)"
+            :hint="t(translationKeys.form.fieldHints.contactPerson)"
+            persistent-hint
             autocomplete="off"
           />
 
@@ -326,6 +368,8 @@ function openBirthDatePicker(): void {
             item-title="title"
             item-value="value"
             :label="t(translationKeys.form.fields.registrationStatus)"
+            :hint="t(translationKeys.form.fieldHints.registrationStatus)"
+            persistent-hint
           />
 
           <v-textarea
@@ -333,7 +377,10 @@ function openBirthDatePicker(): void {
             :label="t(translationKeys.form.fields.remarks)"
             :rules="remarksRules"
             :maxlength="COMPETITOR_REMARKS_MAX_LENGTH"
-            counter
+            :counter="COMPETITOR_REMARKS_MAX_LENGTH"
+            :placeholder="t(translationKeys.form.placeholders.remarks)"
+            :hint="t(translationKeys.form.fieldHints.remarks)"
+            persistent-hint
             auto-grow
             rows="2"
             autocomplete="off"
@@ -342,8 +389,9 @@ function openBirthDatePicker(): void {
           <v-checkbox
             v-model="fields.startEligible"
             :label="t(translationKeys.form.fields.startEligible)"
+            :hint="t(translationKeys.form.fieldHints.startEligible)"
+            persistent-hint
             density="comfortable"
-            hide-details
           />
         </fieldset>
       </v-card-text>
@@ -419,7 +467,7 @@ function openBirthDatePicker(): void {
 
 .participant-form__grade-field {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
 }
 
@@ -428,14 +476,9 @@ function openBirthDatePicker(): void {
   min-width: 0;
 }
 
-/* The grade select is optional (no rules), so drop its empty details row to
-   keep the avatar centered on the input control. */
-.participant-form__grade-select :deep(.v-input__details) {
-  display: none;
-}
-
 .participant-form__grade-field > .judo-belt-avatar {
   flex-shrink: 0;
+  margin-top: 0.5rem;
 }
 
 /* Vuetify may add its own asterisk when `required` is set — hide duplicate markers. */

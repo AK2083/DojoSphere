@@ -115,6 +115,34 @@ export default {
       startEligible: 'Eligible to compete',
       registrationStatus: 'Status',
       remarks: 'Remarks'
+    },
+    placeholders: {
+      givenName: 'e.g. Max',
+      familyName: 'e.g. Mustermann',
+      passNumber: 'e.g. DE-123456',
+      licenseNumber: 'e.g. L-987654',
+      contactPhone: 'e.g. 0170 1234567',
+      contactPerson: 'e.g. Erika Mustermann',
+      remarks: 'e.g. Please arrive early for weigh-in'
+    },
+    fieldHints: {
+      givenName: 'Given name as shown on the judo pass.',
+      familyName: 'Family name as shown on the judo pass.',
+      gender: 'Gender used for tournament assignment.',
+      birthDate: 'Date of birth used to determine the age class.',
+      association: 'Active club the participant competes for.',
+      nationality: 'Nationality as a country code.',
+      ageClass: 'Age class according to the event rules.',
+      weightClass: 'Weight class matching the selected age class.',
+      passNumber: 'Judo pass number (max. 32 characters).',
+      gradingSystem: 'Grading system for the belt grade.',
+      grade: 'Current kyu or dan grade.',
+      licenseNumber: 'Optional competition licence number (max. 32 characters).',
+      contactPhone: 'Reachable phone number for questions (max. 32 characters).',
+      contactPerson: 'Contact person for questions (max. 80 characters).',
+      registrationStatus: 'Current registration status for the event.',
+      remarks: 'Free-text note for registration (max. 500 characters).',
+      startEligible: 'Whether the participant is eligible to compete.'
     }
   },
   gender: {

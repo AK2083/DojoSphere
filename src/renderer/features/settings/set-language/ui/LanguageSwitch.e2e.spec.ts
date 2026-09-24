@@ -4,7 +4,7 @@ import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 test.describe('LanguageSwitch', { tag: '@regression' }, () => {
   test(
     'changes language to German and persists selection',
-    { tag: ['@smoke', '@critical'] },
+    { tag: '@critical' },
     async ({ page }) => {
       await setEnglishLanguage(page)
 

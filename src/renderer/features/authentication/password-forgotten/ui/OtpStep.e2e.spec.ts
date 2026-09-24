@@ -14,7 +14,7 @@ test.describe('OtpStep', { tag: '@regression' }, () => {
     await mockRecoveryRequest(page)
   })
 
-  test('renders otp fields after successful email step', { tag: '@smoke' }, async ({ page }) => {
+  test('renders otp fields after successful email step', { tag: '@critical' }, async ({ page }) => {
     await goToPasswordResetOtpStep(page)
 
     await waitForPasswordResetOtpStep(page)

@@ -3,14 +3,14 @@ import { gotoHashRoute } from '@shared/tests/e2e/navigation'
 import { waitForOtpInputs } from '@shared/tests/e2e/otp-input'
 import { setEnglishLanguage } from '@shared/tests/e2e/setup-language'
 
-test.describe('email verification page', { tag: '@regression' }, () => {
+test.describe('EMailConfirmation', { tag: '@regression' }, () => {
   test.beforeEach(async ({ page }) => {
     await setEnglishLanguage(page)
   })
 
   test(
-    'email verification route renders confirmation flow',
-    { tag: '@smoke' },
+    'renders OTP confirmation form with disabled submit',
+    { tag: ['@smoke', '@critical'] },
     async ({ page }) => {
       await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
 

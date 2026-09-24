@@ -9,7 +9,7 @@ test.describe('EmailStep', { tag: '@regression' }, () => {
 
   test(
     'enables next action after entering a valid email',
-    { tag: ['@smoke', '@critical'] },
+    { tag: '@critical' },
     async ({ page }) => {
       await gotoHashRoute(page, '/#/passwordreset', 'input[autocomplete="email"]')
 

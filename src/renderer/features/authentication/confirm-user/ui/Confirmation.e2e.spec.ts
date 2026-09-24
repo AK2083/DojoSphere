@@ -10,10 +10,14 @@ test.describe('Confirmation', { tag: '@regression' }, () => {
     await setupPendingEmailVerification(page)
   })
 
-  test('renders otp input and disabled submit action', { tag: '@smoke' }, async ({ page }) => {
-    await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
+  test(
+    'renders otp input and disabled submit action',
+    { tag: ['@smoke', '@critical'] },
+    async ({ page }) => {
+      await gotoHashRoute(page, '/#/emailverification', '.v-otp-input')
 
-    await waitForOtpInputs(page)
-    await expect(page.locator('button[type="submit"]').first()).toBeDisabled()
-  })
+      await waitForOtpInputs(page)
+      await expect(page.locator('button[type="submit"]').first()).toBeDisabled()
+    }
+  )
 })

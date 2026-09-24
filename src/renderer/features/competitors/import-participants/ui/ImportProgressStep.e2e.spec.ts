@@ -33,16 +33,12 @@ test.describe('ImportProgressStep', { tag: '@regression' }, () => {
     await startImportFromMapping(page)
   })
 
-  test(
-    'renders imported participant results and a completion message',
-    { tag: '@smoke' },
-    async ({ page }) => {
-      await expect(page.getByText('Yuki Tanaka')).toBeVisible()
-      await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
-      await expect(page.getByText('Import complete.')).toBeVisible()
-      await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible()
-    }
-  )
+  test('renders imported participant results and a completion message', async ({ page }) => {
+    await expect(page.getByText('Yuki Tanaka')).toBeVisible()
+    await expect(page.getByLabel('Yuki Tanaka imported successfully')).toBeVisible()
+    await expect(page.getByText('Import complete.')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Finish import' })).toBeVisible()
+  })
 
   test(
     'returns to participant list when finish is clicked',

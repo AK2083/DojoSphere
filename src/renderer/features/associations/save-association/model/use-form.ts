@@ -7,6 +7,7 @@ import translationKeys from '../i18n/keys'
 import { mapAssociationFormRule } from '../lib/association-form-error-manager'
 import {
   ASSOCIATION_CITY_MAX_LENGTH,
+  ASSOCIATION_EMAIL_MAX_LENGTH,
   ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
   ASSOCIATION_NAME_MAX_LENGTH,
   ASSOCIATION_NUMBER_MAX_LENGTH,
@@ -215,6 +216,7 @@ export function useAssociationForm(options: UseAssociationFormOptions = {}) {
       houseNumber: ASSOCIATION_HOUSE_NUMBER_MAX_LENGTH,
       postalCode: ASSOCIATION_POSTAL_CODE_LENGTH,
       city: ASSOCIATION_CITY_MAX_LENGTH,
+      email: ASSOCIATION_EMAIL_MAX_LENGTH,
       phone: ASSOCIATION_PHONE_MAX_LENGTH
     },
     setFormRef,

@@ -6,7 +6,6 @@ import { useTranslation } from '@shared/lib'
 import RequiredFieldLabel from '@shared/ui/RequiredFieldLabel.vue'
 
 import translationKeys from '../i18n/keys'
-import { ASSOCIATION_EMAIL_MAX_LENGTH } from '../lib/association-form-rules'
 import { useAssociationForm } from '../model/use-form'
 
 const props = defineProps<{
@@ -132,7 +131,10 @@ const addressSections = [
             v-model="fields.name"
             :rules="nameRules"
             :maxlength="fieldLimits.name"
+            :counter="fieldLimits.name"
             :placeholder="t(translationKeys.form.placeholders.name)"
+            :hint="t(translationKeys.form.fieldHints.name)"
+            persistent-hint
             autocomplete="organization"
             required
           >
@@ -146,7 +148,10 @@ const addressSections = [
             :label="t(translationKeys.form.fields.shortName)"
             :rules="shortNameRules"
             :maxlength="fieldLimits.shortName"
+            :counter="fieldLimits.shortName"
             :placeholder="t(translationKeys.form.placeholders.shortName)"
+            :hint="t(translationKeys.form.fieldHints.shortName)"
+            persistent-hint
             autocomplete="off"
           />
 
@@ -167,7 +172,10 @@ const addressSections = [
                 :label="t(translationKeys.form.fields.website)"
                 :rules="websiteHostRules"
                 :maxlength="fieldLimits.websiteHost"
+                :counter="fieldLimits.websiteHost"
                 :placeholder="t(translationKeys.form.placeholders.websiteHost)"
+                :hint="t(translationKeys.form.fieldHints.websiteHost)"
+                persistent-hint
                 autocomplete="url"
               />
             </v-col>
@@ -177,7 +185,10 @@ const addressSections = [
             v-model="fields.associationNumber"
             :rules="associationNumberRules"
             :maxlength="fieldLimits.associationNumber"
+            :counter="fieldLimits.associationNumber"
             :placeholder="t(translationKeys.form.placeholders.associationNumber)"
+            :hint="t(translationKeys.form.fieldHints.associationNumber)"
+            persistent-hint
             autocomplete="off"
             required
           >
@@ -215,7 +226,10 @@ const addressSections = [
                     v-model="fields[section.key].street"
                     :rules="section.required ? headquartersStreetRules : streetRules"
                     :maxlength="fieldLimits.street"
+                    :counter="fieldLimits.street"
                     :placeholder="t(translationKeys.form.placeholders.street)"
+                    :hint="t(translationKeys.form.fieldHints.street)"
+                    persistent-hint
                     autocomplete="address-line1"
                     :required="section.required"
                   >
@@ -232,7 +246,10 @@ const addressSections = [
                     v-model="fields[section.key].houseNumber"
                     :rules="section.required ? headquartersHouseNumberRules : houseNumberRules"
                     :maxlength="fieldLimits.houseNumber"
+                    :counter="fieldLimits.houseNumber"
                     :placeholder="t(translationKeys.form.placeholders.houseNumber)"
+                    :hint="t(translationKeys.form.fieldHints.houseNumber)"
+                    persistent-hint
                     autocomplete="off"
                     :required="section.required"
                   >
@@ -252,7 +269,10 @@ const addressSections = [
                     v-model="fields[section.key].postalCode"
                     :rules="section.required ? headquartersPostalCodeRules : postalCodeRules"
                     :maxlength="fieldLimits.postalCode"
+                    :counter="fieldLimits.postalCode"
                     :placeholder="t(translationKeys.form.placeholders.postalCode)"
+                    :hint="t(translationKeys.form.fieldHints.postalCode)"
+                    persistent-hint
                     inputmode="numeric"
                     autocomplete="postal-code"
                     :required="section.required"
@@ -270,7 +290,10 @@ const addressSections = [
                     v-model="fields[section.key].city"
                     :rules="section.required ? headquartersCityRules : addressCityRules"
                     :maxlength="fieldLimits.city"
+                    :counter="fieldLimits.city"
                     :placeholder="t(translationKeys.form.placeholders.city)"
+                    :hint="t(translationKeys.form.fieldHints.city)"
+                    persistent-hint
                     autocomplete="address-level2"
                     :required="section.required"
                   >
@@ -294,8 +317,11 @@ const addressSections = [
             <v-text-field
               v-model="fields.email"
               :rules="emailRules"
-              :maxlength="ASSOCIATION_EMAIL_MAX_LENGTH"
+              :maxlength="fieldLimits.email"
+              :counter="fieldLimits.email"
               :placeholder="t(translationKeys.form.placeholders.email)"
+              :hint="t(translationKeys.form.fieldHints.email)"
+              persistent-hint
               type="email"
               autocomplete="email"
               required
@@ -322,7 +348,10 @@ const addressSections = [
                   :label="t(translationKeys.form.fields.phone)"
                   :rules="phoneRules"
                   :maxlength="fieldLimits.phone"
+                  :counter="fieldLimits.phone"
                   :placeholder="t(translationKeys.form.placeholders.phone)"
+                  :hint="t(translationKeys.form.fieldHints.phone)"
+                  persistent-hint
                   type="tel"
                   inputmode="tel"
                   autocomplete="tel-national"

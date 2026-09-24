@@ -1,8 +1,8 @@
 import { expect, test } from '@shared/tests/e2e/fixtures'
 
-test.describe('Navigation widget', { tag: '@regression' }, () => {
+test.describe('Navigation', { tag: '@regression' }, () => {
   test(
-    'shows at least one settings action on app start',
+    'exposes a settings link on app start',
     { tag: ['@smoke', '@critical'] },
     async ({ page }) => {
       await page.goto('/')
@@ -33,7 +33,7 @@ test.describe('Navigation widget', { tag: '@regression' }, () => {
     await expect(mobileSettingsAction).toBeVisible()
   })
 
-  test('settings action is available on settings route too', async ({ page }) => {
+  test('keeps settings link visible on settings route', async ({ page }) => {
     await page.goto('/#/settings')
 
     const settingsActions = page.locator('a[href$="#/settings"]')
@@ -66,7 +66,7 @@ test.describe('Navigation widget', { tag: '@regression' }, () => {
     await expect(page).toHaveURL(/#\/participants$/)
   })
 
-  test('mobile view exposes participants action', { tag: '@critical' }, async ({ page }) => {
+  test('mobile view exposes participants action', { tag: '@smoke' }, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
 

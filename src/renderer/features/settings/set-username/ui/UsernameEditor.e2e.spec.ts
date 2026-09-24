@@ -6,7 +6,7 @@ const LOCAL_SESSION_STORAGE_KEY = 'dojosphere.auth.local.session'
 test.describe('UsernameEditor', { tag: '@regression' }, () => {
   test(
     'loads the default username and persists changes',
-    { tag: ['@smoke', '@critical'] },
+    { tag: '@critical' },
     async ({ page }) => {
       await setEnglishLanguage(page)
 
